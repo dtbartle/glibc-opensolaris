@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -36,3 +36,6 @@ longjmp (const sigjmp_buf env, int val)
   /* Call the machine-dependent function to restore machine state.  */
   __longjmp (env[0].__jmpbuf, val ?: 1);
 }
+
+weak_alias (longjmp, _longjmp)
+weak_alias (longjmp, siglongjmp)
