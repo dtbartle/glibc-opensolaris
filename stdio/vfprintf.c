@@ -62,8 +62,8 @@ Cambridge, MA 02139, USA.  */
 #include <stdio.h>
 #define PUTC(c, f)	putc (c, f)
 #define PUT(f, s, n)	fwrite (s, 1, n, f)
-static int __pad __P ((FILE *, char pad, int n));
-#define PAD(padchar)	__pad (s, padchar, width)
+ssize_t __printf_pad __P ((FILE *, char pad, int n));
+#define PAD(padchar)	__printf_pad (s, padchar, width)
 #define ARGCHECK(s, format) \
   do									      \
     {									      \
@@ -804,8 +804,11 @@ static const char blanks[PADSIZE] =
 static const char zeroes[PADSIZE] =
 {'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'};
 
-static ssize_t
-DEFUN(__pad, (s, pad, count), FILE *s AND char pad AND int count)
+ssize_t
+__printf_pad (s, pad, count)
+     FILE *s;
+     char pad;
+     int count;
 {
   CONST char *padptr;
   register int i;
