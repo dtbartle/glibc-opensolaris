@@ -188,6 +188,7 @@ DEFUN(__srandom, (x), unsigned int x)
 }
 
 weak_alias (__srandom, srandom)
+weak_alias (__srandom, srand)
 
 /* Initialize the state information in the given array of N bytes for
    future random number generation.  Based on the number of bytes we
