@@ -62,10 +62,11 @@ all-dirs := $(subdir-dirs) \
 ifndef subdir
 subdirs := $(subdirs) \
 	   $(filter-out $(subdirs),\
-			$(shell sed -e 's/\#.*$$//' \
-				    $(wildcard $(addsuffix /Subdirs,\
-							   $(all-dirs)))\
-				    /dev/null))
+			$(sort \
+			  $(shell sed -e 's/\#.*$$//' \
+				      $(wildcard $(addsuffix /Subdirs,\
+							     $(all-dirs)))\
+				      /dev/null)))
 all-dist = $(foreach Dist,$(wildcard $(all-dirs:%=%/Dist)),\
 		     $(addprefix $(Dist:%/Dist=%)/,\
 				 $(filter %.c %.h %.S %.s,\
