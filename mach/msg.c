@@ -1,6 +1,6 @@
 /* 
  * Mach Operating System
- * Copyright (c) 1991,1990,1989 Carnegie Mellon University
+ * Copyright (c) 1991,1990,1989, 1995 Carnegie Mellon University
  * All Rights Reserved.
  * 
  * Permission to use, copy, modify and distribute this software and its
@@ -61,6 +61,7 @@ __mach_msg (mach_msg_header_t *msg,
   
   return ret;
 }
+weak_alias (__mach_msg, mach_msg)
 
 mach_msg_return_t
 __mach_msg_send	(mach_msg_header_t *msg)
@@ -69,6 +70,7 @@ __mach_msg_send	(mach_msg_header_t *msg)
 		     msg->msgh_size, 0, MACH_PORT_NULL,
 		     MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
 }
+weak_alias (__mach_msg_send, mach_msg_send)
 
 mach_msg_return_t
 __mach_msg_receive (mach_msg_header_t *msg)
@@ -77,3 +79,4 @@ __mach_msg_receive (mach_msg_header_t *msg)
 		     0, msg->msgh_size, msg->msgh_local_port,
 		     MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
 }
+weak_alias (__mach_msg_receive, mach_msg_receive)
