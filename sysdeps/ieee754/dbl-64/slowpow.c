@@ -39,7 +39,7 @@ void __mplog(mp_no *x, mp_no *y, int p);
 double ulog(double);
 double __halfulp(double x,double y);
 
-double slowpow(double x, double y, double z) {
+double __slowpow(double x, double y, double z) {
   double res,res1;
   mp_no mpx, mpy, mpz,mpw,mpp,mpr,mpr1;
   static const mp_no eps = {-3,{1.0,4.0}};
