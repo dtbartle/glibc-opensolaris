@@ -507,6 +507,6 @@ cache_get (xprt, msg, replyp, replylenp)
   uc->uc_proc = msg->rm_call.cb_proc;
   uc->uc_vers = msg->rm_call.cb_vers;
   uc->uc_prog = msg->rm_call.cb_prog;
-  uc->uc_addr = xprt->xp_raddr;
+  memcpy (&uc->uc_addr, &xprt->xp_raddr, sizeof (uc->uc_addr));
   return 0;
 }
