@@ -74,6 +74,7 @@ main()
 #endif
 	  );
 
+  puts ("# define __need_FOPEN_MAX	1");
   puts ("#endif\n");
 
   /* POSIX does not require that OPEN_MAX and PATH_MAX be defined, so
