@@ -122,7 +122,7 @@ static reg_errcode_t build_charclass (RE_TRANSLATE_TYPE trans,
 				      reg_syntax_t syntax);
 #endif /* not RE_ENABLE_I18N */
 static bin_tree_t *build_charclass_op (re_dfa_t *dfa, RE_TRANSLATE_TYPE trans,
-				       const unsigned char *class_name, 
+				       const unsigned char *class_name,
 				       const unsigned char *extra, int not,
 				       reg_errcode_t *err);
 static void free_bin_tree (bin_tree_t *tree);
@@ -2292,7 +2292,7 @@ parse_sub_exp (regexp, preg, token, syntax, nest, err)
   if (BE (token->type != OP_CLOSE_SUBEXP, 0))
     {
       free_bin_tree (tree);
-      *err = REG_BADPAT;
+      *err = REG_EPAREN;
       return NULL;
     }
   new_idx = re_dfa_add_node (dfa, *token, 0);
