@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -33,14 +33,14 @@ routines	:=							      \
 	vsnprintf vsprintf vasprintf	      				      \
 	fprintf printf snprintf sprintf asprintf			      \
 	dprintf vdprintf						      \
-	__vfscanf vfscanf vscanf __vsscanf vsscanf			      \
+	vfscanf vscanf vsscanf						      \
 	fscanf scanf sscanf						      \
 	fread fwrite							      \
 	ungetc								      \
 	fgetc getc getchar getw						      \
 	fputc putc putchar putw						      \
 	fgets gets fputs puts						      \
-	getdelim getline __getdelim __getline				      \
+	getdelim getline						      \
 	perror psignal							      \
 	tmpfile tmpnam tempnam tempname					      \
 	fclose fflush							      \
@@ -54,7 +54,7 @@ mpn-routines := add_1 add_n addmul_1 cmp divmod divmod_1 udiv_qrnnd \
 mpn-headers = longlong.h gmp.h gmp-impl.h gmp-mparam.h asm-syntax.h
 
 routines := $(strip $(routines) $(mpn-routines)) dbl2mpn
-aux	:= errlist siglist defs syms-stdio glue mp_clz_tab
+aux	:= errlist siglist defs glue mp_clz_tab
 distribute = $(mpn-headers) mpn-copy.mk _itoa.h
 
 tests := tst-printf tstscanf test_rdwr test-popen tstgetln test-fseek \
