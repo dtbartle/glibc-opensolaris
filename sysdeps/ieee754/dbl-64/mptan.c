@@ -40,7 +40,7 @@
 int mpranred(double, mp_no *, int);
 void __c32(mp_no *, mp_no *, mp_no *, int);
 
-void mptan(double x, mp_no *mpy, int p) {
+void __mptan(double x, mp_no *mpy, int p) {
 
   static const double MONE = -1.0;
 
