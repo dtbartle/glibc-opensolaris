@@ -128,14 +128,14 @@ __libc_fcntl (int fd, int cmd, ...)
   va_end (ap);
 
 #if __ASSUME_FCNTL64 > 0
-  if (SINGLE_THREAD_P)
+  if (SINGLE_THREAD_P || (cmd != F_SETLKW && cmd != F_SETLKW64))
     return INLINE_SYSCALL (fcntl64, 3, fd, cmd, arg);
 
   int oldtype = LIBC_CANCEL_ASYNC ();
 
   int result = INLINE_SYSCALL (fcntl64, 3, fd, cmd, arg);
 #else
-  if (SINGLE_THREAD_P)
+  if (SINGLE_THREAD_P || (cmd != F_SETLKW && cmd != F_SETLKW64))
     return do_fcntl (fd, cmd, arg);
 
   int oldtype = LIBC_CANCEL_ASYNC ();
