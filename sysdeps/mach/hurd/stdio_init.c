@@ -42,18 +42,10 @@ DEFUN(__stdio_init_stream, (stream), FILE *stream)
 
   /* Find out what sort of file this is.  */
   HURD_CRITICAL_BEGIN;
-  __spin_lock (&d->port.lock);
   err = HURD_FD_PORT_USE (d, __io_stat (port, &statb));
   HURD_CRITICAL_END;
   if (err)
     return;
-
-  if (S_ISFIFO (statb.st_mode))
-    {
-      /* It's a named pipe (FIFO).  Make it unbuffered.  */
-      stream->__userbuf = 1;
-      return;
-    }
 
   if (S_ISCHR (statb.st_mode))
     {
