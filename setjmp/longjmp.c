@@ -25,7 +25,7 @@ Cambridge, MA 02139, USA.  */
    to the position specified in ENV, causing the setjmp
    call there to return VAL, or 1 if VAL is 0.  */
 void
-longjmp (const sigjmp_buf env, int val)
+longjmp (sigjmp_buf env, int val)
 {
   if (env[0].__mask_was_saved)
     /* Restore the saved signal mask.  */
