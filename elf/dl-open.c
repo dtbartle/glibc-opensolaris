@@ -1,5 +1,5 @@
 /* Load a shared object at runtime, relocate it, and run its initializer.
-   Copyright (C) 1996, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1996, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -54,8 +54,6 @@ _dl_open (const char *file, int mode)
   /* Load that object's dependencies.  */
   _dl_map_object_deps (new, NULL, 0, 0);
 
-  /* So far, so good.  Now check the versions.  */
-  (void) _dl_check_map_versions (new, 0);
 
   /* Relocate the objects loaded.  We do this in reverse order so that copy
      relocs of earlier objects overwrite the data written by later objects.  */
@@ -75,6 +73,13 @@ _dl_open (const char *file, int mode)
 	     between when _dl_object_relocation_scope returns and when we
 	     enter the dynamic linker's code (_dl_relocate_object).  */
 	  __typeof (_dl_relocate_object) *reloc = &_dl_relocate_object;
+
+	  /* GCC is very clever.  If we wouldn't add some magic it would
+	     simply optimize away our nice little variable `reloc' and we
+	     would result in a not working binary.  So let's swing the
+	     magic ward.  */
+	  asm ("" : "=r" (reloc) : "0" (reloc));
+
 	  (*reloc) (l, _dl_object_relocation_scope (l),
 		    (mode & RTLD_BINDING_MASK) == RTLD_LAZY);
 	  *_dl_global_scope_end = NULL;
