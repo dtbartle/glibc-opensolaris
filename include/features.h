@@ -196,6 +196,8 @@
 #  define _LARGEFILE_SOURCE	1
 #  if (_XOPEN_SOURCE - 0) >= 600
 #   define __USE_XOPEN2K	1
+#   undef __USE_ISOC99
+#   define __USE_ISOC99		1
 #  endif
 # else
 #  ifdef _XOPEN_SOURCE_EXTENDED
