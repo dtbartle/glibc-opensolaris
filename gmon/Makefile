@@ -34,6 +34,12 @@ CFLAGS-mcount.c := -fno-omit-frame-pointer
 # create resursive calls.  Just copy the normal static object.
 # On systems where `profil' is not a system call, the same
 # problem exists for the internal functions in profil.c.
-$(objpfx)mcount.po $(objpfx)profil.po: %.po: %.o
+
+noprof := mcount
+ifeq (,$(filter profil,$(unix-syscalls)))
+noprof += profil
+endif
+
+$(noprof:%=$(objpfx)%.po): %.po: %.o
 	rm -f $@
 	ln $< $@
