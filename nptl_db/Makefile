@@ -53,8 +53,6 @@ libthread_db.so-no-z-defs = yes
 distribute = thread_dbP.h shlib-versions proc_service.h
 include ../Rules
 
-CPPFLAGS += -I../nptl
-
 # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
 # This ensures they will load libc.so for needed symbols if loaded by
 # a statically-linked program that hasn't already loaded it.
