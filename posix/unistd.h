@@ -704,7 +704,7 @@ extern int tcsetpgrp (int __fd, __pid_t __pgrp_id) __THROW;
 
 /* Return the login name of the user.  */
 extern char *getlogin (void) __THROW;
-#ifdef __USE_REENTRANT
+#if defined __USE_REENTRANT || defined __USE_UNIX98
 /* Return at most NAME_LEN characters of the login name of the user in NAME.
    If it cannot be determined or some other error occurred, return the error
    code.  Otherwise return 0.  */
@@ -805,7 +805,7 @@ extern int daemon (int __nochdir, int __noclose) __THROW;
 extern long int gethostid (void) __THROW;
 
 /* Make all changes done to all files actually appear on disk.  */
-extern int sync (void) __THROW;
+extern void sync (void) __THROW;
 
 
 /* Return the number of bytes in a page.  This is the system's page size,
