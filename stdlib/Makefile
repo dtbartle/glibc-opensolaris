@@ -33,7 +33,8 @@ routines	:=							      \
 	div ldiv							      \
 	mblen mbstowcs mbtowc wcstombs wctomb				      \
 	random rand 							      \
-	strtod strtol strtoul strtoq strtouq				      \
+	strtol strtoul strtoq strtouq					      \
+	strtof strtod strtold						      \
 	system
 
 distribute	:= exit.h
