@@ -56,7 +56,8 @@ Cambridge, MA 02139, USA.  */
 #  define FILE	     _IO_FILE
 #else	/* ! USE_IN_LIBIO */
 #  define PUT(f, s, n) fwrite (s, 1, n, f)
-#  define PAD(f, c, n) __pad (f, c, n)
+#  define PAD(f, c, n) __printf_pad (f, c, n)
+ssize_t __printf_pad __P ((FILE *, char pad, int n)); /* In vfprintf.c.  */
 #endif	/* USE_IN_LIBIO */
 
 /* Tables of constants.  */
@@ -465,61 +466,11 @@ static const struct ten_pows
 #define PADN(ch, len)							      \
   do									      \
     {									      \
-      if (PAD (fp, ch, len) != len)				      \
+      if (PAD (fp, ch, len) != len)					      \
 	return -1;							      \
       done += len;							      \
     }									      \
   while (0)
-
-#ifndef USE_IN_LIBIO
-static ssize_t __pad __P ((FILE *, char, int));
-
-/* Pads string with given number of a specified character.
-   This code is taken from iopadn.c of the GNU I/O library.  */
-#  define PADSIZE	16
-static char const blanks[PADSIZE] =
-{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
-static char const zeroes[PADSIZE] =
-{'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'};
-
-static ssize_t
-__pad (s, pad, count)
-     FILE * s;
-     char pad;
-     int count;
-{
-  char padbuf[PADSIZE];
-  const char *padstr;
-  register int i;
-  size_t written, w;
-
-  if (pad == ' ')
-    padstr = blanks;
-  else if (pad == '0')
-    padstr = zeroes;
-  else
-    {
-      for (i = PADSIZE; --i > 0; )
-	padbuf[i] = pad;
-      padstr = padbuf;
-    }
-  written = 0;
-  for (i = count; i >= PADSIZE; i -= PADSIZE)
-    {
-      w = PUT (s, padstr, PADSIZE);
-      written += w;
-      if (w != PADSIZE)
-	return written;
-    }
-  if (i > 0)
-    {
-      w = PUT (s, padstr, i);
-      written += w;
-    }
-  return written;
-}
-#  undef PADSIZE
-#endif	 /* ! USE_IN_LIBIO */
 
 /* We use the GNU MP library to handle large numbers.
 
@@ -722,7 +673,7 @@ __printf_fp (fp, info, args)
     }
 
 
-  /* We need three multiprecisions variable.  Now that we have the exponent
+  /* We need three multiprecision variables.  Now that we have the exponent
      of the number we can allocate the needed memory.  It would be more
      efficient to use variables of the fixed maximum size but because this
      would be really big it could lead to memory problems.  */
@@ -735,7 +686,7 @@ __printf_fp (fp, info, args)
   }
 
   /* We now have to distinguish between numbers with positive and negative
-     exponents becuase the method used for the one is not applicable/efficient
+     exponents because the method used for the one is not applicable/efficient
      for the other.  */
   scalesize = 0;
   if (exponent > 2)
@@ -770,7 +721,7 @@ __printf_fp (fp, info, args)
 	  --tens;
 
 	  /* The number of the product of two binary numbers with n and m
-	     bytes respectively has m+n or m+n-1 bits.	*/
+	     bits respectively has m+n or m+n-1 bits.	*/
 	  if (exponent >= scaleexpo + tens->p_expo - 1)
 	    {
 	      if (scalesize == 0)
