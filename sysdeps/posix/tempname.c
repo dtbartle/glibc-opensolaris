@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -93,14 +93,14 @@ DEFUN(__stdio_gen_tempname, (dir, pfx, dir_search, lenptr, streamptr),
 
   if (dir_search)
     {
-      register CONST char *d = getenv("TMPDIR");
-      if (d != NULL && !diraccess(d))
+      register CONST char *d = getenv ("TMPDIR");
+      if (d != NULL && !diraccess (d))
 	d = NULL;
-      if (d == NULL && dir != NULL && diraccess(dir))
+      if (d == NULL && dir != NULL && diraccess (dir))
 	d = dir;
-      if (d == NULL && diraccess(tmpdir))
+      if (d == NULL && diraccess (tmpdir))
 	d = tmpdir;
-      if (d == NULL && diraccess("/tmp"))
+      if (d == NULL && diraccess ("/tmp"))
 	d = "/tmp";
       if (d == NULL)
 	{
@@ -114,20 +114,20 @@ DEFUN(__stdio_gen_tempname, (dir, pfx, dir_search, lenptr, streamptr),
 
   dlen = strlen (dir);
 
-  /* Remove trailing slashes from the directory name.  */
+ /* Remove trailing slashes from the directory name.  */
   while (dlen > 1 && dir[dlen - 1] == '/')
     --dlen;
 
   if (pfx != NULL && *pfx != '\0')
     {
-      plen = strlen(pfx);
+      plen = strlen (pfx);
       if (plen > 5)
 	plen = 5;
     }
   else
     plen = 0;
 
-  if (dir != tmpdir && !strcmp(dir, tmpdir))
+  if (dir != tmpdir && !strcmp (dir, tmpdir))
     dir = tmpdir;
   idx = &indices[(plen == 0 && dir == tmpdir) ? 1 : 0];
 
@@ -138,10 +138,11 @@ DEFUN(__stdio_gen_tempname, (dir, pfx, dir_search, lenptr, streamptr),
     }
 
   len = dlen + 1 + plen + 5 + 3;
-  for (; *idx < ((sizeof (letters) - 1) * (sizeof (letters) - 1) *
-		 (sizeof (letters) - 1));
-       ++*idx)
+  while (*idx < ((sizeof (letters) - 1) * (sizeof (letters) - 1) *
+		 (sizeof (letters) - 1)))
     {
+      const size_t i = (*idx)++;
+
       /* Construct a file name and see if it already exists.
 
 	 We use a single counter in *IDX to cycle each of three
@@ -151,12 +152,11 @@ DEFUN(__stdio_gen_tempname, (dir, pfx, dir_search, lenptr, streamptr),
 	  sprintf (buf, "%.*s/%.*s%.5d%c%c%c",
 		   (int) dlen, dir, (int) plen,
 		   pfx, pid % 100000,
-		   letters[*idx
+		   letters[i % (sizeof (letters) - 1)],
+		   letters[(i / (sizeof (letters) - 1))
 			   % (sizeof (letters) - 1)],
-		   letters[(*idx / (sizeof (letters) - 1))
-			   % (sizeof (letters) - 1)],
-		   letters[(*idx / ((sizeof (letters) - 1) *
-				    (sizeof (letters) - 1)))
+		   letters[(i / ((sizeof (letters) - 1) *
+				 (sizeof (letters) - 1)))
 			   % (sizeof (letters) - 1)]
 		   ) != (int) len)
 	return NULL;
