@@ -38,7 +38,8 @@ Cambridge, MA 02139, USA.  */
 /* This code is for use in libio.  */
 #include <libioP.h>
 #define PUT(f, s, n)	_IO_sputn (f, s, n)
-#define PAD(padchar)	_IO_padn (s, padchar, width)
+#define PAD(padchar)	\
+  (width > 0 ? (_IO_padn (s, padchar, width), done += width) : 0)
 #define PUTC(c, f)	_IO_putc(c, f)
 #define vfprintf	_IO_vfprintf
 #define size_t		_IO_size_t
