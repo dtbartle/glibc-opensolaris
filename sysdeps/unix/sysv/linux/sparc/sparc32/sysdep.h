@@ -37,6 +37,7 @@
 /* Linux/SPARC uses a different trap number */
 #undef PSEUDO
 #undef PSEUDO_NOERRNO
+#undef PSEUDO_ERRVAL
 #undef ENTRY
 #undef END
 #undef LOC
@@ -152,6 +153,12 @@ SYSCALL_ERROR_HANDLER_ENTRY(__syscall_error_handler)			\
 	SYSCALL_ERROR_HANDLER
 
 #define PSEUDO_NOERRNO(name, syscall_name, args)		\
+	.text;							\
+	ENTRY(name);						\
+	LOADSYSCALL(syscall_name);				\
+	ta 0x10
+
+#define PSEUDO_ERRVAL(name, syscall_name, args)			\
 	.text;							\
 	ENTRY(name);						\
 	LOADSYSCALL(syscall_name);				\
