@@ -45,7 +45,13 @@ Cambridge, MA 02139, USA.  */
   .globl syscall_error;							      \
   ENTRY (name)								      \
   DO_CALL (syscall_name, args);						      \
-  jb syscall_error
+  jb JUMPTARGET(syscall_error)
+
+#ifdef PIC
+#define JUMPTARGET(name) name@PLT
+#else
+#define JUMPTARGET(name) name
+#endif
 
 /* This is defined as a separate macro so that other sysdep.h files
    can include this one and then redefine DO_CALL.  */
