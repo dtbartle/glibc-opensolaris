@@ -370,7 +370,8 @@ iruserok2 (raddr, superuser, ruser, luser, rhost)
       char *buffer = __alloca (buflen);
       uid_t uid;
 
-      if (__getpwnam_r (luser, &pwdbuf, buffer, buflen, &pwd))
+      if (__getpwnam_r (luser, &pwdbuf, buffer, buflen, &pwd) != 0
+	  || pwd == NULL)
 	return -1;
 
       dirlen = strlen (pwd->pw_dir);
