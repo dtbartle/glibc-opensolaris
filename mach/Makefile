@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -28,18 +28,14 @@ headers = mach_init.h mach.h mach_error.h mach-shortcuts.h \
 	  $(interface-headers) mach/mach.h mach/mig_support.h mach/error.h \
 	  $(lock-headers) machine-sp.h
 distribute = thread_state.h
-lock = spin-solid spin-lock spin-syms mutex-solid
+lock = spin-solid spin-lock mutex-solid
 lock-headers = lock-intern.h machine-lock.h spin-lock.h
-routines = $(filter-out syscall_%,$(mach-syscalls)) \
-	   $(addprefix __,$(mach-syscalls)) \
-	   $(mach-shortcuts) $(addprefix __,$(mach-shortcuts)) \
-	   mach_init vm_page_size \
-	   mig_strncpy __msg msg \
-	   mig-alloc mig-dealloc mig-reply mig_syms \
-	   msg_destroy msgserver msgserver_t \
-	   __msg_dest __msgserver \
+routines = $(filter-out syscall_%,$(mach-syscalls)) $(mach-shortcuts) \
+	   mach_init mig_strncpy msg \
+	   mig-alloc mig-dealloc mig-reply \
+	   msg-destroy msgserver \
 	   mach_error errstring error_compat errsystems \
-	   devstream bootprivport setup-thread thread-sym $(lock)
+	   devstream bootprivport setup-thread $(lock)
 # The RPC interfaces go in a separate library.
 interface-library := libmachuser.a
 user-interfaces := $(addprefix mach/,mach_interface mach_port mach_host	\
@@ -117,16 +113,12 @@ ifndef mach-syscalls
 # call functions, and for that we must know what they all are.
 no_deps=t
 else
-$(mach-syscalls:%=$(objpfx)__%.S): $(objpfx)__%.S: $(objpfx)mach-syscalls.mk
+$(mach-syscalls:%=$(objpfx)%.S): $(objpfx)%.S: $(objpfx)mach-syscalls.mk
 	(echo '#include <sysdep.h>'; \
-	 echo 'kernel_trap(__$*,$(sysno-$*),$(nargs-$*))') > $@-new
+	 echo 'kernel_trap(__$*,$(sysno-$*),$(nargs-$*))'; \
+	 echo 'weak_alias (__$*, $*)') > $@-new
 	 mv $@-new $@
-$(mach-syscalls:%=$(objpfx)%.c): $(objpfx)%.c: Makefile
-	(echo '#include <gnu-stabs.h>'; \
-	 echo 'symbol_alias (__$*, $*);') > $@-new
-	mv $@-new $@
-generated += $(mach-syscalls:%=__%.S) \
-	     $(mach-syscalls:%=%.c)
+generated += $(mach-syscalls:=.S)
 endif	# mach-syscalls
 
 # syscall_device_writev_request has no RPC equivalent.
@@ -138,7 +130,7 @@ ifndef mach-shortcuts
 # $(mach-shortcuts) will be set, and that will change how
 # mach_interface.defs is processed: it will get the -D flags below.
 user-interfaces := $(filter-out mach/mach_interface \
-				mach/mach_port mach/mach_host \
+				mach/mach_port mach/mach_host mach/mach4 \
 				device/device_request,\
 				$(user-interfaces))
 endif
@@ -148,20 +140,12 @@ migdefines += $(foreach call,$(mach-shortcuts),-D$(call)=$(call)_rpc)
 mach/mach_interface.uh mach/mach_port.uh: $(objpfx)mach-syscalls.mk
 
 ifdef mach-shortcuts
-$(mach-shortcuts:%=$(objpfx)__%.c): $(objpfx)__%.c: shortcut.awk \
-						    $(objpfx)RPC_%_rpc.c
-	gawk -v call=__$* -v rpc=__$*_rpc -v syscall=__syscall_$* \
+$(mach-shortcuts:%=$(objpfx)%.c): $(objpfx)%.c: shortcut.awk \
+						$(objpfx)RPC_%_rpc.c
+	gawk -v alias=$* -v call=__$* -v rpc=__$*_rpc -v syscall=__syscall_$* \
 	     -f $^ > $@-new
 	mv $@-new $@
-
-# The shortcut calls have had their names changed to CALL_rpc, so
-# CALL_rpc.c is being generated with a symbol alias to __CALL_rpc.  
-# We also want CALL.c with an alias to __CALL.
-$(mach-shortcuts:%=$(objpfx)%.c): $(objpfx)%.c: # Makefile
-	(echo '#include <gnu-stabs.h>'; \
-	 echo 'symbol_alias (__$*, $*);') > $@-new
-	mv $@-new $@
-generated += $(mach-shortcuts:%=%.c) $(mach-shortcuts:%=__%.c)
+generated += $(mach-shortcuts:%=%.c)
 endif	# mach-shortcuts
 
 # Generate mach-shortcuts.h, which will contain the prototypes for the
