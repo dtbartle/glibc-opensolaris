@@ -20,11 +20,16 @@
 
 #include <fenv.h>
 
+#include <assert.h>
+
 
 void
 fesetenv (const fenv_t *envp)
 {
   fenv_t temp;
+
+  /* The memory block used by fstenv/fldenv has a size of 28 bytes.  */
+  assert (sizeof (fenv_t) == 28);
 
   /* Install the environment specified by ENVP.  But there are a few
      values which we do not want to come from the saved environment.
@@ -35,7 +40,18 @@ fesetenv (const fenv_t *envp)
   if (envp == FE_DFL_ENV)
     {
       temp.control_word |= FE_ALL_EXCEPT;
-      temp.status_word &= ~(FE_ALL_EXCEPT | FE_TOWARDSZERO);
+      temp.control_word &= ~FE_TOWARDSZERO;
+      temp.status_word &= ~FE_ALL_EXCEPT;
+      temp.eip = 0;
+      temp.cs_selector = 0;
+      temp.opcode = 0;
+      temp.data_offset = 0;
+      temp.data_selector = 0;
+    }
+  else if (envp == FE_NOMASK_ENV)
+    {
+      temp.control_word &= ~(FE_ALL_EXCEPT | FE_TOWARDSZERO);
+      temp.status_word &= ~FE_ALL_EXCEPT;
       temp.eip = 0;
       temp.cs_selector = 0;
       temp.opcode = 0;
@@ -44,10 +60,11 @@ fesetenv (const fenv_t *envp)
     }
   else
     {
-      temp.control_word &= ~FE_ALL_EXCEPT;
-      temp.control_word |= envp->control_word & FE_ALL_EXCEPT;
-      temp.status_word &= ~(FE_ALL_EXCEPT | FE_TOWARDSZERO);
-      temp.status_word |= envp->status_word & (FE_ALL_EXCEPT | FE_TOWARDSZERO);
+      temp.control_word &= ~(FE_ALL_EXCEPT | FE_TOWARDSZERO);
+      temp.control_word |= (envp->control_word
+			    & (FE_ALL_EXCEPT | FE_TOWARDSZERO));
+      temp.status_word &= ~FE_ALL_EXCEPT;
+      temp.status_word |= envp->status_word & FE_ALL_EXCEPT;
       temp.eip = envp->eip;
       temp.cs_selector = envp->cs_selector;
       temp.opcode = envp->opcode;
