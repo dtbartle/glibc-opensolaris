@@ -1,4 +1,4 @@
-/* Low-level functions for atomitc operations.  ix86 version, x >= 4.
+/* Low-level functions for atomic operations.  ix86 version, x >= 4.
    Copyright (C) 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -41,7 +41,7 @@ atomic_add (volatile uint32_t *mem, int val)
 			: : "ir" (val), "m" (*mem) : "memory");
 }
 
-static inline int
+static inline char
 __attribute__ ((unused))
 compare_and_swap (volatile long int *p, long int oldval, long int newval)
 {
