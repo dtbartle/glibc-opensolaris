@@ -1254,9 +1254,6 @@ expand_and_execute (const char *program, const char *options)
 @}
 @end smallexample
 
-
-@c No sense finishing this for here.
-@ignore
 @node Tilde Expansion
 @subsection Details of Tilde Expansion
 
@@ -1385,5 +1382,3 @@ If there is more than one alternative for how to match against
 
 Thus, @samp{$@{foo%%r*@}} substitutes @samp{tracto}, because the shortest
 match for @samp{r*} at the end of @samp{tractor} is just @samp{r}.
-
-@end ignore
