@@ -94,8 +94,8 @@ test-srcs = tst-signal
 tests-reverse += tst-cancel5
 
 ifeq ($(build-static),yes)
-tests += tststatic tst-static-locale
-tests-static += tststatic tst-static-locale
+tests += tststatic tst-static-locale tst-cancel-static
+tests-static += tststatic tst-static-locale tst-cancel-static
 endif
 
 ifeq (yes,$(build-shared))
