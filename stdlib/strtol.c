@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1994, 1995 Free Software Foundation, Inc.
 
 This file is part of the GNU C Library.
 
@@ -23,8 +23,29 @@ Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 
 
+/* Nonzero if we are defining `strtoul' or `strtouq', operating on unsigned
+   integers.  */
 #ifndef	UNSIGNED
 #define	UNSIGNED	0
+#endif
+
+/* If QUAD is defined, we are defining `strtoq' or `strtouq',
+   operating on `long long int's.  */
+#ifdef QUAD
+#if UNSIGNED
+#define strtoul		strtouq
+#else
+#define strtol		strtoq
+#endif
+#define	LONG		long long
+#undef	LONG_MIN
+#define	LONG_MIN	LONG_LONG_MIN
+#undef	LONG_MAX
+#define LONG_MAX	LONG_LONG_MAX
+#undef	ULONG_MAX
+#define ULONG_MAX	ULONG_LONG_MAX
+#else
+#define	LONG	long
 #endif
 
 /* Convert NPTR to an `unsigned long int' or `long int' in base BASE.
@@ -34,10 +55,10 @@ Cambridge, MA 02139, USA.  */
    If ENDPTR is not NULL, a pointer to the character after the last
    one converted is stored in *ENDPTR.  */
 #if	UNSIGNED
-unsigned long int
+unsigned LONG int
 #define	strtol	strtoul
 #else
-long int
+LONG int
 #endif
 strtol (nptr, endptr, base)
      const char *nptr;
@@ -45,9 +66,9 @@ strtol (nptr, endptr, base)
      int base;
 {
   int negative;
-  register unsigned long int cutoff;
+  register unsigned LONG int cutoff;
   register unsigned int cutlim;
-  register unsigned long int i;
+  register unsigned LONG int i;
   register const char *s;
   register unsigned char c;
   const char *save;
@@ -99,8 +120,8 @@ strtol (nptr, endptr, base)
   /* Save the pointer so we can check later if anything happened.  */
   save = s;
 
-  cutoff = ULONG_MAX / (unsigned long int) base;
-  cutlim = ULONG_MAX % (unsigned long int) base;
+  cutoff = ULONG_MAX / (unsigned LONG int) base;
+  cutlim = ULONG_MAX % (unsigned LONG int) base;
 
   overflow = 0;
   i = 0;
@@ -119,7 +140,7 @@ strtol (nptr, endptr, base)
 	overflow = 1;
       else
 	{
-	  i *= (unsigned long int) base;
+	  i *= (unsigned LONG int) base;
 	  i += c;
 	}
     }
@@ -135,9 +156,9 @@ strtol (nptr, endptr, base)
 
 #if	!UNSIGNED
   /* Check for a value that is within the range of
-     `unsigned long int', but outside the range of `long int'.  */
+     `unsigned LONG int', but outside the range of `LONG int'.  */
   if (i > (negative ?
-	   -(unsigned long int) LONG_MIN : (unsigned long int) LONG_MAX))
+	   -(unsigned LONG int) LONG_MIN : (unsigned LONG int) LONG_MAX))
     overflow = 1;
 #endif
 
