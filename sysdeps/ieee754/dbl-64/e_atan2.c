@@ -374,8 +374,8 @@ static double  normalized(double ax,double ay,double y, double z)
     { int p;
       mp_no mpx,mpy,mpz,mperr,mpz2,mpt1;
   p=6;
-  dbl_mp(ax,&mpx,p);  dbl_mp(ay,&mpy,p);  dvd(&mpy,&mpx,&mpz,p);
-  dbl_mp(ue.d,&mpt1,p);   mul(&mpz,&mpt1,&mperr,p);
+  __dbl_mp(ax,&mpx,p);  __dbl_mp(ay,&mpy,p);  dvd(&mpy,&mpx,&mpz,p);
+  __dbl_mp(ue.d,&mpt1,p);   mul(&mpz,&mpt1,&mperr,p);
   sub(&mpz,&mperr,&mpz2,p);  __mp_dbl(&mpz2,&z,p);
   return signArctan2(y,z);
 }
@@ -392,9 +392,9 @@ static double  atan2Mp(double x,double y,const int pr[])
   mp_no mpx,mpy,mpz,mpz1,mpz2,mperr,mpt1;
   for (i=0; i<MM; i++) {
     p = pr[i];
-    dbl_mp(x,&mpx,p);  dbl_mp(y,&mpy,p);
+    __dbl_mp(x,&mpx,p);  __dbl_mp(y,&mpy,p);
     __mpatan2(&mpy,&mpx,&mpz,p);
-    dbl_mp(ud[i].d,&mpt1,p);   mul(&mpz,&mpt1,&mperr,p);
+    __dbl_mp(ud[i].d,&mpt1,p);   mul(&mpz,&mpt1,&mperr,p);
     add(&mpz,&mperr,&mpz1,p);  sub(&mpz,&mperr,&mpz2,p);
     __mp_dbl(&mpz1,&z1,p);       __mp_dbl(&mpz2,&z2,p);
     if (z1==z2)   return z1;

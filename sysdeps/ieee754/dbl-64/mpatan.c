@@ -33,9 +33,9 @@
 
 #include "endian.h"
 #include "mpa.h"
-void mpsqrt(mp_no *, mp_no *, int);
+void __mpsqrt(mp_no *, mp_no *, int);
 
-void mpatan(mp_no *x, mp_no *y, int p) {
+void __mpatan(mp_no *x, mp_no *y, int p) {
 #include "mpatan.h"
 
   int i,m,n;
@@ -71,14 +71,14 @@ void mpatan(mp_no *x, mp_no *y, int p) {
     else {
       for (i=0; i<m; i++) {
 	add(&mpone,&mpsm,&mpt1,p);
-	mpsqrt(&mpt1,&mpt2,p);
+	__mpsqrt(&mpt1,&mpt2,p);
 	add(&mpt2,&mpt2,&mpt1,p);
 	add(&mptwo,&mpsm,&mpt2,p);
 	add(&mpt1,&mpt2,&mpt3,p);
 	dvd(&mpsm,&mpt3,&mpt1,p);
 	cpy(&mpt1,&mpsm,p);
       }
-      mpsqrt(&mpsm,&mps,p);    mps.d[0] = X[0];
+      __mpsqrt(&mpsm,&mps,p);    mps.d[0] = X[0];
     }
 
                     /* Evaluate a truncated power series for Atan(s) */

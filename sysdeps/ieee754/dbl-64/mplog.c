@@ -37,9 +37,9 @@
 #include "endian.h"
 #include "mpa.h"
 
-void mpexp(mp_no *, mp_no *, int);
+void __mpexp(mp_no *, mp_no *, int);
 
-void mplog(mp_no *x, mp_no *y, int p) {
+void __mplog(mp_no *x, mp_no *y, int p) {
 #include "mplog.h"
   int i,m;
 #if 0
@@ -61,7 +61,7 @@ void mplog(mp_no *x, mp_no *y, int p) {
   cpy(y,&mpt1,p);
   for (i=0; i<m; i++) {
     mpt1.d[0]=-mpt1.d[0];
-    mpexp(&mpt1,&mpt2,p);
+    __mpexp(&mpt1,&mpt2,p);
     mul(x,&mpt2,&mpt1,p);
     sub(&mpt1,&mpone,&mpt2,p);
     add(y,&mpt2,&mpt1,p);

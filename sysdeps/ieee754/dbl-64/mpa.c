@@ -246,7 +246,7 @@ void __mp_dbl(const mp_no *x, double *y, int p) {
 /* number *y. If the precision p is too small the result is truncated. x is */
 /* left unchanged.                                                          */
 
-void dbl_mp(double x, mp_no *y, int p) {
+void __dbl_mp(double x, mp_no *y, int p) {
 
   int i,n;
   double u;
@@ -479,7 +479,7 @@ void inv(const mp_no *x, mp_no *y, int p) {
                          0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}};
 
   cpy(x,&z,p);  z.e=0;  __mp_dbl(&z,&t,p);
-  t=ONE/t;   dbl_mp(t,y,p);    EY -= EX;
+  t=ONE/t;   __dbl_mp(t,y,p);    EY -= EX;
 
   for (i=0; i<np1[p]; i++) {
     cpy(y,&w,p);

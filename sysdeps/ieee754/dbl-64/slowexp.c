@@ -30,10 +30,10 @@
 /**************************************************************************/
 #include "mpa.h"
 
-void mpexp(mp_no *x, mp_no *y, int p);
+void __mpexp(mp_no *x, mp_no *y, int p);
 
 /*Converting from double precision to Multi-precision and calculating  e^x */
-double slowexp(double x) {
+double __slowexp(double x) {
   double w,z,res,eps=3.0e-26;
 #if 0
   double y;
@@ -45,10 +45,10 @@ double slowexp(double x) {
   mp_no mpx, mpy, mpz,mpw,mpeps,mpcor;
 
   p=6;
-  dbl_mp(x,&mpx,p); /* Convert a double precision number  x               */
+  __dbl_mp(x,&mpx,p); /* Convert a double precision number  x               */
                     /* into a multiple precision number mpx with prec. p. */
-  mpexp(&mpx, &mpy, p); /* Multi-Precision exponential function */
-  dbl_mp(eps,&mpeps,p);
+  __mpexp(&mpx, &mpy, p); /* Multi-Precision exponential function */
+  __dbl_mp(eps,&mpeps,p);
   mul(&mpeps,&mpy,&mpcor,p);
   add(&mpy,&mpcor,&mpw,p);
   sub(&mpy,&mpcor,&mpz,p);
@@ -57,8 +57,8 @@ double slowexp(double x) {
   if (w == z) return w;
   else  {                   /* if calculating is not exactly   */
     p = 32;
-    dbl_mp(x,&mpx,p);
-    mpexp(&mpx, &mpy, p);
+    __dbl_mp(x,&mpx,p);
+    __mpexp(&mpx, &mpy, p);
     __mp_dbl(&mpy, &res, p);
     return res;
   }

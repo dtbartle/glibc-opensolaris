@@ -137,15 +137,15 @@ double __sin32(double x, double res, double res1) {
   int p;
   mp_no a,b,c;
   p=32;
-  dbl_mp(res,&a,p);
-  dbl_mp(0.5*(res1-res),&b,p);
+  __dbl_mp(res,&a,p);
+  __dbl_mp(0.5*(res1-res),&b,p);
   add(&a,&b,&c,p);
   if (x>0.8)
   { sub(&hp,&c,&a,p);
     __c32(&a,&b,&c,p);
   }
   else __c32(&c,&a,&b,p);     /* b=sin(0.5*(res+res1))  */
-  dbl_mp(x,&c,p);           /* c = x                  */
+  __dbl_mp(x,&c,p);           /* c = x                  */
   sub(&b,&c,&a,p);
   /* if a>0 return min(res,res1), otherwise return max(res,res1) */
   if (a.d[0]>0)  return (res<res1)?res:res1;
@@ -161,8 +161,8 @@ double __cos32(double x, double res, double res1) {
   int p;
   mp_no a,b,c;
   p=32;
-  dbl_mp(res,&a,p);
-  dbl_mp(0.5*(res1-res),&b,p);
+  __dbl_mp(res,&a,p);
+  __dbl_mp(0.5*(res1-res),&b,p);
   add(&a,&b,&c,p);
   if (x>2.4)
   { sub(&pi,&c,&a,p);
@@ -174,7 +174,7 @@ double __cos32(double x, double res, double res1) {
          __c32(&a,&c,&b,p);
        }
   else __c32(&c,&b,&a,p);     /* b=cos(0.5*(res+res1))  */
-  dbl_mp(x,&c,p);    /* c = x                  */
+  __dbl_mp(x,&c,p);    /* c = x                  */
   sub(&b,&c,&a,p);
              /* if a>0 return max(res,res1), otherwise return min(res,res1) */
   if (a.d[0]>0)  return (res>res1)?res:res1;
@@ -190,8 +190,8 @@ double __mpsin(double x, double dx) {
   double y;
   mp_no a,b,c;
   p=32;
-  dbl_mp(x,&a,p);
-  dbl_mp(dx,&b,p);
+  __dbl_mp(x,&a,p);
+  __dbl_mp(dx,&b,p);
   add(&a,&b,&c,p);
   if (x>0.8) { sub(&hp,&c,&a,p); __c32(&a,&b,&c,p); }
   else __c32(&c,&a,&b,p);     /* b = sin(x+dx)     */
@@ -208,8 +208,8 @@ double __mpcos(double x, double dx) {
   double y;
   mp_no a,b,c;
   p=32;
-  dbl_mp(x,&a,p);
-  dbl_mp(dx,&b,p);
+  __dbl_mp(x,&a,p);
+  __dbl_mp(dx,&b,p);
   add(&a,&b,&c,p);
   if (x>0.8)
   { sub(&hp,&c,&b,p);
@@ -239,14 +239,14 @@ int mpranred(double x, mp_no *y, int p)
     xn = t - toint.d;
     v.d = t;
     n =v.i[LOW_HALF]&3;
-    dbl_mp(xn,&a,p);
+    __dbl_mp(xn,&a,p);
     mul(&a,&hp,&b,p);
-    dbl_mp(x,&c,p);
+    __dbl_mp(x,&c,p);
     sub(&c,&b,y,p);
     return n;
   }
   else {                      /* if x is very big more precision required */
-    dbl_mp(x,&a,p);
+    __dbl_mp(x,&a,p);
     a.d[0]=1.0;
     k = a.e-5;
     if (k < 0) k=0;

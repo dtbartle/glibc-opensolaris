@@ -42,7 +42,7 @@
 
 double fastiroot(double);
 
-void mpsqrt(mp_no *x, mp_no *y, int p) {
+void __mpsqrt(mp_no *x, mp_no *y, int p) {
 #include "mpsqrt.h"
 
   int i,m,ex,ey;
@@ -61,7 +61,7 @@ void mpsqrt(mp_no *x, mp_no *y, int p) {
   mp3halfs.e=1;  mp3halfs.d[0]=ONE;  mp3halfs.d[1]=ONE;  mp3halfs.d[2]=HALFRAD;
 
   ex=EX;      ey=EX/2;     cpy(x,&mpxn,p);    mpxn.e -= (ey+ey);
-  __mp_dbl(&mpxn,&dx,p);   dy=fastiroot(dx);    dbl_mp(dy,&mpu,p);
+  __mp_dbl(&mpxn,&dx,p);   dy=fastiroot(dx);    __dbl_mp(dy,&mpu,p);
   mul(&mpxn,&mphalf,&mpz,p);
 
   m=mp[p];

@@ -75,7 +75,7 @@ void __mpexp(mp_no *x, mp_no *y, int p) {
   }
 
   /* Compute s=x*2**(-m). Put result in mps */
-  dbl_mp(a,&mpt1,p);
+  __dbl_mp(a,&mpt1,p);
   mul(x,&mpt1,&mps,p);
 
   /* Evaluate the polynomial. Put result in mpt2 */
