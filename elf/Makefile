@@ -368,6 +368,9 @@ $(objpfx)reldep6mod2.so: $(objpfx)reldep6mod1.so
 $(objpfx)reldep6mod3.so: $(objpfx)reldep6mod2.so
 $(objpfx)reldep6mod4.so: $(objpfx)reldep6mod1.so
 $(objpfx)tst-tlsmod3.so: $(objpfx)tst-tlsmod2.so
+# For tst-tls9-static, make sure the modules it dlopens have libc.so in DT_NEEDED
+$(objpfx)tst-tlsmod5.so: $(common-objpfx)libc.so
+$(objpfx)tst-tlsmod6.so: $(common-objpfx)libc.so
 $(objpfx)reldep8mod3.so: $(objpfx)reldep8mod1.so $(objpfx)reldep8mod2.so
 $(objpfx)nodel2mod3.so: $(objpfx)nodel2mod1.so $(objpfx)nodel2mod2.so
 $(objpfx)reldep9mod2.so: $(objpfx)reldep9mod1.so
