@@ -1,4 +1,4 @@
-/* Copyright (C) 2002 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -17,10 +17,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 
 static int val;
@@ -92,6 +94,13 @@ do_test (void)
       if (val != 24)
 	{
 	  printf ("expected val=%d, got %d\n", 24, val);
+	  exit (1);
+	}
+
+      int status;
+      if (TEMP_FAILURE_RETRY (waitpid (pid, &status, 0)) != pid)
+	{
+	  puts ("waitpid failed");
 	  exit (1);
 	}
     }
