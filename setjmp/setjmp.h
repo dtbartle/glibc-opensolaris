@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -68,16 +68,19 @@ extern int __sigsetjmp __P ((jmp_buf __env, int __savemask));
 
 /* Jump to the environment saved in ENV, making the
    `setjmp' call there return VAL, or 1 if VAL is 0.  */
-extern __NORETURN void longjmp __P ((__const jmp_buf __env, int __val));
+extern void longjmp __P ((__const jmp_buf __env, int __val))
+     __attribute__ ((__noreturn__));
 #ifdef	__USE_BSD
 /* Same.  Usually `_longjmp' is used with `_setjmp', which does not save
    the signal mask.  But it is how ENV was saved that determines whether
    `longjmp' restores the mask; `_longjmp' is just an alias.  */
-extern __NORETURN void _longjmp __P ((__const jmp_buf __env, int __val));
+extern void _longjmp __P ((__const jmp_buf __env, int __val))
+     __attribute__ ((__noreturn__));
 #endif /* Use BSD.  */
 
 /* Internal machine-dependent function to restore context sans signal mask.  */
-extern __NORETURN void __longjmp __P ((__const __jmp_buf __env, int __val));
+extern void __longjmp __P ((__const __jmp_buf __env, int __val))
+     __attribute__ ((__noreturn__));
 
 /* Internal function to possibly save the current mask of blocked signals
    in ENV, and always set the flag saying whether or not it was saved.
@@ -100,7 +103,8 @@ typedef jmp_buf sigjmp_buf;
    sigsetjmp call there return VAL, or 1 if VAL is 0.
    Restore the signal mask if that sigsetjmp call saved it.
    This is just an alias `longjmp'.  */
-extern __NORETURN void siglongjmp __P ((__const sigjmp_buf __env, int __val));
+extern void siglongjmp __P ((__const sigjmp_buf __env, int __val))
+     __attribute__ ((__noreturn__));
 #endif /* Use POSIX.  */
 
 __END_DECLS
