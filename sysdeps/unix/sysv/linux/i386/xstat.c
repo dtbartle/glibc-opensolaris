@@ -98,5 +98,14 @@ __xstat (int vers, const char *name, struct stat *buf)
 weak_alias (__xstat, _xstat);
 #ifdef XSTAT_IS_XSTAT64
 # undef __xstat64
-strong_alias (__xstat, __xstat64);
+
+#include <shlib-compat.h>
+
+versioned_symbol (libc, __xstat, __xstat64, GLIBC_2_2);
+
+#if SHLIB_COMPAT(libc, GLIBC_2_1, GLIBC_2_2)
+strong_alias (__xstat, __old__xstat64)
+compat_symbol (libc, __old__xstat64, __xstat64, GLIBC_2_1);
+#endif
+
 #endif
