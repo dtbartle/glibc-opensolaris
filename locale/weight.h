@@ -43,42 +43,21 @@ typedef struct weight_t
 
 /* The following five macros grant access to the values in the
    collate locale file that do not depend on byte order.  */
-#ifndef USE_IN_EXTENDED_LOCALE_MODEL
-# define collate_nrules \
+#define collate_nrules \
   (_NL_CURRENT_WORD (LC_COLLATE, _NL_COLLATE_NRULES))
-# define collate_hash_size \
+#define collate_hash_size \
   (_NL_CURRENT_WORD (LC_COLLATE, _NL_COLLATE_HASH_SIZE))
-# define collate_hash_layers \
+#define collate_hash_layers \
   (_NL_CURRENT_WORD (LC_COLLATE, _NL_COLLATE_HASH_LAYERS))
-# define collate_undefined \
+#define collate_undefined \
   (_NL_CURRENT_WORD (LC_COLLATE, _NL_COLLATE_UNDEFINED))
-# define collate_rules \
+#define collate_rules \
   ((u_int32_t *) _NL_CURRENT (LC_COLLATE, _NL_COLLATE_RULES))
 
-static __inline int get_weight (const STRING_TYPE **str, weight_t *result);
-static __inline int
-get_weight (const STRING_TYPE **str, weight_t *result)
-#else
-# define collate_nrules \
-  current->values[_NL_ITEM_INDEX (_NL_COLLATE_NRULES)].word
-# define collate_hash_size \
-  current->values[_NL_ITEM_INDEX (_NL_COLLATE_HASH_SIZE)].word
-# define collate_hash_layers \
-  current->values[_NL_ITEM_INDEX (_NL_COLLATE_HASH_LAYERS)].word
-# define collate_undefined \
-  current->values[_NL_ITEM_INDEX (_NL_COLLATE_UNDEFINED)].word
-# define collate_rules \
-  ((u_int32_t *) current->values[_NL_ITEM_INDEX (_NL_COLLATE_RULES)].string)
 
-static __inline int get_weight (const STRING_TYPE **str, weight_t *result,
-				struct locale_data *current,
-				const u_int32_t *__collate_table,
-				const u_int32_t *__collate_extra);
-static __inline int
-get_weight (const STRING_TYPE **str, weight_t *result,
-	    struct locale_data *current, const u_int32_t *__collate_table,
-	    const u_int32_t *__collate_extra)
-#endif
+static __inline void get_weight (const STRING_TYPE **str, weight_t *result);
+static __inline void
+get_weight (const STRING_TYPE **str, weight_t *result)
 {
   unsigned int ch = *((USTRING_TYPE *) (*str))++;
   size_t slot;
@@ -107,7 +86,7 @@ get_weight (const STRING_TYPE **str, weight_t *result,
 		  result->data[cnt].value = &__collate_extra[idx];
 		  idx += result->data[cnt].number;
 		}
-	      return 0;
+	      return;
 	    }
 	  slot += level_size;
 	}
@@ -123,7 +102,7 @@ get_weight (const STRING_TYPE **str, weight_t *result,
 	  result->data[cnt].number = 1;
 	  result->data[cnt].value = &__collate_table[slot + 1 + cnt];
 	}
-      return ch == 0;
+      return;
     }
 
   /* We now look for any collation element which starts with CH.
@@ -156,14 +135,12 @@ get_weight (const STRING_TYPE **str, weight_t *result,
 	      result->data[cnt].value = &__collate_extra[idx];
 	      idx += result->data[cnt].number;
 	    }
-	  return 0;
+	  return;
 	}
 
       /* To next entry in list.  */
       slot += __collate_extra[slot];
     }
-  /* NOTREACHED */
-  return 0;	/* To calm down gcc.  */
 }
 
 
@@ -171,22 +148,12 @@ get_weight (const STRING_TYPE **str, weight_t *result,
    the string at once.  The following macro constructs a double linked
    list of this information.  It is a macro because we use `alloca'
    and we use a double linked list because of the backward collation
-   order.
-
-   We have this strange extra macro since the functions which use the
-   given locale (not the global one) canot use the global tables.  */
-#ifndef USE_IN_EXTENDED_LOCALE_MODEL
-# define call_get_weight(strp, newp) get_weight ((strp), (newp))
-#else
-# define call_get_weight(strp, newp) \
-  get_weight ((strp), (newp), current, collate_table, collate_extra)
-#endif
-
+   order.  */
 #define get_string(str, forw, backw)					      \
   do									      \
     {									      \
       weight_t *newp;							      \
-      do								      \
+      while (*str != '\0')						      \
 	{								      \
 	  newp = (weight_t *) alloca (sizeof (weight_t)			      \
 				      + (collate_nrules			      \
@@ -199,7 +166,7 @@ get_weight (const STRING_TYPE **str, weight_t *result,
 	    backw->next = newp;						      \
 	  newp->next = NULL;						      \
 	  backw = newp;							      \
+	  get_weight (&str, newp);					      \
 	}								      \
-      while (call_get_weight (&str, newp) == 0);			      \
     }									      \
   while (0)
