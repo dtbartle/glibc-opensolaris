@@ -372,7 +372,6 @@ hypot (double __x, double __y)
   return sqrt (__x * __x + __y * __y);
 }
 
-__MATH_INLINE double __log1p (double __x);
 __MATH_INLINE double
 log1p (double __x)
 {
@@ -396,8 +395,8 @@ asinh (double __x)
 {
   register double __y = fabs (__x);
 
-  return __log1p ((__y * __y / (sqrt (__y * __y + 1.0) + 1.0) + __y)
-		  * __sgn1 (__x));
+  return log1p ((__y * __y / (sqrt (__y * __y + 1.0) + 1.0) + __y)
+		* __sgn1 (__x));
 }
 
 __MATH_INLINE double __acosh (double __x);
