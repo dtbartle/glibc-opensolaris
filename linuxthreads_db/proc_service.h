@@ -1,4 +1,4 @@
-/* Copyright (C) 1999 Free Software Foundation, Inc.
+/* Copyright (C) 1999, 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -52,9 +52,9 @@ extern ps_err_e ps_pglobal_lookup(struct ps_prochandle *,
 
 
 extern ps_err_e ps_lgetregs(struct ps_prochandle *,
-                        lwpid_t, prgregset_t);
+                        lwpid_t, prgregset_t *);
 extern ps_err_e ps_lsetregs(struct ps_prochandle *,
-                        lwpid_t, const prgregset_t);
+                        lwpid_t, const prgregset_t *);
 extern ps_err_e ps_lgetfpregs(struct ps_prochandle *,
                         lwpid_t, prfpregset_t *);
 extern ps_err_e ps_lsetfpregs(struct ps_prochandle *,
