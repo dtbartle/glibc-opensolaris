@@ -45,7 +45,7 @@ Written by Ulrich Drepper.'
   esac
 fi
 
-LD_PRELOAD="${LD_PRELOAD:+${LD_PRELOAD}:}@SLIB@/libSegFault.so"
+LD_PRELOAD="${LD_PRELOAD:+${LD_PRELOAD}:}@SLIB@/libSegFault.so@SOVER@"
 export LD_PRELOAD
 SEGFAULT_USE_ALTSTACK=1
 export SEGFAULT_USE_ALTSTACK
@@ -66,10 +66,10 @@ if test $exval -eq 139; then
    read line; echo "$line"
    while read line; do
      case "$line" in
-       [*) addr="`echo $line | sed 's/^[\(.*\)]$/\1/'`"
-           complete="`addr2line -f -e $prog $addr 2>/dev/null|`"
-           if $? -eq 0; then
-             echo "`echo $complete|sed 'N;s/\(.*\)\n\(.*\)/\2(\1)/;'`$line"
+       [*) addr="`echo $line | sed 's/^\[\(.*\)\]$/\1/'`"
+           complete="`addr2line -f -e $prog $addr 2>/dev/null`"
+           if test $? -eq 0; then
+             echo "`echo $complete|sed 's/\(.*\) \(.*\)/\2(\1)/;'`$line"
            else
              echo "$line"
            fi
