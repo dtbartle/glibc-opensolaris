@@ -50,6 +50,7 @@ GLIBC_2.0 {
     __select; __sched_get_priority_max; __sched_get_priority_min;
     __sched_getparam; __sched_getscheduler; __sched_setscheduler;
     __sched_yield; __on_exit; __gettimeofday; __fork; __clone;
+    __nss_configure_lookup;
 
     # all functions and variables in the normal name space
     a*; b*; c*; d*; e*; f*; g*; h*; i*; j*; k*; l*; m*;
