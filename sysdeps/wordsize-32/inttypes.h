@@ -122,21 +122,21 @@ typedef unsigned long long int uint_fast64_t;
 
 
 /* Minimum of fast signed integral types having a minimum size.  */
-#define INT_LEAST8_MIN		(-128)
-#define INT_LEAST16_MIN		(-2147483647-1)
-#define INT_LEAST32_MIN		(-2147483647-1)
-#define INT_LEAST64_MIN		(-9223372036854775807LL-1)
+#define INT_FAST8_MIN		(-128)
+#define INT_FAST16_MIN		(-2147483647-1)
+#define INT_FAST32_MIN		(-2147483647-1)
+#define INT_FAST64_MIN		(-9223372036854775807LL-1)
 /* Maximum of fast signed integral types having a minimum size.  */
-#define INT_LEAST8_MAX		(127)
-#define INT_LEAST16_MAX		(2147483647)
-#define INT_LEAST32_MAX		(2147483647)
-#define INT_LEAST64_MAX		(9223372036854775807LL)
+#define INT_FAST8_MAX		(127)
+#define INT_FAST16_MAX		(2147483647)
+#define INT_FAST32_MAX		(2147483647)
+#define INT_FAST64_MAX		(9223372036854775807LL)
 
 /* Maximum of fast unsigned integral types having a minimum size.  */
-#define UINT_LEAST8_MAX		(255U)
-#define UINT_LEAST16_MAX	(4294967295U)
-#define UINT_LEAST32_MAX	(4294967295U)
-#define UINT_LEAST64_MAX	(18446744073709551615uLL)
+#define UINT_FAST8_MAX		(255U)
+#define UINT_FAST16_MAX		(4294967295U)
+#define UINT_FAST32_MAX		(4294967295U)
+#define UINT_FAST64_MAX		(18446744073709551615uLL)
 
 
 /* Minimum for most efficient signed integral types.  */
