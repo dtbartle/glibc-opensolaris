@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -47,9 +47,9 @@ unsigned int _hurd_pids_changed_stamp;
 struct condition _hurd_pids_changed_sync;
 
 kern_return_t
-_S_proc_newids (mach_port_t me,
-		task_t task,
-		pid_t ppid, pid_t pgrp, int orphaned)
+_S_msg_proc_newids (mach_port_t me,
+		    task_t task,
+		    pid_t ppid, pid_t pgrp, int orphaned)
 {
   if (task != __mach_task_self ())
     return EPERM;
