@@ -117,7 +117,6 @@ struct _pthread_descr_struct {
   int p_priority;               /* Thread priority (== 0 if not realtime) */
   struct _pthread_fastlock * p_lock; /* Spinlock for synchronized accesses */
   int p_signal;                 /* last signal received */
-  struct pthread_atomic p_resume_count; /* number of times restart() was called on thread */
   sigjmp_buf * p_signal_jmp;    /* where to siglongjmp on a signal or NULL */
   sigjmp_buf * p_cancel_jmp;    /* where to siglongjmp on a cancel or NULL */
   char p_terminated;            /* true if terminated e.g. by pthread_exit */
@@ -130,8 +129,6 @@ struct _pthread_descr_struct {
   char p_cancelstate;           /* cancellation state */
   char p_canceltype;            /* cancellation type (deferred/async) */
   char p_canceled;              /* cancellation request pending */
-  char p_woken_by_cancel;       /* cancellation performed wakeup */
-  pthread_extricate_if *p_extricate; /* See above */
   int * p_errnop;               /* pointer to used errno variable */
   int p_errno;                  /* error returned by last system call */
   int * p_h_errnop;             /* pointer to used h_errno variable */
@@ -151,6 +148,10 @@ struct _pthread_descr_struct {
   struct __res_state *p_resp;	/* Pointer to resolver state */
   struct __res_state p_res;	/* per-thread resolver state */
   /* New elements must be added at the end.  */
+  struct pthread_atomic p_resume_count; /* number of times restart() was
+					   called on thread */
+  char p_woken_by_cancel;       /* cancellation performed wakeup */
+  pthread_extricate_if *p_extricate; /* See above */
 } __attribute__ ((aligned(32))); /* We need to align the structure so that
 				    doubles are aligned properly.  This is 8
 				    bytes on MIPS and 16 bytes on MIPS64.
