@@ -37,7 +37,12 @@
 /*
  * HISTORY
  * $Log$
- * Revision 1.9  1995/02/13 16:36:08  roland
+ * Revision 1.10  1995/02/13 22:04:34  roland
+ * (malloc_init): Add self reference to avoid not only the `defined but not
+ * used' warning, but also to avoid GCC optimizing out the entire function
+ * (!).
+ *
+ * Revision 1.9  1995/02/13  16:36:08  roland
  * Include string.h; #define bcopy using memcpy.
  *
  * Revision 1.8  1995/02/03  01:54:21  roland
@@ -147,6 +152,11 @@ malloc_init (void)
       malloc_free_list[i].in_use = 0;
 #endif
     }
+
+  /* This not only suppresses a `defined but not used' warning,
+     but it is ABSOLUTELY NECESSARY to avoid the hyperclever
+     compiler from "optimizing out" the entire function!  */
+  (void) &malloc_init;
 }
 
 static void
