@@ -71,7 +71,8 @@ static bool_t authdes_marshal (AUTH *, XDR *);
 static bool_t authdes_validate (AUTH *, struct opaque_auth *);
 static bool_t authdes_refresh (AUTH *);
 static void authdes_destroy (AUTH *);
-static bool_t synchronize (struct sockaddr *, struct timeval *);
+static bool_t synchronize (struct sockaddr *, struct timeval *)
+     internal_function;
 
 static struct auth_ops authdes_ops =
 {
@@ -440,6 +441,7 @@ authdes_destroy (AUTH * auth)
  * adjust timep to reflect the delta between our clocks
  */
 static bool_t
+internal_function
 synchronize (struct sockaddr *syncaddr, struct timeval *timep)
 {
   struct timeval mytime;
