@@ -68,7 +68,7 @@ perror (const char *s)
       || (fp = fdopen (fd, "w+")) == NULL)
     {
       if (__builtin_expect (fd != -1, 0))
-	close (fd);
+	__close (fd);
 
       /* Use standard error as is.  */
       perror_internal (stderr, s);
