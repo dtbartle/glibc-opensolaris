@@ -267,7 +267,8 @@ static struct pthread_functions pthread_functions =
     .ptr_pthread_self = __pthread_self,
     .ptr_pthread_setcancelstate = __pthread_setcancelstate,
     .ptr_pthread_setcanceltype = __pthread_setcanceltype,
-    .ptr_pthread_do_exit = __pthread_do_exit
+    .ptr_pthread_do_exit = __pthread_do_exit,
+    .ptr_pthread_thread_self = __pthread_thread_self
   };
 # define ptr_pthread_functions &pthread_functions
 #else
@@ -778,6 +779,11 @@ compat_symbol (libpthread, __pthread_create_2_0, pthread_create, GLIBC_2_0);
 #endif
 
 /* Simple operations on thread identifiers */
+
+pthread_descr __pthread_thread_self(void)
+{
+  return thread_self();
+}
 
 pthread_t __pthread_self(void)
 {
