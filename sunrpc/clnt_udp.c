@@ -267,7 +267,7 @@ clntudp_call (cl, proc, xargs, argsp, xresults, resultsp, utimeout)
   bool_t ok;
   int nrefreshes = 2;		/* number of times to refresh cred */
   struct timeval timeout;
-  int anyup;			/* any network interface up */
+  int anyup = 0;		/* any network interface up */
 
   if (cu->cu_total.tv_usec == -1)
     {
