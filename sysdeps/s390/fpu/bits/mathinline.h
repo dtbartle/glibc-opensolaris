@@ -47,4 +47,31 @@ __MATH_INLINE int __signbit (double __x) __THROW
 
 #endif /* C99 */
 
+/* This code is used internally in the GNU libc.  */
+#ifdef __LIBC_INTERNAL_MATH_INLINES
+
+#include <sysdep.h>
+#include <ldsodefs.h>
+#include <dl-procinfo.h>
+
+__MATH_INLINE double
+__ieee754_sqrt (double x)
+{
+  double res;
+     
+  asm ( "sqdbr %0,%1" : "=f" (res) : "f" (x) );
+  return res;
+}
+
+__MATH_INLINE float
+__ieee754_sqrtf (float x)
+{
+  float res;
+  
+  asm ( "sqebr %0,%1" : "=f" (res) : "f" (x) );
+  return res;
+}
+
+#endif /* __LIBC_INTERNAL_MATH_INLINES */
+
 #endif /* __NO_MATH_INLINES */
