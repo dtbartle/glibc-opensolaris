@@ -82,6 +82,7 @@ GLIBC_2.0 {
     cexp; cexpf; cexpl;
     cimag; cimagf; cimagl;
     clog; clogf; clogl;
+    clog10; clog10f; clog10l;
     conj; conjf; conjl;
     cpow; cpowf; cpowl;
     cproj; cprojf; cprojl;
