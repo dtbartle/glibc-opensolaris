@@ -133,7 +133,7 @@ enum
 /* Return number of classification appropriate for X.  */
 #define fpclassify(x) \
      (sizeof (x) == sizeof (float) ?					      \
-        __fpclassifyf (x)							      \
+        __fpclassifyf (x)						      \
       : sizeof (x) == sizeof (double) ?					      \
         __fpclassify (x) : __fpclassifyl (x))
 
