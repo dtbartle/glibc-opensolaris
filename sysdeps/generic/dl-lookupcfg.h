@@ -1,5 +1,5 @@
 /* Configuration of lookup functions.
-   Copyright (C) 2000 Free Software Foundation, Inc.
+   Copyright (C) 2002 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -18,5 +18,12 @@
    02111-1307 USA.  */
 
 /* Some platforms need more information from the symbol lookup function
-   than just the address.  But this is not generally the case.  */
-#undef DL_LOOKUP_RETURNS_MAP
+   than just the address.  But this is not generally the case.
+
+   However, because of how _dl_sym and _dl_tls_symaddr are written, every
+   platform needs it when we support TLS.  */
+#ifdef USE_TLS
+# define DL_LOOKUP_RETURNS_MAP
+#else
+# undef DL_LOOKUP_RETURNS_MAP
+#endif
