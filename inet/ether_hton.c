@@ -35,7 +35,8 @@ struct etherent
 
 
 /* Type of the lookup function we need here.  */
-typedef int (*lookup_function) (const char *, struct etherent *, char *, int);
+typedef int (*lookup_function) (const char *, struct etherent *, char *, int,
+				int *);
 
 /* The lookup function for the first entry of this service.  */
 extern int __nss_ethers_lookup (service_user **nip, const char *name,
