@@ -45,9 +45,7 @@ register char * stack_pointer __asm__ ("%esp");
    We test dynamically whether it's available or not. */
 
 #define HAS_COMPARE_AND_SWAP
-#ifndef __i686__
-# define TEST_FOR_COMPARE_AND_SWAP
-#endif
+#define TEST_FOR_COMPARE_AND_SWAP
 
 extern inline int
 __compare_and_swap (long int *p, long int oldval, long int newval)
