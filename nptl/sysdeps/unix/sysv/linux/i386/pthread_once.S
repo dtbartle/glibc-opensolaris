@@ -105,8 +105,7 @@ __pthread_once:
 	pushl	%edx
 	call	__pthread_cleanup_push	/* Note: no @PLT.  */
 
-	movl	44(%esp), %eax
-	call	*%eax
+	call	*44(%esp)
 
 	/* Pop the cleanup handler.  This code depends on the once
 	   handler and _pthread_cleanup_push not touch the content
