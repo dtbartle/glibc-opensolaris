@@ -175,6 +175,7 @@ __pthread_cond_wait:
 	ENTER_KERNEL
 	subl	$wakeup_seq, %ebx
 
+	movl	(%esp), %eax
 	call	__pthread_disable_asynccancel
 
 	/* Lock.  */
