@@ -65,7 +65,7 @@ eat flaming death
 ; return 0; }
 EOF
   if { (eval echo configure:30: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-    cat >> confdefs.h <<\EOF
+    cat >> confdefs.h <<EOF
 #define __LINUX_KERNEL_VERSION $decnum
 EOF
 
