@@ -141,14 +141,6 @@ union user_desc_init
 # endif
 #endif
 
-# ifdef __PIC__
-#  define TLS_EBX_ARG "r"
-#  define TLS_LOAD_EBX "xchgl %3, %%ebx\n\t"
-# else
-#  define TLS_EBX_ARG "b"
-#  define TLS_LOAD_EBX
-# endif
-
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the
    operation can cause a failure 'errno' must not be touched.
