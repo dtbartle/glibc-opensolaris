@@ -1,4 +1,4 @@
-/* Copyright (C) 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ Cambridge, MA 02139, USA.  */
 #include "ieee754.h"
 
 /* Return the remainder of X/Y.  */
-__CONSTVALUE double
+double
 DEFUN(__drem, (x, y),
       double x AND double y)
 {
@@ -103,3 +103,5 @@ DEFUN(__drem, (x, y),
       return x;
     }
 }
+
+weak_alias (__drem, drem)
