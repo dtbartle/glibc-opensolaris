@@ -1,5 +1,5 @@
 /* Assembler macros for i386.
-   Copyright (C) 1991, 92, 93, 95, 96 Free Software Foundation, Inc.
+   Copyright (C) 1991, 92, 93, 95, 96, 98 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@
 #define ALIGNARG(log2) 1<<log2
 /* For ELF we need the `.type' directive to make shared libs work right.  */
 #define ASM_TYPE_DIRECTIVE(name,typearg) .type name,typearg;
-#define ASM_SIZE_DIRECTIVE(name) .size name,.-name
+#define ASM_SIZE_DIRECTIVE(name) .size name,.-name;
 
 /* In ELF C symbols are asm symbols.  */
 #undef	NO_UNDERSCORES
@@ -49,12 +49,22 @@
   ASM_GLOBAL_DIRECTIVE C_SYMBOL_NAME(name);				      \
   ASM_TYPE_DIRECTIVE (C_SYMBOL_NAME(name),@function)			      \
   .align ALIGNARG(4);							      \
+  STABS_FUN(name)							      \
   C_LABEL(name)								      \
   CALL_MCOUNT
 
 #undef	END
 #define END(name)							      \
-  ASM_SIZE_DIRECTIVE(name)
+  ASM_SIZE_DIRECTIVE(name)						      \
+  STABS_FUN_END(name)
+
+/* Emit stabs definition lines.  We use F(0,1) since for gcc this means
+   `a function returning int'.  */
+#define STABS_FUN(name) STABS_FUN2(name, name##:F(0,1))
+#define STABS_FUN2(name, namestr)					     \
+  .stabs #namestr,36,0,0,name;
+#define STABS_FUN_END(name)						     \
+  1: .stabs "",36,0,0,1b-name;
 
 /* If compiled for profiling, call `mcount' at the start of each function.  */
 #ifdef	PROF
