@@ -29,12 +29,27 @@ getpriority (enum __priority_which which, int who)
 {
   error_t err, onerr;
   int maxpri = INT_MIN;
+  struct procinfo *pip;		/* Just for sizeof.  */
+  int pibuf[sizeof *pip + 2 * sizeof (pip->threadinfos[0])], *pi = pibuf;
+  unsigned int pisize = sizeof pibuf / sizeof pibuf[0];
 
   error_t getonepriority (pid_t pid, struct procinfo *pip)
     {
-      struct procinfo pi;
-      onerr = pip ? 0 : __USEPORT (PROC, __proc_getprocinfo (port,
-							     pid, pip = &pi));
+      if (pip)
+	onerr = 0;
+      else
+	{
+	  int *oldpi = pi;
+	  unsigned int oldpisize = pisize;
+	  onerr = __USEPORT (PROC, __proc_getprocinfo (port,
+						       pid,
+						       &pi, &pisize));
+	  if (pi != oldpi && oldpi != pibuf)
+	    /* Old buffer from last call was not reused; free it.  */
+	    __vm_deallocate (__mach_task_self (),
+			     (vm_address_t) oldpi, oldpisize * sizeof pi[0]);
+	  pip = (struct procinfo *) pi;
+	}
       if (!onerr && pip->taskinfo.base_priority > maxpri)
 	maxpri = pip->taskinfo.base_priority;
       return 0;
@@ -42,6 +57,10 @@ getpriority (enum __priority_which which, int who)
 
   onerr = 0;
   err = _hurd_priority_which_map (which, who, getonepriority);
+
+  if (pi != pibuf)
+    __vm_deallocate (__mach_task_self (),
+		     (vm_address_t) pi, pisize * sizeof pi[0]);
 
   if (!err && maxpri == INT_MIN)
     /* No error, but no pids found.  */
