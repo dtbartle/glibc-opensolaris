@@ -101,7 +101,7 @@ canonicalize (const char *name, char *resolved)
     }
   memcpy (end, name, namelen + 1);
 
-  if (__lstat (result, &st) == 0 && S_ISLNK (st.st_mode))
+  while (__lstat (result, &st) == 0 && S_ISLNK (st.st_mode))
     {
       /* The file is a symlink.  Read its contents.  */
       ssize_t n;
@@ -123,7 +123,27 @@ canonicalize (const char *name, char *resolved)
 	    }
 	  else if (resolved)
 	    {
+	      /* It didn't fit in the remainder of the buffer.  Either it
+		 fits in the entire buffer, or it doesn't.  Copy back the
+		 unresolved name onto the canonical directory and try once
+		 more.  */
+	      memcpy (end, name, namelen + 1);
+	      n = readlink (result, result, path_max);
+	      if (n < 0)
+		return NULL;
+	      if (n == path_max)
+		{
+		  errno = ENAMETOOLONG;
+		  return NULL;
+		}
+	      result[n] = '\0';
 	    }
+	  else
+	    /* Try again with a bigger buffer.  */
+	    goto extend_buffer;
+
+	  /* Check the resolved name for being a symlink too.  */
+	  continue;
 	}
 
       if (resolved)
@@ -138,6 +158,7 @@ canonicalize (const char *name, char *resolved)
 	    }
 	}
       else if (n == namelen + 1)
+      extend_buffer:
 	{
 	  /* The name buffer is dynamically allocated.  Extend it.  */
 	  char *new;
