@@ -132,6 +132,7 @@ CFLAGS-wgenops.c = $(exceptions)
 CFLAGS-oldiofopen.c = $(exceptions)
 CFLAGS-iofopen.c = $(exceptions)
 CFLAGS-iofopen64.c = $(exceptions)
+CFLAGS-oldtmpfile.c = $(exceptions)
 # XXX Do we need filedoalloc and wfiledoalloc?  Others?
 
 CFLAGS-tst_putwc.c = -DOBJPFX=\"$(objpfx)\"
