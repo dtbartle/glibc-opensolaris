@@ -23,6 +23,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+#include <assert.h>
+
 int
 waitid (idtype, id, infop, options)
      idtype_t idtype;
@@ -91,7 +93,7 @@ waitid (idtype, id, infop, options)
       infop->si_code = CLD_EXITED;
       infop->si_status = WEXITSTATUS (status);
     }
-  else if (WIFSIGNALLED (status))
+  else if (WIFSIGNALED (status))
     {
       infop->si_code = WCOREDUMP (status) ? CLD_DUMPED : CLD_KILLED;
       infop->si_status = WTERMSIG (status);
@@ -101,11 +103,13 @@ waitid (idtype, id, infop, options)
       infop->si_code = CLD_STOPPED;
       infop->si_status = WSTOPSIG (status);
     }
+#ifdef WIFCONTINUED
   else if (WIFCONTINUED (status))
     {
       infop->si_code = CLD_CONTINUED;
       infop->si_status = SIGCONT;
     }
+#endif
   else
     /* Can't happen. */
     assert (! "What?");
