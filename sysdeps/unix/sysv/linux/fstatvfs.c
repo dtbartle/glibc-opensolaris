@@ -137,7 +137,7 @@ fstatvfs (int fd, struct statvfs *buf)
 		{
 		  /* Bingo, we found the entry for the device FD is on.
 		     Now interpret the option string.  */
-		  char *cp = strdupa (mntbuf.mnt_opts);
+		  char *cp = mntbuf.mnt_opt);
 		  char *opt;
 
 		  while ((opt = strsep (&cp, ",")) != NULL)
