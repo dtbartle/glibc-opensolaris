@@ -56,6 +56,7 @@ static char rcsid[] = "$Id$";
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
+#include "conf/portability.h"
 
 extern int h_errno;
 
