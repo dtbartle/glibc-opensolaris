@@ -194,14 +194,14 @@ extern int netname2host (__const char *, char *, __const int) __THROW;
  * These routines interface to the keyserv daemon
  *
  */
-extern int key_decryptsession (char *, des_block *) __THROW;
-extern int key_decryptsession_pk (char *, netobj *, des_block *) __THROW;
-extern int key_encryptsession (char *, des_block *) __THROW;
-extern int key_encryptsession_pk (char *, netobj *, des_block *) __THROW;
-extern int key_gendes (des_block *) __THROW;
-extern int key_setsecret (char *) __THROW;
-extern int key_secretkey_is_set (void) __THROW;
-extern int key_get_conv (char *, des_block *) __THROW;
+extern int key_decryptsession (char *, des_block *);
+extern int key_decryptsession_pk (char *, netobj *, des_block *);
+extern int key_encryptsession (char *, des_block *);
+extern int key_encryptsession_pk (char *, netobj *, des_block *);
+extern int key_gendes (des_block *);
+extern int key_setsecret (char *);
+extern int key_secretkey_is_set (void);
+extern int key_get_conv (char *, des_block *);
 
 /*
  * XDR an opaque authentication struct.
