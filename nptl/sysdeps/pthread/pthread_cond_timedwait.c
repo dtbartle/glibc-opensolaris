@@ -164,7 +164,7 @@ __pthread_cond_timedwait (cond, mutex, abstime)
   /* Get the mutex before returning.  */
   err = __pthread_mutex_lock_internal (mutex);
 
-  return result ?: err;
+  return err ?: result;
 }
 
 versioned_symbol (libpthread, __pthread_cond_timedwait, pthread_cond_timedwait,
