@@ -26,7 +26,7 @@
 # error This is for 32-bit targets only
 #endif
 
-#if SHLIB_COMPAT(libc, GLIBC_2_2, GLIBC_2_2_6)
+#if SHLIB_COMPAT(libc, GLIBC_2_0, GLIBC_2_2_6)
 
 typedef unsigned int UQItype	__attribute__ ((mode (QI)));
 typedef          int SItype	__attribute__ ((mode (SI)));
