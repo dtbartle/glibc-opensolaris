@@ -16,6 +16,8 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
+#ifdef ASSEMBLER
+
 /* Get the Mach definitions of ENTRY and kernel_trap.  */
 #include <mach/machine/syscall_sw.h>
 
@@ -25,6 +27,8 @@ Cambridge, MA 02139, USA.  */
 #undef LEXT
 #define EXT(x) C_SYMBOL_NAME(x)
 #define LEXT(x) C_SYMBOL_NAME(x##:)
+
+#endif
 
 /* This is invoked by things run when there is random lossage, before they
    try to do anything else.  Just to be safe, deallocate the reply port so
