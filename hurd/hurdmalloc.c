@@ -33,7 +33,10 @@
 /*
  * HISTORY
  * $Log$
- * Revision 1.7  1995/01/26 04:22:02  roland
+ * Revision 1.8  1995/02/03 01:54:21  roland
+ * Remove bogus bcopy decl.
+ *
+ * Revision 1.7  1995/01/26  04:22:02  roland
  * Don't include gnu-stabs.h.
  *
  * Revision 1.6  1994/12/07  19:41:26  roland
@@ -87,10 +90,6 @@
 #include <cthreads.h>
 #include "cthread_internals.h"
 
-/*
- * C library imports:
- */
-extern bcopy();
 
 /*
  * Structure of memory block header.
