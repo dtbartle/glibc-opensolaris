@@ -27,7 +27,7 @@
 
 #include <sys/types.h>
 
-#if STDC_HEADERS
+#if STDC_HEADERS || _LIBC
 #include <stdlib.h>
 #else
 VOID *calloc ();
