@@ -256,6 +256,7 @@ endif
 compile.c = $(CC) $< -c $(CFLAGS) $(CPPFLAGS)
 compile.S = $(CC) $< -c $(CPPFLAGS) -DASSEMBLER $(asm-CPPFLAGS)
 COMPILE.S = $(CC) -c $(CPPFLAGS) -DASSEMBLER $(asm-CPPFLAGS)
+COMPILE.s = $(filter-out -pipe,$(CC)) -c
 
 # We need this for the output to go in the right place.  It will default to
 # empty if make was configured to work with a cc that can't grok -c and -o
