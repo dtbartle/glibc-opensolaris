@@ -87,7 +87,6 @@ size_t
 socklen_t
 ssize_t
 suseconds_t
-timer_t
 time_t
 u_char
 uid_t
