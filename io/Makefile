@@ -1,4 +1,4 @@
-# Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -26,23 +26,22 @@ headers := sys/stat.h statbuf.h \
 	   poll.h sys/poll.h \
 	   utime.h ftw.h fts.h
 
-routines :=								      \
-	utime								      \
-	mkfifo								      \
-	__stat __fstat __lstat						      \
-	__umask __chmod __fchmod __mkdir				      \
-	__open __close __read __write __lseek __access			      \
-	__fcntl __flock lockf						      \
-	__dup __dup2 __pipe						      \
-	creat								      \
-	__chdir fchdir							      \
-	getcwd getwd getdirname						      \
-	__chown __fchown						      \
-	ttyname __isatty						      \
-	__link __symlink __readlink					      \
-	__unlink __rmdir						      \
+routines :=							      \
+	utime							      \
+	mkfifo							      \
+	stat fstat lstat					      \
+	umask chmod fchmod mkdir				      \
+	open close read write lseek access			      \
+	fcntl flock lockf					      \
+	dup dup2 pipe						      \
+	creat							      \
+	chdir fchdir						      \
+	getcwd getwd getdirname					      \
+	chown fchown						      \
+	ttyname isatty						      \
+	link symlink readlink					      \
+	unlink rmdir						      \
 	ftw fts poll
-routines	:= $(sort $(foreach f,$(routines),$f $(f:__%=%)))
 
 others		:= pwd
 tests		:= test-utime
