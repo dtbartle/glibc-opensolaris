@@ -2698,15 +2698,15 @@ int foo (int a)
 EOF
 if { ac_try='${CC-cc} $CFLAGS -nostdlib -nostartfiles
 			    -o conftest conftest.c -lgcc >&5'; { (eval echo configure:2701: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; }; then
-  libc_vc_gcc_builtin_expect=yes
+  libc_cv_gcc_builtin_expect=yes
 else
-  libc_vc_gcc_builtin_expect=no
+  libc_cv_gcc_builtin_expect=no
 fi
 rm -f conftest*
 fi
 
 echo "$ac_t""$libc_cv_gcc_builtin_expect" 1>&6
-if test "$libc_vc_gcc_builtin_expect" = yes; then
+if test "$libc_cv_gcc_builtin_expect" = yes; then
   cat >> confdefs.h <<\EOF
 #define HAVE_BUILTIN_EXPECT 1
 EOF
