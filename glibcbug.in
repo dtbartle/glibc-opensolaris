@@ -21,9 +21,6 @@ BUILD_BOUNDED="@bounded@"
 BUILD_STATIC_NSS="@static_nss@"
 STDIO="@stdio@"
 
-PATH=/bin:/usr/bin:/usr/local/bin:$PATH
-export PATH
-
 TEMP=`mktemp -q /tmp/glibcbugXXXXXX 2>/dev/null`
 if test $? -ne 0; then
   TEMP=/tmp/glibcbug.$$
@@ -108,7 +105,7 @@ MACHINE=`[ -f /bin/machine ] && /bin/machine`
 CCVERSION=`$CC -v 2>&1 | sed -n 's/gcc version //p'`
 
 case $HOST in *linux*)
-  KHDRS=`(echo '#include <linux/version.h>
+  KHDRS=`(echo '#include <linux/version.h>'
 	  echo '! UTS_RELEASE' ) |
 	 $CC -E - | sed -n '/!/s/[! "]//gp'`;;
 esac
