@@ -17,14 +17,14 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
-#include <pwd.h>
+#include <grp.h>
 
 
-#define LOOKUP_TYPE	struct passwd
-#define FUNCTION_NAME	getpwuid
-#define DATABASE_NAME	passwd
-#define ADD_PARAMS	uid_t uid
-#define ADD_VARIABLES	uid
+#define LOOKUP_TYPE	struct group
+#define SETFUNC_NAME	setgrent
+#define	GETFUNC_NAME	getgrent
+#define	ENDFUNC_NAME	endgrent
+#define DATABASE_NAME	group
 #define BUFLEN		1024
 
-#include "../nss/getXXbyYY.c"
+#include "../nss/getXXent_r.c"

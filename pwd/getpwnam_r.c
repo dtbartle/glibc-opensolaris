@@ -21,10 +21,10 @@ Boston, MA 02111-1307, USA.  */
 
 
 #define LOOKUP_TYPE	struct passwd
-#define FUNCTION_NAME	getpwuid
+#define FUNCTION_NAME	getpwnam
 #define DATABASE_NAME	passwd
-#define ADD_PARAMS	uid_t uid
-#define ADD_VARIABLES	uid
+#define ADD_PARAMS	const char *name
+#define ADD_VARIABLES	name
 #define BUFLEN		1024
 
-#include "../nss/getXXbyYY.c"
+#include "../nss/getXXbyYY_r.c"

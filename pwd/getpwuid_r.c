@@ -27,4 +27,4 @@ Boston, MA 02111-1307, USA.  */
 #define ADD_VARIABLES	uid
 #define BUFLEN		1024
 
-#include "../nss/getXXbyYY.c"
+#include "../nss/getXXbyYY_r.c"
