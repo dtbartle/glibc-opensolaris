@@ -142,7 +142,7 @@ do_test (void)
       /* Get a write lock.  */
       if (pthread_rwlock_timedwrlock (&r, &ts) != 0)
 	{
-	  printf ("round %d: rwlock_wrlock failed\n", cnt);
+	  printf ("round %d: rwlock_timedwrlock failed\n", cnt);
 	  exit (1);
 	}
 
