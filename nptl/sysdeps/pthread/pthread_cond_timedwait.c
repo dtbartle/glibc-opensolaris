@@ -92,8 +92,6 @@ __pthread_cond_timedwait (cond, mutex, abstime)
 
   while (1)
     {
-      int err;
-
       /* Get the current time.  So far we support only one clock.  */
       struct timeval tv;
       (void) gettimeofday (&tv, NULL);
