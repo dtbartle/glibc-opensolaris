@@ -54,6 +54,15 @@ extern int sem_init __P ((sem_t *__sem, int __pshared, unsigned int __value));
 /* Free resources associated with semaphore object SEM.  */
 extern int sem_destroy __P ((sem_t *__sem));
 
+/* Open a named semaphore NAME with open flaot OFLAG.  */
+extern sem_t *sem_open __P ((__const char *__name, int __oflag, ...));
+
+/* Close descriptor for named semaphore SEM.  */
+extern int sem_close __P ((sem_t *__sem));
+
+/* Remove named semaphore NAME.  */
+extern int sem_unlink __P ((__const char *__name));
+
 /* Wait for SEM being posted.  */
 extern int sem_wait __P ((sem_t *__sem));
 
