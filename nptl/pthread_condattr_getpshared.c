@@ -1,4 +1,4 @@
-/* Copyright (C) 2002 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -25,7 +25,7 @@ pthread_condattr_getpshared (attr, pshared)
      const pthread_condattr_t *attr;
      int *pshared;
 {
-  *pshared = ((const struct pthread_condattr *) attr)->pshared;
+  *pshared = ((const struct pthread_condattr *) attr)->value & 1;
 
   return 0;
 }
