@@ -75,7 +75,7 @@ static double sloww2(double x, double dx, double orig, int n);
 static double bsloww(double x, double dx, double orig, int n);
 static double bsloww1(double x, double dx, double orig, int n);
 static double bsloww2(double x, double dx, double orig, int n);
-int branred(double x, double *a, double *aa);
+int __branred(double x, double *a, double *aa);
 static double cslow2(double x);
 static double csloww(double x, double dx, double orig);
 static double csloww1(double x, double dx, double orig);
@@ -307,7 +307,7 @@ double __sin(double x){
 /* -----------------281474976710656 <|x| <2^1024----------------------------*/
 	else if (k < 0x7ff00000) {
 
-	  n = branred(x,&a,&da);
+	  n = __branred(x,&a,&da);
 	  switch (n) {
 	  case 0:
 	    if (a*a < 0.01588) return bsloww(a,da,x,n);
@@ -548,7 +548,7 @@ double __cos(double x)
 
   else if (k < 0x7ff00000) {/* 281474976710656 <|x| <2^1024 */
 
-    n = branred(x,&a,&da);
+    n = __branred(x,&a,&da);
     switch (n) {
     case 1:
       if (a*a < 0.01588) return bsloww(-a,-da,x,n);

@@ -49,9 +49,9 @@ double __slowexp(double x) {
                     /* into a multiple precision number mpx with prec. p. */
   __mpexp(&mpx, &mpy, p); /* Multi-Precision exponential function */
   __dbl_mp(eps,&mpeps,p);
-  mul(&mpeps,&mpy,&mpcor,p);
-  add(&mpy,&mpcor,&mpw,p);
-  sub(&mpy,&mpcor,&mpz,p);
+  __mul(&mpeps,&mpy,&mpcor,p);
+  __add(&mpy,&mpcor,&mpw,p);
+  __sub(&mpy,&mpcor,&mpz,p);
   __mp_dbl(&mpw, &w, p);
   __mp_dbl(&mpz, &z, p);
   if (w == z) return w;
