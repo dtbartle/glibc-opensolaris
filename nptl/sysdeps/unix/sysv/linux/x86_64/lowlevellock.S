@@ -127,7 +127,7 @@ __lll_timedwait_tid:
 	/* Compute relative timeout.  */
 	movq	8(%esp), %rax
 	movq	$1000, %rdi
-	mul	%rdx		/* Milli seconds to nano seconds.  */
+	mul	%rdi		/* Milli seconds to nano seconds.  */
 	movq	(%r9), %rdi
 	movq	8(%r9), %rsi
 	subq	(%rsp), %rdi
