@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -81,7 +81,7 @@ headers := features.h errno.h sys/errno.h errnos.h limits.h $(stddef.h)
 
 echo-headers: subdir_echo-headers
 
-ifdef +gnu-stabs
+ifeq ($(gnu-ld),yes)
 # We're using the GNU linker, so we use the set-element init function.
 +init := set-init
 else
