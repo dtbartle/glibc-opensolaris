@@ -24,6 +24,9 @@
 #include <netdb.h>
 #include <pwd.h>
 
+/* Interval in which we transfer retry to contact the NSCD.  */
+#define NSS_NSCD_RETRY	100
+
 /* Variables for communication between NSCD handler functions and NSS.  */
 extern int __nss_not_use_nscd_passwd attribute_hidden;
 extern int __nss_not_use_nscd_group attribute_hidden;
