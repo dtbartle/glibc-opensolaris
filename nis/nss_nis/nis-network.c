@@ -64,8 +64,8 @@ _nss_nis_setnetent (int stayopen)
   return NSS_STATUS_SUCCESS;
 }
 /* Make _nss_nis_endnetent an alias of _nss_nis_setnetent.  We do this
-   even though the prototypes don't match.  The argument of setgrent
-   is used so this makes no difference.  */
+   even though the prototypes don't match.  The argument of setnetent
+   is not used so this makes no difference.  */
 strong_alias (_nss_nis_setnetent, _nss_nis_endnetent)
 
 static enum nss_status
