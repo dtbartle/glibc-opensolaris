@@ -1558,6 +1558,7 @@ aiocb64} since the LFS replaces transparently the old interface.
 * Status of AIO Operations::     Getting the Status of AIO Operations.
 * Synchronizing AIO Operations:: Getting into a consistent state.
 * Cancel AIO Operations::        Cancelation of AIO Operations.
+* Configuration of AIO::         How to optimize the AIO implementation.
 @end menu
 
 @node Asynchronous Reads/Writes
@@ -1931,18 +1932,19 @@ The @code{aio_fsync} and @code{aio_fsync64} functions are only available
 if in @file{unistd.h} the symbol @code{_POSIX_SYNCHRONIZED_IO} is
 defined.
 
+@cindex synchronizing
 @comment aio.h
 @comment POSIX.1b
 @deftypefun int aio_fsync (int @var{op}, struct aiocb *@var{aiocbp})
 Calling this function forces all I/O operations operating queued at the
-time of the function call opearting on the file desriptor
-@code{aiocbp->aio_fildes} into the synchronized I/O completion state.
-The @code{aio_fsync} function return immediately but the notification
-thought the method described in @code{aiocbp->aio_sigevent} will happen
-only after all requests for this file descriptor terminated and the file
-is synchronized.  This also means that requests for this very same file
-descriptor which are queued after the synchronization request are not
-effected.
+time of the function call operating on the file desriptor
+@code{aiocbp->aio_fildes} into the synchronized I/O completion state
+(@pxref{Synchronizing I/O}).  The @code{aio_fsync} function return
+immediately but the notification through the method described in
+@code{aiocbp->aio_sigevent} will happen only after all requests for this
+file descriptor terminated and the file is synchronized.  This also
+means that requests for this very same file descriptor which are queued
+after the synchronization request are not effected.
 
 If @var{op} is @code{O_DSYNC} the synchronization happens as with a call
 to @code{fdatasync}.  Otherwise @var{op} should be @code{O_SYNC} and
@@ -1988,6 +1990,70 @@ aiocb64}.
 
 When the sources are compiled with @code{_FILE_OFFSET_BITS == 64} this
 function is available under the name @code{aio_fsync} and so
+transparently replaces the interface for small files on 32 bits
+machines.
+@end deftypefun
+
+Another method of synchronization is to until one or more requests of a
+specific set terminated.  This could be achieved by the @code{aio_*}
+functions to notify the initiating process about the termination but in
+some situations this is not the ideal solution.  In a program which
+constantly updates clients somehow connected to the server it is not
+always the best solution to go round robin since some connections might
+be slow.  On the other hand letting the @code{aio_*} function notify the
+caller might also be not the best solution since whenever the process
+works on preparing data for on client it makes no sense to be
+interrupted by a notification since the new client will not be handled
+before the current client is served.  For situations like this
+@code{aio_suspend} should be used.
+
+@comment aio.h
+@comment POSIX.1b
+@deftypefun int aio_suspend (const struct aiocb *const @var{list}[], int @var{nent}, const struct timespec *@var{timeout})
+When calling this function the calling thread is suspended until at
+least one of the requests pointed to by the @var{nent} elements of the
+array @var{list} has completed.  If any of the requests already has
+completed at the time @code{aio_suspend} is called the function returns
+immediately.  Whether a request has terminated or not is done by
+comparing the error status of the request with @code{EINPROGRESS}.  If
+an element of @var{list} is @code{NULL} the entry is simply ignored.
+
+If no request has finished the calling process is suspended.  If
+@var{timeout} is @code{NULL} the process is not waked until a request
+finished.  If @var{timeout} is not @code{NULL} the process remains
+suspended at as long as specified in @var{timeout}.  In this case
+@code{aio_suspend} returns with an error.
+
+The return value of the function is @math{0} is one or more requests
+from the @var{list} have terminated.  Otherwise the function returns
+@math{-1} and @code{errno} is set to one of the following values:
+
+@table @code
+@item EAGAIN
+None of the requests from the @var{list} completed in the time specified
+by @var{timeout}.
+@item EINTR
+A signal interrupted the @code{aio_suspend} function.  This signal might
+also be sent by the AIO implementation while signalling the termination
+of one of the requests.
+@item ENOSYS
+The @code{aio_suspend} function is not implemented.
+@end table
+
+When the sources are compiled with @code{_FILE_OFFSET_BITS == 64} this
+function is in fact @code{aio_suspend64} since the LFS interface
+transparently replaces the normal implementation.
+@end deftypefun
+
+@comment aio.h
+@comment Unix98
+@deftypefun int aio_suspend64 (const struct aiocb64 *const @var{list}[], int @var{nent}, const struct timespec *@var{timeout})
+This function is similar to @code{aio_suspend} with the only difference
+that the argument is a reference to a variable of type @code{struct
+aiocb64}.
+
+When the sources are compiled with @code{_FILE_OFFSET_BITS == 64} this
+function is available under the name @code{aio_suspend} and so
 transparently replaces the interface for small files on 32 bits
 machines.
 @end deftypefun
@@ -2064,6 +2130,63 @@ When the sources are compiled with @code{_FILE_OFFSET_BITS == 64} this
 function is available under the name @code{aio_cancel} and so
 transparently replaces the interface for small files on 32 bits
 machines.
+@end deftypefun
+
+@node Configuration of AIO
+@subsection How to optimize the AIO implementation
+
+The POSIX standard does not specify how the AIO functions are
+implemented.  They could be system calls but it is also possible to
+emulate them at userlevel.
+
+At least the available implementatio at the point of this writing is a
+userlevel implementation which uses threads for handling the enqueued
+requests.  This implementation requires to make some decisions about
+limitations but hard limitations are something which better should be
+avoided the GNU C library implementation provides a mean to tune the AIO
+implementation individually for each use.
+
+@comment aio.h
+@comment GNU
+@deftp {Data Type} {struct aioinit}
+This data type is used to pass the configuration or tunable parameters
+to the implementation.  The program has to initialize the members of
+this struct and pass it to the implementation using the @code{aio_init}
+function.
+
+@table @code
+@item int aio_threads
+This member specifies the maximal number of threads which must be used
+at any one time.
+@item int aio_num
+This number provides an esitmate on the maximal number of simultaneously
+enqueued requests.
+@item int aio_locks
+@c What?
+@item int aio_usedba
+@c What?
+@item int aio_debug
+@c What?
+@item int aio_numusers
+@c What?
+@item int aio_reserved[2]
+@c What?
+@end table
+@end deftp
+
+@comment aio.h
+@comment GNU
+@deftypefun void aio_init (const struct aioinit *@var{init})
+This function must be called before any other AIO function.  Calling it
+is completely voluntarily since it only is meant to help the AIO
+implementation to perform better.
+
+Before calling the @code{aio_init} function the members of a variable of
+type @code{struct aioinit} must be initialized.  Then a reference to
+this variable is passed as the parameter to @code{aio_init} which itself
+may or may not pay attention to the hints.
+
+The function has no return value and no error cases are defined.
 @end deftypefun
 
 @node Control Operations
