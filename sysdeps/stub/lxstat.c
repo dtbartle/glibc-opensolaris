@@ -34,6 +34,4 @@ __lxstat (int vers, const char *file, struct stat *buf)
   __set_errno (ENOSYS);
   return -1;
 }
-stub_warning (__lxstat)
-
-weak_alias (__lxstat, _lxstat)
+stub_warning (lstat)
