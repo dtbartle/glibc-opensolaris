@@ -22,6 +22,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "eintr.c"
 
@@ -49,7 +50,9 @@ tf1 (void *arg)
 	      exit (1);
 	    }
 
-	  puts ("pthread_create failed");
+	  char buf[100];
+	  printf ("tf1: pthread_create failed: %s\n",
+		  strerror_r (e, buf, sizeof (buf)));
 	  exit (1);
 	}
 
@@ -62,7 +65,8 @@ tf1 (void *arg)
 	      exit (1);
 	    }
 
-	  puts ("join failed");
+	  char buf[100];
+	  printf ("tf1: pthread_join failed: %s\n",
 	  exit (1);
 	}
     }
@@ -80,7 +84,8 @@ do_test (void)
       pthread_t th;
       if (pthread_create (&th, NULL, tf1, NULL) != 0)
 	{
-	  puts ("pthread_create failed");
+	  char buf[100];
+	  printf ("main: pthread_create failed: %s\n",
 	  exit (1);
 	}
     }
