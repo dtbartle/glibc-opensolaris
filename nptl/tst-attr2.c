@@ -17,6 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,7 +50,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setdetachstate (&a, PTHREAD_CREATE_DETACHED) != 0)
+  int e = pthread_attr_setdetachstate (&a, PTHREAD_CREATE_DETACHED);
+  if (e != 0)
     {
       puts ("1st attr_setdetachstate failed");
       exit (1);
@@ -65,7 +67,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setdetachstate (&a, PTHREAD_CREATE_JOINABLE) != 0)
+  e = pthread_attr_setdetachstate (&a, PTHREAD_CREATE_JOINABLE);
+  if (e != 0)
     {
       puts ("2nd attr_setdetachstate failed");
       exit (1);
@@ -95,7 +98,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setguardsize (&a, 0) != 0)
+  e = pthread_attr_setguardsize (&a, 0);
+  if (e != 0)
     {
       puts ("1st attr_setguardsize failed");
       exit (1);
@@ -111,7 +115,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setguardsize (&a, 1) != 0)
+  e = pthread_attr_setguardsize (&a, 1);
+  if (e != 0)
     {
       puts ("2nd attr_setguardsize failed");
       exit (1);
@@ -140,7 +145,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setinheritsched (&a, PTHREAD_EXPLICIT_SCHED) != 0)
+  e = pthread_attr_setinheritsched (&a, PTHREAD_EXPLICIT_SCHED);
+  if (e != 0)
     {
       puts ("1st attr_setinheritsched failed");
       exit (1);
@@ -156,7 +162,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setinheritsched (&a, PTHREAD_INHERIT_SCHED) != 0)
+  e = pthread_attr_setinheritsched (&a, PTHREAD_INHERIT_SCHED);
+  if (e != 0)
     {
       puts ("2nd attr_setinheritsched failed");
       exit (1);
@@ -185,7 +192,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setschedpolicy (&a, SCHED_RR) != 0)
+  e = pthread_attr_setschedpolicy (&a, SCHED_RR);
+  if (e != 0)
     {
       puts ("1st attr_setschedpolicy failed");
       exit (1);
@@ -201,7 +209,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setschedpolicy (&a, SCHED_FIFO) != 0)
+  e = pthread_attr_setschedpolicy (&a, SCHED_FIFO);
+  if (e != 0)
     {
       puts ("2nd attr_setschedpolicy failed");
       exit (1);
@@ -217,7 +226,8 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
-  if (pthread_attr_setschedpolicy (&a, SCHED_OTHER) != 0)
+  e = pthread_attr_setschedpolicy (&a, SCHED_OTHER);
+  if (e != 0)
     {
       puts ("3rd attr_setschedpolicy failed");
       exit (1);
@@ -230,6 +240,72 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
   if (s != SCHED_OTHER)
     {
       printf ("schedpolicy set to SCHED_OTHER, but got %d\n", s);
+      exit (1);
+    }
+
+
+  if (pthread_attr_getscope (&a, &s) != 0)
+    {
+      puts ("1st attr_getscope failed");
+      exit (1);
+    }
+  /* XXX What is the correct default value.  */
+  if (s != PTHREAD_SCOPE_SYSTEM && s != PTHREAD_SCOPE_PROCESS)
+    {
+      puts ("incorrect default value for contentionscope");
+      exit (1);
+    }
+
+  e = pthread_attr_setscope (&a, PTHREAD_SCOPE_PROCESS);
+  if (e != ENOTSUP)
+    {
+      if (e != 0)
+	{
+	  puts ("1st attr_setscope failed");
+	  exit (1);
+	}
+      if (pthread_attr_getscope (&a, &s) != 0)
+	{
+	  puts ("2nd attr_getscope failed");
+	  exit (1);
+	}
+      if (s != PTHREAD_SCOPE_PROCESS)
+	{
+	  printf ("\
+contentionscope set to PTHREAD_SCOPE_PROCESS, but got %d\n", s);
+	  exit (1);
+	}
+    }
+
+  e = pthread_attr_setscope (&a, PTHREAD_SCOPE_SYSTEM);
+  if (e != 0)
+    {
+      puts ("2nd attr_setscope failed");
+      exit (1);
+    }
+  if (pthread_attr_getscope (&a, &s) != 0)
+    {
+      puts ("3rd attr_getscope failed");
+      exit (1);
+    }
+  if (s != PTHREAD_SCOPE_SYSTEM)
+    {
+      printf ("contentionscope set to PTHREAD_SCOPE_SYSTEM, but got %d\n", s);
+      exit (1);
+    }
+
+  char buf[1];
+  e = pthread_attr_setstack (&a, buf, 1);
+  if (e != EINVAL)
+    {
+      puts ("setstack with size 1 did not produce EINVAL");
+      exit (1);
+    }
+
+  e = pthread_attr_setstacksize (&a, 1);
+  if (e != EINVAL)
+    {
+      puts ("setstacksize with size 1 did not produce EINVAL");
       exit (1);
     }
 
