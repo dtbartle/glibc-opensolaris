@@ -17,7 +17,7 @@
    Boston, MA 02111-1307, USA.  */
 
 /*
- * ISO C 9X 7.6: Floating-point environment	<fenv.h>
+ * ISO C99 7.6: Floating-point environment	<fenv.h>
  */
 
 #ifndef _FENV_H
