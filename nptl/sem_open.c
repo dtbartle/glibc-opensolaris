@@ -243,6 +243,9 @@ sem_open (const char *name, int oflag, ...)
 		  /* Remove the file.  */
 		  (void) unlink (tmpfname);
 
+		  /* Close the file.  */
+		  (void) __libc_close (fd);
+
 		  goto try_again;
 		}
 	    }
@@ -258,7 +261,7 @@ sem_open (const char *name, int oflag, ...)
     result = SEM_FAILED;
 
   /* We don't need the file descriptor anymore.  */
-  __libc_close (fd);
+  (void) __libc_close (fd);
 
   return result;
 }
