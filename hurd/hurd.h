@@ -109,11 +109,10 @@ extern pid_t _hurd_pid, _hurd_ppid, _hurd_pgrp;
 extern int _hurd_orphaned;
 
 /* This variable is incremented every time the process IDs change.  */
-
-unsigned int _hurd_pids_changed_stamp;
+extern unsigned int _hurd_pids_changed_stamp;
 
 /* This condition is broadcast every time the process IDs change.  */
-struct condition _hurd_pids_changed_sync;
+extern struct condition _hurd_pids_changed_sync;
 
 /* Unix `data break', for brk and sbrk.
    If brk and sbrk are not used, this info will not be initialized or used.  */
@@ -302,6 +301,13 @@ extern int hurd_check_cancel (void);
    On error, sets `errno' and returns MACH_PORT_NULL.  */
 
 extern io_t __getdport (int fd), getdport (int fd);
+
+
+#include <stdarg.h>
+
+/* Write formatted output to PORT, a Mach port supporting the i/o protocol,
+   according to the format string FORMAT, using the argument list in ARG.  */
+int vpprintf (io_t port, const char *format, va_list arg);
 
 
 #endif	/* hurd.h */
