@@ -23,6 +23,7 @@ subdir	:= locale
 
 headers		= locale.h langinfo.h
 distribute	= localeinfo.h categories.def iso-4217.def weight.h \
+		  strlen-hash.h \
 		  $(addprefix programs/, \
 			      $(localedef-modules:=.c) $(locale-modules:=.c) \
 			      $(lib-modules:=.c) config.h simple-hash.h \
@@ -44,7 +45,7 @@ vpath %.h programs
 vpath %.gperf programs
 
 localedef-modules	:= $(categories:%=ld-%) charmap charset linereader \
-			   locfile stringtrans
+			   locfile stringtrans locale-spec
 lib-modules		:= simple-hash xmalloc xstrdup
 
 
