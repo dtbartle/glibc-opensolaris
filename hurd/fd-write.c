@@ -1,5 +1,5 @@
 /* _hurd_fd_write -- write to a file descriptor; handles job control et al.
-Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -35,9 +35,10 @@ _hurd_fd_write (struct hurd_fd *fd, const void *buf, size_t *nbytes)
 
   /* Don't use the ctty io port if we are blocking or ignoring SIGTTOU.  */
   ss = _hurd_self_sigstate ();
+  __spin_lock (&ss->lock);
   noctty = (__sigismember (&ss->blocked, SIGTTOU) ||
 	    ss->actions[SIGTTOU].sa_handler == SIG_IGN);
-  __mutex_unlock (&ss->lock);
+  __spin_unlock (&ss->lock);
 
   err = HURD_FD_PORT_USE
     (fd,
@@ -61,10 +62,10 @@ _hurd_fd_write (struct hurd_fd *fd, const void *buf, size_t *nbytes)
 		      SIGTTOU or resumed after being stopped.  Now this is
 		      still a "system call", so check to see if we should
 		      restart it.  */
-		   __mutex_lock (&ss->lock);
+		   __spin_lock (&ss->lock);
 		   if (!(ss->actions[SIGTTOU].sa_flags & SA_RESTART))
 		     err = EINTR;
-		   __mutex_unlock (&ss->lock);
+		   __spin_unlock (&ss->lock);
 		 }
 	     }
 	 } while (err == EBACKGROUND);
