@@ -48,10 +48,14 @@ __ctan (__complex__ double x)
     }
   else
     {
-      double den = (__cos (2.0 * __real__ x)
-		    + __ieee754_cosh (2.0 * __imag__ x));
+      double sin2rx, cos2rx;
+      double den;
 
-      __real__ res = __sin (2.0 * __real__ x) / den;
+      __sincos (2.0 * __real__ x, &sin2rx, &cos2rx);
+
+      den = cos2rx + __ieee754_cosh (2.0 * __imag__ x);
+
+      __real__ res = sin2rx / den;
       __imag__ res = __ieee754_sinh (2.0 * __imag__ x) / den;
     }
 
