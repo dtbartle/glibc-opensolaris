@@ -167,6 +167,46 @@ create_archive (const char *archivefname, struct locarhandle *ah)
   ah->len = total;
 }
 
+
+struct oldlocrecent
+{
+  unsigned int cnt;
+  struct locrecent *locrec;
+};
+
+static int
+oldlocrecentcmp (const void *a, const void *b)
+{
+  struct locrecent *la = ((const struct oldlocrecent *) a)->locrec;
+  struct locrecent *lb = ((const struct oldlocrecent *) b)->locrec;
+
+  if (la->record[LC_ALL].offset < lb->record[LC_ALL].offset)
+    return -1;
+  if (la->record[LC_ALL].offset > lb->record[LC_ALL].offset)
+    return 1;
+
+  if (la->record[LC_CTYPE].offset < lb->record[LC_CTYPE].offset)
+    return -1;
+  if (la->record[LC_CTYPE].offset > lb->record[LC_CTYPE].offset)
+    return 1;
+
+  if (la->record[LC_COLLATE].offset < lb->record[LC_COLLATE].offset)
+    return -1;
+  if (la->record[LC_COLLATE].offset > lb->record[LC_COLLATE].offset)
+    return 1;
+
+  if (((const struct oldlocrecent *) a)->cnt
+      < ((const struct oldlocrecent *) b)->cnt)
+    return -1;
+
+  if (((const struct oldlocrecent *) a)->cnt
+      > ((const struct oldlocrecent *) b)->cnt)
+    return 1;
+
+  return 0;
+}
+
+
 /* forward decl for below */
 static uint32_t add_locale (struct locarhandle *ah, const char *name,
 			    locale_data_t data, bool replace);
@@ -179,13 +219,14 @@ enlarge_archive (struct locarhandle *ah, const struct locarhead *head)
   struct locarhead newhead;
   size_t total;
   void *p;
-  unsigned int cnt;
+  unsigned int cnt, loccnt;
   struct namehashent *oldnamehashtab;
   struct locrecent *oldlocrectab;
   struct locarhandle new_ah;
   size_t prefix_len = output_prefix ? strlen (output_prefix) : 0;
   char archivefname[prefix_len + sizeof (ARCHIVE_NAME)];
   char fname[prefix_len + sizeof (ARCHIVE_NAME) + sizeof (".XXXXXX") - 1];
+  struct oldlocrecent *oldlocrecarray;
 
   if (output_prefix)
     memcpy (archivefname, output_prefix, prefix_len);
@@ -282,34 +323,46 @@ enlarge_archive (struct locarhandle *ah, const struct locarhead *head)
 					   + head->namehash_offset);
   oldlocrectab = (struct locrecent *) ((char *) ah->addr
 				       + head->locrectab_offset);
-  for (cnt = 0; cnt < head->namehash_size; ++cnt)
+  oldlocrecarray = (struct oldlocrecent *)
+		   alloca (head->namehash_size
+			   * sizeof (struct oldlocrecent));
+
+  for (cnt = 0, loccnt = 0; cnt < head->namehash_size; ++cnt)
     if (oldnamehashtab[cnt].locrec_offset != 0)
       {
-	/* Insert this entry in the new hash table.  */
-	locale_data_t old_data;
-	unsigned int idx;
-	struct locrecent *oldlocrec;
-
-	oldlocrec = (struct locrecent *) ((char *) ah->addr
-					  + oldnamehashtab[cnt].locrec_offset);
-
-	for (idx = 0; idx < __LC_LAST; ++idx)
-	  if (idx != LC_ALL)
-	    {
-	      old_data[idx].size = oldlocrec->record[idx].len;
-	      old_data[idx].addr
-		= ((char *) ah->addr + oldlocrec->record[idx].offset);
-
-	      __md5_buffer (old_data[idx].addr, old_data[idx].size,
-			    old_data[idx].sum);
-	    }
-
-	if (add_locale (&new_ah,
-			((char *) ah->addr + oldnamehashtab[cnt].name_offset),
-			old_data, 0) == 0)
-	  error (EXIT_FAILURE, 0, _("cannot extend locale archive file"));
+	oldlocrecarray[loccnt].cnt = cnt;
+	oldlocrecarray[loccnt++].locrec
+	  = (struct locrecent *) ((char *) ah->addr
+				  + oldnamehashtab[cnt].locrec_offset);
       }
 
+  qsort (oldlocrecarray, loccnt, sizeof (struct oldlocrecent),
+	 oldlocrecentcmp);
+
+  for (cnt = 0; cnt < loccnt; ++cnt)
+    {
+      /* Insert this entry in the new hash table.  */
+      locale_data_t old_data;
+      unsigned int idx;
+      struct locrecent *oldlocrec = oldlocrecarray[cnt].locrec;
+
+      for (idx = 0; idx < __LC_LAST; ++idx)
+	if (idx != LC_ALL)
+	  {
+	    old_data[idx].size = oldlocrec->record[idx].len;
+	    old_data[idx].addr
+	      = ((char *) ah->addr + oldlocrec->record[idx].offset);
+
+	    __md5_buffer (old_data[idx].addr, old_data[idx].size,
+			  old_data[idx].sum);
+	  }
+
+      if (add_locale (&new_ah,
+	  ((char *) ah->addr
+	   + oldnamehashtab[oldlocrecarray[cnt].cnt].name_offset),
+	  old_data, 0) == 0)
+	error (EXIT_FAILURE, 0, _("cannot extend locale archive file"));
+    }
 
   /* Make the file globally readable.  */
   if (fchmod (fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) == -1)
@@ -487,6 +540,13 @@ insert_name (struct locarhandle *ah,
 	  break;
 	}
 
+      if (namehashtab[idx].hashval == hval)
+	{
+	  error (0, 0, "hash collision (%u) %s, %s",
+		 hval, name, (char *) ah->addr + namehashtab[idx].name_offset);
+	}
+
+
       /* Remember the first place we can insert the new entry.  */
       if (namehashtab[idx].locrec_offset == 0 && insert_idx == -1)
 	insert_idx = idx;
@@ -575,25 +635,41 @@ add_locale (struct locarhandle *ah,
   unsigned int num_new_offsets = 0;
   struct sumhashent *sumhashtab;
   uint32_t hval;
-  unsigned int cnt;
-  unsigned int idx;
+  unsigned int cnt, idx;
   struct locarhead *head;
   struct namehashent *namehashent;
   unsigned int incr;
   struct locrecent *locrecent;
+  off64_t lastoffset;
+  char *ptr;
 
   head = ah->addr;
   sumhashtab = (struct sumhashent *) ((char *) ah->addr
 				      + head->sumhash_offset);
 
+  memset (file_offsets, 0, sizeof (file_offsets));
+  data[LC_ALL].size = 0;
+  for (cnt = 0; cnt < __LC_LAST; ++cnt)
+    if (cnt != LC_ALL && cnt != LC_CTYPE && cnt != LC_COLLATE)
+      data[LC_ALL].size += (data[cnt].size + 15) & -16;
+
+  data[LC_ALL].addr = alloca (data[LC_ALL].size);
+  memset (data[LC_ALL].addr, 0, data[LC_ALL].size);
+
+  ptr = data[LC_ALL].addr;
+  for (cnt = 0; cnt < __LC_LAST; ++cnt)
+    if (cnt != LC_ALL && cnt != LC_CTYPE && cnt != LC_COLLATE)
+      {
+	memcpy (ptr, data[cnt].addr, data[cnt].size);
+	ptr += (data[cnt].size + 15) & -16;
+      }
+  __md5_buffer (data[LC_ALL].addr, data[LC_ALL].size, data[LC_ALL].sum);
 
   /* For each locale category data set determine whether the same data
      is already somewhere in the archive.  */
   for (cnt = 0; cnt < __LC_LAST; ++cnt)
-    if (cnt != LC_ALL)
+    if (cnt == LC_ALL || cnt == LC_CTYPE || cnt == LC_COLLATE)
       {
-	/* By default signal that we have no data.  */
-	file_offsets[cnt] = 0;
 	++num_new_offsets;
 
 	/* Compute the hash value of the checksum to determine a
@@ -638,8 +714,9 @@ add_locale (struct locarhandle *ah,
     }
 
   /* Add the locale data which is not yet in the archive.  */
-  for (cnt = 0; cnt < __LC_LAST; ++cnt)
-    if (cnt != LC_ALL && file_offsets[cnt] == 0)
+  for (cnt = 0, lastoffset = 0; cnt < __LC_LAST; ++cnt)
+    if ((cnt == LC_ALL || cnt == LC_CTYPE || cnt == LC_COLLATE)
+	&& file_offsets[cnt] == 0)
       {
 	/* The data for this section is not yet available in the
 	   archive.  Append it.  */
@@ -649,6 +726,28 @@ add_locale (struct locarhandle *ah,
 	lastpos = lseek64 (ah->fd, 0, SEEK_END);
 	if (lastpos == (off64_t) -1)
 	  error (EXIT_FAILURE, errno, _("cannot add to locale archive"));
+
+	/* If block of small locales would cross page boundary, align it
+	   unless it follows immediately LC_CTYPE or LC_COLLATE.  */
+	if (cnt == LC_ALL && lastoffset != lastpos)
+	  {
+	    size_t pagesz = getpagesize ();
+
+	    if ((((lastpos & (pagesz - 1)) + data[cnt].size + pagesz - 1)
+		  & -pagesz)
+		> ((data[cnt].size + pagesz - 1) & -pagesz))
+	      {
+		size_t sz = pagesz - (lastpos & (pagesz - 1));
+		char *zeros = alloca (sz);
+
+		memset (zeros, 0, sz);
+		if (TEMP_FAILURE_RETRY (write (ah->fd, zeros, sz) != sz))
+		  error (EXIT_FAILURE, errno,
+			 _("cannot add to locale archive"));
+
+		lastpos += sz;
+	      }
+	  }
 
 	/* Align all data to a 16 byte boundary.  */
 	if ((lastpos & 15) != 0)
@@ -664,6 +763,7 @@ add_locale (struct locarhandle *ah,
 
 	/* Remember the position.  */
 	file_offsets[cnt] = lastpos;
+	lastoffset = lastpos + data[cnt].size;
 
 	/* Write the data.  */
 	if (TEMP_FAILURE_RETRY (write (ah->fd, data[cnt].addr, data[cnt].size))
@@ -687,6 +787,14 @@ add_locale (struct locarhandle *ah,
 	sumhashtab[idx].file_offset = file_offsets[cnt];
 
 	++head->sumhash_used;
+      }
+
+  lastoffset = file_offsets[LC_ALL];
+  for (cnt = 0; cnt < __LC_LAST; ++cnt)
+    if (cnt != LC_ALL && cnt != LC_CTYPE && cnt != LC_COLLATE)
+      {
+	file_offsets[cnt] = lastoffset;
+	lastoffset += (data[cnt].size + 15) & -16;
       }
 
   if (namehashent->name_offset == 0)
@@ -730,11 +838,10 @@ add_locale (struct locarhandle *ah,
 
   /* Fill in the table with the locations of the locale data.  */
   for (cnt = 0; cnt < __LC_LAST; ++cnt)
-    if (cnt != LC_ALL)
-      {
-	locrecent->record[cnt].offset = file_offsets[cnt];
-	locrecent->record[cnt].len = data[cnt].size;
-      }
+    {
+      locrecent->record[cnt].offset = file_offsets[cnt];
+      locrecent->record[cnt].len = data[cnt].size;
+    }
 
   return namehashent->locrec_offset;
 }
@@ -1292,7 +1399,9 @@ show_archive_content (int verbose)
 	  locrec = (struct locrecent *) ((char *) ah.addr
 					 + names[cnt].locrec_offset);
 	  for (idx = 0; idx < __LC_LAST; ++idx)
-	    if (idx != LC_ALL)
+	    if (locrec->record[LC_ALL].offset != 0
+		? (idx == LC_ALL || idx == LC_CTYPE || idx == LC_COLLATE)
+		: idx != LC_ALL)
 	      {
 		struct dataent *data, dataent;
 
@@ -1318,13 +1427,19 @@ show_archive_content (int verbose)
 	      {
 		struct dataent *data, dataent;
 
-		dataent.file_offset = locrec->record[idx].offset;
+		if (idx != LC_CTYPE && idx != LC_COLLATE
+		    && locrec->record[LC_ALL].offset)
+		  dataent.file_offset = locrec->record[LC_ALL].offset;
+		else
+		  dataent.file_offset = locrec->record[idx].offset;
 		data = (struct dataent *) bsearch (&dataent, files, sumused,
 						   sizeof (struct dataent),
 						   dataentcmp);
-		printf ("%6d %7x %3d ",
+		printf ("%6d %7x %3d%c ",
 			locrec->record[idx].len, locrec->record[idx].offset,
-			data->nlink);
+			data->nlink,
+			dataent.file_offset == locrec->record[LC_ALL].offset
+			? '+' : ' ');
 		for (i = 0; i < 16; i += 4)
 		    printf ("%02x%02x%02x%02x",
 			    data->sum[i], data->sum[i + 1],
