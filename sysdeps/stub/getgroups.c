@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -21,6 +21,7 @@ Cambridge, MA 02139, USA.  */
 #include <stddef.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <limits.h>
 
 
 /* If SIZE is zero, return the number of supplementary groups
@@ -29,21 +30,20 @@ Cambridge, MA 02139, USA.  */
 int
 DEFUN(__getgroups, (size, list), int size AND gid_t *list)
 {
-  if (list == NULL)
-    {
-      errno = EINVAL;
-      return -1;
-    }
+#if defined (NGROUPS_MAX) && NGROUPS_MAX == 0
+  /* The system has no supplementary groups.  */
+  return 0;
+#endif
 
   errno = ENOSYS;
   return -1;
 }
 
 
-#ifdef	 HAVE_GNU_LD
+#if defined (HAVE_GNU_LD) && !(defined (NGROUPS_MAX) && NGROUPS_MAX == 0)
 
 #include <gnu-stabs.h>
 
-stub_warning(__getgroups);
+stub_warning (__getgroups);
 
 #endif	/* GNU stabs.  */
