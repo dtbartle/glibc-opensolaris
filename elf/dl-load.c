@@ -408,7 +408,7 @@ fillin_rpath (char *rpath, struct r_search_path_elem **result, const char *sep,
 	{
 	  size_t cnt;
 	  enum r_dir_status init_val;
-	  size_t where_len = strlen (where) + 1;
+	  size_t where_len = where ? strlen (where) + 1 : 0;
 
 	  /* It's a new directory.  Create an entry and add it.  */
 	  dirp = (struct r_search_path_elem *)
@@ -432,9 +432,12 @@ fillin_rpath (char *rpath, struct r_search_path_elem **result, const char *sep,
 	    dirp->status[cnt] = init_val;
 
 	  dirp->what = what;
-	  dirp->where = memcpy ((char *) dirp + sizeof (*dirp)
-				+ ncapstr * sizeof (enum r_dir_status),
-				where, where_len);
+	  if (__builtin_expect (where != NULL, 1))
+	    dirp->where = memcpy ((char *) dirp + sizeof (*dirp)
+				  + ncapstr * sizeof (enum r_dir_status),
+				  where, where_len);
+	  else
+	    dirp->where = NULL;
 
 	  dirp->next = all_dirs;
 	  all_dirs = dirp;
