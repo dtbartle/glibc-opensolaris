@@ -28,7 +28,6 @@
       typedef unsigned char host_addr_t [16];
       host_addr_t *host_addr;
       typedef char *host_addr_list_t [2];
-      host_addr_list_t *host_aliases;
       host_addr_list_t *h_addr_ptrs;
       size_t size_needed;
       int addr_size;
@@ -53,8 +52,7 @@
 	}
 
       size_needed = (sizeof (*host_addr)
-		     + sizeof (*host_aliases) + sizeof (*h_addr_ptrs)
-		     + strlen (name) + 1);
+		     + sizeof (*h_addr_ptrs) + strlen (name) + 1);
 
 #ifdef HAVE_LOOKUP_BUFFER
       if (buflen < size_needed)
@@ -89,10 +87,8 @@
       memset (buffer, 0, size_needed);
 
       host_addr = (host_addr_t *) buffer;
-      host_aliases = (host_addr_list_t *)
-	((char *) host_addr + sizeof (*host_addr));
       h_addr_ptrs = (host_addr_list_t *)
-	((char *) host_aliases + sizeof (*host_aliases));
+	((char *) host_addr + sizeof (*host_addr));
       hostname = (char *) h_addr_ptrs + sizeof (*h_addr_ptrs);
 
       if (isdigit (name[0]))
@@ -119,7 +115,7 @@
 		    }
 		  if (! ok)
 		    {
-		      __set_h_errno (HOST_NOT_FOUND);
+		      *h_errnop = HOST_NOT_FOUND;
 #ifndef HAVE_LOOKUP_BUFFER
 		      result = (struct hostent *) NULL;
 #endif
@@ -127,8 +123,7 @@
 		    }
 
 		  resbuf.h_name = strcpy (hostname, name);
-		  resbuf.h_aliases = *host_aliases;
-		  (*host_aliases)[0] = NULL;
+		  resbuf.h_aliases = NULL;
 		  (*h_addr_ptrs)[0] = (char *)host_addr;
 		  (*h_addr_ptrs)[1] = (char *)0;
 		  resbuf.h_addr_list = *h_addr_ptrs;
@@ -156,7 +151,7 @@
 		      resbuf.h_addrtype = af;
 		      resbuf.h_length = addr_size;
 		    }
-		  __set_h_errno (NETDB_SUCCESS);
+		  *h_errnop = NETDB_SUCCESS;
 #ifdef HAVE_LOOKUP_BUFFER
 		  status = NSS_STATUS_SUCCESS;
 #else
@@ -177,7 +172,6 @@
 	  typedef unsigned char host_addr_t [16];
 	  host_addr_t *host_addr;
 	  typedef char *host_addr_list_t [2];
-	  host_addr_list_t *host_aliases;
 	  host_addr_list_t *h_addr_ptrs;
 	  size_t size_needed;
 	  int addr_size;
@@ -202,8 +196,7 @@
 	    }
 
 	  size_needed = (sizeof (*host_addr)
-			 + sizeof (*host_aliases) + sizeof (*h_addr_ptrs)
-			 + strlen (name) + 1);
+			 + sizeof (*h_addr_ptrs) + strlen (name) + 1);
 
 #ifdef HAVE_LOOKUP_BUFFER
 	  if (buflen < size_needed)
@@ -235,10 +228,8 @@
 	  memset (buffer, 0, size_needed);
 
 	  host_addr = (host_addr_t *) buffer;
-	  host_aliases = (host_addr_list_t *)
-	    ((char *) host_addr + sizeof (*host_addr));
 	  h_addr_ptrs = (host_addr_list_t *)
-	    ((char *) host_aliases + sizeof (*host_aliases));
+	    ((char *) host_addr + sizeof (*host_addr));
 	  hostname = (char *) h_addr_ptrs + sizeof (*h_addr_ptrs);
 
 	  for (cp = name;; ++cp)
@@ -252,7 +243,7 @@
 		     hostent as if we'd actually done a lookup.  */
 		  if (inet_pton (af, name, host_addr) <= 0)
 		    {
-		      __set_h_errno (HOST_NOT_FOUND);
+		      *h_errnop = HOST_NOT_FOUND;
 #ifndef HAVE_LOOKUP_BUFFER
 		      result = (struct hostent *) NULL;
 #endif
@@ -260,14 +251,13 @@
 		    }
 
 		  resbuf.h_name = strcpy (hostname, name);
-		  resbuf.h_aliases = *host_aliases;
-		  (*host_aliases)[0] = NULL;
+		  resbuf.h_aliases = NULL;
 		  (*h_addr_ptrs)[0] = (char *) host_addr;
 		  (*h_addr_ptrs)[1] = (char *) 0;
 		  resbuf.h_addr_list = *h_addr_ptrs;
 		  resbuf.h_addrtype = af;
 		  resbuf.h_length = addr_size;
-		  __set_h_errno (NETDB_SUCCESS);
+		  *h_errnop = NETDB_SUCCESS;
 #ifdef HAVE_LOOKUP_BUFFER
 		  status = NSS_STATUS_SUCCESS;
 #else
