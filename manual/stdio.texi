@@ -1057,6 +1057,11 @@ which can be parsed by the @code{strtoul} function (@pxref{Parsing of
 Integers}) and @code{scanf} with the @samp{%i} conversion
 (@pxref{Numeric Input Conversions}).
 
+@item @samp{'}
+Separate the digits into groups as specified by the locale specified for
+the @code{LC_NUMERIC} category; @pxref{General Numeric}.  This flag is a
+GNU extension.
+
 @item @samp{0}
 Pad the field with zeros instead of spaces.  The zeros are placed after
 any indication of sign or base.  This flag is ignored if the @samp{-}
@@ -1189,6 +1194,11 @@ Specifies that the result should always include a decimal point, even
 if no digits follow it.  For the @samp{%g} and @samp{%G} conversions,
 this also forces trailing zeros after the decimal point to be left
 in place where they would otherwise be removed.
+
+@item @samp{'}
+Separate the digits of the integer part of the result into groups as
+specified by the locale specified for the @code{LC_NUMERIC} category;
+@pxref{General Numeric}.  This flag is a GNU extension.
 
 @item @samp{0}
 Pad the field with zeros instead of spaces; the zeros are placed
@@ -2014,6 +2024,9 @@ This is a boolean that is true if the @samp{-} flag was specified.
 
 @item unsigned int showsign
 This is a boolean that is true if the @samp{+} flag was specified.
+
+@item unsigned int group
+This is a boolean that is true if the @samp{'} flag was specified.
 
 @item char pad
 This is the character to use for padding the output to the minimum field
