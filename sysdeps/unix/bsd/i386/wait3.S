@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -40,3 +40,5 @@ ENTRY (__wait3)
 	je done			/* Yup; return.  */
 	mov r1, 0(scratch)	/* Non-nil; store the status in it.  */
 done:	ret
+
+weak_alias (__wait3, wait3)
