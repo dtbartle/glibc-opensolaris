@@ -45,7 +45,8 @@ vpath %.h programs
 vpath %.gperf programs
 
 localedef-modules	:= $(categories:%=ld-%) charmap charset linereader \
-			   locfile stringtrans locale-spec
+			   locfile stringtrans
+locale-modules		:= locale-spec
 lib-modules		:= simple-hash xmalloc xstrdup
 
 
