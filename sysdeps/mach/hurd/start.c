@@ -46,7 +46,8 @@ unsigned long int *__hurd_sigthread_variables;
 vm_address_t _hurd_stack_base;
 vm_size_t _hurd_stack_size;
 
-char **__environ;
+/* This must be initialized; we cannot have a weak alias into bss.  */
+char **__environ = NULL;
 weak_alias (__environ, environ)
 
 /* Things that want to be run before _hurd_init or much anything else.
