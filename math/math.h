@@ -1,5 +1,5 @@
 /* Declarations for math functions.
-   Copyright (C) 1991,92,93,95,96,97,98,99 Free Software Foundation, Inc.
+   Copyright (C) 1991,92,93,95,96,97,98,99,2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -228,6 +228,10 @@ enum
       : sizeof (x) == sizeof (double)					      \
       ? __isinf (x) : __isinfl (x))
 # endif
+
+/* Bitmasks for the math_errhandling macro.  */
+# define MATH_ERRNO	1	/* errno set by math functions.  */
+# define MATH_ERREXCEPT	2	/* Exceptions raised by math functions.  */
 
 #endif /* Use ISO C99.  */
 
