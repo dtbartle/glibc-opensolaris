@@ -30,11 +30,11 @@
 
 #include <sys/types.h>
 
-#if defined __GNUC__ && !defined C_ALLOCA
+#ifdef __GNUC__
 # define alloca __builtin_alloca
 # define HAVE_ALLOCA 1
 #else
-# if (defined HAVE_ALLOCA_H || defined _LIBC) && !defined C_ALLOCA
+# if defined HAVE_ALLOCA_H || defined _LIBC
 #  include <alloca.h>
 # else
 #  ifdef _AIX
@@ -322,7 +322,9 @@ typedef unsigned char transmem_block_t;
 #endif
 
 /* Lock variable to protect the global data in the gettext implementation.  */
+#ifdef _LIBC
 __libc_rwlock_define_initialized (, _nl_state_lock)
+#endif
 
 /* Checking whether the binaries runs SUID must be done and glibc provides
    easier methods therefore we make a difference here.  */
