@@ -1,0 +1,3 @@
+*.dvi* *.info* *.c.texi
+*.toc *.aux *.log
+*.cp *.cps *.fn *.fns *.vr *.vrs *.tp *.tps *.ky *.kys *.pg *.pgs
