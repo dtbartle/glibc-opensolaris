@@ -42,27 +42,30 @@ Cambridge, MA 02139, USA.  */
 
 #if PAGE_COPY_THRESHOLD
 
-#define PAGE_COPY_FWD_MAYBE(dstp, srcp, nbytes_left, nbytes)
-  do
-    {
-      if ((nbytes) >= PAGE_COPY_THRESHOLD &&
-	  (dstp) % PAGE_SIZE == (srcp) % PAGE_SIZE)
-	{
-	  /* The amount to copy is past the threshold for copying
-	     pages virtually with kernel VM operations, and the
-	     source and destination addresses have the same alignment.  */
-	  size_t nbytes_before = PAGE_SIZE - (dstp) % PAGE_SIZE;
-	  if (nbytes_before != 0)
-	    {
-	      /* First copy the words before the first page boundary.  */
-	      WORD_COPY_FWD (dstp, srcp, nbytes_left, nbytes_before);
-	      nbytes_before -= nbytes_left;
-	      nbytes -= nbytes_before;
-	    }
-	  if (nbytes_before == 0)
-	    PAGE_COPY_FWD (dstp, srcp, nbytes_left, nbytes);
-	}
+#define PAGE_COPY_FWD_MAYBE(dstp, srcp, nbytes_left, nbytes)		      \
+  do									      \
+    {									      \
+      if ((nbytes) >= PAGE_COPY_THRESHOLD &&				      \
+	  PAGE_OFFSET (dstp) == PAGE_OFFSET (srcp))			      \
+	{								      \
+	  /* The amount to copy is past the threshold for copying	      \
+	     pages virtually with kernel VM operations, and the		      \
+	     source and destination addresses have the same alignment.  */    \
+	  size_t nbytes_before = PAGE_OFFSET (PAGE_SIZE - PAGE_OFFSET (dstp));\
+	  if (nbytes_before != 0)					      \
+	    {								      \
+	      /* First copy the words before the first page boundary.  */     \
+	      WORD_COPY_FWD (dstp, srcp, nbytes_left, nbytes_before);	      \
+	      nbytes_before -= nbytes_left;				      \
+	      nbytes -= nbytes_before;					      \
+	    }								      \
+	  if (nbytes_before == 0)					      \
+	    PAGE_COPY_FWD (dstp, srcp, nbytes_left, nbytes);		      \
+	}								      \
     } while (0)
+
+/* The page size is always a power of two, so we can avoid modulo division.  */
+#define PAGE_OFFSET(n)	((n) & (PAGE_SIZE - 1))
 
 #else
 
