@@ -195,10 +195,9 @@ __pthread_cond_timedwait:
 	je	15f
 
 7:	cmpl	%ecx, %edx
-	ja	9f
-	jb	15f
+	jne	9f
 	cmp	%eax, %edi
-	ja	9f
+	jne	9f
 
 15:	cmpl	$-ETIMEDOUT, %esi
 	jne	8b
