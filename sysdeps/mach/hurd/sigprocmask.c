@@ -76,7 +76,7 @@ DEFUN(__sigprocmask, (how, set, oset),
   if (pending)
     /* Send a message to the signal thread so it
        will wake up and check for pending signals.  */
-    __sig_post (_hurd_msgport, 0, __mach_task_self ());
+    __msg_sig_post (_hurd_msgport, 0, __mach_task_self ());
 
   return 0;
 }
