@@ -885,6 +885,7 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 	int prot;
       } loadcmds[l->l_phnum], *c;
     size_t nloadcmds = 0;
+    bool has_holes = false;
 
     /* The struct is initialized to zero so this is not necessary:
     l->l_ld = 0;
@@ -929,6 +930,11 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 	  c->dataend = ph->p_vaddr + ph->p_filesz;
 	  c->allocend = ph->p_vaddr + ph->p_memsz;
 	  c->mapoff = ph->p_offset & ~(ph->p_align - 1);
+
+	  /* Determine whether there is a gap between the last segment
+	     and this one.  */
+	  if (nloadcmds > 1 && c[-1].mapend != c->mapstart)
+	    has_holes = true;
 
 	  /* Optimize a common case.  */
 #if (PF_R | PF_W | PF_X) == 7 && (PROT_READ | PROT_WRITE | PROT_EXEC) == 7
@@ -1059,14 +1065,15 @@ cannot allocate TLS data structures for initial thread");
 	l->l_map_end = l->l_map_start + maplength;
 	l->l_addr = l->l_map_start - c->mapstart;
 
-	/* Change protection on the excess portion to disallow all access;
-	   the portions we do not remap later will be inaccessible as if
-	   unallocated.  Then jump into the normal segment-mapping loop to
-	   handle the portion of the segment past the end of the file
-	   mapping.  */
-	__mprotect ((caddr_t) (l->l_addr + c->mapend),
-		    loadcmds[nloadcmds - 1].allocend - c->mapend,
-		    PROT_NONE);
+	if (has_holes)
+	  /* Change protection on the excess portion to disallow all access;
+	     the portions we do not remap later will be inaccessible as if
+	     unallocated.  Then jump into the normal segment-mapping loop to
+	     handle the portion of the segment past the end of the file
+	     mapping.  */
+	  __mprotect ((caddr_t) (l->l_addr + c->mapend),
+		      loadcmds[nloadcmds - 1].allocend - c->mapend,
+		      PROT_NONE);
 
 	goto postmap;
       }
@@ -1126,23 +1133,18 @@ cannot allocate TLS data structures for initial thread");
 	    if (zeropage > zero)
 	      {
 		/* Zero the final part of the last page of the segment.  */
-		if ((c->prot & PROT_WRITE) == 0)
+		if (__builtin_expect ((c->prot & PROT_WRITE) == 0, 0))
 		  {
 		    /* Dag nab it.  */
-		    if (__builtin_expect (__mprotect ((caddr_t)
-						      (zero
-						       & ~(GL(dl_pagesize)
-							   - 1)),
-						      GL(dl_pagesize),
-						      c->prot|PROT_WRITE) < 0,
-					  0))
+		    if (__mprotect ((caddr_t) (zero & ~(GL(dl_pagesize) - 1)),
+				    GL(dl_pagesize), c->prot|PROT_WRITE) < 0)
 		      {
 			errstring = N_("cannot change memory protections");
 			goto call_lose_errno;
 		      }
 		  }
 		memset ((void *) zero, '\0', zeropage - zero);
-		if ((c->prot & PROT_WRITE) == 0)
+		if (__builtin_expect ((c->prot & PROT_WRITE) == 0, 0))
 		  __mprotect ((caddr_t) (zero & ~(GL(dl_pagesize) - 1)),
 			      GL(dl_pagesize), c->prot);
 	      }
