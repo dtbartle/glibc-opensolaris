@@ -21,6 +21,9 @@
 
 #include <linux/posix_types.h>
 
+#include <sys/syscall.h>
+#ifdef __NR_getresgid
+
 extern int __syscall_getresgid (__kernel_gid_t *rgid, __kernel_gid_t *egid,
 				__kernel_gid_t *sgid);
 
@@ -37,3 +40,6 @@ getresgid (gid_t *rgid, gid_t *egid, gid_t *sgid)
   *sgid = (gid_t) k_sgid;
   return 0;
 }
+#else
+# include <sysdeps/generic/getresgid.c>
+#endif
