@@ -460,13 +460,15 @@ command line which failed and run the test from the subdirectory for this
 test in the sources.
 
 There are some failures which are not directly related to the GNU libc:
-- Some compilers produce buggy code.  The egcs 1.1 release should be ok. 
-  gcc 2.8.1 might cause some failures, and gcc 2.7.2.x is so buggy, that
+- Some compilers produce buggy code.  No compiler gets single precision
+  complex numbers correct on Alpha.  Otherwise, the egcs 1.1 release should be
+  ok; gcc 2.8.1 might cause some failures; gcc 2.7.2.x is so buggy that
   explicit checks have been used so that you can't build with it.
 - The kernel might have bugs.  For example on Linux/Alpha 2.0.34 the
   floating point handling has quite a number of bugs and therefore most of
   the test cases in the math subdirectory will fail.  Linux 2.2 has
-  fixes for the floating point support on Alpha.
+  fixes for the floating point support on Alpha.  The Linux/SPARC kernel has
+  also some bugs in the FPU emulation code (as of Linux 2.2.0).
 
 
 1.17.	What is symbol versioning good for?  Do I need it?
