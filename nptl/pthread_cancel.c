@@ -61,8 +61,8 @@ pthread_cancel (th)
 
 	  int val = INTERNAL_SYSCALL (tkill, err, 2, pd->tid, SIGCANCEL);
 
-	  result = (INTERNAL_SYSCALL_ERROR_P (val, err)
-		    ? INTERNAL_SYSCALL_ERRNO (val, err) : 0);
+	  if (INTERNAL_SYSCALL_ERROR_P (val, err))
+	    result = INTERNAL_SYSCALL_ERRNO (val, err);
 
 	  break;
 	}
