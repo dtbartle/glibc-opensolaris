@@ -72,6 +72,10 @@ print_entry (const char *lib, int flag, unsigned long int hwcap, const char *key
     case FLAG_SPARC_LIB64:
       fputs (",64bit", stdout);
 #endif
+#if defined __ia64__ || defined __i386__
+    case FLAG_IA64_LIB64:
+      fputs (",64bit", stdout);
+#endif
     case 0:
       break;
     default:
