@@ -249,6 +249,7 @@ __initstate_r (seed, arg_state, n, buf)
   return 0;
 
  fail:
+  __set_errno (EINVAL);
   return -1;
 }
 
@@ -300,7 +301,7 @@ __setstate_r (arg_state, buf)
     }
   buf->state = &new_state[1];
   /* Set end_ptr too.  */
-  buf->end_ptr = &new_state[degree];
+  buf->end_ptr = &new_state[1 + degree];
 
   return 0;
 
@@ -369,6 +370,7 @@ __random_r (buf, result)
   return 0;
 
  fail:
+  __set_errno (EINVAL);
   return -1;
 }
 
