@@ -1,4 +1,4 @@
-/* Copyright (C) 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -37,13 +37,13 @@ DEFUN(closedir, (dirp), DIR *dirp)
       return -1;
     }
 
-  if ((err = __vm_deallocate (__mach_task_self (),
-			      (vm_address_t) dirp->__data, dirp->__allocation))
-      || (err = __mach_port_deallocate (__mach_task_self (), dirp->__port)))
-    {
-      errno = err;
-      return -1;
-    }
+  if (err = __vm_deallocate (__mach_task_self (),
+			     (vm_address_t) dirp->__data, dirp->__allocation))
+    return __hurd_fail (err);
+  dirp->__data = NULL;
+
+  if (err = _hurd_fd_close (dirp->__fd))
+    return __hurd_fail (err);
 
   free (dirp);
 
