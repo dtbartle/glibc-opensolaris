@@ -37,6 +37,8 @@ do_test (void)
   FILE *fp;
   int res = 0;
 
+  add_temp_file (outname);
+
   fp = fopen (outname, "w+");
   if (fp == NULL)
     error (EXIT_FAILURE, errno, "cannot open temporary file");
