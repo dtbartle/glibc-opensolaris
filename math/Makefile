@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -26,9 +26,8 @@ headers	:= math.h __math.h huge_val.h nan.h
 
 routines := acos asin atan cos sin tan cosh sinh tanh exp fabs ldexp	\
 	    log log10 floor sqrt fmod frexp pow atan2 ceil modf		\
-	    isinf isnan finite infnan copysign scalb drem logb		\
-	    __isinf __isnan __finite __infnan __copysign __scalb __drem __logb\
-	    __rint rint hypot cabs cbrt __expm1 expm1 log1p acosh asinh atanh 
+	    isinf isnan finite infnan copysign drem logb		\
+	    rint hypot cabs cbrt expm1 log1p acosh asinh atanh 
 tests := # test-math
 install-lib := libm.a
 
