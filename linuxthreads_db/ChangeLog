@@ -1,5 +1,7 @@
 1999-11-03  Ulrich Drepper  <drepper@cygnus.com>
 
+	* Versions: New file.
+
 	* td_thr_get_info.c (td_thr_get_info): Initialize ti_traceme.
 
 1999-11-02  Ulrich Drepper  <drepper@cygnus.com>
