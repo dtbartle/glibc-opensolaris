@@ -339,10 +339,10 @@ again:
 		 * reading an NFS mounted file system, can't read files that
 		 * are protected read/write owner only.
 		 */
-		uid = geteuid();
-		(void)seteuid(pwd->pw_uid);
-		hostf = fopen(pbuf, "r");
-		(void)seteuid(uid);
+		if (euidaccess (pbuf, R_OK) != 0)
+		  hostf = NULL;
+		else
+		  hostf = fopen(pbuf, "r");
 
 		if (hostf == NULL)
 			return (-1);
