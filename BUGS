@@ -1,7 +1,7 @@
 	    List of known bugs (certainly very incomplete)
 	    ----------------------------------------------
 
-Time-stamp: <1997-03-20T02:33:37+0100 drepper>
+Time-stamp: <1997-03-21T22:24:37+0100 drepper>
 
 This following list contains those bugs which I'm aware of.  Please
 make sure that bugs you report are not listed here.  I you can fix one
@@ -9,8 +9,6 @@ of these bugs I'll certainly be glad to receive a patch.
 
 Severity: [  *] to [***]
 
-
-[***]  Profiling currently does not work with programs using NSS.
 
 [***]  At least on Linux/Alpha, there seem to be problems with dynamically
        loading NSS modules in certain situations.
