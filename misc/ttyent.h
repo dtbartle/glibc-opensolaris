@@ -42,6 +42,8 @@
 #define	_TTYS_ON	"on"
 #define	_TTYS_SECURE	"secure"
 #define	_TTYS_WINDOW	"window"
+#define _TTYS_TRUSTED	"trusted"
+#define _TTYS_CONSOLE	"console"
 
 struct ttyent {
 	char	*ty_name;	/* terminal device name */
@@ -49,6 +51,8 @@ struct ttyent {
 	char	*ty_type;	/* terminal type for termcap */
 #define	TTY_ON		0x01	/* enable logins (start ty_getty program) */
 #define	TTY_SECURE	0x02	/* allow uid of 0 to login */
+#define	TTY_TRUSTED	0x04	/* allow login without password */
+#define	TTY_CONSOLE	0x08	/* allow uid of 0 to login without password */
 	int	ty_status;	/* status flags */
 	char 	*ty_window;	/* command to start up window manager */
 	char	*ty_comment;	/* comment field */
