@@ -156,7 +156,7 @@ pthread_rwlock_timedrdlock:
 	callq	__lll_mutex_lock_wait
 	jmp	2b
 
-14:	cmpq	%gs:16, %rax
+14:	cmpq	%fs:SELF, %rax
 	jne	3b
 	movq	$EDEADLK, %rcx
 	jmp	9b

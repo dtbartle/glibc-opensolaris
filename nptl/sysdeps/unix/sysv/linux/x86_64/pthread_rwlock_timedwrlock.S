@@ -131,7 +131,7 @@ pthread_rwlock_timedwrlock:
 
 
 5:	xorq	%rcx, %rcx
-	movq	%gs:16, %rax
+	movq	%fs:SELF, %rax
 	movq	%rax, WRITER(%r8)
 9:	LOCK
 #if MUTEX == 0
@@ -153,7 +153,7 @@ pthread_rwlock_timedwrlock:
 	callq	__lll_mutex_lock_wait
 	jmp	2b
 
-14:	cmpq	%gs:16, %rax
+14:	cmpq	%fs:SELF, %rax
 	jne	3b
 20:	movq	$EDEADLK, %rcx
 	jmp	9b

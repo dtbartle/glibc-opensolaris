@@ -119,7 +119,7 @@ __pthread_rwlock_rdlock:
 #endif
 	jmp	2b
 
-14:	cmpq	%gs:16, %rax
+14:	cmpq	%fs:SELF, %rax
 	jne	3b
 	/* Deadlock detected.  */
 	movq	$EDEADLK, %rcx
