@@ -84,7 +84,7 @@ static double csloww2(double x, double dx, double orig, int n);
 /* An ultimate sin routine. Given an IEEE double machine number x   */
 /* it computes the correctly rounded (to nearest) value of sin(x)  */
 /*******************************************************************/
-double sin(double x){
+double __sin(double x){
 	double xx,res,t,cor,y,s,c,sn,ssn,cs,ccs,xn,a,da,db,eps,xn1,xn2;
 #if 0
 	double w[2];
@@ -337,7 +337,7 @@ double sin(double x){
 /* it computes the correctly rounded (to nearest) value of cos(x)  */
 /*******************************************************************/
 
-double cos(double x)
+double __cos(double x)
 {
   double y,xx,res,t,cor,s,c,sn,ssn,cs,ccs,xn,a,da,db,eps,xn1,xn2;
   mynumber u,v;
@@ -1116,7 +1116,12 @@ static double csloww2(double x, double dx, double orig, int n) {
   }
 }
 
+weak_alias (__cos, cos)
+weak_alias (__sin, sin)
+
 #ifdef NO_LONG_DOUBLE
-weak_alias (sin, sinl)
-weak_alias (cos, cosl)
+strong_alias (__sin, __sinl)
+weak_alias (__sin, sinl)
+strong_alias (__cos, __cosl)
+weak_alias (__cos, cosl)
 #endif
