@@ -60,7 +60,7 @@ __pthread_getspecific (key)
       uintptr_t seq = data->seq;
 
       if (seq != __pthread_keys[key].seq)
-	result = data = NULL;
+	result = data->data = NULL;
     }
 
   return result;
