@@ -119,7 +119,7 @@ getsourcefilter (int s, uint32_t interface, struct sockaddr *group,
       return -1;
     }
 
-  int result = __getsockopt (s, SOL_IP, MCAST_MSFILTER, gf, &needed);
+  int result = __getsockopt (s, sol, MCAST_MSFILTER, gf, &needed);
 
   /* If successful, copy the results to the places the caller wants
      them in.  */
