@@ -28,6 +28,10 @@ extra-libs		= libcidn
 extra-libs-others	= $(extra-libs)
 
 libcidn-routines := punycode toutf8 nfkc stringprep rfc3454 profiles idna
+
+
+include ../Makeconfig
+
 libcidn-inhibit-o = $(filter-out .os,$(object-suffixes))
 
 include ../Rules
