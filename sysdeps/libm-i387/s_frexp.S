@@ -39,14 +39,13 @@ two54:	.byte 0, 0, 0, 0, 0, 0, 0x50, 0x43
 
 	.text
 ENTRY(__frexp)
-	movl	4(%esp), %edx
+	movl	4(%esp), %ecx
 	movl	8(%esp), %eax
-	xorl	%ecx, %ecx
-	orl	%eax, %edx
-	testl	%edx, %edx
-	jz	1f
 	movl	%eax, %edx
 	andl	$0x7fffffff, %eax
+	orl	%eax, %ecx
+	jz	1f
+	xorl	%ecx, %ecx
 	cmpl	$0x7ff00000, %eax
 	jae	1f
 

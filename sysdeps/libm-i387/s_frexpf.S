@@ -41,10 +41,9 @@ two25:	.byte 0, 0, 0, 0x4c
 ENTRY(__frexpf)
 	movl	4(%esp), %eax
 	xorl	%ecx, %ecx
-	testl	%eax, %eax
-	jz	1f
 	movl	%eax, %edx
 	andl	$0x7fffffff, %eax
+	jz	1f
 	cmpl	$0x7f800000, %eax
 	jae	1f
 
@@ -57,7 +56,7 @@ ENTRY(__frexpf)
 3:	popl	%edx
 	addl	$_GLOBAL_OFFSET_TABLE_+[.-3b], %edx
 #endif
-	fmull	MO(two25)
+	fmuls	MO(two25)
 	movl	$-25, %ecx
 	fstps	4(%esp)
 	movl	4(%esp), %eax

@@ -39,18 +39,16 @@ two64:	.byte 0, 0, 0, 0, 0, 0, 0xf0, 0x43
 
 	.text
 ENTRY(__frexpl)
-	movl	4(%esp), %edx
+	movl	4(%esp), %ecx
 	movl	12(%esp), %eax
-	orl	8(%esp), %edx
-	andl	$0xffff, %eax
-	xorl	%ecx, %ecx
-	orl	%eax, %edx
-	testl	%edx, %edx
-	jz	1f
+	orl	8(%esp), %ecx
 	movl	%eax, %edx
 	andl	$0x7fff, %eax
+	orl	%eax, %ecx
+	jz	1f
+	xorl	%ecx, %ecx
 	cmpl	$0x7fff, %eax
-	jae	1f
+	je	1f
 
 	cmpl	$0, %eax
 	je	2f
