@@ -31,7 +31,7 @@ extern nis_error __do_niscall (__const nis_server *server, int server_len,
 extern AUTH *authdes_pk_create (const char *, const netobj *, u_int,
 				struct sockaddr *, des_block *);
 #endif
-extern nis_name *__nis_expandname (__const nis_name);
+extern nis_name *__nis_expandname (const char *);
 
 __END_DECLS
 
