@@ -35,9 +35,10 @@ Cambridge, MA 02139, USA.  */
 #include <hurd/hurd_types.h>
 #include <signal.h>
 #include <errno.h>
+#include <hurd/msg.h>
 
 #include <cthreads.h>		/* For `struct mutex'.  */
-#include <lock-intern.h>
+#include <spin-lock.h>
 #include <hurd/threadvar.h>	/* We cache sigstate in a threadvar.  */
 
 
@@ -45,18 +46,15 @@ Cambridge, MA 02139, USA.  */
 
 struct hurd_sigstate
   {
-    /* This mutex locks most of the rest of this structure.  It also acts
-       as a critical section lock for the thread (see below).  */
-    struct mutex lock;
-    int critical_section;
+    spin_lock_t lock;		/* Locks most of the rest of the structure.  */
 
-    /* XXX This should perhaps instead be something that identifies
-       cthreads multiplexed on a single kernel thread.  */
+    int critical_section;	/* Nonzero if in critical section.  */
+
     thread_t thread;
     struct hurd_sigstate *next; /* Linked-list of thread sigstates.  */
 
-    sigset_t blocked;
-    sigset_t pending;
+    sigset_t blocked;		/* What signals are blocked.  */
+    sigset_t pending;		/* Pending signals, possibly blocked.  */
     struct sigaction actions[NSIG];
     struct sigaltstack sigaltstack;
     struct
@@ -71,8 +69,9 @@ struct hurd_sigstate
        the signal thread sends an empty message to it.  */
     mach_port_t suspended;
 
-    /* Not locked.  Used only by this thread, or by the signal thread with
-       this thread suspended.  */
+    /* The following members are not locked.  They are used only by this
+       thread, or by the signal thread with this thread suspended.  */
+
     volatile mach_port_t intr_port; /* Port interruptible RPC was sent on.  */
 
     /* If this is not null, the thread is in sigreturn awaiting delivery of
@@ -125,12 +124,7 @@ _hurd_self_sigstate (void)
    A critical section is a section of code which cannot safely be interrupted
    to run a signal handler; for example, code that holds any lock cannot be
    interrupted lest the signal handler try to take the same lock and
-   deadlock result.  Before entering a critical section, a thread must make
-   sure it holds its own sigstate lock.  The thread sets the
-   `critical_section' flag (which is not itself locked) to indicate the
-   lock is already held by the same thread.  Subroutines which contain
-   critical sections of their own then test this flag; if it is set, they
-   don't try to acquire the sigstate lock again, to avoid deadlock.  */
+   deadlock result.  */
 
 _EXTERN_INLINE void *
 _hurd_critical_section_lock (void)
@@ -145,18 +139,19 @@ _hurd_critical_section_lock (void)
        way; this locks the sigstate lock.  */
     ss = *location = _hurd_thread_sigstate (__mach_thread_self ());
   else
+    __spin_lock (&ss->lock);
+
+  if (ss->critical_section)
     {
-      if (ss->critical_section)
-	/* Some caller higher up has already acquired the critical section
-	   lock.  We need do nothing.  The null pointer we return will
-	   make _hurd_critical_section_unlock (below) be a no-op.  */
-	return NULL;
-      /* Acquire the sigstate lock to prevent any signal from arriving.  */
-      __mutex_lock (&ss->lock);
+      /* We are already in a critical section, so do nothing.  */
+      __spin_unlock (&ss->lock);
+      return NULL;
     }
-  /* Set the critical section flag so no later call will try to
-     take the sigstate lock while we already have it locked.  */
+
+  /* Set the critical section flag so no signal handler will run.  */
   ss->critical_section = 1;
+  __spin_unlock (&ss->lock);
+
   /* Return our sigstate pointer; this will be passed to
      _hurd_critical_section_unlock to clear the critical section flag. */
   return ss;
@@ -171,10 +166,18 @@ _hurd_critical_section_unlock (void *our_lock)
   else
     {
       /* It was us who acquired the critical section lock.  Clear the
-	 critical section flag and unlock the sigstate lock.  */
+	 critical section flag.  */
       struct hurd_sigstate *ss = our_lock;
+      sigset_t pending;
+      __spin_lock (&ss->lock);
       ss->critical_section = 0;
-      __mutex_unlock (&ss->lock);
+      pending = ss->pending & ~ss->blocked;
+      __spin_unlock (&ss->lock);
+      if (pending)
+	/* There are unblocked signals pending, which weren't
+	   delivered because we were in the critical section.
+	   Tell the signal thread to deliver them now.  */
+	__msg_sig_post (_hurd_msgport, 0, __mach_task_self ());
     }
 }
 
@@ -229,8 +232,7 @@ extern void _hurd_exception2signal (int exception, int code, int subcode,
    SIGCODE.  If the process is traced, this will in fact stop with a SIGNO
    as the stop signal unless UNTRACED is nonzero.  When the signal can be
    considered delivered, sends a sig_post reply message on REPLY_PORT
-   indicating success.  SS->lock is held on entry, and released before
-   return.  */
+   indicating success.  SS is not locked.  */
 
 extern void _hurd_internal_post_signal (struct hurd_sigstate *ss,
 					int signo, long int sigcode, int error,
