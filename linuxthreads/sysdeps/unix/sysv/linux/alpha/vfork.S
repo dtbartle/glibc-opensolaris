@@ -26,26 +26,35 @@ __LABEL(__vfork)
 	ldgp	gp, 0(pv)
 	.prologue 1
 	PSEUDO_PROF
+
 	SINGLE_THREAD_P(t0)
 #ifdef SHARED
 	bne	t0, HIDDEN_JUMPTARGET (__fork) !samegp
 #else
-	bne	t0, $hidden_fork
+	bne	t0, $do_fork
 #endif
+
 	lda	v0, SYS_ify(vfork)
 	call_pal PAL_callsys
-#ifdef SHARED
-	bne	a3, __syscall_error !samegp
-#else
-	bne	a3, $syscall_error
-#endif
+	bne	a3, SYSCALL_ERROR_LABEL
 	ret
+
 #ifndef SHARED
-$hidden_fork:
-	jmp	zero, HIDDEN_JUMPTARGET (__fork)
+	/* Can't tail-call due to possible mismatch between GP in
+	   fork and vfork object files.  */
+$do_fork:
+	subq	sp, 16, sp
+	stq	ra, 0(sp)
+	jsr	ra, HIDDEN_JUMPTARGET (__fork)
+	ldgp	gp, 0(ra)
+	ldq	ra, 0(sp)
+	addq	sp, 16, sp
+	ret
+
 $syscall_error:
-	jmp	zero, __syscall_error
+	SYSCALL_ERROR_HANDLER
 #endif
+
 PSEUDO_END(__vfork)
 libc_hidden_def (__vfork)
 
