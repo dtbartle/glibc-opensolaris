@@ -45,6 +45,8 @@ Cambridge, MA 02139, USA.  */
 # define GROUP		0x080	/* ': group numbers */
 # define MALLOC		0x100	/* a: malloc strings */
 
+# define TYPEMOD	(LONG|LONGDBL|SHORT)
+
 
 #ifdef USE_IN_LIBIO
 # include <libioP.h>
@@ -307,7 +309,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	  {
 	  case 'h':
 	    /* int's are short int's.  */
-	    if (flags & (LONG|LONGDBL))
+	    if (flags & TYPEMOD)
 	      /* Signal illegal format element.  */
 	      conv_error ();
 	    flags |= SHORT;
@@ -328,12 +330,15 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	  case 'q':
 	  case 'L':
 	    /* double's are long double's, and int's are long long int's.  */
-	    if (flags & (LONG|SHORT))
+	    if (flags & TYPEMOD)
 	      /* Signal illegal format element.  */
 	      conv_error ();
 	    flags |= LONGDBL;
 	    break;
 	  case 'a':
+	    if (flags & TYPEMOD)
+	      /* Signal illegal format element.  */
+	      conv_error ();
 	    /* String conversions (%s, %[) take a `char **'
 	       arg and fill it in with a malloc'd pointer.  */
 	    flags |= MALLOC;
