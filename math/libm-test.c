@@ -367,6 +367,63 @@ check_bool (const char *test_name, int computed)
 
 
 static void
+check_long (const char *test_name, long int computed, long int expected)
+{
+  long int diff = computed - expected;
+  int result = diff == 0;
+
+  if (result)
+    {
+      if (verbose > 2)
+	printf ("Pass: %s\n", test_name);
+    }
+  else
+    {
+      if (verbose)
+	printf ("Fail: %s\n", test_name);
+      if (verbose > 1)
+	{
+	  printf ("Result:\n");
+	  printf (" is:         %ld\n", computed);
+	  printf (" should be:  %ld\n", expected);
+	}
+      noErrors++;
+    }
+
+  fpstack_test (test_name);
+}
+
+
+static void
+check_longlong (const char *test_name, long long int computed,
+		long long int expected)
+{
+  long long int diff = computed - expected;
+  int result = diff == 0;
+
+  if (result)
+    {
+      if (verbose > 2)
+	printf ("Pass: %s\n", test_name);
+    }
+  else
+    {
+      if (verbose)
+	printf ("Fail: %s\n", test_name);
+      if (verbose > 1)
+	{
+	  printf ("Result:\n");
+	  printf (" is:         %lld\n", computed);
+	  printf (" should be:  %lld\n", expected);
+	}
+      noErrors++;
+    }
+
+  fpstack_test (test_name);
+}
+
+
+static void
 check_isnan (const char *test_name, MATHTYPE computed)
 {
   output_isvalue (test_name, isnan (computed), computed);
@@ -2743,6 +2800,46 @@ csqrt_test (void)
 
 
 static void
+rinttol_test (void)
+{
+  /* XXX this test is incomplete.  We need to have a way to specifiy
+     the rounding method and test the critical cases.  So far, only
+     unproblematic numbers are tested.  */
+
+  check_long ("rinttol(0) = 0", 0.0, 0);
+  check_long ("rinttol(-0) = 0", minus_zero, 0);
+  check_long ("rinttol(0.2) = 0", 0.2, 0);
+  check_long ("rinttol(-0.2) = 0", -0.2, 0);
+
+  check_long ("rinttol(1.4) = 1", 1.4, 1);
+  check_long ("rinttol(-1.4) = -1", -1.4, -1);
+
+  check_long ("rinttol(8388600.3) = 8388600", 8388600.3, 8388600);
+  check_long ("rinttol(-8388600.3) = -8388600", -8388600.3, -8388600);
+}
+
+
+static void
+rinttoll_test (void)
+{
+  /* XXX this test is incomplete.  We need to have a way to specifiy
+     the rounding method and test the critical cases.  So far, only
+     unproblematic numbers are tested.  */
+
+  check_longlong ("rinttoll(0) = 0", 0.0, 0);
+  check_longlong ("rinttoll(-0) = 0", minus_zero, 0);
+  check_longlong ("rinttoll(0.2) = 0", 0.2, 0);
+  check_longlong ("rinttoll(-0.2) = 0", -0.2, 0);
+
+  check_longlong ("rinttoll(1.4) = 1", 1.4, 1);
+  check_longlong ("rinttoll(-1.4) = -1", -1.4, -1);
+
+  check_longlong ("rinttoll(8388600.3) = 8388600", 8388600.3, 8388600);
+  check_longlong ("rinttoll(-8388600.3) = -8388600", -8388600.3, -8388600);
+}
+
+
+static void
 inverse_func_pair_test (const char *test_name,
 			mathfunc f1, mathfunc inverse,
 			MATHTYPE x, MATHTYPE epsilon)
@@ -3073,6 +3170,9 @@ main (int argc, char *argv[])
   csinh_test ();
   ccosh_test ();
   clog_test ();
+
+  rinttol_test ();
+  rinttoll_test ();
 
   identities ();
   inverse_functions ();
