@@ -65,7 +65,7 @@ include ../Rules
 
 ifeq (no,$(cross-compiling))
 tests: $(objpfx)globtest
-	$(SHELL) -e globtest.sh $(common-objpfx)
+	$(SHELL) -e globtest.sh $(common-objpfx) $(elf-objpfx) $(rtld-installed-name)
 endif
 
 CFLAGS-regex.c = -Wno-unused -Wno-strict-prototypes
