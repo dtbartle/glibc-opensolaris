@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or modify
@@ -39,13 +39,9 @@ extern __ptr_t __sbrk __P ((int increment));
    If INCREMENT is negative, shrink data space.  */
 __ptr_t
 __default_morecore (increment)
-#ifdef __STDC__
-     ptrdiff_t increment;
-#else
-     int increment;
-#endif
+     __malloc_ptrdiff_t increment;
 {
-  __ptr_t result = (__ptr_t) __sbrk ((int) increment);
+  __ptr_t result = (__ptr_t) __sbrk (increment);
   if (result == (__ptr_t) -1)
     return NULL;
   return result;
