@@ -34,7 +34,7 @@
 #endif
 
 _IO_FILE *
-_IO_fdopen (fd, mode)
+_IO_new_fdopen (fd, mode)
      int fd;
      const char *mode;
 {
@@ -42,7 +42,7 @@ _IO_fdopen (fd, mode)
   int posix_mode = 0;
   struct locked_FILE
   {
-    struct _IO_FILE_complete fp;
+    struct _IO_FILE_plus fp;
 #ifdef _IO_MTSAFE_IO
     _IO_lock_t lock;
 #endif
@@ -106,29 +106,36 @@ _IO_fdopen (fd, mode)
   if (new_f == NULL)
     return NULL;
 #ifdef _IO_MTSAFE_IO
-  new_f->fp.plus.file._lock = &new_f->lock;
+  new_f->fp.file._lock = &new_f->lock;
 #endif
-  _IO_init (&new_f->fp.plus.file, 0);
-  _IO_JUMPS (&new_f->fp.plus.file) = &_IO_file_jumps;
-  _IO_file_init (&new_f->fp.plus.file);
+  _IO_init (&new_f->fp.file, 0);
+  _IO_JUMPS (&new_f->fp) = &_IO_file_jumps;
+  _IO_file_init (&new_f->fp.file);
 #if  !_IO_UNIFIED_JUMPTABLES
   new_f->fp.vtable = NULL;
 #endif
-  if (_IO_file_attach (&new_f->fp.plus.file, fd) == NULL)
+  if (_IO_file_attach (&new_f->fp.file, fd) == NULL)
     {
-      _IO_un_link (&new_f->fp.plus.file);
+      _IO_un_link (&new_f->fp.file);
       free (new_f);
       return NULL;
     }
-  new_f->fp.plus.file._flags &= ~_IO_DELETE_DONT_CLOSE;
+  new_f->fp.file._flags &= ~_IO_DELETE_DONT_CLOSE;
 
-  new_f->fp.plus.file._IO_file_flags =
-    _IO_mask_flags (&new_f->fp.plus.file, read_write,
+  new_f->fp.file._IO_file_flags =
+    _IO_mask_flags (&new_f->fp.file, read_write,
 		    _IO_NO_READS+_IO_NO_WRITES+_IO_IS_APPENDING);
 
   return (_IO_FILE *) &new_f->fp;
 }
 
-#ifdef weak_alias
-weak_alias (_IO_fdopen, fdopen)
+#ifdef DO_VERSIONING
+strong_alias (_IO_new_fdopen, __new_fdopen)
+default_symbol_version (_IO_new_fdopen, _IO_fdopen, GLIBC_2.1);
+default_symbol_version (__new_fdopen, fdopen, GLIBC_2.1);
+#else
+# ifdef weak_alias
+weak_alias (_IO_new_fdopen, _IO_fdopen)
+weak_alias (_IO_new_fdopen, fdopen)
+# endif
 #endif
