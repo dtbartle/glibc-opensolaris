@@ -85,7 +85,7 @@ do
   eval "unix_syscall=`echo $unix_function | \
 		       sed -e 's@=\(.*\)$@ unix_srcdir=\1@' \
 			   -e 's@/\(.*\)$@ unix_srcname=\1@'`"
-  test -z "$unix_srcname" && unix_srcname=$unix_function
+  test -z "$unix_srcname" && unix_srcname=$unix_syscall
 
   unix_implementor=none
   for unix_dir in $sysnames; do
