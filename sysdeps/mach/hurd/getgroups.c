@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -64,3 +64,5 @@ __getgroups (int n, gid_t *gidset)
 
   return ngids;
 }
+
+weak_alias (__getgroups, getgroups)
