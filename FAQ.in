@@ -87,7 +87,7 @@ required.  For Linux, get binutils-2.8.1.0.17 or later.  Other systems
 may have native linker support, but it's moot right now, because glibc
 has not been ported to them.
 
-??ppc	What tools do I need for powerpc?
+??powerpc	What tools do I need for powerpc?
 
 {GK} For a successful installation you definitely need the most recent
 tools. You can safely assume that anything earlier than binutils
