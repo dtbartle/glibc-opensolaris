@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 Contributed by Olaf Flebbe.
 
@@ -86,6 +86,10 @@ Boston, MA 02111-1307, USA.  */
 
 /* IEEE:  same as above, but exceptions */
 #define _FPU_IEEE     0x137f
+
+/* Macros for accessing the hardware control word.  */
+#define _FPU_GETCW(cw) __asm__ ("fnstcw %0" : "=m" (cw))
+#define _FPU_SETCW(cw) __asm__ ("fldcw %0" : "m" (cw))
 
 /* private namespace. It should only be used in init-first.o. */
 extern unsigned short __fpu_control;
