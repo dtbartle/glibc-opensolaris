@@ -337,7 +337,7 @@ the function
 in the module
 
 @smallexample
-       libnss_files.so.1
+       libnss_files.so.2
 @end smallexample
 
 @noindent
@@ -398,7 +398,7 @@ The actual prototype of the function in the NSS modules in this case is
 enum nss_status _nss_files_gethostbyname_r (const char *name,
                                             struct hostent *result_buf,
                                             char *buf, size_t buflen,
-                                            int *h_errnop)
+                                            int *errnop, int *h_errnop)
 @end smallexample
 
 I.e., the interface function is in fact the reentrant function with the
