@@ -498,8 +498,8 @@ enum
 
     _SC_IPV6 = _SC_LEVEL1_ICACHE_SIZE + 50,
 #define _SC_IPV6			_SC_IPV6
-    _SC_RAW_SOCKET
-#define _SC_RAW_SOCKET			_SC_RAW_SOCKET
+    _SC_RAW_SOCKETS
+#define _SC_RAW_SOCKETS			_SC_RAW_SOCKETS
   };
 
 /* Values for the NAME argument to `confstr'.  */
