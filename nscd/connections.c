@@ -1,5 +1,5 @@
 /* Inner loops of cache daemon.
-   Copyright (C) 1998-2003, 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 1998-2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
@@ -183,13 +183,28 @@ static int sock;
 unsigned long int client_queued;
 
 
+ssize_t
+writeall (int fd, const void *buf, size_t len)
+{
+  size_t n = len;
+  ssize_t ret;
+  do
+    {
+      ret = TEMP_FAILURE_RETRY (write (fd, buf, n));
+      if (ret <= 0)
+	break;
+      buf = (const char *) buf + ret;
+      n -= ret;
+    }
+  while (n > 0);
+  return ret < 0 ? ret : len - n;
+}
+
+
 /* Initialize database information structures.  */
 void
 nscd_init (void)
 {
-  struct sockaddr_un sock_addr;
-  size_t cnt;
-
   /* Secure mode and unprivileged mode are incompatible */
   if (server_user != NULL && secure_in_use)
     {
@@ -206,7 +221,7 @@ nscd_init (void)
     /* No configuration for this value, assume a default.  */
     nthreads = 2 * lastdb;
 
-  for (cnt = 0; cnt < lastdb; ++cnt)
+  for (size_t cnt = 0; cnt < lastdb; ++cnt)
     if (dbs[cnt].enabled)
       {
 	pthread_rwlock_init (&dbs[cnt].lock, NULL);
@@ -502,6 +517,7 @@ cannot set socket to close on exec: %s; disabling paranoia mode"),
       exit (1);
     }
   /* Bind a name to the socket.  */
+  struct sockaddr_un sock_addr;
   sock_addr.sun_family = AF_UNIX;
   strcpy (sock_addr.sun_path, _PATH_NSCDSOCKET);
   if (bind (sock, (struct sockaddr *) &sock_addr, sizeof (sock_addr)) < 0)
@@ -605,10 +621,7 @@ send_ro_fd (struct database_dyn *db, char *key, int fd)
 
   /* Send the control message.  We repeat when we are interrupted but
      everything else is ignored.  */
-#ifndef MSG_NOSIGNAL
-# define MSG_NOSIGNAL 0
-#endif
-  (void) TEMP_FAILURE_RETRY (sendmsg (fd, &msg, MSG_NOSIGNAL));
+  (void) TEMP_FAILURE_RETRY (sendmsg (fd, &msg, 0));
 
   if (__builtin_expect (debug_level > 0, 0))
     dbg_log (_("provide access to FD %d, for %s"), db->ro_fd, key);
@@ -693,7 +706,7 @@ cannot handle old request version %d; current version is %d"),
       if (cached != NULL)
 	{
 	  /* Hurray it's in the cache.  */
-	  if (TEMP_FAILURE_RETRY (write (fd, cached->data, cached->recsize))
+	  if (writeall (fd, cached->data, cached->recsize)
 	      != cached->recsize
 	      && __builtin_expect (debug_level, 0) > 0)
 	    {

@@ -1,4 +1,4 @@
-/* Copyright (C) 1998-2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 1998-2002, 2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
@@ -32,6 +32,64 @@
 #include <nis/rpcsvc/nis.h>
 
 #include "nscd-client.h"
+
+
+ssize_t
+__readall (int fd, void *buf, size_t len)
+{
+  size_t n = len;
+  ssize_t ret;
+  do
+    {
+      ret = TEMP_FAILURE_RETRY (__read (fd, buf, n));
+      if (ret <= 0)
+	break;
+      buf = (char *) buf + ret;
+      n -= ret;
+    }
+  while (n > 0);
+  return ret < 0 ? ret : len - n;
+}
+
+
+ssize_t
+__readvall (int fd, const struct iovec *iov, int iovcnt)
+{
+  ssize_t ret = TEMP_FAILURE_RETRY (__readv (fd, iov, iovcnt));
+  if (ret <= 0)
+    return ret;
+
+  size_t total = 0;
+  for (int i = 0; i < iovcnt; ++i)
+    total += iov[i].iov_len;
+
+  if (ret < total)
+    {
+      struct iovec iov_buf[iovcnt];
+      ssize_t r = ret;
+
+      struct iovec *iovp = memcpy (iov_buf, iov, iovcnt * sizeof (*iov));
+      do
+	{
+	  while (iovp->iov_len <= r)
+	    {
+	      r -= iovp->iov_len;
+	      --iovcnt;
+	      ++iovp;
+	    }
+	  iovp->iov_base = (char *) iovp->iov_base + r;
+	  iovp->iov_len -= r;
+	  r = TEMP_FAILURE_RETRY (__readv (fd, iovp, iovcnt));
+	  if (r <= 0)
+	    break;
+	  ret += r;
+	}
+      while (ret < total);
+      if (r < 0)
+	ret = r;
+    }
+  return ret;
+}
 
 
 static int
@@ -138,10 +196,7 @@ get_mapping (request_type type, const char *key,
     /* Failure or timeout.  */
     goto out_close2;
 
-#ifndef MSG_NOSIGNAL
-# define MSG_NOSIGNAL 0
-#endif
-  if (TEMP_FAILURE_RETRY (__recvmsg (sock, &msg, MSG_NOSIGNAL)) != keylen)
+  if (TEMP_FAILURE_RETRY (__recvmsg (sock, &msg, 0)) != keylen)
     goto out_close2;
 
   mapfd = *(int *) CMSG_DATA (cmsg);
