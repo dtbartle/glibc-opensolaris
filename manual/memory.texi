@@ -280,8 +280,7 @@ any time (or never).
 				 block and clear it.
 * Efficiency and Malloc::       Efficiency considerations in use of
 				 these functions.
-* Aligned Memory Blocks::       Allocating specially aligned memory:
-				 @code{memalign} and @code{valloc}.
+* Aligned Memory Blocks::       Allocating specially aligned memory.
 * Malloc Tunable Parameters::   Use @code{mallopt} to adjust allocation
                                  parameters.
 * Heap Consistency Checking::   Automatic checking for errors.
@@ -383,8 +382,8 @@ The block that @code{malloc} gives you is guaranteed to be aligned so
 that it can hold any type of data.  In the GNU system, the address is
 always a multiple of eight on most systems, and a multiple of 16 on
 64-bit systems.  Only rarely is any higher boundary (such as a page
-boundary) necessary; for those cases, use @code{memalign} or
-@code{valloc} (@pxref{Aligned Memory Blocks}).
+boundary) necessary; for those cases, use @code{memalign},
+@code{posix_memalign} or @code{valloc} (@pxref{Aligned Memory Blocks}).
 
 Note that the memory located after the end of the block is likely to be
 in use for something else; perhaps a block already allocated by another
@@ -617,12 +616,13 @@ after calling @code{free} wastes memory.  The size threshold for
 The address of a block returned by @code{malloc} or @code{realloc} in
 the GNU system is always a multiple of eight (or sixteen on 64-bit
 systems).  If you need a block whose address is a multiple of a higher
-power of two than that, use @code{memalign} or @code{valloc}.  These
-functions are declared in @file{stdlib.h}.
+power of two than that, use @code{memalign}, @code{posix_memalign}, or
+@code{valloc}.  These functions are declared in @file{stdlib.h}.
 
 With the GNU library, you can use @code{free} to free the blocks that
-@code{memalign} and @code{valloc} return.  That does not work in BSD,
-however---BSD does not provide any way to free such blocks.
+@code{memalign}, @code{posix_memalign}, and @code{valloc} return.  That
+does not work in BSD, however---BSD does not provide any way to free
+such blocks.
 
 @comment malloc.h stdlib.h
 @comment BSD
@@ -632,6 +632,22 @@ address is a multiple of @var{boundary}.  The @var{boundary} must be a
 power of two!  The function @code{memalign} works by allocating a
 somewhat larger block, and then returning an address within the block
 that is on the specified boundary.
+@end deftypefun
+
+@comment stdlib.h
+@comment POSIX
+@deftypefun int posix_memalign (void **@var{memptr}, size_t @var{alignment}, size_t @var{size})
+The @code{posix_memalign} function is similar to the @code{memalign}
+function in that it returns a buffer of @var{size} bytes aligned to a
+multiple of @var{alignment}.  But it adds one requirement to the
+parameter @var{alignment}: the value must be a power of two multiple of
+@code{sizeof (void *)}.
+
+If the function succeeds in allocation memory a pointer to the allocated
+memory is returned in @code{*@var{memptr}} and the return value is zero.
+Otherwise the function returns an error value indicating the problem.
+
+This function was introduced in POSIX 1003.1d.
 @end deftypefun
 
 @comment malloc.h stdlib.h
