@@ -21,6 +21,7 @@
 #endif
 
 #include <ctype.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -177,12 +178,15 @@ _nl_load_domain (domain_file)
       do
 	{
 	  long int nb = (long int) read (fd, read_ptr, to_read);
-	  if (nb == -1)
+	  if (nb <= 0)
 	    {
+#ifdef EINTR
+	      if (nb == -1 && errno == EINTR)
+		continue;
+#endif
 	      close (fd);
 	      return;
 	    }
-
 	  read_ptr += nb;
 	  to_read -= nb;
 	}
