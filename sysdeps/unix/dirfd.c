@@ -22,7 +22,7 @@ Cambridge, MA 02139, USA.  */
 
 int
 dirfd (dirp)
-     FILE *dirp;
+     DIR *dirp;
 {
   return dirp->__fd;
 }
