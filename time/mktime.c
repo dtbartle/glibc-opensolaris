@@ -219,7 +219,7 @@ do_normalization (tmptr)
 time_t
 __mktime_internal (timeptr, producer)
      struct tm *timeptr;
-     struct tm *(*producer) __P ((const time_t *));
+     struct tm *(*producer) __P ((const time_t *, struct tm *));
 {
   struct tm our_tm;		/* our working space */
   struct tm *me = &our_tm;	/* a pointer to the above */
@@ -276,6 +276,7 @@ __mktime_internal (timeptr, producer)
 
   {
     struct tm *guess_tm;
+    struct tm guess_struct;
     time_t guess = 0;
     time_t distance = 0;
     time_t last_distance = 0;
@@ -288,7 +289,7 @@ __mktime_internal (timeptr, producer)
 
 	times_through_search++;     
       
-	guess_tm = (*producer) (&guess);
+	guess_tm = (*producer) (&guess, &guess_struct);
       
 #ifdef DEBUG
 	if (debugging_enabled)
@@ -408,7 +409,7 @@ mktime (timeptr)
 #endif
      struct tm *timeptr;
 {
-  return __mktime_internal (timeptr, localtime);
+  return __mktime_internal (timeptr, __localtime_r);
 }
 
 #ifdef weak_alias

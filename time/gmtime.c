@@ -20,11 +20,23 @@ Cambridge, MA 02139, USA.  */
 #include <stddef.h>
 #include <time.h>
 
+/* Defined in localtime.c.  */
+extern struct tm _tmbuf;
+
 /* Return the `struct tm' representation of *T in UTC.	*/
 struct tm *
 DEFUN(gmtime, (t), CONST time_t *t)
 {
-  struct tm *tp = __offtime (t, 0L);
+  return __gmtime_r (t, &_tmbuf);
+}
+
+/* Return the `struct tm' representation of *T in UTC,
+   using *TP to store the result.  */
+struct tm *
+DEFUN(__gmtime_r, (t, tp),
+      CONST time_t *t AND struct tm *tp)
+{
+  __offtime (t, 0L, tp);
 
   tp->tm_isdst = 0;
   tp->tm_gmtoff = 0L;
