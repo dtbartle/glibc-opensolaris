@@ -123,6 +123,23 @@ typedef union {
 
 extern int h_errno;
 
+#ifdef DEBUG
+static void
+dprintf(msg, num)
+	char *msg;
+	int num;
+{
+	if (_res.options & RES_DEBUG) {
+		int save = errno;
+
+		printf(msg, num);
+		errno = save;
+	}
+}
+#else
+# define dprintf(msg, num) /*nada*/
+#endif
+
 static struct hostent *
 getanswer(answer, anslen, qname, qclass, qtype)
 	const querybuf *answer;
@@ -234,8 +251,9 @@ getanswer(answer, anslen, qname, qclass, qtype)
 		}
 		if (type != qtype) {
 			syslog(LOG_NOTICE|LOG_AUTH,
-		     "gethostby*.getanswer: asked for type %d(%s), got %d(%s)",
-			       qtype, qname, type, bp);
+	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
+			       qname, p_class(qclass), p_type(qtype),
+			       p_type(type));
 			cp += n;
 			continue;		/* XXX - had_error++ ? */
 		}
@@ -268,6 +286,7 @@ getanswer(answer, anslen, qname, qclass, qtype)
 			break;
 #else
 			host.h_name = bp;
+			h_errno = NETDB_SUCCESS;
 			return (&host);
 #endif
 		case T_A:
@@ -298,17 +317,14 @@ getanswer(answer, anslen, qname, qclass, qtype)
 			bp += sizeof(align) - ((u_long)bp % sizeof(align));
 
 			if (bp + n >= &hostbuf[sizeof hostbuf]) {
-#ifdef DEBUG
-				if (_res.options & RES_DEBUG)
-					printf("size (%d) too big\n", n);
-#endif
+				dprintf("size (%d) too big\n", n);
 				had_error++;
 				continue;
 			}
 			if (hap >= &h_addr_ptrs[MAXADDRS-1]) {
-				if (_res.options & RES_DEBUG && !toobig++)
-					printf("Too many addresses (%d)\n",
-					       MAXADDRS);
+				if (!toobig++)
+					dprintf("Too many addresses (%d)\n",
+						MAXADDRS);
 				cp += n;
 				continue;
 			}
@@ -317,7 +333,9 @@ getanswer(answer, anslen, qname, qclass, qtype)
 			cp += n;
 			break;
 		default:
-			abort();
+			dprintf("Impossible condition (type=%d)\n", type);
+			h_errno = NO_RECOVERY;
+			return (NULL);
 		} /*switch*/
 		if (!had_error)
 			haveanswer++;
@@ -345,6 +363,7 @@ getanswer(answer, anslen, qname, qclass, qtype)
 			strcpy(bp, qname);
 			host.h_name = bp;
 		}
+		h_errno = NETDB_SUCCESS;
 		return (&host);
 	} else {
 		h_errno = TRY_AGAIN;
@@ -360,6 +379,14 @@ gethostbyname(name)
 	register const char *cp;
 	int n;
 	extern struct hostent *_gethtbyname();
+
+	/*
+	 * if there aren't any dots, it could be a user-level alias.
+	 * this is also done in res_query() since we are not the only
+	 * function that looks up host names.
+	 */
+	if (!strchr(name, '.') && (cp = __hostalias(name)))
+		name = cp;
 
 	/*
 	 * disallow names consisting only of digits/dots, unless
@@ -391,6 +418,7 @@ gethostbyname(name)
 #else
 				host.h_addr = h_addr_ptrs[0];
 #endif
+				h_errno = NETDB_SUCCESS;
 				return (&host);
 			}
 			if (!isdigit(*cp) && *cp != '.') 
@@ -398,14 +426,10 @@ gethostbyname(name)
 		}
 
 	if ((n = res_search(name, C_IN, T_A, buf.buf, sizeof(buf))) < 0) {
-#ifdef DEBUG
-		if (_res.options & RES_DEBUG)
-			printf("res_search failed\n");
-#endif
+		dprintf("res_search failed (%d)\n", n);
 		if (errno == ECONNREFUSED)
 			return (_gethtbyname(name));
-		else
-			return (NULL);
+		return (NULL);
 	}
 	return (getanswer(&buf, n, name, C_IN, T_A));
 }
@@ -423,11 +447,15 @@ gethostbyaddr(addr, len, type)
 	register struct hostent *rhp;
 	char **haddr;
 	u_long old_options;
+	char hname2[MAXDNAME+1];
 #endif /*SUNSECURITY*/
 	extern struct hostent *_gethtbyaddr();
 	
-	if (type != AF_INET)
+	if (type != AF_INET) {
+		errno = EAFNOSUPPORT;
+		h_errno = NETDB_INTERNAL;
 		return (NULL);
+	}
 	(void)sprintf(qbuf, "%u.%u.%u.%u.in-addr.arpa",
 		((unsigned)addr[3] & 0xff),
 		((unsigned)addr[2] & 0xff),
@@ -435,29 +463,29 @@ gethostbyaddr(addr, len, type)
 		((unsigned)addr[0] & 0xff));
 	n = res_query(qbuf, C_IN, T_PTR, (u_char *)buf.buf, sizeof buf.buf);
 	if (n < 0) {
-#ifdef DEBUG
-		if (_res.options & RES_DEBUG)
-			printf("res_query failed\n");
-#endif
+		dprintf("res_query failed (%d)\n", n);
 		if (errno == ECONNREFUSED)
 			return (_gethtbyaddr(addr, len, type));
 		return (NULL);
 	}
 	if (!(hp = getanswer(&buf, n, qbuf, C_IN, T_PTR)))
-		return (NULL);
+		return (NULL);	/* h_errno was set by getanswer() */
 #ifdef SUNSECURITY
 	/*
 	 * turn off search as the name should be absolute,
 	 * 'localhost' should be matched by defnames
 	 */
+	strncpy(hname2, hp->h_name, MAXDNAME);
+	hname2[MAXDNAME] = '\0';
 	old_options = _res.options;
 	_res.options &= ~RES_DNSRCH;
 	_res.options |= RES_DEFNAMES;
 	if (!(rhp = gethostbyname(hp->h_name))) {
 		syslog(LOG_NOTICE|LOG_AUTH,
 		       "gethostbyaddr: No A record for %s (verifying [%s])",
-		       hp->h_name, inet_ntoa(*((struct in_addr *)addr)));
+		       hname2, inet_ntoa(*((struct in_addr *)addr)));
 		_res.options = old_options;
+		h_errno = HOST_NOT_FOUND;
 		return (NULL);
 	}
 	_res.options = old_options;
@@ -467,7 +495,7 @@ gethostbyaddr(addr, len, type)
 	if (!*haddr) {
 		syslog(LOG_NOTICE|LOG_AUTH,
 		       "gethostbyaddr: A record of %s != PTR record [%s]",
-		       hp->h_name, inet_ntoa(*((struct in_addr *)addr)));
+		       hname2, inet_ntoa(*((struct in_addr *)addr)));
 		h_errno = HOST_NOT_FOUND;
 		return (NULL);
 	}
@@ -477,9 +505,7 @@ gethostbyaddr(addr, len, type)
 	h_addr_ptrs[0] = (char *)&host_addr;
 	h_addr_ptrs[1] = NULL;
 	host_addr = *(struct in_addr *)addr;
-#if BSD < 43 && !defined(h_addr)	/* new-style hostent structure */
-	hp->h_addr = h_addr_ptrs[0];
-#endif
+	h_errno = NETDB_SUCCESS;
 	return (hp);
 }
 
@@ -509,11 +535,15 @@ _gethtent()
 	char *p;
 	register char *cp, **q;
 
-	if (!hostf && !(hostf = fopen(_PATH_HOSTS, "r" )))
+	if (!hostf && !(hostf = fopen(_PATH_HOSTS, "r" ))) {
+		h_errno = NETDB_INTERNAL;
 		return (NULL);
+	}
 again:
-	if (!(p = fgets(hostbuf, sizeof hostbuf, hostf)))
+	if (!(p = fgets(hostbuf, sizeof hostbuf, hostf))) {
+		h_errno = HOST_NOT_FOUND;
 		return (NULL);
+	}
 	if (*p == '#')
 		goto again;
 	if (!(cp = strpbrk(p, "#\n")))
@@ -551,6 +581,7 @@ again:
 			*cp++ = '\0';
 	}
 	*q = NULL;
+	h_errno = NETDB_SUCCESS;
 	return (&host);
 }
 
@@ -602,7 +633,7 @@ addrsort(ap, num)
 
 	p = ap;
 	for (i = 0; i < num; i++, p++) {
-	    for (j = 0 ; j < _res.nsort; j++)
+	    for (j = 0 ; (unsigned)j < _res.nsort; j++)
 		if (_res.sort_list[j].addr.s_addr == 
 		    (((struct in_addr *)(*p))->s_addr & _res.sort_list[j].mask))
 			break;
