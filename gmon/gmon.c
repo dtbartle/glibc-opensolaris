@@ -257,7 +257,7 @@ write_bb_counts (fd)
       __writev (fd, bbhead, 2);
       for (i = 0; i < ncounts; ++i)
 	{
-	  bbbody[0].iov_base = &grp->addresses[i];
+	  bbbody[0].iov_base = (char *) &grp->addresses[i];
 	  bbbody[1].iov_base = &grp->counts[i];
 	  __writev (fd, bbbody, 2);
 	}
