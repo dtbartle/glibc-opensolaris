@@ -41,6 +41,8 @@ extern size_t _dl_pagesize;
 extern const char *_dl_platform;
 extern unsigned long int _dl_hwcap;
 extern size_t _dl_platformlen;
+extern fpu_control_t _dl_fpu_control;
+extern int _dl_fpu_control_set;
 extern void _end;
 extern void ENTRY_POINT (void);
 
@@ -128,7 +130,9 @@ _dl_sysdep_start (void **start_argptr,
 	_dl_hwcap = av->a_un.a_val;
 	break;
       case AT_FPUCW:
-	__fpu_control = av->a_un.a_val;
+	_dl_fpu_control = av->a_un.a_val;
+	/* Indicate that AT_FPUCW was seen.  */
+	_dl_fpu_control_set = 1;
 	break;
       }
 
