@@ -108,6 +108,8 @@ struct	protoent {
 
 extern int h_errno;
 
+#define	NETDB_INTERNAL	-1	/* see errno */
+#define	NETDB_SUCCESS	0	/* no problem */
 #define	HOST_NOT_FOUND	1 /* Authoritative Answer Host not found */
 #define	TRY_AGAIN	2 /* Non-Authoritive Host not found, or SERVERFAIL */
 #define	NO_RECOVERY	3 /* Non recoverable errors, FORMERR, REFUSED, NOTIMP */
