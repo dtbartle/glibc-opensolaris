@@ -43,9 +43,13 @@ Cambridge, MA 02139, USA.  */
 #undef	LONG_MAX
 #define LONG_MAX	LONG_LONG_MAX
 #undef	ULONG_MAX
+#define ULONG_MAX	ULONG_LONG_MAX
+#if __GNUC__ == 2 && __GNUC_MINOR__ < 7
+/* Work around gcc bug with using this constant.  */
+static const unsigned long long int maxquad = ULONG_LONG_MAX;
+#undef	ULONG_MAX
 #define ULONG_MAX	maxquad
-/* XXX Work around gcc bug with using this constant.  */
-static unsigned long long int maxquad = ULONG_LONG_MAX;
+#endif
 #else
 #define	LONG	long
 #endif
