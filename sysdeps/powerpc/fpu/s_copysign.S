@@ -34,7 +34,7 @@ ENTRY(__copysign)
 	blt     0f
 	fabs    fp1,fp1
 	blr
-0:	fnabs   fp1,f1
+0:	fnabs   fp1,fp1
 	blr
 	END (__copysign)
 
