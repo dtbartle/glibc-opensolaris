@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -18,6 +18,13 @@ Cambridge, MA 02139, USA.  */
 
 /* Get the Mach definitions of ENTRY and kernel_trap.  */
 #include <mach/machine/syscall_sw.h>
+
+/* The Mach definitions assume underscores should be prepended to
+   symbol names.  Redefine them to do so only when appropriate.  */
+#undef EXT
+#undef LEXT
+#define EXT(x) C_SYMBOL_NAME(x)
+#define LEXT(x) C_SYMBOL_NAME(x##:)
 
 /* This is invoked by things run when there is random lossage, before they
    try to do anything else.  Just to be safe, deallocate the reply port so
