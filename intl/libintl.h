@@ -1,89 +1,145 @@
 /* libgettext.h -- Message catalogs for internationalization.
-Copyright (C) 1995 Free Software Foundation, Inc.
-This file is part of the GNU C Library.
-Contributed by Ulrich Drepper.
-This file is derived from the file libgettext.h in the GNU gettext package.
+   Copyright (C) 1995 Free Software Foundation, Inc.
 
-The GNU C Library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Library General Public License as
-published by the Free Software Foundation; either version 2 of the
-License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
 
-The GNU C Library is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Library General Public
-License along with the GNU C Library; see the file COPYING.LIB.  If
-not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-Boston, MA 02111-1307, USA.  */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _LIBINTL_H
-#define _LIBINTL_H	1
-#include <features.h>
+/* Because on some systems (e.g. Solaris) we sometimes have to include
+   the systems libintl.h as well as this file we have more complex
+   include protection above.  But the systems header might perhaps also
+   define _LIBINTL_H and therefore we have to protect the definition here.  */
 
-#include <locale.h>
-
-#define __need_NULL
-#include <stddef.h>
+#if !defined (_LIBINTL_H) || !defined (_LIBGETTEXT_H)
+#if !defined (_LIBINTL_H)
+# define _LIBINTL_H	1
+#endif
+#define _LIBGETTEXT_H	1
 
 /* We define an additional symbol to signal that we use the GNU
    implementation of gettext.  */
 #define __USE_GNU_GETTEXT 1
 
-__BEGIN_DECLS
+#include <sys/types.h>
+
+#if HAVE_LOCALE_H
+# include <locale.h>
+#endif
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* @@ end of prolog @@ */
+
+#ifndef PARAMS
+# if __STDC__
+#  define PARAMS(args) args
+# else
+#  define PARAMS(args) ()
+# endif
+#endif
+
+#ifndef NULL
+# if !defined __cplusplus || defined __GNUC__
+#  define NULL ((void *) 0)
+# else
+#  define NULL (0)
+# endif
+#endif
+
+#if !HAVE_LC_MESSAGES
+/* This value determines the behaviour of the gettext() and dgettext()
+   function.  But some system does not have this defined.  Define it
+   to a default value.  */
+# define LC_MESSAGES (-1)
+#endif
+
+
+/* Declarations for gettext-using-catgets interface.  Derived from
+   Jim Meyering's libintl.h.  */
+struct _msg_ent
+{
+  const char *_msg;
+  int _msg_number;
+};
+
+
+#if HAVE_CATGETS
+/* These two variables are defined in the automatically by po-to-tbl.sed
+   generated file `cat-id-tbl.c'.  */
+extern const struct _msg_ent _msg_tbl[];
+extern int _msg_tbl_length;
+#endif
+
+
+/* For automatical extraction of messages sometimes no real
+   translation is needed.  Instead the string itself is the result.  */
+#define gettext_noop(Str) (Str)
 
 /* Look up MSGID in the current default message catalog for the current
    LC_MESSAGES locale.  If not found, returns MSGID itself (the default
    text).  */
-extern char *gettext __P ((const char *__msgid));
-extern char *__gettext __P ((const char *__msgid));
+extern char *gettext PARAMS ((const char *__msgid));
+extern char *gettext__ PARAMS ((const char *__msgid));
 
 /* Look up MSGID in the DOMAINNAME message catalog for the current
    LC_MESSAGES locale.  */
-extern char *dgettext __P ((const char *__domainname, const char *__msgid));
-extern char *__dgettext __P ((const char *__domainname, const char *__msgid));
+extern char *dgettext PARAMS ((const char *__domainname, const char *__msgid));
+extern char *dgettext__ PARAMS ((const char *__domainname,
+				 const char *__msgid));
 
 /* Look up MSGID in the DOMAINNAME message catalog for the current CATEGORY
    locale.  */
-extern char *dcgettext __P ((const char *__domainname, const char *__msgid,
-			     int __category));
-extern char *__dcgettext __P ((const char *__domainname, const char *__msgid,
-			       int __category));
+extern char *dcgettext PARAMS ((const char *__domainname, const char *__msgid,
+				int __category));
+extern char *dcgettext__ PARAMS ((const char *__domainname,
+				  const char *__msgid, int __category));
 
 
 /* Set the current default message catalog to DOMAINNAME.
    If DOMAINNAME is null, return the current default.
    If DOMAINNAME is "", reset to the default of "messages".  */
-extern char *textdomain __P ((const char *__domainname));
-extern char *__textdomain __P ((const char *__domainname));
+extern char *textdomain PARAMS ((const char *__domainname));
+extern char *textdomain__ PARAMS ((const char *__domainname));
 
 /* Specify that the DOMAINNAME message catalog will be found
    in DIRNAME rather than in the system locale data base.  */
-extern char *bindtextdomain __P ((const char *__domainname,
+extern char *bindtextdomain PARAMS ((const char *__domainname,
 				  const char *__dirname));
-extern char *__bindtextdomain __P ((const char *__domainname,
+extern char *bindtextdomain__ PARAMS ((const char *__domainname,
 				    const char *__dirname));
 
+#if ENABLE_NLS
 
-/* Optimized version of the function above.  */
-#if defined __OPTIMIZED
-/* These must be a macro.  Inlined functions are useless because the
-   `__builtin_constant_p' predicate in dcgettext would always return
-   false.  */
+/* Solaris 2.3 has the gettext function but dcgettext is missing.
+   So we omit this optimization for Solaris 2.3.  BTW, Solaris 2.4
+   has dcgettext.  */
+# if !HAVE_CATGETS && (!HAVE_GETTEXT || HAVE_DCGETTEXT)
 
-# define gettext (msgid) dgettext (NULL, msgid)
+#  define gettext(Msgid) \
+     dgettext (NULL, Msgid)
 
-# define dgettext (domainname, msgid)					      \
-  dcgettext (domainname, msgid, LC_MESSAGES)
+#  define dgettext(Domainname, Msgid) \
+     dcgettext (Domainname, Msgid, LC_MESSAGES)
 
-# if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 7)
-#  define dcgettext(domainname, msgid, category)			      \
+#  if defined __GNUC__ && __GNUC__ == 2 && __GNUC_MINOR__ >= 7
+#   define dcgettext(Domainname, Msgid, Category) \
   (__extension__							      \
    ({									      \
      char *result;							      \
-     if (__builtin_constant_p (msgid))					      \
+     if (__builtin_constant_p (Msgid))					      \
        {								      \
 	 extern int _nl_msg_cat_cntr;					      \
 	 static char *__translation__;					      \
@@ -91,19 +147,32 @@ extern char *__bindtextdomain __P ((const char *__domainname,
 	 if (! __translation__ || __catalog_counter__ != _nl_msg_cat_cntr)    \
 	   {								      \
 	     __translation__ =						      \
-	       __dcgettext ((domainname), (msgid), (category));		      \
+	       dcgettext__ ((Domainname), (Msgid), (Category));		      \
 	     __catalog_counter__ = _nl_msg_cat_cntr;			      \
 	   }								      \
 	 result = __translation__;					      \
        }								      \
      else								      \
-       result = __dcgettext ((domainname), (msgid), (category));	      \
+       result = dcgettext__ ((Domainname), (Msgid), (Category));	      \
      result;								      \
     }))
+#  endif
 # endif
-#endif /* Optimizing. */
 
+#else
 
-__END_DECLS
+# define gettext(Msgid) (Msgid)
+# define dgettext(Domainname, Msgid) (Msgid)
+# define dcgettext(Domainname, Msgid, Category) (Msgid)
+# define textdomain(Domainname) while (0) /* nothing */
+# define bindtextdomain(Domainname, Dirname) while (0) /* nothing */
 
-#endif /* libintl.h */
+#endif
+
+/* @@ begin of epilog @@ */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
