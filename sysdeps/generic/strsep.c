@@ -19,7 +19,7 @@ Boston, MA 02111-1307, USA.  */
 #include <string.h>
 
 char *
-strsep (char **stringp, const char *delim)
+__strsep (char **stringp, const char *delim)
 {
   char *begin, *end;
 
@@ -41,3 +41,4 @@ strsep (char **stringp, const char *delim)
 
   return begin;
 }
+weak_alias (__strsep, strsep)
