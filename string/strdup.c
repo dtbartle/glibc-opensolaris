@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,7 +16,6 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,15 +23,16 @@ Cambridge, MA 02139, USA.  */
 
 /* Duplicate S, returning an identical malloc'd string.  */
 char *
-DEFUN(strdup, (s), CONST char *s)
+__strdup (const char *s)
 {
-  size_t len = strlen(s) + 1;
-  PTR new = malloc(len);
+  size_t len = strlen (s) + 1;
+  void *new = malloc (len);
 
   if (new == NULL)
     return NULL;
 
-  memcpy(new, (PTR) s, len);
+  memcpy (new, s, len);
 
   return (char *) new;
 }
+weak_alias (__strdup, strdup)
