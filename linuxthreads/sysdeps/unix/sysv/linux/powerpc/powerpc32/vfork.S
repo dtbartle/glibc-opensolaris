@@ -31,7 +31,11 @@ ENTRY (__vfork)
 #ifdef __NR_vfork
 
 	SINGLE_THREAD_P
+# ifdef SHARED
 	bne-	HIDDEN_JUMPTARGET(__fork)
+# else
+	bne-	.Lhidden_fork
+# endif
 
 	DO_CALL (SYS_ify (vfork));
 
@@ -41,7 +45,11 @@ ENTRY (__vfork)
 	bnslr+
 	/* Check if vfork syscall is known at all.  */
 	cmpwi	r3,ENOSYS
+#  ifdef SHARED
 	bne	JUMPTARGET(__syscall_error)
+#  else
+	bne	.Lsyscall_error
+#  endif
 
 # endif
 #endif
@@ -52,6 +60,13 @@ ENTRY (__vfork)
 	DO_CALL (SYS_ify (fork));
 	PSEUDO_RET
 #endif
+
+# ifndef SHARED
+.Lhidden_fork:
+	b	HIDDEN_JUMPTARGET(__fork)
+.Lsyscall_error:
+	b	JUMPTARGET(__syscall_error)
+# endif
 
 PSEUDO_END (__vfork)
 libc_hidden_def (__vfork)
