@@ -32,15 +32,15 @@ int
 internal_function
 _dl_make_stack_executable (void **stack_endp)
 {
+  /* This gives us the highest/lowest page that needs to be changed.  */
+  uintptr_t page = (uintptr_t) __libc_stack_end & -(intptr_t) GL(dl_pagesize);
+
   /* Challenge the caller.  */
-  if (*stack_endp != __libc_stack_end)
+  if (__builtin_expect (*stack_endp != __libc_stack_end, 0))
     return EPERM;
   *stack_endp = NULL;
 
 #if _STACK_GROWS_DOWN
-  /* This gives us the highest page that needs to be changed.  */
-  uintptr_t page = (uintptr_t) __libc_stack_end & -(intptr_t) GL(dl_pagesize);
-
   /* Newer Linux kernels support a flag to make our job easy.  */
 # ifdef PROT_GROWSDOWN
 #  if __ASSUME_PROT_GROWSUPDOWN == 0
@@ -95,10 +95,6 @@ _dl_make_stack_executable (void **stack_endp)
 # endif
 
 #elif _STACK_GROWS_UP
-
-  /* This gives us the lowest page that needs to be changed.  */
-  uintptr_t page = (uintptr_t) __libc_stack_end & -(intptr_t) GL(dl_pagesize);
-
   /* Newer Linux kernels support a flag to make our job easy.  */
 # ifdef PROT_GROWSUP
 #  if __ASSUME_PROT_GROWSUPDOWN == 0
