@@ -52,6 +52,7 @@ inl-tester-ENV = LANGUAGE=C
 noinl-tester-ENV = LANGUAGE=C
 CFLAGS-tester.c = -fno-builtin
 CFLAGS-inl-tester.c = -fno-builtin
+CFLAGS-noinl-tester.c = -fno-builtin
 CFLAGS-tst-strlen.c = -fno-builtin
 CFLAGS-stratcliff.c = -fno-builtin
 
