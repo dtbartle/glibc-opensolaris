@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -40,22 +40,21 @@ user-interfaces		:= $(addprefix hurd/,\
 server-interfaces	:= hurd/msg
 
 routines = hurdinit hurdid hurdlookup hurdpid hurdrlimit hurdprio hurdexec \
-	   __setauth setauth \
-	   __pid2task __task2pid pid2task task2pid \
+	   setauth \
+	   pid2task task2pid \
 	   getuids setuids getumask fchroot \
 	   hurdsock hurdauth invoke-trans \
 	   privports \
 	   msgportdemux \
-	   fopenport __fopenport \
+	   fopenport \
  	   vpprintf \
 	   ports-get ports-set hurdports hurdmsg \
 	   $(sig) $(dtable) hurdinline
 sig	= hurdsig hurdfault faultexc siginfo hurd-raise preempt-sig \
 	  trampoline longjmp-ts catch-exc exc2signal hurdkill
 dtable	= dtable port2fd new-fd alloc-fd intern-fd \
-	  __getdport getdport openport \
+	  getdport openport \
 	  fd-close fd-read fd-write hurdioctl
-aux := hurdsyms
 
 # XXX this is a temporary hack; see hurdmalloc.h
 routines += hurdmalloc
