@@ -26,6 +26,7 @@ DEFUN(gmtime, (t), CONST time_t *t)
 {
   struct tm *tp = __offtime (t, 0L);
 
+  tp->tm_isdst = 0;
   tp->tm_gmtoff = 0L;
   tp->tm_zone = "GMT";
 
