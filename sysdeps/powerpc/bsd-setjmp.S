@@ -23,11 +23,14 @@
 
 #include <sysdep.h>
 
-ENTRY (setjmp)
+ENTRY (__setjmp)
 	li 4,1				/* Set second argument to 1.  */
 #ifdef PIC
 	b __sigsetjmp@plt
 #else
 	b __sigsetjmp
 #endif
-END (setjmp)
+END (__setjmp)
+
+	.globl setjmp
+	.set setjmp,__setjmp
