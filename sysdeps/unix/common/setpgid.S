@@ -18,7 +18,8 @@ Cambridge, MA 02139, USA.  */
 
 #include <sysdep.h>
 
-SYSCALL__ (setpgrp, 2)
+PSEUDO (__setpgid, setpgrp, 2)
 	ret
 
-weak_alias (__setpgrp, setpgrp)
+weak_alias (__setpgid, setpgid)
+weak_alias (__setpgid, setpgrp)
