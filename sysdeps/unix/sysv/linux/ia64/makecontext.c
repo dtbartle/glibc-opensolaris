@@ -59,8 +59,8 @@ __makecontext (ucontext_t *ucp, void (*func) (void), int argc, ...)
 
   if (argc > 8)
     {
-      fprintf (stderr, "__makecontext: does not know how to handle more "
-	       "than 8 arguments\n");
+      fprintf (stderr, _("\
+makecontext: does not know how to handle more than 8 arguments\n"));
       exit (-1);
     }
 
