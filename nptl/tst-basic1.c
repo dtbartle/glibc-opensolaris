@@ -1,4 +1,4 @@
-/* Copyright (C) 2002 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -20,10 +20,20 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 
-static void *tf (void *a)
+static pid_t pid;
+
+static void *
+tf (void *a)
 {
+  if (getpid () != pid)
+    {
+      write (2, "pid mismatch\n", 13);
+      _exit (1);
+    }
+
   return a;
 }
 
@@ -31,6 +41,8 @@ static void *tf (void *a)
 int
 do_test (void)
 {
+  pid = getpid ();
+
 #define N 2
   pthread_t t[N];
   int i;
