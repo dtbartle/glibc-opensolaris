@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -29,28 +29,9 @@ Cambridge, MA 02139, USA.  */
 #define	__P(args)	args	/* GCC can always grok prototypes.  */
 #define	__DOTS		, ...
 
-/* In GCC versions before 2.5, the `volatile' and `const' keywords have
-   special meanings when applied to functions.  In versions 2.5 and 2.6,
-   the `__attribute__' syntax used below does not work properly.  */
-#if	__GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5)
-#define	__NORETURN	__volatile
-#define	__CONSTVALUE	__const
- #elif	__GNUC__ > 2 || __GNUC_MINOR__ >= 7 /* Faith.  */
-/* In GCC 2.5 and later, these keywords are meaningless when applied to
-   functions, as ANSI requires.  Instead, we use GCC's special
-   `__attribute__' syntax.  */
-#define	__NORETURN	__attribute__ ((__volatile__))
-#define	__CONSTVALUE	__attribute__ ((__const__))
-#else
-#define __NORETURN
-#define __CONSTVALUE
-#endif
-
 #else	/* Not GCC.  */
 
 #define	__inline		/* No inline functions.  */
-#define	__NORETURN		/* No way to say functions never return.  */
-#define	__CONSTVALUE		/* No way to say functions are functional.  */
 
 #if (defined (__STDC__) && __STDC__) || defined (__cplusplus)
 
@@ -111,6 +92,13 @@ typedef double __long_double_t;
 #else
 #define	__BEGIN_DECLS
 #define	__END_DECLS
+#endif
+
+/* GCC2 has various useful declarations that can be made with the
+   `__attribute__' syntax.  All of the ways we use this do fine if
+   they are omitted for compilers that don't understand it.  */
+#if !defined (__GNUC__) || __GNUC__ < 2
+#define __attribute__(xyz)	/* Ignore.  */
 #endif
 
 #endif	 /* sys/cdefs.h */
