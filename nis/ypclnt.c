@@ -98,7 +98,7 @@ __yp_bind (const char *domain, dom_binding **ypdb)
         }
 
 #if USE_BINDINGDIR
-      if (ysd->dom_vers < 1)
+      if (ysd->dom_vers < 1 && try < 3)
 	{
 	  char path[sizeof (BINDINGDIR) - 1 + strlen (domain) + 10];
 	  struct iovec vec[2];
@@ -220,7 +220,8 @@ __yp_bind (const char *domain, dom_binding **ypdb)
 
   /* If the program exists, close the socket */
   if (fcntl (ysd->dom_socket, F_SETFD, 1) == -1)
-    perror (_("fcntl: F_SETFD"));
+    /* XXX Really print here? --drepper */
+    perror ("fcntl: F_SETFD");
 
   if (is_new && ypdb != NULL)
     {
@@ -245,10 +246,11 @@ do_ypcall (const char *domain, u_long prog, xdrproc_t xargs,
 {
   dom_binding *ydb = NULL;
   bool_t use_ypbindlist = FALSE;
-  int try, result;
+  int try, status;
+  enum clnt_stat result;
 
   try = 0;
-  result = YPERR_YPERR;
+  status = YPERR_YPERR;
 
   __libc_lock_lock (ypbindlist_lock);
   if (__ypbindlist != NULL)
@@ -268,7 +270,7 @@ do_ypcall (const char *domain, u_long prog, xdrproc_t xargs,
   else
     __libc_lock_unlock (ypbindlist_lock);
 
-  while (try < MAXTRIES && result != RPC_SUCCESS)
+  while (try < MAXTRIES && status != YPERR_SUCCESS))
     {
       if (__yp_bind (domain, &ydb) != 0)
 	{
@@ -290,8 +292,11 @@ do_ypcall (const char *domain, u_long prog, xdrproc_t xargs,
 	      free (ydb);
 	      ydb = NULL;
 	    }
-	  result = YPERR_RPC;
+	  status = YPERR_RPC;;
 	}
+      else
+	status = YPERR_SUCCESS;
+
       try++;
     }
   if (use_ypbindlist)
@@ -307,7 +312,7 @@ do_ypcall (const char *domain, u_long prog, xdrproc_t xargs,
 	ydb = NULL;
       }
 
-  return result;
+  return status;
 }
 
 int
@@ -407,7 +412,7 @@ yp_match (const char *indomain, const char *inmap, const char *inkey,
 {
   ypreq_key req;
   ypresp_val resp;
-  int result;
+  enum clnt_stat result;
 
   if (indomain == NULL || indomain[0] == '\0' ||
       inmap == NULL || inmap[0] == '\0' ||
@@ -428,7 +433,7 @@ yp_match (const char *indomain, const char *inmap, const char *inkey,
 		      (caddr_t) & resp);
 
   if (result != RPC_SUCCESS)
-    return result;
+    return YPERR_RPC;
   if (resp.stat != YP_TRUE)
     return ypprot_err (resp.stat);
 
@@ -448,7 +453,7 @@ yp_first (const char *indomain, const char *inmap, char **outkey,
 {
   ypreq_nokey req;
   ypresp_key_val resp;
-  int result;
+  enum clnt_stat result;
 
   if (indomain == NULL || indomain[0] == '\0' ||
       inmap == NULL || inmap[0] == '\0')
@@ -466,7 +471,7 @@ yp_first (const char *indomain, const char *inmap, char **outkey,
 		      (caddr_t) & resp);
 
   if (result != RPC_SUCCESS)
-    return result;
+    return YPERR_RPC;
   if (resp.stat != YP_TRUE)
     return ypprot_err (resp.stat);
 
@@ -491,7 +496,7 @@ yp_next (const char *indomain, const char *inmap, const char *inkey,
 {
   ypreq_key req;
   ypresp_key_val resp;
-  int result;
+  enum clnt_stat result;
 
   if (indomain == NULL || indomain[0] == '\0' ||
       inmap == NULL || inmap[0] == '\0' ||
@@ -512,7 +517,7 @@ yp_next (const char *indomain, const char *inmap, const char *inkey,
 		      (caddr_t) & resp);
 
   if (result != RPC_SUCCESS)
-    return result;
+    return YPERR_RPC;
   if (resp.stat != YP_TRUE)
     return ypprot_err (resp.stat);
 
@@ -535,7 +540,7 @@ yp_master (const char *indomain, const char *inmap, char **outname)
 {
   ypreq_nokey req;
   ypresp_master resp;
-  int result;
+  enum clnt_stat result;
 
   if (indomain == NULL || indomain[0] == '\0' ||
       inmap == NULL || inmap[0] == '\0')
@@ -550,11 +555,12 @@ yp_master (const char *indomain, const char *inmap, char **outname)
 	  (caddr_t) & req, (xdrproc_t) xdr_ypresp_master, (caddr_t) & resp);
 
   if (result != RPC_SUCCESS)
-    return result;
+    return YPERR_RPC;
   if (resp.stat != YP_TRUE)
     return ypprot_err (resp.stat);
 
   *outname = strdup (resp.peer);
+  /* XXX Check for failure in strdup --drepper */
   xdr_free ((xdrproc_t) xdr_ypresp_master, (char *) &resp);
 
   return YPERR_SUCCESS;
@@ -565,7 +571,7 @@ yp_order (const char *indomain, const char *inmap, unsigned int *outorder)
 {
   struct ypreq_nokey req;
   struct ypresp_order resp;
-  int result;
+  enum clnt_stat result;
 
   if (indomain == NULL || indomain[0] == '\0' ||
       inmap == NULL || inmap == '\0')
@@ -580,7 +586,7 @@ yp_order (const char *indomain, const char *inmap, unsigned int *outorder)
 	   (caddr_t) & req, (xdrproc_t) xdr_ypresp_order, (caddr_t) & resp);
 
   if (result != RPC_SUCCESS)
-    return result;
+    return YPERR_RPC;
   if (resp.stat != YP_TRUE)
     return ypprot_err (resp.stat);
 
@@ -606,13 +612,13 @@ __xdr_ypresp_all (XDR * xdrs, u_long * objp)
 	{
 	  xdr_free ((xdrproc_t) xdr_ypresp_all, (char *) &resp);
 	  *objp = YP_YPERR;
-	  return (FALSE);
+	  return FALSE;
 	}
       if (resp.more == 0)
 	{
 	  xdr_free ((xdrproc_t) xdr_ypresp_all, (char *) &resp);
 	  *objp = YP_NOMORE;
-	  return (FALSE);
+	  return TRUE;
 	}
 
       switch (resp.ypresp_all_u.val.stat)
@@ -654,7 +660,8 @@ yp_all (const char *indomain, const char *inmap,
 {
   struct ypreq_nokey req;
   dom_binding *ydb = NULL;
-  int try, result;
+  int try, res;
+  enum clnt_stat result;
   struct sockaddr_in clnt_sin;
   CLIENT *clnt;
   unsigned long status;
@@ -665,9 +672,9 @@ yp_all (const char *indomain, const char *inmap,
     return YPERR_BADARGS;
 
   try = 0;
-  result = YPERR_YPERR;
+  res = YPERR_YPERR;
 
-  while (try < MAXTRIES && result != RPC_SUCCESS)
+  while (try < MAXTRIES && res != YPERR_SUCCESS)
     {
       if (__yp_bind (indomain, &ydb) != 0)
 	{
@@ -691,31 +698,30 @@ yp_all (const char *indomain, const char *inmap,
 			  (caddr_t) &req, (xdrproc_t) __xdr_ypresp_all,
 			  (caddr_t) &status, RPCTIMEOUT);
 
-      clnt_destroy (clnt);
-      close (clnt_sock);
       if (result != RPC_SUCCESS)
 	{
-	  clnt_perror (ydb->dom_client, "yp_all: clnt_call");
-	  __yp_unbind (ydb);
-	  free (ydb);
-	  result = YPERR_RPC;
+	  clnt_perror (clnt, "yp_all: clnt_call");
+	  res = YPERR_RPC;
 	}
       else
-	result = YPERR_SUCCESS;
+	res = YPERR_SUCCESS;
+
+      clnt_destroy (clnt);
+      close (clnt_sock);
 
       if (status != YP_NOMORE)
 	return ypprot_err (status);
       try++;
     }
 
-  return result;
+  return res;
 }
 
 int
 yp_maplist (const char *indomain, struct ypmaplist **outmaplist)
 {
   struct ypresp_maplist resp;
-  int result;
+  enum clnt_stat result;
 
   if (indomain == NULL || indomain[0] == '\0')
     return YPERR_BADARGS;
@@ -726,7 +732,7 @@ yp_maplist (const char *indomain, struct ypmaplist **outmaplist)
     (caddr_t) & indomain, (xdrproc_t) xdr_ypresp_maplist, (caddr_t) & resp);
 
   if (result != RPC_SUCCESS)
-    return result;
+    return YPERR_RPC;
   if (resp.stat != YP_TRUE)
     return ypprot_err (resp.stat);
 
