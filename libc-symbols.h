@@ -165,7 +165,7 @@ Cambridge, MA 02139, USA.  */
 #else
 #define link_warning(symbol, msg)		\
   asm(".stabs \"" msg "\",30,0,0,0\n"	\
-      ".stabs \"" __SYMBOL_PREFIX #symbol \",1,0,0,0\n");
+      ".stabs \"" __SYMBOL_PREFIX #symbol "\",1,0,0,0\n");
 #endif
 #else
 /* We will never be heard; they will all die horribly.  */
