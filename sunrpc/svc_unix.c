@@ -294,7 +294,7 @@ __msgread (int sock, void *buf, size_t cnt)
 {
   struct iovec iov[1];
   struct msghdr msg;
-  int len, on = 1;
+  int on = 1;
 
   iov[0].iov_base = buf;
   iov[0].iov_len = cnt;
@@ -322,7 +322,6 @@ __msgwrite (int sock, void *buf, size_t cnt)
 #else
   struct iovec iov[1];
   struct msghdr msg;
-  int len;
 
   iov[0].iov_base = buf;
   iov[0].iov_len = cnt;
