@@ -124,7 +124,7 @@ registerrpc (u_long prognum, u_long versnum, u_long procnum,
  err_out:
 #ifdef USE_IN_LIBIO
   if (_IO_fwide (stderr, 0) > 0)
-    (void) fwprintf (stderr, L"%s", buf);
+    (void) __fwprintf (stderr, L"%s", buf);
   else
 #endif
     (void) fputs (buf, stderr);
