@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,37 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
 #include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
+#define __need_NULL
+#include <stddef.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
-
-int
-getdomainname (name, len)
-    char *name;
-    size_t len;
-{
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
-}
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
+unsigned int
+if_nametoindex (const char *ifname)
 {
   __set_errno (ENOSYS);
-  return -1;
+  return 0;
 }
+stub_warning (if_nametoindex)
 
-stub_warning (getdomainname)
+char *
+if_indextoname (unsigned int ifindex, char *ifname)
+{
+  __set_errno (ENOSYS);
+  return NULL;
+}
+stub_warning (if_indextoname)
+
+void
+if_freenameindex (struct if_nameindex *ifn)
+{
+}
+stub_warning (if_freenameindex)
+
+struct if_nameindex *
+if_nameindex (void)
+{
+  __set_errno (ENOSYS);
+  return NULL;
+}
+stub_warning (if_nameindex)
 #include <stub-tag.h>
-
-#endif

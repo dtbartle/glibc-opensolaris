@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,36 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
 #include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
+#include <signal.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
 
+/* If SET is not NULL, modify the current set of blocked signals
+   according to HOW, which may be SIG_BLOCK, SIG_UNBLOCK or SIG_SETMASK.
+   If OSET is not NULL, store the old set of blocked signals in *OSET.  */
 int
-getdomainname (name, len)
-    char *name;
-    size_t len;
+__sigprocmask (how, set, oset)
+     int how;
+     const sigset_t *set;
+     sigset_t *oset;
 {
-  struct utsname u;
+  switch (how)
+    {
+    case SIG_BLOCK:
+    case SIG_UNBLOCK:
+    case SIG_SETMASK:
+      break;
+    default:
+      __set_errno (EINVAL);
+      return -1;
+    }
 
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
-}
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
-{
   __set_errno (ENOSYS);
   return -1;
 }
 
-stub_warning (getdomainname)
-#include <stub-tag.h>
+/* No stub warning because abort calls __sigprocmask,
+   and we don't want warnings for every use of abort on
+   a system without safe signals.  */
 
-#endif
+weak_alias (__sigprocmask, sigprocmask)

@@ -1,4 +1,5 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Low-level functions for atomic operations.  Stub version.
+   Copyright (C) 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +17,37 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
+#ifndef _ATOMICITY_H
+#define _ATOMICITY_H	1
 
-#include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
+#include <inttypes.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
 
-int
-getdomainname (name, len)
-    char *name;
-    size_t len;
+static inline int
+__attribute__ ((unused))
+exchange_and_add (uint32_t *mem, int val)
 {
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
+  int result = *mem;
+  *mem += val;
+  return result;
 }
 
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
+static inline void
+__attribute__ ((unused))
+atomic_add (uint32_t *mem, int val)
 {
-  __set_errno (ENOSYS);
-  return -1;
+  *mem += val;
 }
 
-stub_warning (getdomainname)
-#include <stub-tag.h>
+static inline int
+__attribute__ ((unused))
+compare_and_swap (long int *p, long int oldval, long int newval)
+{
+  if (*p != oldval)
+    return 0;
 
-#endif
+  *p = newval;
+  return 1;
+}
+
+#endif /* atomicity.h */

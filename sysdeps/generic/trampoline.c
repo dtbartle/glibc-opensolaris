@@ -1,4 +1,5 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Set thread_state for sighandler, and sigcontext to recover.  Stub version.
+   Copyright (C) 1994, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +17,21 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
+#include <hurd.h>
+#include <mach/thread_status.h>
 
-#include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
+/* Set up STATE to run a signal handler in the thread it describes.
+   This should save the original state in a `struct sigcontext' on the
+   thread's stack (or possibly a signal stack described by SIGALTSTACK,
+   if the SA_ONSTACK bit is set in FLAGS), and return the address of
+   that structure.  */
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
-
-int
-getdomainname (name, len)
-    char *name;
-    size_t len;
+struct sigcontext *
+_hurd_setup_sighandler (int flags,
+			__sighandler_t handler,
+			struct sigaltstack *sigaltstack,
+			int signo, int sigcode,
+			void *state)
 {
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
+#error "Need to write sysdeps/mach/hurd/MACHINE/trampoline.c"
 }
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
-{
-  __set_errno (ENOSYS);
-  return -1;
-}
-
-stub_warning (getdomainname)
-#include <stub-tag.h>
-
-#endif

@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,26 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
+#include <sys/types.h>
+#include <sys/mman.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
+/* Map addresses starting near ADDR and extending for LEN bytes.  From
+   OFFSET into the file FD describes according to PROT and FLAGS.  If ADDR
+   is nonzero, it is the desired mapping address.  If the MAP_FIXED bit is
+   set in FLAGS, the mapping will be at ADDR exactly (which must be
+   page-aligned); otherwise the system chooses a convenient nearby address.
+   The return value is the actual mapping address chosen or (void *) -1
+   for errors (in which case `errno' is set).  A successful `mmap' call
+   deallocates any previous mapping for the affected region.  */
 
-int
-getdomainname (name, len)
-    char *name;
-    size_t len;
-{
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
-}
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
+void *
+__mmap (void *addr, size_t len, int prot, int flags, int fd, off_t offset)
 {
   __set_errno (ENOSYS);
-  return -1;
+  return MAP_FAILED;
 }
 
-stub_warning (getdomainname)
+stub_warning (mmap)
 #include <stub-tag.h>
-
-#endif
+weak_alias (__mmap, mmap)

@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,47 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
 #include <errno.h>
+#include <stddef.h>
 #include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
 
-int
-getdomainname (name, len)
-    char *name;
-    size_t len;
+/* Get file-specific information about descriptor FD.  */
+long int
+__fpathconf (fd, name)
+     int fd;
+     int name;
 {
-  struct utsname u;
+  if (fd < 0)
+    {
+      __set_errno (EBADF);
+      return -1;
+    }
 
-  if (uname (&u) < 0)
-    return -1;
+  switch (name)
+    {
+    default:
+      __set_errno (EINVAL);
+      return -1;
 
-  strncpy (name, u.domainname, len);
-  return 0;
-}
+    case _PC_LINK_MAX:
+    case _PC_MAX_CANON:
+    case _PC_MAX_INPUT:
+    case _PC_NAME_MAX:
+    case _PC_PATH_MAX:
+    case _PC_PIPE_BUF:
+    case _PC_SOCK_MAXBUF:
+    case _PC_CHOWN_RESTRICTED:
+    case _PC_NO_TRUNC:
+    case _PC_VDISABLE:
+      break;
+    }
 
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
-{
   __set_errno (ENOSYS);
   return -1;
 }
 
-stub_warning (getdomainname)
-#include <stub-tag.h>
+weak_alias (__fpathconf, fpathconf)
 
-#endif
+stub_warning (fpathconf)
+#include <stub-tag.h>

@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,45 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
+#include <stddef.h>
+#include <signal.h>
+#include <stdio.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
 
-int
-getdomainname (name, len)
-    char *name;
-    size_t len;
+/* Open a new stream that is a one-way pipe to a
+   child process running the given shell command.  */
+FILE *
+popen (command, mode)
+     const char *command;
+     const char *mode;
 {
-  struct utsname u;
+  if (command == NULL || mode == NULL || (*mode != 'r' && *mode != 'w'))
+    {
+      __set_errno (EINVAL);
+      return NULL;
+    }
 
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
+  __set_errno (ENOSYS);
+  return NULL;
 }
-
-#else
-
+
+/* Close a stream opened by popen and return its status.
+   Returns -1 if the stream was not opened by popen.  */
 int
-getdomainname (name, len)
-     char *name;
-     size_t len;
+pclose (stream)
+     register FILE *stream;
 {
+  if (!__validfp (stream) || !stream->__ispipe)
+    {
+      __set_errno (EINVAL);
+      return -1;
+    }
+
   __set_errno (ENOSYS);
   return -1;
 }
 
-stub_warning (getdomainname)
+stub_warning (popen)
+stub_warning (pclose)
 #include <stub-tag.h>
-
-#endif

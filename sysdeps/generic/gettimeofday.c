@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,21 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
 #include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
+#include <sys/time.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
-
+/* Get the current time of day and timezone information,
+   putting it into *TV and *TZ.  If TZ is NULL, *TZ is not filled.
+   Returns 0 on success, -1 on errors.  */
 int
-getdomainname (name, len)
-    char *name;
-    size_t len;
-{
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
-}
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
+__gettimeofday (tv, tz)
+     struct timeval *tv;
+     struct timezone *tz;
 {
   __set_errno (ENOSYS);
   return -1;
 }
+stub_warning (gettimeofday)
 
-stub_warning (getdomainname)
+weak_alias (__gettimeofday, gettimeofday)
 #include <stub-tag.h>
-
-#endif

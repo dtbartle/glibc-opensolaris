@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,27 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
+#include <sys/time.h>
+#include <sys/types.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
-
+/* Check the first NFDS descriptors each in READFDS (if not NULL) for read
+   readiness, in WRITEFDS (if not NULL) for write readiness, and in EXCEPTFDS
+   (if not NULL) for exceptional conditions.  If TIMEOUT is not NULL, time out
+   after waiting the interval specified therein.  Returns the number of ready
+   descriptors, or -1 for errors.  */
 int
-getdomainname (name, len)
-    char *name;
-    size_t len;
-{
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
-}
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
+__select (nfds, readfds, writefds, exceptfds, timeout)
+     int nfds;
+     fd_set *readfds;
+     fd_set *writefds;
+     fd_set *exceptfds;
+     struct timeval *timeout;
 {
   __set_errno (ENOSYS);
   return -1;
 }
+stub_warning (select)
 
-stub_warning (getdomainname)
+weak_alias (__select, select)
 #include <stub-tag.h>
-
-#endif

@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,27 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
+#include <stddef.h>
 
-#include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
-
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
-
-int
-getdomainname (name, len)
-    char *name;
-    size_t len;
-{
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
-}
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
-{
-  __set_errno (ENOSYS);
-  return -1;
-}
-
-stub_warning (getdomainname)
-#include <stub-tag.h>
-
-#endif
+const char *const _sys_siglist[] =
+  {
+    "Signal 0",
+    "Aborted",
+    "Erroneous arithmetic operation",
+    "Illegal instruction",
+    "Interrupt",
+    "Invalid access to storage",
+    "Terminated",
+    "Hangup",
+    "Quit",
+    "Broken pipe",
+    "Killed",
+    "Alarm clock",
+    "Stopped (signal)",
+    "Stopped",
+    "Continued",
+    "Child exited",
+    "Stopped (tty input)",
+    "Stopped (tty output)",
+    NULL
+  };

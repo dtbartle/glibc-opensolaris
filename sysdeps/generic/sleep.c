@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,26 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
-#include <errno.h>
+#include <signal.h>
+#include <time.h>
 #include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
+#include <errno.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
-
-int
-getdomainname (name, len)
-    char *name;
-    size_t len;
-{
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
-}
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
+/* Make the process sleep for SECONDS seconds, or until a signal arrives
+   and is not ignored.  The function returns the number of seconds less
+   than SECONDS which it actually slept (zero if it slept the full time).
+   If a signal handler does a `longjmp' or modifies the handling of the
+   SIGALRM signal while inside `sleep' call, the handling of the SIGALRM
+   signal afterwards is undefined.  There is no return value to indicate
+   error, but if `sleep' returns SECONDS, it probably didn't work.  */
+unsigned int
+__sleep (seconds)
+     unsigned int seconds;
 {
   __set_errno (ENOSYS);
-  return -1;
+  return seconds;
 }
+weak_alias (__sleep, sleep)
 
-stub_warning (getdomainname)
+stub_warning (sleep)
 #include <stub-tag.h>
-
-#endif

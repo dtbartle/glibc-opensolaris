@@ -1,4 +1,4 @@
-/* Copyright (C) 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,44 +16,24 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* Put the name of the current YP domain in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-
+#include <signal.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <string.h>
 
-#if _UTSNAME_DOMAIN_LENGTH
-/* The `uname' information includes the domain name.  */
-
+/* If VEC is non-NULL, set the handler for SIG to the `sv_handler' member
+   of VEC.  The signals in `sv_mask' will be blocked while the handler runs.
+   If the SV_RESETHAND bit is set in `sv_flags', the handler for SIG will be
+   reset to SIG_DFL before `sv_handler' is entered.  If OVEC is non-NULL,
+   it is filled in with the old information for SIG.  */
 int
-getdomainname (name, len)
-    char *name;
-    size_t len;
-{
-  struct utsname u;
-
-  if (uname (&u) < 0)
-    return -1;
-
-  strncpy (name, u.domainname, len);
-  return 0;
-}
-
-#else
-
-int
-getdomainname (name, len)
-     char *name;
-     size_t len;
+__sigvec (sig, vec, ovec)
+     int sig;
+     const struct sigvec *vec;
+     struct sigvec *ovec;
 {
   __set_errno (ENOSYS);
   return -1;
 }
+stub_warning (sigvec)
 
-stub_warning (getdomainname)
+weak_alias (__sigvec, sigvec)
 #include <stub-tag.h>
-
-#endif
