@@ -1,4 +1,5 @@
 ifeq ($(subdir), math)
+sysdep_routines += setfpucw
 extra-objs += ieee-fpucw.o
 install-lib += libieee.a
 
