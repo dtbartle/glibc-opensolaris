@@ -71,10 +71,10 @@ pthread_rwlock_timedwrlock:
 	je	5f
 
 	/* Check the value of the timeout parameter.  */
-	cmpl	$1000000000, 4(%edi)
+3:	cmpl	$1000000000, 4(%edi)
 	jae	19f
 
-3:	incl	WRITERS_QUEUED(%ebp)
+	incl	WRITERS_QUEUED(%ebp)
 	je	4f
 
 	LOCK
@@ -161,7 +161,7 @@ pthread_rwlock_timedwrlock:
 
 14:	cmpl	%gs:8, %eax
 	jne	3b
-	movl	$EDEADLK, %ecx
+20:	movl	$EDEADLK, %ecx
 	jmp	9b
 
 6:	movl	%ebp, %eax
