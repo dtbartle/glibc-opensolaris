@@ -451,16 +451,18 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
       path_max = (unsigned int) PATH_MAX;
       path_max += 2;		/* The getcwd docs say to do this.  */
 
-      dirname = (char *) alloca (path_max + dirname_len);
-      ADD_BLOCK (block_list, dirname);
-
-      __set_errno (0);
-      while ((ret = getcwd (dirname, path_max)) == NULL && errno == ERANGE)
+      for (;;)
 	{
-	  path_max += PATH_INCR;
 	  dirname = (char *) alloca (path_max + dirname_len);
 	  ADD_BLOCK (block_list, dirname);
+
 	  __set_errno (0);
+	  ret = getcwd (dirname, path_max);
+	  if (ret != NULL || errno != ERANGE)
+	    break;
+
+	  path_max += path_max / 2;
+	  path_max += PATH_INCR;
 	}
 
       if (ret == NULL)
