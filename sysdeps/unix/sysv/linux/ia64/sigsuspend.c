@@ -20,7 +20,7 @@
 #include <signal.h>
 #include <unistd.h>
 
-#include <sysdep.h>
+#include <sysdep-cancel.h>
 #include <sys/syscall.h>
 #include <bp-checks.h>
 
@@ -35,7 +35,16 @@ __sigsuspend (set)
 {
   /* XXX The size argument hopefully will have to be changed to the
      real size of the user-level sigset_t.  */
-  return INLINE_SYSCALL (rt_sigsuspend, 2, CHECK_SIGSET (set), _NSIG / 8);
+  if (SINGLE_THREAD_P)
+    return INLINE_SYSCALL (rt_sigsuspend, 2, CHECK_SIGSET (set), _NSIG / 8);
+
+  int oldtype = LIBC_CANCEL_ASYNC ();
+
+  int result = INLINE_SYSCALL (rt_sigsuspend, 2, CHECK_SIGSET (set), _NSIG / 8);
+
+  LIBC_CANCEL_RESET (oldtype);
+
+  return result;
 }
 libc_hidden_def (__sigsuspend)
 weak_alias (__sigsuspend, sigsuspend)
