@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1996, 1999 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1996, 1999, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,75 +16,24 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#include <bits/libc-lock.h>
 #include <stdlib.h>
 #include "exit.h"
+
+
+/* This is defined by newer gcc version unique for each module.  */
+extern void *__dso_handle __attribute__ ((__weak__));
 
 
 /* Register FUNC to be executed by `exit'.  */
 int
 atexit (void (*func) (void))
 {
-  struct exit_function *new = __new_exitfn ();
-
-  if (new == NULL)
-    return -1;
-
-  new->flavor = ef_at;
-  new->func.at = func;
-  return 0;
+  return __cxa_atexit ((void (*) (void *)) func, NULL,
+		       &__dso_handle == NULL ? NULL : __dso_handle);
 }
 
-
-/* We change global data, so we need locking.  */
-__libc_lock_define_initialized (static, lock)
-
-
-static struct exit_function_list initial;
-struct exit_function_list *__exit_funcs = &initial;
-
-struct exit_function *
-__new_exitfn (void)
-{
-  struct exit_function_list *l;
-  size_t i = 0;
-
-  __libc_lock_lock (lock);
-
-  for (l = __exit_funcs; l != NULL; l = l->next)
-    {
-      for (i = 0; i < l->idx; ++i)
-	if (l->fns[i].flavor == ef_free)
-	  break;
-      if (i < l->idx)
-	break;
-
-      if (l->idx < sizeof (l->fns) / sizeof (l->fns[0]))
-	{
-	  i = l->idx++;
-	  break;
-	}
-    }
-
-  if (l == NULL)
-    {
-      l = (struct exit_function_list *)
-	malloc (sizeof (struct exit_function_list));
-      if (l != NULL)
-	{
-	  l->next = __exit_funcs;
-	  __exit_funcs = l;
-
-	  l->idx = 1;
-      	  i = 0;
-	}
-    }
-
-  /* Mark entry as used, but we don't know the flavor now.  */
-  if (l != NULL)
-    l->fns[i].flavor = ef_us;
-
-  __libc_lock_unlock (lock);
-
-  return l == NULL ? NULL : &l->fns[i];
-}
+/* Hide the symbol so that no definition but the one locally in the
+   executable or DSO is used.  */
+#ifdef HAVE_DOT_HIDDEN
+asm (".hidden\tatexit");
+#endif
