@@ -40,7 +40,7 @@ _hurd_fd_close (struct hurd_fd *fd)
       err = 0;
     }
 
-  HURD_CRITICAL_BEGIN;
+  HURD_CRITICAL_END;
 
   return err;
 }
