@@ -59,11 +59,8 @@ __kill (pid_t pid, int sig)
 		   err == MIG_SERVER_DIED);
       else
 	err = HURD_MSGPORT_RPC (__proc_getmsgport (proc, pid, &msgport),
-				({ err = __proc_pid2task (proc, pid,
-							  &refport);
-				   if (err)
-				     err = __proc_getsidport (proc, &refport);
-				   err; }),
+				__proc_pid2task (proc, pid, &refport) ?
+				__proc_getsidport (proc, &refport) : 0, 1,
 				/* If no msgport, we cannot send a signal.  */
 				msgport == MACH_PORT_NULL ? EPERM :
 				__msg_sig_post (msgport, sig, refport));
