@@ -109,32 +109,32 @@ gconv_init (struct __gconv_step *step)
   enum variant var = illegal_var;
   int result;
 
-  if (__strcasecmp (step->__from_name, "UTF-16") == 0)
+  if (__strcasecmp (step->__from_name, "UTF-16//") == 0)
     {
       dir = from_utf16;
       var = UTF_16;
     }
-  else if (__strcasecmp (step->__to_name, "UTF-16") == 0)
+  else if (__strcasecmp (step->__to_name, "UTF-16//") == 0)
     {
       dir = to_utf16;
       var = UTF_16;
     }
-  else if (__strcasecmp (step->__from_name, "UTF-16BE") == 0)
+  else if (__strcasecmp (step->__from_name, "UTF-16BE//") == 0)
     {
       dir = from_utf16;
       var = UTF_16BE;
     }
-  else if (__strcasecmp (step->__to_name, "UTF-16BE") == 0)
+  else if (__strcasecmp (step->__to_name, "UTF-16BE//") == 0)
     {
       dir = to_utf16;
       var = UTF_16BE;
     }
-  else if (__strcasecmp (step->__from_name, "UTF-16LE") == 0)
+  else if (__strcasecmp (step->__from_name, "UTF-16LE//") == 0)
     {
       dir = from_utf16;
       var = UTF_16LE;
     }
-  else if (__strcasecmp (step->__to_name, "UTF-16LE") == 0)
+  else if (__strcasecmp (step->__to_name, "UTF-16LE//") == 0)
     {
       dir = to_utf16;
       var = UTF_16LE;
