@@ -146,14 +146,14 @@ enum
 	    continue;							      \
 	  }								      \
       }									      \
-    else if (ch == SI)							      \
+    else if (ch == SO)							      \
       {									      \
 	/* Switch to use KSC.  */					      \
 	++inptr;							      \
 	set = KSC5601_set;						      \
 	continue;							      \
       }									      \
-    else if (ch == SO)							      \
+    else if (ch == SI)							      \
       {									      \
 	/* Switch to use ASCII.  */					      \
 	++inptr;							      \
