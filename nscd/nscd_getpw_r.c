@@ -48,7 +48,7 @@ __nscd_getpwuid_r (uid_t uid, struct passwd *resultbuf, char *buffer,
 		   size_t buflen)
 {
   char *p = buffer;
-  char plen;
+  int plen;
 
   plen = snprintf (buffer, buflen, "%d", uid);
   if (plen == -1)
