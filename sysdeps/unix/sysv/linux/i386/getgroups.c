@@ -77,8 +77,8 @@ __getgroups (int n, gid_t *groups)
 	for (i = 0; i < ngids; i++)
 	  (__ptrvalue (groups))[i] = kernel_groups[i];
       return ngids;
-#endif
     }
+#endif
 }
 
 weak_alias (__getgroups, getgroups)
