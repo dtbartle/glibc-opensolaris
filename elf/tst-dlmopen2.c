@@ -1,5 +1,6 @@
 #include <dlfcn.h>
 #include <stdio.h>
+#include <string.h>
 #include <gnu/lib-names.h>
 #include <ldsodefs.h>
 
