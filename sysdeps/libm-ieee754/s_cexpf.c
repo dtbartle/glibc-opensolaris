@@ -33,8 +33,16 @@ __cexpf (__complex__ float x)
 	{
 	  float exp_val = __expf (__real__ x);
 
-	  __real__ retval = exp_val * __cosf (__imag__ x);
-	  __imag__ retval = exp_val * __sinf (__imag__ x);
+	  if (isfinite (exp_val))
+	    {
+	      __real__ retval = exp_val * __cosf (__imag__ x);
+	      __imag__ retval = exp_val * __sinf (__imag__ x);
+	    }
+	  else
+	    {
+	      __real__ retval = __copysignf (exp_val, __cosf (__imag__ x));
+	      __imag__ retval = __copysignf (exp_val, __sinf (__imag__ x));
+	    }
 	}
       else
 	{
@@ -48,14 +56,17 @@ __cexpf (__complex__ float x)
     {
       if (isfinite (__imag__ x))
 	{
-	  if (signbit (__real__ x) == 0 && __imag__ x == 0.0)
-	    retval = HUGE_VALF;
+	  float value = signbit (__real__ x) ? 0.0 : HUGE_VALF;
+
+	  if (__imag__ x == 0.0)
+	    {
+	      __real__ retval = value;
+	      __imag__ retval = __imag__ x;
+	    }
 	  else
 	    {
-	      float value = signbit (__real__ x) ? 0.0 : HUGE_VALF;
-
-	      __real__ retval = value * __cosf (__imag__ x);
-	      __imag__ retval = value * __sinf (__imag__ x);
+	      __real__ retval = __copysignf (value, __cosf (__imag__ x));
+	      __imag__ retval = __copysignf (value, __sinf (__imag__ x));
 	    }
 	}
       else if (signbit (__real__ x) == 0)
@@ -64,7 +75,10 @@ __cexpf (__complex__ float x)
 	  __imag__ retval = __nanf ("");
 	}
       else
-	retval = 0.0;
+	{
+	  __real__ retval = 0.0;
+	  __imag__ retval = __copysignf (0.0, __imag__ x);
+	}
     }
   else
     {
