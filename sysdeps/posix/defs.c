@@ -72,7 +72,5 @@ DEFUN_VOID(_cleanup)
 
 
 #ifdef	HAVE_GNU_LD
-#include <gnu-stabs.h>
-
 text_set_element(__libc_atexit, _cleanup);
 #endif
