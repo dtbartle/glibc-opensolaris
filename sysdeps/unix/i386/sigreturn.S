@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -23,3 +23,5 @@ ENTRY (__sigreturn)
 	addl $4, %esp		/* Pop the return PC.  */
 	DO_CALL (sigreturn, 0)	/* Do the system call; it never returns.  */
 	/* NOTREACHED */
+
+weak_alias (__sigreturn, sigreturn)
