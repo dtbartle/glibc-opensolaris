@@ -31,13 +31,17 @@ Cambridge, MA 02139, USA.  */
   typedef void __##NAME##_hook_function_t PROTO; \
   symbol_set_define (NAME)
 
+#define DECLARE_HOOK(NAME, PROTO)		\
+  typedef void __##NAME##_hook_function_t PROTO;\
+  symbol_set_declare (NAME)
+
 /* Run all the functions hooked on the set called NAME.
    Each function is called like this: `function ARGS'.  */
 
 #define RUN_HOOK(NAME, ARGS) \
 do {									      \
   void *const *ptr;							      \
-  for (ptr = __symbol_set_first_element (NAME);				      \
+  for (ptr = symbol_set_first_element (NAME);				      \
        ! symbol_set_end_p (NAME, ptr); ++ptr)				      \
     (*(__##NAME##_hook_function_t *) ptr) ARGS;				      \
 } while (0)
