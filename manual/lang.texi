@@ -487,7 +487,7 @@ is invalid it hopefully is and so one should always write something like
 this:
 
 @smallexample
-{
+@{
   va_list ap, save;
   @dots{}
 #ifdef __va_copy
@@ -496,7 +496,7 @@ this:
   save = ap;
 #endif
   @dots{}
-}
+@}
 @end smallexample
 
 
