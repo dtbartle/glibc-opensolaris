@@ -1,4 +1,4 @@
-/* Copyright (C) 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -43,3 +43,5 @@ DEFUN(__settimeofday, (tv, tz),
   when = tv->tv_sec + (tv->tv_usec / 1000000);
   return stime (&when);
 }
+
+weak_alias (__settimeofday, settimeofday)
