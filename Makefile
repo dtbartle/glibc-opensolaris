@@ -31,7 +31,7 @@ all: lib others
 define autoconf-it
 autoconf $(ACFLAGS) $< > $@.new
 mv -f $@.new $@
-test -d CVS && cvs commit -m'Regenerated: autoconf $(ACFLAGS) $<' $@
+test ! -d CVS || cvs commit -m'Regenerated: autoconf $(ACFLAGS) $<' $@
 endef
 
 configure: configure.in; $(autoconf-it)
