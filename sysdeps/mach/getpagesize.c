@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -28,3 +28,5 @@ DEFUN_VOID(__getpagesize)
 {
   return __vm_page_size;
 }
+
+weak_alias (__getpagesize, getpagesize)
