@@ -1583,7 +1583,7 @@ output_weight (struct obstack *pool, struct locale_collate_t *collate,
 	if (elem->weights[cnt].w[i] == NULL)
 	  {
 	    /* This entry was IGNORE.  */
-	    buf[len++] = '\3';
+	    buf[len++] = IGNORE_CHAR;
 	  }
 	else
 	  len += utf8_encode (&buf[len],
