@@ -67,6 +67,7 @@ tf1 (void *arg)
 
 	  char buf[100];
 	  printf ("tf1: pthread_join failed: %s\n",
+		  strerror_r (e, buf, sizeof (buf)));
 	  exit (1);
 	}
     }
@@ -82,10 +83,12 @@ do_test (void)
   for (i = 0; i < 10; ++i)
     {
       pthread_t th;
-      if (pthread_create (&th, NULL, tf1, NULL) != 0)
+      int e = pthread_create (&th, NULL, tf1, NULL);
+      if (e != 0)
 	{
 	  char buf[100];
 	  printf ("main: pthread_create failed: %s\n",
+		  strerror_r (e, buf, sizeof (buf)));
 	  exit (1);
 	}
     }
