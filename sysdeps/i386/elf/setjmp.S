@@ -51,9 +51,10 @@ ENTRY (BP_SYM (__sigsetjmp))
            we can't save and restore our caller's value.  Instead, we do an
            indirect jump through the GOT, using for the temporary register
            %ecx, which is call-clobbered.  */
-	call here
-here:	popl %ecx
-	addl $_GLOBAL_OFFSET_TABLE_+[.-here], %ecx
+	call L(here)
+L(here):
+	popl %ecx
+	addl $_GLOBAL_OFFSET_TABLE_+[.-L(here)], %ecx
 	movl C_SYMBOL_NAME (BP_SYM (__sigjmp_save)@GOT)(%ecx), %ecx
 	jmp *%ecx
 #else
