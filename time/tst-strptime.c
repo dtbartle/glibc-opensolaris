@@ -18,13 +18,16 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <locale.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 
 static const struct
 {
+  const char *locale;
   const char *input;
   const char *format;
   int wday;
@@ -33,12 +36,14 @@ static const struct
   int mday;
 } day_tests[] =
 {
-  { "2000-01-01", "%Y-%m-%d", 6, 0, 0, 1 },
-  { "03/03/00", "%D", 5, 62, 2, 3 },
-  { "9/9/99", "%x", 4, 251, 8, 9 },
-  { "19990502123412", "%Y%m%d%H%M%S", 0, 121, 4, 2 },
-  { "2001 20 Mon", "%Y %U %a", 1, 140, 4, 21 },
-  { "2001 21 Mon", "%Y %W %a", 1, 140, 4, 21 },
+  { "C", "2000-01-01", "%Y-%m-%d", 6, 0, 0, 1 },
+  { "C", "03/03/00", "%D", 5, 62, 2, 3 },
+  { "C", "9/9/99", "%x", 4, 251, 8, 9 },
+  { "C", "19990502123412", "%Y%m%d%H%M%S", 0, 121, 4, 2 },
+  { "C", "2001 20 Mon", "%Y %U %a", 1, 140, 4, 21 },
+  { "C", "2001 21 Mon", "%Y %W %a", 1, 140, 4, 21 },
+  { "ja_JP.EUC-JP", "2001 20 \xb7\xee", "%Y %U %a", 1, 140, 4, 21 },
+  { "ja_JP.EUC-JP", "2001 21 \xb7\xee", "%Y %W %a", 1, 140, 4, 21 },
 };
 
 
@@ -116,6 +121,12 @@ main (int argc, char *argv[])
     {
       memset (&tm, '\0', sizeof (tm));
 
+      if (setlocale (LC_ALL, day_tests[i].locale) == NULL)
+	{
+	  printf ("cannot set locale %s: %m\n", day_tests[i].locale);
+	  exit (EXIT_FAILURE);
+	}
+
       if (*strptime (day_tests[i].input, day_tests[i].format, &tm) != '\0')
 	{
 	  printf ("not all of `%s' read\n", day_tests[i].input);
@@ -155,6 +166,8 @@ main (int argc, char *argv[])
 	  result = 1;
 	}
     }
+
+  setlocale (LC_ALL, "C");
 
   result |= test_tm ();
 
