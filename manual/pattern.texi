@@ -380,6 +380,10 @@ matched by wildcards.  @xref{Wildcard Matching}, @code{FNM_PERIOD}.
 @comment glob.h
 @comment GNU
 @item GLOB_MAGCHAR
+The @code{GLOB_MAGCHAR} value is not to be given to @code{glob} in the
+@var{flags} parameter.  Instead, @code{glob} sets this bit in the
+@var{gl_flags} element of the @var{glob_t} structure provided as the
+result if the pattern used for matching contains any wildcard character.
 
 @comment glob.h
 @comment GNU
@@ -430,9 +434,8 @@ if we leave aside error handling.
 @comment glob.h
 @comment GNU
 @item GLOB_NOMAGIC
-If the pattern contains special characters like wildcards and braces and
-there are no matching entries for this pattern, the function does not
-return the pattern itself (See @code{GLOB_NOCHECK} above).
+If the pattern contains no wildcard constructs (it is a literal file name),
+return it as the sole ``matching'' word, even if no file exists by that name.
 
 @comment glob.h
 @comment GNU
