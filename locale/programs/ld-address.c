@@ -485,7 +485,7 @@ address_read (struct linereader *ldfile, struct localedef_t *result,
 %s: unknown character in field `%s'"), "LC_ADDRESS", #cat);		      \
 	      address->cat = "";					      \
 	    }								      \
-	  else								      \
+	  else if (!ignore_content)					      \
 	    address->cat = arg->val.str.startmb;			      \
 	  break
 
@@ -517,7 +517,7 @@ address_read (struct linereader *ldfile, struct localedef_t *result,
 	  else if (address->cat != 0)					      \
 	    lr_error (ldfile, _("\
 %s: field `%s' declared more than once"), "LC_ADDRESS", #cat);		      \
-	  else								      \
+	  else if (!ignore_content)					      \
 	    address->cat = arg->val.num;				      \
 	  break
 
