@@ -21,7 +21,6 @@ Cambridge, MA 02139, USA.  */
 #include <hurd.h>
 #include <hurd/resource.h>
 #include <cthreads.h>		/* For `struct mutex'.  */
-#include <gnu-stabs.h>
 
 
 /* Initial maximum size of the data segment (32MB, which is arbitrary).  */
@@ -54,6 +53,8 @@ DEFUN(__brk, (inaddr), PTR inaddr)
   HURD_CRITICAL_END;
   return ret;
 }
+weak_alias (__brk, brk)
+
 
 int
 _hurd_set_brk (vm_address_t addr)
@@ -127,5 +128,3 @@ init_brk (void)
   (void) &init_brk;		/* Avoid ``defined but not used'' warning.  */
 }
 text_set_element (_hurd_preinit_hook, init_brk);
-
-weak_alias (__brk, brk)
