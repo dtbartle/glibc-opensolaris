@@ -25,6 +25,6 @@ SYSCALL__ (fork, 0)
 	   make it -1 (all bits set) for the parent, and 0 (no bits set)
 	   for the child.  Then AND it with R0, so the parent gets
 	   R0&-1==R0, and the child gets R0&0==0.  */
-	subl r1, #1
+	subl #1, r1
 	andl r1, r0
 	ret
