@@ -1272,7 +1272,8 @@ This function @code{strerror_r} is a GNU extension and it is declared in
 @comment ISO
 @deftypefun void perror (const char *@var{message})
 This function prints an error message to the stream @code{stderr};
-see @ref{Standard Streams}.
+see @ref{Standard Streams}.  The orientation of @code{stderr} is not
+changed.
 
 If you call @code{perror} with a @var{message} that is either a null
 pointer or an empty string, @code{perror} just prints the error message
