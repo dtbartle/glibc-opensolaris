@@ -1030,14 +1030,14 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	    const char *mbs = (const char *) string;			      \
 	    mbstate_t mbstate;						      \
 									      \
-	    len = prec == -1 ? strnlen (mbs, prec) : strlen (mbs);	      \
+	    len = prec != -1 ? strnlen (mbs, prec) : strlen (mbs);	      \
 									      \
 	    /* Allocate dynamically an array which definitely is long	      \
 	       enough for the wide character version.  */		      \
-	    string = (CHAR_T *) alloca ((len + 1) * sizeof (wchar_t));	      \
+	    string = (CHAR_T *) alloca (len * sizeof (wchar_t));	      \
 									      \
 	    memset (&mbstate, '\0', sizeof (mbstate_t));		      \
-	    len = __mbsrtowcs (string, &mbs, len + 1, &mbstate);	      \
+	    len = __mbsrtowcs (string, &mbs, len, &mbstate);		      \
 	    if (len == (size_t) -1)					      \
 	      {								      \
 		/* Illegal multibyte character.  */			      \
