@@ -1,0 +1,15 @@
+/* Define if using GNU ld, with support for weak symbols in a.out,
+   and for symbol set and warning messages extensions in a.out and ELF.
+   This implies HAVE_WEAK_SYMBOLS; set by --with-gnu-ld.  */
+#undef	HAVE_GNU_LD
+
+/* Define if using ELF, which supports weak symbols.
+   This implies HAVE_WEAK_SYMBOLS; set by --with-elf.  */
+#undef	HAVE_ELF
+
+/* Define if weak symbols are available in the assembler and
+   linker being used.  Set by --with-weak-symbols.  */
+#undef	HAVE_WEAK_SYMBOLS
+
+/* Define if using the GNU assembler, gas.  */
+#undef	HAVE_GNU_AS
