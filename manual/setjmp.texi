@@ -249,8 +249,7 @@ Set of signals which are blocked when this context is used.
 
 @item stack_t uc_stack
 Stack used for this context.  The value need not be (and normally is
-not) the stack pointer.
-@c XXX stack_t should be described: sigaltstack()
+not) the stack pointer.  @xref{Signal Stack}.
 
 @item mcontext_t uc_mcontext
 This element contains the actual state of the process.  The
@@ -323,12 +322,12 @@ Safe ways to allocate stacks correctly include using memory on the
 original threads stack or explicitly allocate memory tagged for
 execution using (@pxref{Memory-mapped I/O}).
 
-@emph{Note}: the current Unix standard is very imprecise about the way
-the stack is allocated.  All implementations seem to agree that the
-@code{uc_stack} element must be used but the values stored in the
-elements of the @code{stack_t} value are unclear.  The GNU C library and
-most other Unix implementations require the @code{ss_sp} value of the
-@code{uc_stack} element to point to the base of the memory region
+@strong{Compatibility note}: The current Unix standard is very imprecise
+about the way the stack is allocated.  All implementations seem to agree
+that the @code{uc_stack} element must be used but the values stored in
+the elements of the @code{stack_t} value are unclear.  The GNU C library
+and most other Unix implementations require the @code{ss_sp} value of
+the @code{uc_stack} element to point to the base of the memory region
 allocated for the stack and the size of the memory region is stored in
 @code{ss_size}.  There are implements out there which require
 @code{ss_sp} to be set to the value the stack pointer will have (which
