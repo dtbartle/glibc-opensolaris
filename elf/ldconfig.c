@@ -132,6 +132,9 @@ static const struct argp_option options[] =
   { NULL, 0, NULL, 0, NULL, 0 }
 };
 
+#define PROCINFO_CLASS static
+#include <dl-procinfo.c>
+
 /* Short description of program.  */
 static const char doc[] = N_("Configure Dynamic Linker Run Time Bindings.");
 
