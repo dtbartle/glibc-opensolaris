@@ -29,7 +29,6 @@
 #define SYS_futex		240
 #define FUTEX_WAKE		1
 
-#define EAGAIN			11
 #define EINVAL			22
 
 
@@ -72,7 +71,7 @@ __new_sem_post:
 	movl	$EINVAL, (%edx)
 #else
 	call	__errno_location@plt
-	movl	$EAGAIN, (%eax)
+	movl	$EINVAL, (%eax)
 #endif
 
 	orl	$-1, %eax
