@@ -1,5 +1,5 @@
 ifeq ($(subdir),misc)
-sysdep_headers += ia64/rse.h
+sysdep_headers += sys/rse.h
 endif
 
 ifeq ($(subdir),stdlib)
