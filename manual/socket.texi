@@ -482,7 +482,7 @@ might be @code{lo} (the loopback interface) and @code{eth0} (the first
 Ethernet interface).
 
 Although such names are convenient for humans, it would be clumsy to
-have to use them whenever a program needed to refer to an interface.  In
+have to use them whenever a program needs to refer to an interface.  In
 such situations an interface is referred to by its @dfn{index}, which is
 an arbitrarily-assigned small positive integer.
 
@@ -1952,7 +1952,7 @@ connection in progress (see @code{EINPROGRESS} above).
 This function is defined as a cancelation point in multi-threaded
 programs.  So one has to be prepared for this and make sure that
 possibly allocated resources (like memory, files descriptors,
-semaphores or whatever) are freed even if the thread is cancel.
+semaphores or whatever) are freed even if the thread is canceled.
 @c @xref{pthread_cleanup_push}, for a method how to do this.
 @end deftypefun
 
