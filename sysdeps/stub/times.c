@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -37,13 +37,6 @@ DEFUN(__times, (buffer), struct tms *buffer)
   errno = ENOSYS;
   return (clock_t) -1;
 }
+stub_warning (times)
 
-
-
-#ifdef	 HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
-stub_warning(__times);
-
-#endif	/* GNU stabs.  */
+weak_alias (__times, times)
