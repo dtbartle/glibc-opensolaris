@@ -28,8 +28,8 @@
 ENTRY (__vfork)
 
 #ifdef __NR_vfork
-	mov	#+__NR_vfork, r0
-	trapa	#0
+	mov.w	.L3, r3
+	trapa	#0x10
 	mov     r0, r1
 	mov	#-12, r2
 	shad	r2, r1
@@ -63,6 +63,7 @@ ENTRY (__vfork)
 #endif
 .L1:
 	.word	-ENOSYS
+.L3:	.word	__NR_vfork
 1:
 	rts
 	 nop
@@ -70,8 +71,8 @@ ENTRY (__vfork)
 #endif
 
 	/* If we don't have vfork, fork is close enough.  */
-	mov	#+__NR_fork, r0
-	trapa	#0
+	mov	#+__NR_fork, r3
+	trapa	#0x10
 	mov     r0, r1
 	mov	#-12, r2
 	shad	r2, r1
