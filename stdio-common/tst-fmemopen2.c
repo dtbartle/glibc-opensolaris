@@ -36,7 +36,7 @@ do_test (void)
       return 1;
     }
   o = ftello (fp);
-  if (o != sizeof (buf))
+  if (o != nstr)
     {
       printf ("third ftello returned %ld, expected %zu\n", o, nstr);
       result = 1;
