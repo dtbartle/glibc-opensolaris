@@ -1,4 +1,4 @@
-/* Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+/* Copyright (C) 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -13,35 +13,17 @@ Library General Public License for more details.
 
 You should have received a copy of the GNU Library General Public
 License along with the GNU C Library; see the file COPYING.LIB.  If
-not, write to the Free Software Foundation, Inc., 675 Mass Ave,
-Cambridge, MA 02139, USA.  */
+not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.  */
 
-#include <sysdep.h>
+#ifndef _SIGCONTEXT_H
+#define _SIGCONTEXT_H 1
 
-	.text
-	SYSCALL_ERROR_HANDLER
+/* Kernel headers before 2.1.1 define a struct sigcontext_struct, but
+   we need sigcontext.  */
+#define sigcontext_struct sigcontext
 
-ENTRY (__mmap)
+#include <asm/sigcontext.h>
 
-	/* Save registers.  */
-	movl %ebx, %edx
 
-	movl $SYS_ify(mmap), %eax	/* System call number in %eax.  */
-
-	lea 4(%esp), %ebx		/* Address of args is 1st arg.  */
-
-        /* Do the system call trap.  */
-	int $0x80
-
-	/* Restore registers.  */
-	movl %edx, %ebx
-
-	/* If 0 > %eax > -4096 there was an error.  */
-	cmpl $-4096, %eax
-	ja syscall_error
-
-	/* Successful; return the syscall's value.  */
-	ret
-	.size __mmap,.-__mmap
-
-weak_alias (__mmap, mmap)
+#endif /* sigcontext.h */
