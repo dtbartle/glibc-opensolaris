@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -62,6 +62,7 @@ __hurd_file_name_lookup (file_t crdir, file_t cwdir,
   return __hurd_file_name_lookup_retry (crdir, doretry, retryname, flags, mode,
 					result);
 }
+weak_alias (__hurd_file_name_lookup, hurd_file_name_lookup)
 
 error_t
 __hurd_file_name_lookup_retry (file_t crdir,
@@ -283,6 +284,7 @@ __hurd_file_name_lookup_retry (file_t crdir,
 			  &doretry, retryname, result);
     }
 }
+weak_alias (__hurd_file_name_lookup_retry, hurd_file_name_lookup_retry)
 
 error_t
 __hurd_file_name_split (file_t crdir, file_t cwdir,
@@ -326,6 +328,8 @@ __hurd_file_name_split (file_t crdir, file_t cwdir,
       return 0;
     }
 }
+weak_alias (__hurd_file_name_split, hurd_file_name_split)
+
 
 file_t
 __file_name_lookup (const char *file_name, int flags, mode_t mode)
@@ -348,6 +352,8 @@ __file_name_lookup (const char *file_name, int flags, mode_t mode)
   else
     return result;
 }
+weak_alias (__file_name_lookup, file_name_lookup)
+
 
 file_t
 __file_name_split (const char *file_name, char **name)
@@ -372,3 +378,4 @@ __file_name_split (const char *file_name, char **name)
   else
     return dir;
 }
+weak_alias (__file_name_split, file_name_split)
