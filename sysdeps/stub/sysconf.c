@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -65,3 +65,5 @@ DEFUN(__sysconf, (name), int name)
   errno = ENOSYS;
   return -1;
 }
+
+weak_alias (__sysconf, sysconf)
