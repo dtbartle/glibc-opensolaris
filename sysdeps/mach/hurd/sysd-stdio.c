@@ -105,7 +105,7 @@ int
 DEFUN(__stdio_close, (cookie), PTR cookie)
 {
   error_t error = cookie ? _hurd_fd_close (cookie) : EBADF;
-  return error ? __fd_fail (fd, error) : 0;
+  return error ? fd_fail (cookie, error) : 0;
 }
 
 
