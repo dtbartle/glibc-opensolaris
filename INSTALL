@@ -253,73 +253,56 @@ manufacturer's name, and the operating system.  `configure' uses these
 to pick the list of system-dependent directories to look for.  If the
 `--nfp' option is *not* passed to `configure', the directory
 `MACHINE/fpu' is also used.  The operating system often has a "base
-operating system"; for example, if the operating system is `sunos4.1',
-the base operating system is `unix/bsd'.  The algorithm used to pick
-the list of directories is simple: `configure' makes a list of the base
+operating system"; for example, if the operating system is `Linux', the
+base operating system is `unix/sysv'.  The algorithm used to pick the
+list of directories is simple: `configure' makes a list of the base
 operating system, manufacturer, CPU type, and operating system, in that
 order.  It then concatenates all these together with slashes in
 between, to produce a directory name; for example, the configuration
-`sparc-sun-sunos4.1' results in `unix/bsd/sun/sparc/sunos4.1'.
-`configure' then tries removing each element of the list in turn, so
-`unix/bsd/sparc' and `sun/sparc' are also tried, among others.  Since
+`i686-linux-gnu' results in `unix/sysv/linux/i386/i686'.  `configure'
+then tries removing each element of the list in turn, so
+`unix/sysv/linux' and `unix/sysv' are also tried, among others.  Since
 the precise version number of the operating system is often not
 important, and it would be very inconvenient, for example, to have
-identical `sunos4.1.1' and `sunos4.1.2' directories, `configure' tries
+identical `irix6.2' and `irix6.3' directories, `configure' tries
 successively less specific operating system names by removing trailing
 suffixes starting with a period.
 
    As an example, here is the complete list of directories that would be
-tried for the configuration `sparc-sun-sunos4.1' (without the `--nfp'
-option):
+tried for the configuration `i686-linux-gnu' (with the `crypt' and
+`linuxthreads' add-on):
 
-     sparc/fpu
-     unix/bsd/sun/sunos4.1/sparc
-     unix/bsd/sun/sunos4.1
-     unix/bsd/sun/sunos4/sparc
-     unix/bsd/sun/sunos4
-     unix/bsd/sun/sunos/sparc
-     unix/bsd/sun/sunos
-     unix/bsd/sun/sparc
-     unix/bsd/sun
-     unix/bsd/sunos4.1/sparc
-     unix/bsd/sunos4.1
-     unix/bsd/sunos4/sparc
-     unix/bsd/sunos4
-     unix/bsd/sunos/sparc
-     unix/bsd/sunos
-     unix/bsd/sparc
-     unix/bsd
-     unix/sun/sunos4.1/sparc
-     unix/sun/sunos4.1
-     unix/sun/sunos4/sparc
-     unix/sun/sunos4
-     unix/sun/sunos/sparc
-     unix/sun/sunos
-     unix/sun/sparc
-     unix/sun
-     unix/sunos4.1/sparc
-     unix/sunos4.1
-     unix/sunos4/sparc
-     unix/sunos4
-     unix/sunos/sparc
-     unix/sunos
-     unix/sparc
-     unix
-     sun/sunos4.1/sparc
-     sun/sunos4.1
-     sun/sunos4/sparc
-     sun/sunos4
-     sun/sunos/sparc
-     sun/sunos
-     sun/sparc
-     sun
-     sunos4.1/sparc
-     sunos4.1
-     sunos4/sparc
-     sunos4
-     sunos/sparc
-     sunos
-     sparc
+     sysdeps/i386/elf
+     crypt/sysdeps/unix
+     linuxthreads/sysdeps/unix/sysv/linux
+     linuxthreads/sysdeps/pthread
+     linuxthreads/sysdeps/unix/sysv
+     linuxthreads/sysdeps/unix
+     linuxthreads/sysdeps/i386/i686
+     linuxthreads/sysdeps/i386
+     linuxthreads/sysdeps/pthread/no-cmpxchg
+     sysdeps/unix/sysv/linux/i386
+     sysdeps/unix/sysv/linux
+     sysdeps/gnu
+     sysdeps/unix/common
+     sysdeps/unix/mman
+     sysdeps/unix/inet
+     sysdeps/unix/sysv/i386/i686
+     sysdeps/unix/sysv/i386
+     sysdeps/unix/sysv
+     sysdeps/unix/i386
+     sysdeps/unix
+     sysdeps/posix
+     sysdeps/i386/i686
+     sysdeps/i386/i486
+     sysdeps/libm-i387/i686
+     sysdeps/i386/fpu
+     sysdeps/libm-i387
+     sysdeps/i386
+     sysdeps/wordsize-32
+     sysdeps/ieee754
+     sysdeps/libm-ieee754
+     sysdeps/generic
 
    Different machine architectures are conventionally subdirectories at
 the top level of the `sysdeps' directory tree.  For example,
@@ -343,6 +326,15 @@ hierarchy that are not for particular machine architectures.
      format, and `double' is IEEE 754 double-precision format.  Usually
      this directory is referred to in the `Implies' file in a machine
      architecture-specific directory, such as `m68k/Implies'.
+
+`libm-ieee754'
+     This directory contains an implementation of a mathematical library
+     usable on platforms which use IEEE 754 conformant floating-point
+     arithmetic.
+
+`libm-i387'
+     This is a special case.  Ideally the code should be in
+     `sysdeps/i386/fpu' but for various reasons it is kept aside.
 
 `posix'
      This directory contains implementations of things in the library in
