@@ -1,5 +1,5 @@
 /* setjmp for i386.
-   Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -23,14 +23,14 @@
 #include <asm-syntax.h>
 
 	/* Binary compatibility entry point.  */
-ENTRY (__setjmp)
+ENTRY (__libc_setjmp)
 	popl %eax		/* Pop return address.  */
 	popl %ecx		/* Pop jmp_buf.  */
 	pushl $0		/* Push zero argument.  */
 	pushl %ecx		/* Push jmp_buf.  */
 	pushl %eax		/* Push back return address.  */
 
-ENTRY (__sigsetjmp)
+ENTRY (__libc_sigsetjmp)
 	movl 4(%esp), %eax	/* User's jmp_buf in %eax.  */
      	/* Save registers.  */
 	movl %ebx, (JB_BX*4)(%eax)
@@ -58,3 +58,6 @@ L(here):
 	jmp __sigjmp_save
 #endif
 END (__sigsetjmp)
+
+weak_alias (__libc_setjmp, __setjmp)
+weak_alias (__libc_sigsetjmp, __sigsetjmp)
