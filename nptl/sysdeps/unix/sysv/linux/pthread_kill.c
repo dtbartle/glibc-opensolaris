@@ -36,6 +36,10 @@ __pthread_kill (threadid, signo)
     /* Not a valid thread handle.  */
     return ESRCH;
 
+  /* Disallow sending the signal we use for cancellation.  */
+  if (signo == SIGCANCEL)
+    return EINVAL;
+
   /* We have a special syscall to do the work.  */
   INTERNAL_SYSCALL_DECL (err);
 
