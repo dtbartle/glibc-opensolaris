@@ -365,7 +365,6 @@ johab_from_ucs4 (uint32_t ch, unsigned char *cp)
 #define BODY \
   {									      \
     uint32_t ch = *((uint32_t *) inptr);				      \
-    unsigned char cp[2];						      \
     /*									      \
        if (ch >= (sizeof (from_ucs4_lat1) / sizeof (from_ucs4_lat1[0])))      \
 	 {								      \
@@ -379,27 +378,98 @@ johab_from_ucs4 (uint32_t ch, unsigned char *cp)
        else								      \
 	 cp = from_ucs4_lat1[ch];					      \
     */									      \
-    johab_from_ucs4 (ch, cp);						      \
 									      \
-    if (cp[0] == '\0' && ch != 0)					      \
+    if (ch < 0x7f)							      \
+      *outptr++ = ch;							      \
+    else								      \
       {									      \
-	/* Illegal character.  */					      \
-	result = GCONV_ILLEGAL_INPUT;					      \
-	break;								      \
-      }									      \
-									      \
-    *outptr++ = cp[0];							      \
-    /* Now test for a possible second byte and write this if possible.  */    \
-    if (cp[1] != '\0')							      \
-      {									      \
-	if (NEED_LENGTH_TEST && outptr >= outend)			      \
+	if ((ch >= 0x4e00 && ch <= 0x9fa5) || (ch >= 0xf900 && ch <= 0xfa0b)) \
 	  {								      \
-	    /* The result does not fit into the buffer.  */		      \
-	    --outptr;							      \
-	    result = GCONV_FULL_OUTPUT;					      \
-	    break;							      \
+	    size_t written;						      \
+									      \
+	    written = ucs4_to_ksc5601_hanja (ch, outptr,		      \
+					     (NEED_LENGTH_TEST		      \
+					      ? outend - outptr : 2));	      \
+	    if (NEED_LENGTH_TEST && written == 0)			      \
+	      {								      \
+		result = GCONV_FULL_OUTPUT;				      \
+		break;							      \
+	      }								      \
+	    if (written == UNKNOWN_10646_CHAR)				      \
+	      {								      \
+		result = GCONV_ILLEGAL_INPUT;				      \
+		break;							      \
+	      }								      \
+									      \
+	    outptr[0] -= 0x4a;						      \
+	    outptr[1] += 0x80;						      \
+									      \
+	    outptr[1] += (outptr[0] % 2					      \
+			  ? 0 : (outptr[1] > 0xee ? 0x43 : 0x31));	      \
+	    outptr[1] -= 0xa1;						      \
+	    outptr[0] /= 2;						      \
+	    outptr[0] += 0xe0;						      \
+									      \
+	    outptr += 2;						      \
 	  }								      \
-	*outptr++ = cp[1];						      \
+	else								      \
+	  {								      \
+	    size_t written;						      \
+									      \
+	    written = ucs4_to_ksc5601_sym (ch, outptr,			      \
+					   (NEED_LENGTH_TEST		      \
+					    ? outend - outptr : 2));	      \
+	    if (NEED_LENGTH_TEST && written == 0)			      \
+	      {								      \
+		result = GCONV_FULL_OUTPUT;				      \
+		break;							      \
+	      }								      \
+	    if (written == UNKNOWN_10646_CHAR)				      \
+	      {								      \
+		result = GCONV_ILLEGAL_INPUT;				      \
+		break;							      \
+	      }								      \
+									      \
+	    outptr[0] -= 0x4a;						      \
+	    outptr[1] += 0x80;						      \
+									      \
+	    outptr[1] += (outptr[0] % 2					      \
+			  ? 0 : (outptr[1] > 0xee ? 0x43 : 0x31));	      \
+	    outptr[1] -= 0xa1;						      \
+	    outptr[0] /= 2;						      \
+	    outptr[0] += 0xe0;						      \
+									      \
+	    outptr += 2;						      \
+	  }								      \
+	else								      \
+	  {								      \
+	    if (ch >= 0xac00 && ch <= 0xd7a3)				      \
+	      {								      \
+		ch -= 0xac00;						      \
+									      \
+		ch = (init_to_bit[ch / 588]	  /* 21 * 28 = 588 */	      \
+		      + mid_to_bit[(ch / 28) % 21]/* (ch % (21 * 28)) / 28 */ \
+		      + final_to_bit[ch %  28]);  /* (ch % (21 * 28)) % 28 */ \
+	      }								      \
+	    /* KS C 5601-1992 Annex 3 regards  0xA4DA(Hangul Filler : U3164)  \
+	       as symbol */						      \
+	    else if (ch >= 0x3131 && ch <= 0x3163)			      \
+	      ch = jamo_from_ucs_table[ch - 0x3131];			      \
+	    else							      \
+	      {								      \
+		result = GCONV_ILLEGAL_INPUT;				      \
+		break;							      \
+	      }								      \
+									      \
+	    if (NEED_LENGTH_TEST && outptr + 2 > outend)		      \
+	      {								      \
+		result = GCONV_FULL_OUTPUT;				      \
+		break;							      \
+	      }								      \
+									      \
+	    *outptr++ = ch / 256;					      \
+	    *outptr++ = ch % 256;					      \
+	  }								      \
       }									      \
 									      \
     inptr += 4;								      \
