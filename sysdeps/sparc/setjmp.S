@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -17,15 +17,15 @@ not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
 #include <sysdep.h>
-
-/* NOTE: This code depends on the definition of `__jmp_buf' in <jmp_buf.h>.  */
+#include <jmp_buf.h>
 
 ENTRY (__sigsetjmp)
-	/* Save our return PC and SP (second store in the jmp delay slot).  */
-	st %o7, [%o0]
-	/* Save the signal mask if requested.  We do this as a tail-call
+	/* Save our SP and FP; in the delay slot of the jump, save our
+	   return PC.  Save the signal mask if requested with a tail-call
 	   for simplicity; it always returns zero.  */
 	sethi %hi(C_SYMBOL_NAME (__sigjmp_save)), %g1
+	st %sp, [%o0 + (JB_SP*4)]
 	or %lo(C_SYMBOL_NAME (__sigjmp_save)), %g1, %g1
+	st %fp, [%o0 + (JB_FP*4)]
 	jmp %g1
-	st %sp, [%o0 + 4]
+	 st %o7, [%o0 + (JB_PC*4)]
