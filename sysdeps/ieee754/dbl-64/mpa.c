@@ -126,7 +126,10 @@ void cpymn(const mp_no *x, int m, mp_no *y, int n) {
 static void norm(const mp_no *x, double *y, int p)
 {
   #define R  radixi.d
-  int i,k;
+  int i;
+#if 0
+  int k;
+#endif
   double a,c,u,v,z[5];
   if (p<5) {
     if      (p==1) c = X[1];
@@ -178,7 +181,10 @@ static void norm(const mp_no *x, double *y, int p)
 static void denorm(const mp_no *x, double *y, int p)
 {
   int i,k;
-  double a,c,u,v,z[5];
+  double c,u,z[5];
+#if 0
+  double a,v;
+#endif
 
 #define R  radixi.d
   if (EX<-44 || (EX==-44 && X[1]<TWO5))
@@ -223,9 +229,10 @@ static void denorm(const mp_no *x, double *y, int p)
 /* The result is correctly rounded to the nearest/even. *x is left unchanged */
 
 void __mp_dbl(const mp_no *x, double *y, int p) {
-
+#if 0
   int i,k;
   double a,c,u,v,z[5];
+#endif
 
   if (X[0] == ZERO)  {*y = ZERO;  return; }
 
@@ -458,15 +465,18 @@ void mul(const mp_no *x, const mp_no *y, mp_no *z, int p) {
 /* *x=0 is not permissible. *x is left unchanged.                           */
 
 void inv(const mp_no *x, mp_no *y, int p) {
-  int i,l;
+  int i;
+#if 0
+  int l;
+#endif
   double t;
   mp_no z,w;
   static const int np1[] = {0,0,0,0,1,2,2,2,2,3,3,3,3,3,3,3,3,3,
                             4,4,4,4,4,4,4,4,4,4,4,4,4,4,4};
-  const mp_no mptwo = {1,1.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
+  const mp_no mptwo = {1,{1.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
                          0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
                          0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
-                         0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,};
+                         0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}};
 
   cpy(x,&z,p);  z.e=0;  __mp_dbl(&z,&t,p);
   t=ONE/t;   dbl_mp(t,y,p);    EY -= EX;
