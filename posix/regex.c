@@ -1284,7 +1284,11 @@ convert_mbs_to_wcs (dest, src, len, offset_buffer, is_binary)
   for( ; mb_remain > 0 ; ++wc_count, ++pdest, mb_remain -= consumed,
 	 psrc += consumed)
     {
+#ifdef _LIBC
+      consumed = __mbrtowc (pdest, psrc, mb_remain, &mbs);
+#else
       consumed = mbrtowc (pdest, psrc, mb_remain, &mbs);
+#endif
 
       if (consumed <= 0)
 	/* failed to convert. maybe src contains binary data.
