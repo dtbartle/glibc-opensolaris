@@ -748,7 +748,7 @@ my_strftime (s, maxsize, format, tp)
 	    *u++ = format_char;
 	    *u = '\0';
 	    len = strftime (ubuf, sizeof ubuf, ufmt, tp);
-	    if (len == 0)
+	    if (len == 0 && ubuf[0] != '\0')
 	      return 0;
 	    cpy (len, ubuf);
 	  }
