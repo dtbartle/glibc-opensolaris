@@ -35,8 +35,6 @@ _IO_fwrite (buf, size, count, fp)
   _IO_size_t request = size * count;
   _IO_size_t written = 0;
   CHECK_FILE (fp, 0);
-  /* Many traditional implementations return 0 if size==0 && count > 0,
-     but ANSI requires us to return count in this case. */
   if (request == 0)
     return 0;
   _IO_cleanup_region_start ((void (*) __P ((void *))) _IO_funlockfile, fp);
