@@ -32,7 +32,7 @@ Cambridge, MA 02139, USA.  */
 #include <stddef.h>
 
 #define	__need_Emath
-#include <errno.h>
+#include <errnos.h>
 
 __BEGIN_DECLS
 
