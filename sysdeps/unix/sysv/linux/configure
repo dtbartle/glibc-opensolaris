@@ -35,6 +35,10 @@ fi
 
 echo "$ac_t""$libc_cv_linux2" 1>&6
 if test "$libc_cv_linux2" != '2.0 or later'; then
-  { echo "configure: error: 'GNU libc requires kernel header files from Linux 2.0 or later
-	to be installed (/usr/include/{asm,linux}) before configuring'" 1>&2; exit 1; }
+  { echo "configure: error: GNU libc requires kernel header files from Linux 2.0
+or later to be installed before configuring.  The kernel header files
+are found usually in /usr/include/asm and /usr/include/linux; make sure
+these directories use files from Linux 2.0 or later.  This check uses
+<linux/version.h>, so make sure that file was built correctly when
+installing the kernel header files." 1>&2; exit 1; }
 fi
