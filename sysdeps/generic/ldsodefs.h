@@ -478,28 +478,13 @@ struct rtld_global_ro
 					      const char *);
   void (internal_function *_dl_start_profile) (void);
   void (*_dl_mcount) (ElfW(Addr) frompc, ElfW(Addr) selfpc);
-  lookup_t (internal_function *_dl_lookup_symbol) (const char *,
-						   struct link_map *,
-						   const ElfW(Sym) **,
-						   struct r_scope_elem *[],
-						   int, int);
-  lookup_t (internal_function *_dl_lookup_versioned_symbol) (const char *,
-							     struct link_map *,
-							     const ElfW(Sym) **,
-							     struct r_scope_elem *[],
-							     const struct r_found_version *,
-							     int, int);
-  lookup_t (internal_function *_dl_lookup_symbol_skip) (const char *,
-							struct link_map *,
-							const ElfW(Sym) **,
-							struct r_scope_elem *[],
-							struct link_map *);
-  lookup_t (internal_function *_dl_lookup_versioned_symbol_skip) (const char *,
-								  struct link_map *,
-								  const ElfW(Sym) **,
-								  struct r_scope_elem *[],
-								  const struct r_found_version *,
-								  struct link_map *);
+  lookup_t (internal_function *_dl_lookup_symbol_x) (const char *,
+						     struct link_map *,
+						     const ElfW(Sym) **,
+						     struct r_scope_elem *[],
+						     const struct r_found_version *,
+						     int, int,
+						     struct link_map *);
 
 };
 # define __rtld_global_attribute__
@@ -681,13 +666,6 @@ extern void _dl_rtld_di_serinfo (struct link_map *loader,
    object) is searched in turn.  REFERENCE_NAME should name the object
    containing the reference; it is used in error messages.
    TYPE_CLASS describes the type of symbol we are looking for.  */
-extern lookup_t _dl_lookup_symbol (const char *undef,
-				   struct link_map *undef_map,
-				   const ElfW(Sym) **sym,
-				   struct r_scope_elem *symbol_scope[],
-				   int type_class, int flags)
-     internal_function attribute_hidden;
-
 enum
   {
     /* If necessary add dependency between user and provider object.  */
@@ -698,31 +676,15 @@ enum
   };
 
 /* Lookup versioned symbol.  */
-extern lookup_t _dl_lookup_versioned_symbol (const char *undef,
-					     struct link_map *undef_map,
-					     const ElfW(Sym) **sym,
-					     struct r_scope_elem *symbol_scope[],
-					     const struct r_found_version *version,
-					     int type_class, int explicit)
+extern lookup_t _dl_lookup_symbol_x (const char *undef,
+				     struct link_map *undef_map,
+				     const ElfW(Sym) **sym,
+				     struct r_scope_elem *symbol_scope[],
+				     const struct r_found_version *version,
+				     int type_class, int explicit,
+				     struct link_map *skip_map)
      internal_function attribute_hidden;
 
-/* For handling RTLD_NEXT we must be able to skip shared objects.  */
-extern lookup_t _dl_lookup_symbol_skip (const char *undef,
-					struct link_map *undef_map,
-					const ElfW(Sym) **sym,
-					struct r_scope_elem *symbol_scope[],
-					struct link_map *skip_this)
-     internal_function;
-
-/* For handling RTLD_NEXT with versioned symbols we must be able to
-   skip shared objects.  */
-extern lookup_t _dl_lookup_versioned_symbol_skip (const char *undef,
-						  struct link_map *undef_map,
-						  const ElfW(Sym) **sym,
-						  struct r_scope_elem *symbol_scope[],
-						  const struct r_found_version *version,
-						  struct link_map *skip_this)
-     internal_function;
 
 /* Look up symbol NAME in MAP's scope and return its run-time address.  */
 extern ElfW(Addr) _dl_symbol_value (struct link_map *map, const char *name)
