@@ -2164,8 +2164,10 @@ echo "$ac_t""$stdio" 1>&6
 echo $ac_n "checking ldap selection""... $ac_c" 1>&6
 echo "configure:2166: checking ldap selection" >&5
 
-case $ldap in
-yes) LDAP=ldap ;;
+case $add_ons in
+*ldap*)
+   ldap=yes
+   LDAP=ldap ;;
 *) ldap=no
    LDAP= ;;
 esac
