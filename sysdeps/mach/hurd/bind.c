@@ -62,8 +62,12 @@ DEFUN(bind, (fd, addr, len),
 				       MACH_PORT_NULL,
 				       MACH_MSG_TYPE_COPY_SEND);
 	  if (! err)
-	    /* Link the node, now a socket, into the target directory.  */
-	    err = __dir_link (dir, node, n);
+	    {
+	      /* Link the node, now a socket, into the target directory.  */
+	      err = __dir_link (dir, node, n);
+	      if (err == EEXIST)
+		err = EADDRINUSE;
+	    }
 	  __mach_port_deallocate (__mach_task_self (), node);
 	  if (! err)
 	    {
@@ -77,8 +81,16 @@ DEFUN(bind, (fd, addr, len),
 		}
 	    }
 	  if (! err)
-	    /* Get the address port.  */
-	    err = __ifsock_getsockaddr (ifsock, &aport);
+	    {
+	      /* Get the address port.  */
+	      err = __ifsock_getsockaddr (ifsock, &aport);
+	      if (err == MIG_BAD_ID || err == EOPNOTSUPP)
+		/* We are not talking to /hurd/ifsock.  Probably someone
+		   came in after we linked our node, unlinked it, and
+		   replaced it with a different node, before we did our
+		   lookup.  Treat it as if our link had failed with EEXIST.  */
+		err = EADDRINUSE;
+	    }
 	  __mach_port_deallocate (__mach_task_self (), ifsock);
 	}
       __mach_port_deallocate (__mach_task_self (), dir);
