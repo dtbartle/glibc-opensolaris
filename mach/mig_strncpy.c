@@ -1,10 +1,9 @@
 /* Silly pointless function MiG needs.  */
 
-#include <ansidecl.h>
-#include <string.h>
+#include <mach.h>
 
-size_t
-__mig_strncpy (char *dest, char *src, size_t len)
+vm_size_t
+__mig_strncpy (char *dest, char *src, vm_size_t len)
 {
   size_t i;
 
