@@ -194,7 +194,6 @@ _dl_map_object_deps (struct link_map *map,
 	    else if (d->d_tag == DT_AUXILIARY || d->d_tag == DT_FILTER)
 	      {
 		char *errstring;
-		const char *objname;
 		struct list *newp;
 
 		if (d->d_tag == DT_AUXILIARY)
@@ -204,7 +203,7 @@ _dl_map_object_deps (struct link_map *map,
 
 		    /* We must be prepared that the addressed shared
 		       object is not available.  */
-		    if (_dl_catch_error (&errstring, &objname, openaux, &args))
+		    if (_dl_catch_error (&errstring, openaux, &args))
 		      {
 			/* We are not interested in the error message.  */
 			assert (errstring != NULL);
