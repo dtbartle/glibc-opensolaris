@@ -39,15 +39,16 @@ init_stdio (void)
       FILE *s = *streamptr ?: __newstream ();
       struct hurd_fd *d = _hurd_fd_get (fd);
       if (d == NULL)
-	/* There is no file descriptor allocated.  We want the standard
-	   streams to always refer to their standard file descriptors, even
-	   if those descriptors are not set up until later.  So allocate
-	   the descriptor structure with no ports and store it in the
-	   stream.  Operations will fail until ports are installed in the
-	   file descriptor.  */
-	d = _hurd_alloc_fd (NULL, fd);
-      if (d)
-	__spin_unlock (&d->port.lock);
+	{
+	  /* There is no file descriptor allocated.  We want the standard
+	     streams to always refer to their standard file descriptors, even
+	     if those descriptors are not set up until later.  So allocate
+	     the descriptor structure with no ports and store it in the
+	     stream.  Operations will fail until ports are installed in the
+	     file descriptor.  */
+	  if (d = _hurd_alloc_fd (NULL, fd))
+	    __spin_unlock (&d->port.lock);
+	}
       if (s)
 	s->__cookie = d;
       *streamptr = s;
