@@ -66,7 +66,7 @@ extern int __lll_mutex_unlock_wait (int *__futex) attribute_hidden;
 			      "testl %0, %0\n\t"			      \
 			      "jne 1f\n\t"				      \
 			      ".subsection 1\n"				      \
-			      "1:\tleaq %2, %%rsi\n\t"			      \
+			      "1:\tleaq %2, %%rdi\n\t"			      \
 			      "subq $128, %%rsp\n\t"			      \
 			      "callq __lll_mutex_lock_wait\n\t"		      \
 			      "addq $128, %%rsp\n\t"			      \
