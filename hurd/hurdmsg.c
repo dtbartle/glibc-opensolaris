@@ -124,15 +124,17 @@ get_int (int which, int *value)
     case INIT_SIGMASK:
       {
 	struct hurd_sigstate *ss = _hurd_thread_sigstate (_hurd_sigthread);
+	__spin_lock (&ss->lock);
 	*value = ss->blocked;
-	__mutex_unlock (&ss->lock);
+	__spin_unlock (&ss->lock);
 	return 0;
       }
     case INIT_SIGPENDING:
       {
 	struct hurd_sigstate *ss = _hurd_thread_sigstate (_hurd_sigthread);
+	__spin_lock (&ss->lock);
 	*value = ss->pending;
-	__mutex_unlock (&ss->lock);
+	__spin_unlock (&ss->lock);
 	return 0;
       }
     case INIT_SIGIGN:
@@ -140,11 +142,12 @@ get_int (int which, int *value)
 	struct hurd_sigstate *ss = _hurd_thread_sigstate (_hurd_sigthread);
 	sigset_t ign;
 	int sig;
+	__spin_lock (&ss->lock);
 	__sigemptyset (&ign);
 	for (sig = 1; sig < NSIG; ++sig)
 	  if (ss->actions[sig].sa_handler == SIG_IGN)
 	    __sigaddset (&ign, sig);
-	__mutex_unlock (&ss->lock);
+	__spin_unlock (&ss->lock);
 	*value = ign;
 	return 0;
       }
@@ -207,15 +210,17 @@ set_int (int which, int value)
     case INIT_SIGMASK:
       {
 	struct hurd_sigstate *ss = _hurd_thread_sigstate (_hurd_sigthread);
+	__spin_lock (&ss->lock);
 	ss->blocked = value;
-	__mutex_unlock (&ss->lock);
+	__spin_unlock (&ss->lock);
 	return 0;
       }
     case INIT_SIGPENDING:
       {
 	struct hurd_sigstate *ss = _hurd_thread_sigstate (_hurd_sigthread);
+	__spin_lock (&ss->lock);
 	ss->pending = value;
-	__mutex_unlock (&ss->lock);
+	__spin_unlock (&ss->lock);
 	return 0;
       }
     case INIT_SIGIGN:
@@ -223,6 +228,7 @@ set_int (int which, int value)
 	struct hurd_sigstate *ss = _hurd_thread_sigstate (_hurd_sigthread);
 	int sig;
 	const sigset_t ign = value;
+	__spin_lock (&ss->lock);
 	for (sig = 1; sig < NSIG; ++sig)
 	  {
 	    if (__sigismember (&ign, sig))
@@ -230,7 +236,7 @@ set_int (int which, int value)
 	    else if (ss->actions[sig].sa_handler == SIG_IGN)
 	      ss->actions[sig].sa_handler = SIG_DFL;
 	  }
-	__mutex_unlock (&ss->lock);
+	__spin_unlock (&ss->lock);
 	return 0;
       }
     default:
