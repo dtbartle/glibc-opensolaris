@@ -165,3 +165,5 @@ double x;
 	/*  expm1(INF) is INF, expm1(+big#) overflows to INF */
 	    return( finite(x) ?  scalb(one,5000) : x);
 }
+
+weak_alias (__expm1, expm1)
