@@ -1209,7 +1209,7 @@ else
 fi
 
 if test "$MAKEINFO"; then
-  if $MAKEINFO --version | grep 'Texinfo 3\.[1-9][1-9]' >/dev/null 2>&1
+  if $MAKEINFO --version | grep 'texinfo 3\.[1-9][1-9]' >/dev/null 2>&1
   then : # Makeinfo 3.11 or greater, works.
   else
     echo "configure: warning: 
