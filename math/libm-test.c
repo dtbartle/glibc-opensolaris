@@ -1703,7 +1703,7 @@ modf_test (void)
   check ("modf (-0, &x) returns -0", result, minus_zero);
   check ("modf (-0, &x) sets x to -0", intpart, minus_zero);
 
-  result = FUNC(modf) (2.5, &intpart);
+  result = FUNC(modf) (1.5, &intpart);
   check ("modf (1.5, &x) returns 0.5", result, 0.5);
   check ("modf (1.5, &x) sets x to 1", intpart, 1);
 
