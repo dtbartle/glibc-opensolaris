@@ -570,7 +570,7 @@ extern int fseeko64 __P ((FILE *__stream, __off64_t __off, int __whence));
 # ifndef __USE_FILE_OFFSET64
 extern __off_t ftello __P ((FILE *__stream));
 # else
-extern __off64_t ftello __P ((FILE *__stream)) __asm__ ("ftello");
+extern __off64_t ftello __P ((FILE *__stream)) __asm__ ("ftello64");
 # endif
 # ifdef __USE_LARGEFILE64
 extern __off64_t ftello64 __P ((FILE *__stream));
