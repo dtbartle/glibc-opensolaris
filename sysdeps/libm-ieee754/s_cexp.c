@@ -1,4 +1,4 @@
-/* Return value of complex exponential function for double complex value.
+/* Return value of complex exponential function for float complex value.
    Copyright (C) 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
@@ -31,33 +31,52 @@ __cexp (__complex__ double x)
     {
       if (isfinite (__imag__ x))
 	{
-	  retval = __exp (__real__ x) * (__cos (__imag__ x)
-					 + 1i * __sin (__imag__ x));
+	  double exp_val = __exp (__real__ x);
+
+	  __real__ retval = exp_val * __cos (__imag__ x);
+	  __imag__ retval = exp_val * __sin (__imag__ x);
 	}
       else
-	/* If the imaginary part is +-inf or NaN and the real part is
-	   not +-inf the result is NaN + iNan.  */
-	retval = __nan ("") + 1.0i * __nan ("");
+	{
+	  /* If the imaginary part is +-inf or NaN and the real part
+	     is not +-inf the result is NaN + iNaN.  */
+	  __real__ retval = __nan ("");
+	  __imag__ retval = __nan ("");
+	}
     }
   else if (__isinf (__real__ x))
     {
-      if (isfinite (__imag x))
+      if (isfinite (__imag__ x))
 	{
 	  if (signbit (__real__ x) == 0 && __imag__ x == 0.0)
 	    retval = HUGE_VAL;
 	  else
-	    retval = ((signbit (__real__ x) ? 0.0 : HUGE_VAL)
-		      * (__cos (__imag__ x) + 1i * __sin (__imag__ x)));
+	    {
+	      double value = signbit (__real__ x) ? 0.0 : HUGE_VAL;
+
+	      __real__ retval = value * __cos (__imag__ x);
+	      __imag__ retval = value * __sin (__imag__ x);
+	    }
 	}
-      else if (signbit (__real__ x))
-	retval = HUGE_VAL + 1.0i * __nan ("");
+      else if (signbit (__real__ x) == 0)
+	{
+	  __real__ retval = HUGE_VAL;
+	  __imag__ retval = __nan ("");
+	}
       else
 	retval = 0.0;
     }
   else
-    /* If the real part is NaN the result is NaN + iNan.  */
-    retval = __nan ("") + 1.0i * __nan ("");
+    {
+      /* If the real part is NaN the result is NaN + iNaN.  */
+      __real__ retval = __nan ("");
+      __imag__ retval = __nan ("");
+    }
 
   return retval;
 }
 weak_alias (__cexp, cexp)
+#ifdef NO_LONG_DOUBLE
+string_alias (__cexp, __cexpl)
+weak_alias (__cexp, cexpl)
+#endif
