@@ -44,7 +44,7 @@ routines = hurdstartup hurdinit \
 	   setauth \
 	   pid2task task2pid \
 	   getuids setuids getumask fchroot \
-	   hurdsock hurdauth invoke-trans \
+	   hurdsock hurdauth \
 	   privports \
 	   msgportdemux \
 	   fopenport \
