@@ -30,7 +30,7 @@ headers = mach_init.h mach.h mach_error.h mach-shortcuts.h \
 distribute = thread_state.h
 lock = spin-solid spin-lock mutex-solid
 lock-headers = lock-intern.h machine-lock.h spin-lock.h
-routines = $(filter-out syscall_%,$(mach-syscalls)) $(mach-shortcuts) \
+routines = $(mach-syscalls) $(mach-shortcuts) \
 	   mach_init mig_strncpy msg \
 	   mig-alloc mig-dealloc mig-reply \
 	   msg-destroy msgserver \
