@@ -65,6 +65,7 @@ static void process_envvars (enum mode *modep, int *lazyp);
 
 int _dl_argc;
 char **_dl_argv;
+unsigned int _dl_skip_args;	/* Nonzero if we were run directly.  */
 const char *_dl_rpath;
 int _dl_verbose;
 const char *_dl_platform;
@@ -269,7 +270,6 @@ match_version (const char *string, struct link_map *map)
   return 0;
 }
 
-static unsigned int _dl_skip_args;	/* Nonzero if we were run directly.  */
 static const char *library_path;	/* The library search path.  */
 static const char *preloadlist;		/* The list preloaded objects.  */
 static int version_info;		/* Nonzero if information about
