@@ -474,7 +474,6 @@ __msgwrite (int sock, void *buf, size_t cnt)
   struct iovec iov[1];
   struct msghdr msg;
   struct cmessage cm;
-  int len;
 
   iov[0].iov_base = buf;
   iov[0].iov_len = cnt;
