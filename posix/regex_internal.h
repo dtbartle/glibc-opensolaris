@@ -143,18 +143,21 @@ static inline void bitset_mask (bitset dest, const bitset src);
 #define NEXT_NEWLINE_CONSTRAINT 0x0020
 #define PREV_BEGBUF_CONSTRAINT 0x0040
 #define NEXT_ENDBUF_CONSTRAINT 0x0080
-#define DUMMY_CONSTRAINT 0x0100
+#define WORD_DELIM_CONSTRAINT 0x0100
+#define NOT_WORD_DELIM_CONSTRAINT 0x0200
 
 typedef enum
 {
   INSIDE_WORD = PREV_WORD_CONSTRAINT | NEXT_WORD_CONSTRAINT,
   WORD_FIRST = PREV_NOTWORD_CONSTRAINT | NEXT_WORD_CONSTRAINT,
   WORD_LAST = PREV_WORD_CONSTRAINT | NEXT_NOTWORD_CONSTRAINT,
+  INSIDE_NOTWORD = PREV_NOTWORD_CONSTRAINT | NEXT_NOTWORD_CONSTRAINT,
   LINE_FIRST = PREV_NEWLINE_CONSTRAINT,
   LINE_LAST = NEXT_NEWLINE_CONSTRAINT,
   BUF_FIRST = PREV_BEGBUF_CONSTRAINT,
   BUF_LAST = NEXT_ENDBUF_CONSTRAINT,
-  WORD_DELIM = DUMMY_CONSTRAINT
+  WORD_DELIM = WORD_DELIM_CONSTRAINT,
+  NOT_WORD_DELIM = NOT_WORD_DELIM_CONSTRAINT
 } re_context_type;
 
 typedef struct
@@ -486,7 +489,7 @@ struct re_dfastate_t
   re_node_set non_eps_nodes;
   re_node_set inveclosure;
   re_node_set *entrance_nodes;
-  struct re_dfastate_t **trtable, **word_trtable;
+  struct re_dfastate_t **trtable;
   unsigned int context : 4;
   unsigned int halt : 1;
   /* If this state can accept `multi byte'.
@@ -496,6 +499,7 @@ struct re_dfastate_t
   /* If this state has backreference node(s).  */
   unsigned int has_backref : 1;
   unsigned int has_constraint : 1;
+  unsigned int word_trtable : 1;
 };
 typedef struct re_dfastate_t re_dfastate_t;
 
