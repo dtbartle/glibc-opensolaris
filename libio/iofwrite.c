@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 96, 97, 98, 99, 2000 Free Software Foundation, Inc.
    This file is part of the GNU IO Library.
 
    This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ _IO_fwrite (buf, size, count, fp)
   /* Many traditional implementations return 0 if size==0 && count > 0,
      but ANSI requires us to return count in this case. */
   if (request == 0)
-    return count;
+    return 0;
   _IO_cleanup_region_start ((void (*) __P ((void *))) _IO_funlockfile, fp);
   _IO_flockfile (fp);
   if (fp->_vtable_offset != 0 || _IO_fwide (fp, -1) == -1)
