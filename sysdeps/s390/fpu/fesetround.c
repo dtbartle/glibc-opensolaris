@@ -1,7 +1,7 @@
 /* Set current rounding direction.
    Copyright (C) 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Denis Joseph Barrow (djbarrow@de.ibm.com)
+   Contributed by Denis Joseph Barrow (djbarrow@de.ibm.com).
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public License as
@@ -18,7 +18,7 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#include <fenv.h>
+#include <fenv_libc.h>
 #include <fpu_control.h>
 
 int
@@ -32,6 +32,6 @@ fesetround (int round)
   __asm__ volatile ("srnm 0(%0)"
 		    :
 		    : "a" (round));
-  
+
   return 0;
 }
