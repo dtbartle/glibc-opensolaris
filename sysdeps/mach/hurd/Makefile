@@ -131,7 +131,7 @@ endif
 
 # For the shared library, we don't need to do the linker script machination.
 # Instead, we specify the required libraries when building the shared object.
-LDLIBS-libc.so = -lmachuser -lhurduser
+LDLIBS-c.so = -lmachuser -lhurduser
 
 
 endif	# in-Makerules
