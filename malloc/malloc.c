@@ -4551,17 +4551,6 @@ _int_realloc(mstate av, Void_t* oldmem, size_t bytes)
   INTERNAL_SIZE_T* d;               /* copy destination */
 
 
-#if REALLOC_ZERO_BYTES_FREES
-  if (bytes == 0) {
-    if (oldmem != 0)
-      _int_free(av, oldmem);
-    return 0;
-  }
-#endif
-
-  /* realloc of null is supposed to be same as malloc */
-  if (oldmem == 0) return _int_malloc(av, bytes);
-
   checked_request2size(bytes, nb);
 
   oldp    = mem2chunk(oldmem);
