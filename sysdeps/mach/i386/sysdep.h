@@ -16,20 +16,6 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#define	ENTRY(name)							      \
-  .text;								      \
-  .globl _##name;							      \
-  .align 4;								      \
-  _##name##:
-
-#define	SYSCALL_TRAP(name, number)					      \
-  ENTRY (name)								      \
-  lea number, %eax;							      \
-  /* lcall $7, $0; */							      \
-  /* Above loses; GAS bug.  */						      \
-  .byte 0x9a, 0, 0, 0, 0, 7, 0;						      \
-  ret
-
 #define MOVE(x,y)	movl x , y
 
 #define LOSE asm volatile ("hlt")
