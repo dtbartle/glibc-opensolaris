@@ -34,8 +34,7 @@ __nss_getent (getent_r_function func, void **resbuf, char **buffer,
     }
 
   while (buffer != NULL
-	 && func (resbuf, *buffer, *buffer_size, &result,
-		  h_errnop) == ERANGE
+	 && func (resbuf, *buffer, *buffer_size, &result, h_errnop) == ERANGE
 	 && (h_errnop == NULL || *h_errnop == NETDB_INTERNAL))
     {
       char *new_buf;
