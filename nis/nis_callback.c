@@ -1,4 +1,4 @@
-/* Copyright (C) 1997, 1998, 1999 Free Software Foundation, Inc.
+/* Copyright (C) 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@suse.de>, 1997.
 
@@ -210,6 +210,9 @@ internal_nis_do_callback (struct dir_binding *bptr, netobj *cookie,
         return NIS_CBERROR;
 
       my_pollfd = malloc (sizeof (struct pollfd) * svc_max_pollfd);
+      if (__builtin_expect (my_pollfd == NULL, 0))
+	return NIS_NOMEMORY;
+
       for (i = 0; i < svc_max_pollfd; ++i)
         {
           my_pollfd[i].fd = svc_pollfd[i].fd;
@@ -276,23 +279,29 @@ __nis_create_callback (int (*callback) (const_nis_name, const nis_object *,
   unsigned short port;
 
   cb = (struct nis_cb *) calloc (1, sizeof (struct nis_cb));
-  if (cb == NULL)
+  if (__builtin_expect (cb == NULL, ))
     {
       syslog (LOG_ERR, "NIS+: out of memory allocating callback");
       return NULL;
     }
 
   cb->serv = (nis_server *) calloc (1, sizeof (nis_server));
-  if (cb->serv == NULL)
+  if (__builtin_expect (cb->serv == NULL, 0))
     {
       free (cb);
       syslog (LOG_ERR, "NIS+: out of memory allocating callback");
       return NULL;
     }
   cb->serv->name = strdup (nis_local_principal ());
+  if (__builtin_expect (cb->serv->name == NULL, 0))
+    return NIS_NOMEMORY;
   cb->serv->ep.ep_val = (endpoint *) calloc (2, sizeof (endpoint));
+  if (__builtin_expect (cb->serv->ep.ep_val == NULL, 0))
+    return NIS_NOMEMORY;
   cb->serv->ep.ep_len = 1;
   cb->serv->ep.ep_val[0].family = strdup ("inet");
+  if (__builtin_expect (cb->serv->ep.ep_val[0].family == NULL, 0))
+    return NIS_NOMEMORY;
   cb->callback = callback;
   cb->userdata = userdata;
 
@@ -332,6 +341,8 @@ __nis_create_callback (int (*callback) (const_nis_name, const nis_object *,
       cb->serv->ep.ep_val[0].proto = strdup ("tcp");
       cb->xprt = svctcp_create (sock, 100, 8192);
     }
+  if (__builtin_expect (cb->serv->ep.ep_val[0].proto == NULL, 0))
+    return NIS_NOMEMORY;
   cb->sock = cb->xprt->xp_sock;
   if (!svc_register (cb->xprt, CB_PROG, CB_VERS, cb_prog_1, 0))
     {
