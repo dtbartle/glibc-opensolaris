@@ -1056,7 +1056,8 @@ solutions:
 - do you really need NIS/NIS+ (some Linux distributions add by default
   nis/nisplus even if it's not needed)?  If not, just remove the entries.
 
-- if you need NIS, use the Name Service Cache Daemon nscd.
+- if you need NIS/NIS+, use the Name Service Cache Daemon nscd that comes
+  with glibc 2.1.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
