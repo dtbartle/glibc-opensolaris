@@ -471,7 +471,7 @@ struct re_dfastate_t
   re_node_set nodes;
   re_node_set *entrance_nodes;
   struct re_dfastate_t **trtable;
-  unsigned int context : 10;
+  unsigned int context : 4;
   unsigned int halt : 1;
   /* If this state can accept `multi byte'.
      Note that we refer to multibyte characters, and multi character
