@@ -27,58 +27,13 @@ _hurd_fd_write (struct hurd_fd *fd, const void *buf, size_t *nbytes)
 {
   error_t err;
   mach_msg_type_number_t wrote;
-  int noctty;
-  struct hurd_sigstate *ss;
 
-  /* Note that __ioctl.c implements the same SIGTTOU behavior.
-     Any changes here should be done there as well.  */
+  error_t writefd (io_t port)
+    {
+      return __io_write (port, buf, *nbytes, -1, &wrote);
+    }
 
-  /* Don't use the ctty io port if we are blocking or ignoring SIGTTOU.  */
-  ss = _hurd_self_sigstate ();
-  __spin_lock (&ss->lock);
-  noctty = (__sigismember (&ss->blocked, SIGTTOU) ||
-	    ss->actions[SIGTTOU].sa_handler == SIG_IGN);
-  __spin_unlock (&ss->lock);
-
-  err = HURD_FD_PORT_USE
-    (fd,
-     ({
-       const io_t ioport = (!noctty && ctty != MACH_PORT_NULL) ? ctty : port;
-       do
-	 {
-	   err = __io_write (ioport, buf, *nbytes, -1, &wrote);
-	   if (ioport == ctty && err == EBACKGROUND)
-	     {
-	       if (_hurd_orphaned)
-		 /* Our process group is orphaned, so we never generate a
-		    signal; we just fail.  */
-		 err = EIO;
-	       else
-		 {
-		   /* Send a SIGTTOU signal to our process group.
-
-		      We must remember here not to clobber ERR, since
-		      the loop condition below uses it to recall that
-		      we should retry after a stop.  */
-
-		   __USEPORT (CTTYID, _hurd_sig_post (0, SIGTTOU, port));
-		   /* XXX what to do if error here? */
-
-		   /* At this point we should have just run the handler for
-		      SIGTTOU or resumed after being stopped.  Now this is
-		      still a "system call", so check to see if we should
-		      restart it.  */
-		   __spin_lock (&ss->lock);
-		   if (!(ss->actions[SIGTTOU].sa_flags & SA_RESTART))
-		     err = EINTR;
-		   __spin_unlock (&ss->lock);
-		 }
-	     }
-	   /* If the last io_write generated a SIGTTOU,
-	      loop to try again to read some data.  */
-	 } while (err == EBACKGROUND);
-       err;
-     }));
+  err = HURD_FD_PORT_USE (fd, _hurd_ctty_output (port, ctty, writefd));
 
   if (! err)
     *nbytes = wrote;
