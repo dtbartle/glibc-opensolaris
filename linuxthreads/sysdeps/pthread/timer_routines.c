@@ -440,7 +440,6 @@ thread_func (void *arg)
     }
   /* These statements will never be executed since the while loop
      loops forever - but we have to add them for proper nesting.  */
-  pthread_mutex_unlock (&__timer_mutex);
   pthread_cleanup_pop (1);
 
 }
