@@ -35,7 +35,8 @@
    PRINTF_EXPR     Floating point conversion specification to print a variable
    of type MATHTYPE with printf. PRINTF_EXPR just contains
    the specifier, not the percent and width arguments,
-   e.g. "f"
+   e.g. "f".
+   PRINTF_XEXPR    Like PRINTF_EXPR, but print in hexadecimal format.
  */
 
 /* This program isn't finished yet.
@@ -398,8 +399,9 @@ output_isvalue (const char *test_name, int result,
     {
       output_fail_value (test_name);
       if (verbose > 1)
-	printf (" Value: %.20" PRINTF_EXPR "\n", value);
-      noErrors++;
+	printf (" Value: % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR "\n",
+		value, value);
+      ++noErrors;
     }
 
   fpstack_test (test_name);
@@ -420,8 +422,10 @@ output_isvalue_ext (const char *test_name, int result,
       output_fail_value (test_name);
       if (verbose > 1)
 	{
-	  printf (" Value:     %.20" PRINTF_EXPR "\n", value);
-	  printf (" Parameter: %.20" PRINTF_EXPR "\n", parameter);
+	  printf (" Value:     % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR "\n",
+		  value, value);
+	  printf (" Parameter: % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR "\n",
+		  parameter, parameter);
 	}
       noErrors++;
     }
@@ -447,12 +451,15 @@ output_result (const char *test_name, int result,
       if (verbose > 1 && print_values)
 	{
 	  printf ("Result:\n");
-	  printf (" is:         %.20" PRINTF_EXPR "\n", computed);
-	  printf (" should be:  %.20" PRINTF_EXPR "\n", expected);
+	  printf (" is:         % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR "\n",
+		  computed, computed);
+	  printf (" should be:  % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR "\n",
+		  expected, expected);
 	  if (print_diff)
-	    printf (" difference: %.20" PRINTF_EXPR "\n", difference);
+	    printf (" difference: % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR
+		    "\n", difference, difference);
 	}
-      noErrors++;
+      ++noErrors;
     }
 
   fpstack_test (test_name);
@@ -477,13 +484,17 @@ output_result_ext (const char *test_name, int result,
       if (verbose > 1 && print_values)
 	{
 	  printf ("Result:\n");
-	  printf (" is:         %.20" PRINTF_EXPR "\n", computed);
-	  printf (" should be:  %.20" PRINTF_EXPR "\n", expected);
+	  printf (" is:         % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR "\n",
+		  computed, computed);
+	  printf (" should be:  % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR "\n",
+		  expected, expected);
 	  if (print_diff)
-	    printf (" difference: %.20" PRINTF_EXPR "\n", difference);
-	  printf ("Parameter:   %.20" PRINTF_EXPR "\n", parameter);
+	    printf (" difference: % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR
+		    "\n", difference, difference);
+	  printf ("Parameter:   % .20" PRINTF_EXPR "  % .20" PRINTF_XEXPR "\n",
+		  parameter, parameter);
 	}
-      noErrors++;
+      ++noErrors;
     }
 
   fpstack_test (test_name);
@@ -1176,9 +1187,14 @@ check_frexp (const char *test_name, MATHTYPE computed, MATHTYPE expected,
       if (verbose > 1)
 	{
 	  printf ("Result:\n");
-	  printf (" is:         %.20" PRINTF_EXPR " *2^%d\n", computed, comp_int);
-	  printf (" should be:  %.20" PRINTF_EXPR " *2^%d\n", expected, exp_int);
-	  printf (" difference: %.20" PRINTF_EXPR "\n", diff);
+	  printf (" is:         %.20" PRINTF_EXPR " *2^%d  %.20"
+		  PRINTF_XEXPR "*2^%d\n",
+		  computed, comp_int, computed, comp_int);
+	  printf (" should be:  %.20" PRINTF_EXPR " *2^%d  %.20"
+		  PRINTF_XEXPR "*2^%d\n",
+		  expected, exp_int, expected, exp_int);
+	  printf (" difference: %.20" PRINTF_EXPR "  %.20" PRINTF_XEXPR "\n",
+		  diff, diff);
 	}
       noErrors++;
     }
