@@ -103,7 +103,9 @@ $(objpfx)rtld-ldscript: $(rtld-ldscript-in) $(rtld-parms)
 $(objpfx)ld.so: $(objpfx)librtld.os $(objpfx)rtld-ldscript
 	$(rtld-link) -Wl,-soname=$(rtld-installed-name)
 
-RTLD-VERSIONS=$(addprefix -Wl,--version-script=,$(libc-map))
+ifeq ($(versioning),yes)
+RTLD-VERSIONS = -Wl,--version-script=$(libc-map)
+endif
 
 define rtld-link
 $(LINK.o) -nostdlib -nostartfiles -shared -o $@ \
