@@ -166,7 +166,7 @@ of this helper program; chances are you did not intend to run this program.\n",
 	  l->l_phdr = phdr;
 	  l->l_phnum = phent;
 	  interpreter_name = 0;
-	  assert (*user_entry == l->l_entry);
+	  l->l_entry = *user_entry;
 	}
 
       if (l != _dl_loaded)
