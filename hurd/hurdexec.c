@@ -115,6 +115,7 @@ _hurd_exec (task_t task, file_t file,
       }
 
   ss = _hurd_self_sigstate ();
+  __spin_lock (&ss->lock);
   ints[INIT_SIGMASK] = ss->blocked;
   ints[INIT_SIGPENDING] = ss->pending;
   ints[INIT_SIGIGN] = 0;
@@ -131,6 +132,7 @@ _hurd_exec (task_t task, file_t file,
      sigstate lock.  */
   
   ss->critical_section = 1;
+  __spin_unlock (&ss->lock);
 
   /* Pack up the descriptor table to give the new program.  */
   __mutex_lock (&_hurd_dtable_lock);
@@ -243,8 +245,15 @@ _hurd_exec (task_t task, file_t file,
   __mutex_unlock (&_hurd_dtable_lock);
 
   /* Safe to let signals happen now.  */
-  ss->critical_section = 0;
-  __mutex_unlock (&ss->lock);
+  {
+    sigset_t pending;
+    __spin_lock (&ss->lock);
+    ss->critical_section = 0;
+    pending = ss->pending & ~ss->blocked;
+    __spin_unlock (&ss->lock);
+    if (pending)
+      __msg_sig_post (_hurd_msgport, 0, __mach_task_self ());
+  }
 
   return err;
 }
