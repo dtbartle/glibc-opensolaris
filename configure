@@ -2240,10 +2240,11 @@ memcpy () {}
 memset () {}
 free () {}
 abort () {}
+__bzero () {}
 EOF
 if { ac_try='${CC-cc} $CFLAGS
 			    -nostdlib -nostartfiles
-			    -o conftest conftest.c -lgcc -lc >&5'; { (eval echo configure:2247: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; }; then
+			    -o conftest conftest.c -lgcc >&5'; { (eval echo configure:2248: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; }; then
   libc_cv_gcc_dwarf2_unwind_info=yes
 else
   libc_cv_gcc_dwarf2_unwind_info=no
@@ -2301,7 +2302,7 @@ if test "$uname" = "sysdeps/generic"; then
   fi
 
   echo $ac_n "checking OS release for uname""... $ac_c" 1>&6
-echo "configure:2305: checking OS release for uname" >&5
+echo "configure:2306: checking OS release for uname" >&5
 if eval "test \"`echo '$''{'libc_cv_uname_release'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2323,7 +2324,7 @@ echo "$ac_t""$libc_cv_uname_release" 1>&6
   uname_release="$libc_cv_uname_release"
 
   echo $ac_n "checking OS version for uname""... $ac_c" 1>&6
-echo "configure:2327: checking OS version for uname" >&5
+echo "configure:2328: checking OS version for uname" >&5
 if eval "test \"`echo '$''{'libc_cv_uname_version'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2345,7 +2346,7 @@ else
 fi
 
 echo $ac_n "checking stdio selection""... $ac_c" 1>&6
-echo "configure:2349: checking stdio selection" >&5
+echo "configure:2350: checking stdio selection" >&5
 
 case $stdio in
 libio) cat >> confdefs.h <<\EOF
@@ -2357,7 +2358,7 @@ esac
 echo "$ac_t""$stdio" 1>&6
 
 echo $ac_n "checking ldap selection""... $ac_c" 1>&6
-echo "configure:2361: checking ldap selection" >&5
+echo "configure:2362: checking ldap selection" >&5
 
 case $add_ons in
 *ldap*)
