@@ -425,6 +425,12 @@ extern char *ttyname __P ((int __fd));
 extern int __isatty __P ((int __fd));
 extern int isatty __P ((int __fd));
 
+#ifdef __USE_BSD
+/* Return the index into the active-logins file (utmp) for
+   the terminal FD is open on.  */
+extern int ttyslot ((int __fd));
+#endif
+
 
 /* Make a link to FROM named TO.  */
 extern int __link __P ((__const char *__from, __const char *__to));
