@@ -313,7 +313,7 @@ double mpsin1(double x)
 /* based  on the routines mpranred() and c32().                  */
 /*****************************************************************/
 
-double mpcos1(double x)
+double __mpcos1(double x)
 {
   int p;
   int n;
