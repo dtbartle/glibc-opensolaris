@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -23,13 +23,14 @@
 /* Change the set of blocked signals to SET,
    wait until a signal arrives, and restore the set of blocked signals.  */
 int
-sigsuspend (set)
+__sigsuspend (set)
      const sigset_t *set;
 {
   __set_errno (ENOSYS);
   return -1;
 }
-
+weak_alias (__sigsuspend, sigsuspend)
 
 stub_warning (sigsuspend)
+stub_warning (__sigsuspend)
 #include <stub-tag.h>
