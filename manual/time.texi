@@ -1537,6 +1537,12 @@ multi-threaded applications.
 The @code{errno} variable is @emph{not} changed.  Error conditions are
 signalled using the global variable @code{getdate_err}.  See the
 description above for a list of the possible error values.
+
+@emph{Warning:} The @code{getdate} function should @emph{never} be
+used in SUID-programs.  The reason is obvious: using the
+@code{DATEMSK} environment variable one can get the function to open
+any arbitrary file and changes are high that with some bogus input
+(such as a binary file) the program will crash.
 @end deftypefun
 
 @node TZ Variable
