@@ -1165,9 +1165,9 @@ msgstr ""
 "Ungültiges Zeichen im Feld »%s« in der Kategorie »%s«"
 
 #: locale/programs/ld-measurement.c:114
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid value for field `%s'"
-msgstr "%s: Panik: ungültiger »l_value« %d\n"
+msgstr "%s: ungültiger Wert für Feld »%s«"
 
 #: locale/programs/ld-messages.c:115 locale/programs/ld-messages.c:149
 #, c-format
@@ -1634,7 +1634,7 @@ msgstr ""
 #: locale/programs/locarchive.c:1137
 #, fuzzy, c-format
 msgid "cannot open directory \"%s\": %s: ignored"
-msgstr "%s: Kann das Verzeichnis »%s« nicht erzeugen: %s\n"
+msgstr "Kann das Verzeichnis »%s« nicht öffnen: %s"
 
 #: locale/programs/locarchive.c:1209
 #, fuzzy, c-format
@@ -1839,11 +1839,6 @@ msgstr "Die Nachricht ist nicht abgeschlossen"
 #: catgets/gencat.c:1212
 msgid "while opening old catalog file"
 msgstr "beim Öffnen der alten Katalogdatei"
-
-#: catgets/gencat.c:1303
-#, fuzzy
-msgid "conversion modules not available"
-msgstr "Das Programm %lu ist in der Version %lu nicht verfügbar\n"
 
 #: catgets/gencat.c:1329
 #, fuzzy
@@ -3831,11 +3826,6 @@ msgstr "Datenbank [Schlüssel ...]"
 msgid "Service configuration to be used"
 msgstr "Die aktuelle Konfigurationsstatistik ausgeben"
 
-#: nss/getent.c:136 nss/getent.c:305
-#, fuzzy, c-format
-msgid "Enumeration not supported on %s\n"
-msgstr "Die Operation wird nicht unterstützt"
-
 #: nss/getent.c:729
 msgid "getent - get entries from administrative database."
 msgstr "getent - Einträge aus administrativen Datenbanken lesen."
@@ -5450,11 +5440,6 @@ msgstr "Unbekanntes Betriebssystem"
 msgid ", OS ABI: %s %d.%d.%d"
 msgstr ""
 
-#: elf/cache.c:136 elf/ldconfig.c:1033
-#, fuzzy, c-format
-msgid "Can't open cache file %s\n"
-msgstr "Kann die Eingabedatei »%s« nicht öffnen"
-
 #: elf/cache.c:148
 msgid "mmap of cache file failed.\n"
 msgstr "Das Mapping der Cache-Datei ist fehlgeschlagen.\n"
@@ -5798,11 +5783,6 @@ msgstr "%s: Kann »%s« nicht erzeugen: %s\n"
 msgid "%s is not a symbolic link\n"
 msgstr "%s ist kein symbolischer Link\n"
 
-#: elf/ldconfig.c:443
-#, fuzzy, c-format
-msgid "Can't unlink %s"
-msgstr "%s: Kann den Verzeichniseintrag »%s« nicht löschen (unlink): %s\n"
-
 #: elf/ldconfig.c:449
 #, c-format
 msgid "Can't link %s to %s"
@@ -5835,11 +5815,6 @@ msgstr "Datei %s übergangen, da sie keine reguläre Datei ist."
 #, c-format
 msgid "No link created since soname could not be found for %s"
 msgstr "Keinen Link angelegt, da »soname« für %s nicht zu finden ist"
-
-#: elf/ldconfig.c:634
-#, fuzzy, c-format
-msgid "Can't open directory %s"
-msgstr "%s: Kann das Verzeichnis »%s« nicht erzeugen: %s\n"
 
 #: elf/ldconfig.c:689 elf/ldconfig.c:736
 #, c-format
@@ -5885,11 +5860,6 @@ msgstr "Die Konfigurationsdatei »%s« kann nicht geöffnet werden"
 msgid "Can't chdir to /"
 msgstr "Wechsel in das Verzeichnis / nicht möglich"
 
-#: elf/ldconfig.c:1054
-#, fuzzy, c-format
-msgid "Can't open cache file directory %s\n"
-msgstr "Kann das Lokale-Verzeichnis »%s« nicht lesen"
-
 #: elf/readlib.c:99
 #, c-format
 msgid "Cannot fstat file %s.\n"
@@ -5899,11 +5869,6 @@ msgstr "Es ist nicht möglich, den Status (fstat()) der Datei %s zu lesen.\n"
 #, c-format
 msgid "File %s is too small, not checked."
 msgstr "Datei %s ist zu klein; keine Überprüfung."
-
-#: elf/readlib.c:118
-#, fuzzy, c-format
-msgid "Cannot mmap file %s.\n"
-msgstr "Kann die Eingabedatei »%s« nicht öffnen"
 
 #: elf/readlib.c:158
 #, c-format
