@@ -41,7 +41,7 @@ dlopen_doit (void *a)
 
 
 void *
-dlopen (const char *file, int mode)
+__dlopen_check (const char *file, int mode)
 {
   struct dlopen_args args;
   args.file = file;
@@ -49,3 +49,8 @@ dlopen (const char *file, int mode)
 
   return _dlerror_run (dlopen_doit, &args) ? NULL : args.new;
 }
+#if defined PIC && defined DO_VERSIONING
+default_symbol_version (__dlopen_check, dlopen, GLIBC_2.1);
+#else
+weak_alias (__dlopen_check, dlopen)
+#endif
