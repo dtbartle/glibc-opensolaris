@@ -47,3 +47,7 @@ _IO_fputs (str, fp)
 #ifdef weak_alias
 weak_alias (_IO_fputs, fputs)
 #endif
+
+#ifndef _IO_MTSAFE_IO
+weak_alias (_IO_fputs, fputs_unlocked)
+#endif
