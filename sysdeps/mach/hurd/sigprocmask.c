@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -80,3 +80,5 @@ DEFUN(__sigprocmask, (how, set, oset),
 
   return 0;
 }
+
+weak_alias (__sigprocmask, sigprocmask)
