@@ -64,7 +64,7 @@ setsourcefilter (int s, uint32_t interface, struct sockaddr *group,
       return -1;
     }
 
-  int result = __setsockopt (s, SOL_IP, MCAST_MSFILTER, gf, needed);
+  int result = __setsockopt (s, sol, MCAST_MSFILTER, gf, needed);
 
   if (! use_alloca)
     {
