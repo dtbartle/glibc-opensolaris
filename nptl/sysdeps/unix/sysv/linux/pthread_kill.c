@@ -34,4 +34,4 @@ __pthread_kill (threadid, signo)
   /* We have a special syscall to do the work.  */
   return INLINE_SYSCALL (tkill, 2, pd->tid, signo);
 }
-strong_alias (pthread_kill)
+strong_alias (__pthread_kill, pthread_kill)
