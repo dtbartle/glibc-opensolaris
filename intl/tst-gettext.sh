@@ -31,10 +31,24 @@ export LC_ALL
 
 # Generate the test data.
 test -d ${objpfx}domaindir || mkdir ${objpfx}domaindir
-# Create the locale directories.
+test -d ${objpfx}localedir || mkdir ${objpfx}localedir
+# Create the domain directories.
 test -d ${objpfx}domaindir/existing-locale || mkdir ${objpfx}domaindir/existing-locale
 test -d ${objpfx}domaindir/existing-locale/LC_MESSAGES || mkdir ${objpfx}domaindir/existing-locale/LC_MESSAGES
 test -d ${objpfx}domaindir/existing-locale/LC_TIME || mkdir ${objpfx}domaindir/existing-locale/LC_TIME
+# Create the locale directories.
+test -d ${objpfx}localedir/existing-locale || {
+  mkdir ${objpfx}localedir/existing-locale
+  for f in ADDRESS COLLATE CTYPE IDENTIFICATION MEASUREMENT MONETARY NAME NUMEIRC PAPER TELEPHONE TIME; do
+    cp ${common_objpfx}localedata/de_DE.ISO-8859-1/LC_$f \
+       ${objpfx}localedir/existing-locale
+  done
+}
+test -d ${objpfx}localedir/existing-locale/LC_MESSAGES || {
+  mkdir ${objpfx}localedir/existing-locale/LC_MESSAGES
+  cp ${common_objpfx}localedata/de_DE.ISO-8859-1/LC_MESSAGES/SYS_LC_MESSAGES \
+     ${objpfx}localedir/existing-locale/LC_MESSAGES
+}
 
 # Populate them.
 msgfmt -o ${objpfx}domaindir/existing-locale/LC_MESSAGES/existing-domain.mo \
@@ -43,7 +57,7 @@ msgfmt -o ${objpfx}domaindir/existing-locale/LC_TIME/existing-time-domain.mo \
        ../po/de.po
 
 # Now run the test.
-MALLOC_TRACE=$malloc_trace \
+MALLOC_TRACE=$malloc_trace LOCPATH=${objpfx}localedir:$LOCPATH \
 ${common_objpfx}elf/ld.so --library-path $common_objpfx \
 ${objpfx}tst-gettext > ${objpfx}tst-gettext.out ${objpfx}domaindir
 
