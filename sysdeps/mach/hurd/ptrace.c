@@ -179,11 +179,22 @@ ptrace (enum __ptrace_request request, ... )
 	    err = (request == PTRACE_ATTACH ?
 		   __msg_set_some_exec_flags :
 		   __msg_clear_some_exec_flags) (msgport, task, EXEC_TRACED);
-	    if (!err && request == PTRACE_ATTACH)
+#ifdef notyet			/* XXX */
+	    if (! err)
+	      /* Request (or request an end to) SIGCHLD notification
+		 when PID stops or dies, and proc_wait working on PID.  */
+	      err = __USEPORT (PROC,
+			       __proc_trace_pid (port, pid,
+						 request == PTRACE_ATTACH));
+#endif
+	    if (! err)
 	      {
-		/* XXX Need proc server call to reparent or somesuch.  */
-		/* Now stop the process.  */
-		err = __msg_sig_post (msgport, task, SIGSTOP);
+		if (request == PTRACE_ATTACH)
+		  /* Now stop the process.  */
+		  err = __msg_sig_post (msgport, SIGSTOP, task);
+		else
+		  /* Resume the process from tracing stop.  */
+		  err = __msg_sig_post_untraced (msgport, 0, task);
 	      }
 	    __mach_port_deallocate (__mach_task_self (), msgport);
 	  }
