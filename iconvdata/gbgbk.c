@@ -81,7 +81,7 @@
 	ch = (ch << 8) | inptr[1];					      \
 									      \
 	/* Now determine whether the character is valid.  */		      \
-	if (ch >= 0xa1a1 && ch <= 0x777e && inptr[1] >= 0xa1)		      \
+	if (ch >= 0xa1a1 && ch <= 0xf7fe && inptr[1] >= 0xa1)		      \
 	  {								      \
 	    /* So far so good.  Now test the exceptions.  */		      \
 	    if ((ch >= 0xa2a1 && ch <= 0xa2aa)				      \
