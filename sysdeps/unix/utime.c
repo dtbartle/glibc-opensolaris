@@ -32,21 +32,19 @@ utime (file, times)
      const struct utimbuf *times;
 {
   struct timeval timevals[2];
+  struct timeval *tvp;
 
   if (times != NULL)
     {
-      timevals[0].tv_sec = (long int) times->actime;
+      timevals[0].tv_sec = (time_t) times->actime;
       timevals[0].tv_usec = 0L;
-      timevals[1].tv_sec = (long int) times->modtime;
+      timevals[1].tv_sec = (time_t) times->modtime;
       timevals[1].tv_usec = 0L;
+      tvp = timevals;
     }
   else
-    {
-      if (__gettimeofday (&timevals[0], NULL) < 0)
-	return -1;
-      timevals[1] = timevals[0];
-    }
+    tvp = NULL;
 
-  return __utimes (file, timevals);
+  return __utimes (file, tvp);
 }
 libc_hidden_def (utime)
