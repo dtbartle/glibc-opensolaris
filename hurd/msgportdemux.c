@@ -1,6 +1,6 @@
 /* Demux messages sent on the signal port.
 
-Copyright (C) 1991, 1992, 1994 Free Software Foundation, Inc.
+Copyright (C) 1991, 1992, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -59,8 +59,7 @@ _hurd_msgport_receive (void)
   /* Get our own sigstate cached so we never again have to take a lock to
      fetch it.  There is much code in hurdsig.c that operates with some
      sigstate lock held, which will deadlock with _hurd_thread_sigstate.  */
-  struct hurd_sigstate *ss = _hurd_self_sigstate ();
-  __mutex_unlock (&ss->lock);
+  (void) _hurd_self_sigstate ();
 
   while (1)
     (void) __mach_msg_server (msgport_server, __vm_page_size, _hurd_msgport);
