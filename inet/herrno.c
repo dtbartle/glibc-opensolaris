@@ -16,7 +16,19 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
+#include <features.h>
+
 /* We need to have the error status variable of the resolver
    accessible in the libc.  */
-int h_errno;
+int __h_errno;
+strong_alias (__h_errno, h_errno)
 
+/* When threaded, h_errno may be a per-process variable.  */
+#ifdef __USE_REENTRANT
+int
+weak_const_function
+__h_errno_location (void)
+{
+  return &__h_errno;
+}
+#endif
