@@ -460,12 +460,12 @@ int __pthread_initialize_manager(void)
 
   getrlimit(RLIMIT_STACK, &limit);
 #ifdef FLOATING_STACKS
-  if (limit.rlim_max == RLIM_INFINITY)
-    limit.rlim_max = ARCH_STACK_MAX_SIZE;
+  if (limit.rlim_cur == RLIM_INFINITY)
+    limit.rlim_cur = ARCH_STACK_MAX_SIZE;
 # ifdef NEED_SEPARATE_REGISTER_STACK
-  max_stack = limit.rlim_max / 2;
+  max_stack = limit.rlim_cur / 2;
 # else
-  max_stack = limit.rlim_max;
+  max_stack = limit.rlim_cur;
 #endif
 
   __pthread_max_stacksize = max_stack;
