@@ -44,16 +44,16 @@
 #endif
 
 /* Those are flags in the conversion format. */
-# define LONG		0x001	/* l: long or double */
-# define LONGDBL	0x002	/* L: long long or long double */
-# define SHORT		0x004	/* h: short */
-# define SUPPRESS	0x008	/* *: suppress assignment */
-# define POINTER	0x010	/* weird %p pointer (`fake hex') */
-# define NOSKIP		0x020	/* do not skip blanks */
-# define WIDTH		0x040	/* width was given */
-# define GROUP		0x080	/* ': group numbers */
-# define MALLOC		0x100	/* a: malloc strings */
-# define CHAR		0x200	/* hh: char */
+#define LONG		0x001	/* l: long or double */
+#define LONGDBL		0x002	/* L: long long or long double */
+#define SHORT		0x004	/* h: short */
+#define SUPPRESS	0x008	/* *: suppress assignment */
+#define POINTER		0x010	/* weird %p pointer (`fake hex') */
+#define NOSKIP		0x020	/* do not skip blanks */
+#define WIDTH		0x040	/* width was given */
+#define GROUP		0x080	/* ': group numbers */
+#define MALLOC		0x100	/* a: malloc strings */
+#define CHAR		0x200	/* hh: char */
 
 
 #ifdef USE_IN_LIBIO
