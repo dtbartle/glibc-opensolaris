@@ -77,8 +77,10 @@ static char rcsid[] = "$NetBSD: $";
 		lx += 1;
 		if(lx==0) {
 		    hx += 1;
-		    if (hx==0 || (esx == 0 && hx == 0x80000000))
+		    if (hx==0 || (esx == 0 && hx == 0x80000000)) {
 			esx += 1;
+			hx |= 0x80000000;
+		    }
 		}
 	    }
 	} else {				/* x < 0 */
@@ -102,8 +104,10 @@ static char rcsid[] = "$NetBSD: $";
 		lx += 1;
 		if(lx==0) {
 		    hx += 1;
-		    if (hx==0 || (esx == 0xffff8000 && hx == 0x80000000))
-		      esx += 1;
+		    if (hx==0 || (esx == 0xffff8000 && hx == 0x80000000)) {
+			esx += 1;
+			hx |= 0x80000000;
+		    }
 		}
 	    }
 	}
