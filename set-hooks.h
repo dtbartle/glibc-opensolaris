@@ -1,5 +1,5 @@
 /* Macros for using symbol sets for running lists of functions.
-Copyright (C) 1994 Free Software Foundation, Inc.
+Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -27,21 +27,19 @@ Cambridge, MA 02139, USA.  */
    arguments described by PROTO.  Use `text_set_element (NAME, FUNCTION)'
    from gnu-stabs.h to add a function to the hook.  */
 
-#define DEFINE_HOOK(NAME, PROTO) \
-const struct								      \
-  {									      \
-    size_t n;								      \
-    void (*fn[0]) __P (PROTO);						      \
-  } NAME
+#define DEFINE_HOOK(NAME, PROTO)		\
+  typedef void __##NAME##_hook_function_t PROTO; \
+  symbol_set_define (NAME)
 
 /* Run all the functions hooked on the set called NAME.
    Each function is called like this: `function ARGS'.  */
 
 #define RUN_HOOK(NAME, ARGS) \
 do {									      \
-  size_t i;								      \
-  for (i = 0; i < NAME.n; ++i)						      \
-    (*NAME.fn[i]) ARGS;							      \
+  void *const *ptr;							      \
+  for (ptr = __symbol_set_first_element (NAME);				      \
+       ! symbol_set_end_p (NAME, ptr); ++ptr)				      \
+    (*(__##NAME##_hook_function_t *) ptr) ARGS;				      \
 } while (0)
 
 /* Define a hook variable with NAME and PROTO, and a function called RUNNER
