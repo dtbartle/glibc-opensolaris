@@ -28,6 +28,7 @@
 #include <stdio-common/_itoa.h>
 
 #include <dl-machine.h>
+#include <dl-procinfo.h>
 
 extern int _dl_argc;
 extern char **_dl_argv;
@@ -234,10 +235,11 @@ _dl_show_auxv (void)
 	_dl_sysdep_message ("AT_PLATFORM: ", av->a_un.a_ptr, "\n", NULL);
 	break;
       case AT_HWCAP:
-	_dl_sysdep_message ("AT_HWCAP:    ",
-			    _itoa_word (av->a_un.a_val, buf + sizeof buf - 1,
-					16, 0),
-			    "\n", NULL);
+	if (_dl_procinfo (av->a_un.a_val) < 0)
+	  _dl_sysdep_message ("AT_HWCAP:    ",
+			      _itoa_word (av->a_un.a_val, buf + sizeof buf - 1,
+					  16, 0),
+			      "\n", NULL);
 	break;
       }
 }
