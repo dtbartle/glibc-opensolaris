@@ -292,12 +292,14 @@ getnameinfo (const struct sockaddr *sa, socklen_t addrlen, char *host,
 		    if (addrlen > sizeof (struct sockaddr_in6)
 			&& (scopeid = sin6p->sin6_scope_id))
 		      {
+			/* Buffer is >= IFNAMSIZ+1.  */
+			char scopebuf[MAXHOSTNAMELEN + 1];
 			int ni_numericscope = 0;
 
 			if (IN6_IS_ADDR_LINKLOCAL (&sin6p->sin6_addr)
 			    || IN6_IS_ADDR_MC_LINKLOCAL (&sin6p->sin6_addr))
 			  {
-			    if (if_indextoname (scopeid, scopeptr) == NULL)
+			    if (if_indextoname (scopeid, scopebuf) == NULL)
 			      ++ni_numericscope;
 			  }
 			else
@@ -305,8 +307,6 @@ getnameinfo (const struct sockaddr *sa, socklen_t addrlen, char *host,
 
 			if (ni_numericscope)
 			  {
-			    /* Buffer is >= IFNAMSIZ+1.  */
-			    char scopebuf[MAXHOSTNAMELEN + 1];
 			    char *scopeptr = &scopebuf[1];
 			    size_t real_hostlen;
 			    size_t scopelen;
@@ -321,7 +321,7 @@ getnameinfo (const struct sockaddr *sa, socklen_t addrlen, char *host,
 			    real_hostlen = __strnlen (host, hostlen);
 			    if (real_hostlen + scopelen + 1 > hostlen)
 			      return -1;
-			    memcpy (host + real_hostlen, scope, scoplen);
+			    memcpy (host + real_hostlen, scopebuf, scopelen);
 			  }
 		      }
 		  }
