@@ -1269,12 +1269,10 @@ _IO_file_xsgetn_mmap (fp, data, n)
 	}
     }
 
-  if (have == 0)
-    {
-      if (s == (char *) data)
-	fp->_flags |= _IO_EOF_SEEN;
-    }
-  else
+  if (have < n)
+    fp->_flags |= _IO_EOF_SEEN;
+
+  if (have != 0)
     {
       have = MIN (have, n);
 #ifdef _LIBC
