@@ -236,9 +236,9 @@ the implementation.)
 These functions return the complex sine of @var{z}.
 The mathematical definition of the complex sine is
 
-@ifinfo
+@ifnottex
 @math{sin (z) = 1/(2*i) * (exp (z*i) - exp (-z*i))}.
-@end ifinfo
+@end ifnottex
 @tex
 $$\sin(z) = {1\over 2i} (e^{zi} - e^{-zi})$$
 @end tex
@@ -256,9 +256,9 @@ $$\sin(z) = {1\over 2i} (e^{zi} - e^{-zi})$$
 These functions return the complex cosine of @var{z}.
 The mathematical definition of the complex cosine is
 
-@ifinfo
+@ifnottex
 @math{cos (z) = 1/2 * (exp (z*i) + exp (-z*i))}
-@end ifinfo
+@end ifnottex
 @tex
 $$\cos(z) = {1\over 2} (e^{zi} + e^{-zi})$$
 @end tex
@@ -276,9 +276,9 @@ $$\cos(z) = {1\over 2} (e^{zi} + e^{-zi})$$
 These functions return the complex tangent of @var{z}.
 The mathematical definition of the complex tangent is
 
-@ifinfo
+@ifnottex
 @math{tan (z) = -i * (exp (z*i) - exp (-z*i)) / (exp (z*i) + exp (-z*i))}
-@end ifinfo
+@end ifnottex
 @tex
 $$\tan(z) = -i \cdot {e^{zi} - e^{-zi}\over e^{zi} + e^{-zi}}$$
 @end tex
@@ -723,9 +723,9 @@ These functions return @code{e} (the base of natural
 logarithms) raised to the power of @var{z}.
 Mathematically, this corresponds to the value
 
-@ifinfo
+@ifnottex
 @math{exp (z) = exp (creal (z)) * (cos (cimag (z)) + I * sin (cimag (z)))}
-@end ifinfo
+@end ifnottex
 @tex
 $$\exp(z) = e^z = e^{{\rm Re}\,z} (\cos ({\rm Im}\,z) + i \sin ({\rm Im}\,z))$$
 @end tex
@@ -743,9 +743,9 @@ $$\exp(z) = e^z = e^{{\rm Re}\,z} (\cos ({\rm Im}\,z) + i \sin ({\rm Im}\,z))$$
 These functions return the natural logarithm of @var{z}.
 Mathematically, this corresponds to the value
 
-@ifinfo
+@ifnottex
 @math{log (z) = log (cabs (z)) + I * carg (z)}
-@end ifinfo
+@end ifnottex
 @tex
 $$\log(z) = \log |z| + i \arg z$$
 @end tex
@@ -769,9 +769,9 @@ or is very close to 0.  It is well-defined for all other values of
 These functions return the base 10 logarithm of the complex value
 @var{z}. Mathematically, this corresponds to the value
 
-@ifinfo
+@ifnottex
 @math{log (z) = log10 (cabs (z)) + I * carg (z)}
-@end ifinfo
+@end ifnottex
 @tex
 $$\log_{10}(z) = \log_{10}|z| + i \arg z$$
 @end tex
