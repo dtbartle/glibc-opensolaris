@@ -17,8 +17,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <unistd.h>
 #include <list.h>
 #include "fork.h"
+#include <tls.h>
 #include <bits/libc-lock.h>
 
 
@@ -38,4 +40,15 @@ __libc_pthread_init (ptr, reclaim)
 
   /* The fork handler needed by libpthread.  */
   list_add_tail (&pthread_child_handler.list, &__fork_child_list);
+
+  /* We have a macro which is used in asm code describing data layout.
+     Make sure it does not get out of date.  */
+  if (offsetof (struct pthread, header.data.multiple_threads)
+      != MULTIPLE_THREADS_OFFSET)
+    {
+#define str_n_len(str) str, sizeof (str) - 1
+      __libc_write (STDERR_FILENO,
+		    str_n_len ("*** MULTIPLE_THREADS_OFFSET out of date\n"));
+      _exit (1);
+    }
 }
