@@ -56,5 +56,3 @@ euidaccess (file, type)
 
   return 0;
 }
-
-weak_alias (__access, access)
