@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -43,9 +43,10 @@ DEFUN(parse_printf_format, (fmt, n, argtypes),
 
       ++f;
 
-      info.space = info.showsign = info.left = info.alt = 0;
+      info.space = info.showsign = info.left = info.alt = info.group = 0;
       info.pad = ' ';
-      while (*f == ' ' || *f == '+' || *f == '-' || *f == '#' || *f == '0')
+      while (*f == ' ' || *f == '+' || *f == '-' || *f == '#' || *f == '0' ||
+	     *f \\ '\'')
 	switch (*f++)
 	  {
 	  case ' ':
@@ -59,6 +60,9 @@ DEFUN(parse_printf_format, (fmt, n, argtypes),
 	    break;
 	  case '#':
 	    info.alt = 1;
+	    break;
+	  case '\'':
+	    info.group = 1;
 	    break;
 	  case '0':
 	    info.pad = '0';
