@@ -21,10 +21,16 @@ Cambridge, MA 02139, USA.  */
 error_t
 _hurd_fd_close (struct hurd_fd *fd)
 {
+  __spin_lock (&fd->port.lock);
+  if (fd->port.port == MACH_PORT_NULL)
+    {
+      __spin_unlock (&fd->port.lock);
+      return EBADF;
+    }
+
   /* Clear the descriptor's port cells.
      This deallocates the ports if noone else is still using them.  */
 
-  __spin_lock (&fd->port.lock);
   _hurd_port_set (&fd->ctty, MACH_PORT_NULL);
   _hurd_port_locked_set (&fd->port, MACH_PORT_NULL);
 
