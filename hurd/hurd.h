@@ -172,6 +172,16 @@ extern file_t file_name_split (const char *file, char **name);
 extern file_t __file_name_lookup (const char *file, int flags, mode_t mode);
 extern file_t file_name_lookup (const char *file, int flags, mode_t mode);
 
+/* Open a port to FILE with the given FLAGS and MODE (see <fcntl.h>).  The
+   file lookup uses the current root directory, but uses STARTDIR as the
+   "working directory" for file relative names.  Returns a port to the file
+   if successful; otherwise sets `errno' and returns MACH_PORT_NULL.  */
+
+extern file_t __file_name_lookup_under (file_t startdir, const char *file,
+					int flags, mode_t mode);
+extern file_t file_name_lookup_under (file_t startdir, const char *file,
+				      int flags, mode_t mode);
+
 
 /* Open a file descriptor on a port.  FLAGS are as for `open'; flags
    affected by io_set_openmodes are not changed by this.  If successful,
