@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
    Based on strlen implemention by Torbjorn Granlund (tege@sics.se),
    with help from Dan Sahlin (dan@sics.se) and
    bug fix and commentary by Jim Blandy (jimb@ai.mit.edu);
@@ -176,3 +176,8 @@ DEFUN(strchr, (s, c), CONST char *s AND int c)
 
   return NULL;
 }
+
+#ifdef weak_alias
+#undef index
+weak_alias (strchr, index)
+#endif
