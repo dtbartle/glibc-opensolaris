@@ -44,7 +44,7 @@
 #define MAX_NEEDED_TO		4
 #define PREPARE_LOOP \
   int save_set;								      \
-  int set = data->statep->count;					      \
+  int *setp = &data->statep->count;					      \
   if (!FROM_DIRECTION && !data->internal_use && data->invocation_counter == 0)\
     {									      \
       /* Emit the designator sequence.  */				      \
@@ -56,7 +56,7 @@
       *outbuf++ = ')';							      \
       *outbuf++ = 'C';							      \
     }
-#define EXTRA_LOOP_ARGS		, set
+#define EXTRA_LOOP_ARGS		, setp
 
 
 /* The COUNT element of the state keeps track of the currently selected
@@ -102,9 +102,9 @@ enum
    and retore the state.  */
 #define SAVE_RESET_STATE(Save) \
   if (Save)								      \
-    save_set = set;							      \
+    save_set = *setp;							      \
   else									      \
-    set = save_set
+    *setp = save_set
 
 
 /* First define the conversion function from ISO-2022-JP to UCS4.  */
@@ -161,7 +161,7 @@ enum
 	continue;							      \
       }									      \
 									      \
-    if (set == ASCII_set || ch < 0x21 || ch == 0x7f)			      \
+    if (set == ASCII_set)						      \
       /* Almost done, just advance the input pointer.  */		      \
       ++inptr;								      \
     else								      \
@@ -186,7 +186,9 @@ enum
 									      \
     *((uint32_t *) outptr)++ = ch;					      \
   }
-#define EXTRA_LOOP_DECLS	, int set
+#define EXTRA_LOOP_DECLS	, int *setp
+#define INIT_PARAMS		int set = *setp
+#define UPDATE_PARAMS		*setp = set
 #include <iconv/loop.c>
 
 
@@ -234,7 +236,7 @@ enum
 	  }								      \
 									      \
 	/* We use KSC 5601.  */						      \
-	if (set != KSC5601_set)						      \
+	if (set != KSC5601_set)					      \
 	  {								      \
 	    *outptr++ = SO;						      \
 	    set = KSC5601_set;						      \
@@ -253,7 +255,9 @@ enum
     /* Now that we wrote the output increment the input pointer.  */	      \
     inptr += 4;								      \
   }
-#define EXTRA_LOOP_DECLS	, int set
+#define EXTRA_LOOP_DECLS	, int *setp
+#define INIT_PARAMS		int set = *setp
+#define UPDATE_PARAMS		*setp = set
 #include <iconv/loop.c>
 
 
