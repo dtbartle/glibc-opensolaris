@@ -107,7 +107,7 @@
     /* We need to fool gcc,  as we need to pass more than 10		\
        input/outputs.  */						\
     register USItype _t1 __asm__ ("g1"), _t2 __asm__ ("g2");		\
-    __asm__ __volatile__ ("
+    __asm__ __volatile__ ("\
 	    addcc %r8,%9,%1\n\
 	    addxcc %r6,%7,%0\n\
 	    addxcc %r4,%5,%%g2\n\
@@ -132,7 +132,7 @@
     /* We need to fool gcc,  as we need to pass more than 10		\
        input/outputs.  */						\
     register USItype _t1 __asm__ ("g1"), _t2 __asm__ ("g2");		\
-    __asm__ __volatile__ ("
+    __asm__ __volatile__ ("\
 	    subcc %r8,%9,%1\n\
 	    subxcc %r6,%7,%0\n\
 	    subxcc %r4,%5,%%g2\n\
@@ -202,14 +202,14 @@ do {								\
        * We need to clear cexc bits if any.			\
        */							\
       extern unsigned long long ___Q_numbers[];			\
-      __asm__ __volatile__("
+      __asm__ __volatile__("\
       	ldd [%0], %%f30\n\
       	faddd %%f30, %%f30, %%f30\
       	" : : "r" (___Q_numbers) : "f30");			\
     }								\
   else								\
     {								\
-      __asm__ __volatile__("
+      __asm__ __volatile__("\
         mov %0, %%o0\n\
         mov %%o7, %%g1\n\
         call ___Q_simulate_exceptions\n\
