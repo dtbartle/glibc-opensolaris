@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -20,7 +21,12 @@ do_test (void)
   struct stat st1;
   struct stat st2;
 
-  buf = (char *) alloca (strlen (test_dir) + sizeof "/tst-atime.XXXXXX");
+  buf = (char *) malloc (strlen (test_dir) + sizeof "/tst-atime.XXXXXX");
+  if (buf == NULL)
+    {
+      printf ("cannot allocate memory: %m\n");
+      return 1;
+    }
   stpcpy (stpcpy (buf, test_dir), "/tst-atime.XXXXXX");
 
   fd = mkstemp (buf);
