@@ -89,7 +89,7 @@ while read from to subset targets; do
 	{ echo "/FAILED";
 	  failed=1; continue; }
     else
-      echo $ac_n "; suntzu: $from -> ASCII $ac_c"
+      echo $ac_n "   suntzu: $from -> ASCII $ac_c"
       $PROG -f ASCII -t $to testdata/suntzus |
       $PROG -f $to -t ASCII > $temp1 ||
         { echo "FAILED";
