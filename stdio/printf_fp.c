@@ -32,6 +32,7 @@ Cambridge, MA 02139, USA.  */
 #include "../stdlib/gmp.h"
 #include "../stdlib/gmp-impl.h"
 #include "../stdlib/longlong.h"
+#include "../stdlib/fpioconst.h"
 #include "../locale/localeinfo.h"
 #include <limits.h>
 #include <math.h>
@@ -118,8 +119,6 @@ extern mp_size_t __mpn_extract_double (mp_ptr res_ptr, mp_size_t size,
 extern mp_size_t __mpn_extract_long_double (mp_ptr res_ptr, mp_size_t size,
 					    int *expt, int *is_neg,
 					    long double value);
-
-#include "fpioconst.h"
 
 
 static unsigned int guess_grouping (unsigned int intdig_max,
