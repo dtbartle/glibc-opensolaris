@@ -22,7 +22,7 @@ subdir		:= elf
 
 headers		= elf.h elfclass.h link.h dlfcn.h
 routines	= $(dl-routines) dl-open dl-close dl-symbol dl-support \
-		  dl-version enbl-secure
+		  enbl-secure
 
 # The core dynamic linking functions are in libc for the static and
 # profiled libraries.
@@ -39,7 +39,7 @@ distribute	= $(rtld-routines:=.c) dynamic-link.h do-rel.h dl-machine.h \
 
 extra-libs	 = libdl
 extra-libs-others = $(extra-libs)
-libdl-routines	:= dlopen dlclose dlsym dlvsym dlerror dladdr
+libdl-routines	:= dlopen dlclose dlsym dlerror dladdr
 
 before-compile = $(objpfx)trusted-dirs.h
 
@@ -124,7 +124,7 @@ CFLAGS-dl-load.c += -Wno-uninitialized
 # rule to build a shared library.
 $(objpfx)libdl.so: $(objpfx)libdl_pic.a $(common-objpfx)libc.so $(objpfx)ld.so
 
-$(inst_slibdir)/$(rtld-version-installed-name): $(objpfx)ld.so
+$(inst_slibdir)/$(rtld-version-installed-name): $(objpfx)ld.so $(+force)
 	$(do-install-program)
 
 $(inst_slibdir)/$(rtld-installed-name): \
