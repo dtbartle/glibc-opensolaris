@@ -41,6 +41,8 @@ DEFUN(sigsuspend, (set), CONST sigset_t *set)
 
   ss = _hurd_self_sigstate ();
 
+  __spin_lock (&ss->lock);
+
   oldmask = ss->blocked;
   if (set != NULL)
     /* Change to the new blocked signal mask.  */
@@ -51,7 +53,7 @@ DEFUN(sigsuspend, (set), CONST sigset_t *set)
 
   /* Tell the signal thread to message us when a signal arrives.  */
   ss->suspended = wait;
-  __mutex_unlock (&ss->lock);
+  __spin_unlock (&ss->lock);
 
   if (pending)
     /* Tell the signal thread to check for pending signals.  */
@@ -62,10 +64,10 @@ DEFUN(sigsuspend, (set), CONST sigset_t *set)
 	      MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
   __mach_port_destroy (__mach_task_self (), wait);
 
-  __mutex_lock (&ss->lock);
+  __spin_lock (&ss->lock);
   ss->blocked = oldmask;	/* Restore the old mask.  */
   pending = ss->pending & ~ss->blocked;	/* Again check for pending signals.  */
-  __mutex_unlock (&ss->lock);
+  __spin_unlock (&ss->lock);
 
   if (pending)
     /* Tell the signal thread to check for pending signals.  */
