@@ -1642,7 +1642,7 @@ __STRING_INLINE size_t __strspn_cg (__const char *__s, __const char __accept[],
 __STRING_INLINE size_t
 __strspn_cg (__const char *__s, __const char __accept[], size_t __accept_len)
 {
-  register unsigned long int __d0, __d1, __d2;
+  register unsigned long int __d0, __d1, __d2, __d3;
   register __const char *__res;
   __asm__ __volatile__
     ("cld\n"
@@ -1651,11 +1651,11 @@ __strspn_cg (__const char *__s, __const char __accept[], size_t __accept_len)
      "testb	%%al,%%al\n\t"
      "je	2f\n\t"
      "movl	%1,%%edi\n\t"
-     "movl	%6,%%ecx\n\t"
+     "movl	%7,%%ecx\n\t"
      "repne; scasb\n\t"
      "je	1b\n"
      "2:"
-     : "=S" (__res), "=&d" (__d0), "=&c" (__d1), "=&D" (__d2)
+     : "=S" (__res), "=&d" (__d0), "=&c" (__d1), "=&D" (__d2), "=&a" (__d3)
      : "0" (__s), "1" (__accept), "g" (__accept_len),
        /* Since we do not know how large the memory we access it, use a really large amount.  */
        "m" ( *(struct { char __x[0xfffffff]; } *)__s),
