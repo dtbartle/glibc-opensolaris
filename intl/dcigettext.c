@@ -55,36 +55,15 @@ extern int errno;
 # define __set_errno(val) errno = (val)
 #endif
 
-#if defined STDC_HEADERS || defined _LIBC
-# include <stddef.h>
-# include <stdlib.h>
-#else
-char *getenv ();
-# ifdef HAVE_MALLOC_H
-#  include <malloc.h>
-# else
-void free ();
-# endif
-#endif
-
-#if defined HAVE_STRING_H || defined _LIBC
-# include <string.h>
-#else
-# include <strings.h>
-#endif
-#if !HAVE_STRCHR && !defined _LIBC
-# ifndef strchr
-#  define strchr index
-# endif
-#endif
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 #if defined HAVE_UNISTD_H || defined _LIBC
 # include <unistd.h>
 #endif
 
-#if defined HAVE_LOCALE_H || defined _LIBC
-# include <locale.h>
-#endif
+#include <locale.h>
 
 #if defined HAVE_SYS_PARAM_H || defined _LIBC
 # include <sys/param.h>
