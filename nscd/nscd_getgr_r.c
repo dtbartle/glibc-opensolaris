@@ -48,7 +48,7 @@ __nscd_getgrgid_r (gid_t gid, struct group *resultbuf, char *buffer,
 		   size_t buflen)
 {
   char *p = buffer;
-  char plen;
+  int plen;
 
   plen = snprintf (buffer, buflen, "%d", gid);
   if (plen == -1)
