@@ -34,7 +34,16 @@ C_LABEL(__curbrk)
 .text
 SYSCALL__ (brk, 1)
 	movl 4(%esp), %eax
+#ifdef	PIC
+	/* Standard PIC nonsense to store into `__curbrk' through the GOT.  */
+	call here
+here:	popl %ecx
+	addl $_GLOBAL_OFFSET_TABLE_+[.-here], %ecx
+	movl C_SYMBOL_NAME(__curbrk@GOT)(%ecx), %ecx
+	movl %eax, (%ecx)
+#else
 	movl %eax, C_SYMBOL_NAME(__curbrk)
+#endif
 	xorl %eax, %eax
 	ret
 
