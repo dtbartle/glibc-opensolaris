@@ -18,17 +18,15 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <stdio.h>
+#include <math.h>
 
-
-/* Return the name of the controlling terminal.
-   If S is not NULL, the name is copied into it (it should be at
-   least L_ctermid bytes long), otherwise a static buffer is used.  */
-char *
-DEFUN(ctermid, (s), char *s)
+/* Break VALUE into a normalized fraction and an integral power of 2.  */
+double
+DEFUN(frexp, (value, exp), double value AND int *exp)
 {
   errno = ENOSYS;
-  return NULL;
+  *exp = 0;
+  return 0.0;
 }
 
 
@@ -36,6 +34,6 @@ DEFUN(ctermid, (s), char *s)
 
 #include <gnu-stabs.h>
 
-stub_warning(ctermid);
+stub_warning(frexp);
 
 #endif	/* GNU stabs.  */
