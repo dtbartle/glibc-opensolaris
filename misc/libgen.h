@@ -26,8 +26,14 @@ __BEGIN_DECLS
 /* Return directory part of PATH or "." if none is available.  */
 extern char *dirname __P ((char *__path));
 
-/* Return filename part of PATH.  */
-extern char *basename __P ((__const char *__path));
+/* Return final component of PATH.
+
+   This is the weird XPG version of this function.  It sometimes will
+   modify its argument.  Therefore we normally use the GNU version (in
+   <string.h>) and only if this header is included make the XPG
+   version available under the real name.  */
+extern char *__xpg_basename __P ((char *__path));
+#define basename(path)	__xpg_basename (path)
 
 __END_DECLS
 
