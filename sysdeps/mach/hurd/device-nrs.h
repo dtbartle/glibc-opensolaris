@@ -23,6 +23,6 @@
 #include <hurd/hurd_types.h>
 
 /* Check whether a given device is a tty.  */
-#define DEV_TTY_P(statp) ((stap)->st_fstype == FSTYPE_TERM)
+#define DEV_TTY_P(statp) ((statp)->st_fstype == FSTYPE_TERM)
 
 #endif	/* device-nrs.h */
