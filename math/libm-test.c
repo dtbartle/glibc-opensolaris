@@ -63,10 +63,6 @@
    -s,--silent outputs only the error count (equals --verbose=0)
  */
 
-/* Define if the following ISO C 9X functions are implemented: exp2,
-   log2.  */
-#undef ISO_9X_IMPLEMENTED
-
 #ifndef _GNU_SOURCE
 # define _GNU_SOURCE
 #endif
@@ -644,10 +640,15 @@ exp_test (void)
 }
 
 
-#ifdef ISO_9X_IMPLEMENTED
 static void
 exp2_test (void)
 {
+  errno = 0;
+  exp2(0);
+  if (errno == ENOSYS)
+    /* Function not implemented.  */
+    return;
+
   check ("exp2 (+0) == 1", FUNC(exp2) (0), 1);
   check ("exp2 (-0) == 1", FUNC(exp2) (minus_zero), 1);
 
@@ -655,7 +656,6 @@ exp2_test (void)
   check ("exp2 (-inf) == 0", FUNC(exp2) (minus_infty), 0);
   check ("exp2 (10) == 1024", FUNC(exp2) (10), 1024);
 }
-#endif
 
 
 static void
@@ -892,7 +892,6 @@ log1p_test (void)
 }
 
 
-#ifdef ISO_9X_IMPLEMENTED
 static void
 log2_test (void)
 {
@@ -914,7 +913,6 @@ log2_test (void)
   check ("log2 (256) == 8", FUNC(log2) (256.0), 8);
 
 }
-#endif
 
 
 static void
@@ -1854,9 +1852,7 @@ main (int argc, char *argv[])
   cos_test ();
   cosh_test ();
   exp_test ();
-#ifdef ISO_9X_IMPLEMENTED
   exp2_test ();
-#endif
   expm1_test ();
   frexp_test ();
   ilogb_test ();
@@ -1864,9 +1860,7 @@ main (int argc, char *argv[])
   log_test ();
   log10_test ();
   log1p_test ();
-#ifdef ISO_9X_IMPLEMENTED
   log2_test ();
-#endif
   logb_test ();
   modf_test ();
   scalb_test ();
