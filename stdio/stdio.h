@@ -275,6 +275,12 @@ extern FILE *__stdio_head;	/* Head of the list.  */
 
 /* Standard streams.  */
 extern FILE *stdin, *stdout, *stderr;
+#ifdef __STRICT_ANSI__
+/* ANSI says these are macros; satisfy pedants.  */
+#define	stdin	stdin
+#define	stdout	stdout
+#define	stderr	stderr
+#endif
 
 
 /* Remove file FILENAME.  */
