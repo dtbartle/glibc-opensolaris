@@ -2818,6 +2818,7 @@ fi
 
 
 
+
   
 if test $gnu_ld = yes; then
   cat >> confdefs.h <<\EOF
@@ -2851,7 +2852,7 @@ if test $shared = default; then
 fi
 
 echo $ac_n "checking whether -fPIC is default""... $ac_c" 1>&6
-echo "configure:2855: checking whether -fPIC is default" >&5
+echo "configure:2856: checking whether -fPIC is default" >&5
 if eval "test \"`echo '$''{'pic_default'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -3064,6 +3065,7 @@ s%@uname_sysname@%$uname_sysname%g
 s%@uname_release@%$uname_release%g
 s%@uname_version@%$uname_version%g
 s%@stdio@%$stdio%g
+s%@old_glibc_headers@%$old_glibc_headers%g
 s%@libc_cv_slibdir@%$libc_cv_slibdir%g
 s%@libc_cv_sysconfdir@%$libc_cv_sysconfdir%g
 s%@libc_cv_rootsbindir@%$libc_cv_rootsbindir%g
