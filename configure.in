@@ -1065,8 +1065,9 @@ EOF
   AC_CACHE_CHECK(for -z combreloc,
 		 libc_cv_z_combreloc, [dnl
   cat > conftest.c <<EOF
-extern int bar (void);
-int foo (void) { return bar (); }
+extern int bar (int);
+extern int mumble;
+int foo (void) { return bar (mumble); }
 EOF
   if AC_TRY_COMMAND([${CC-cc} -shared -o conftest.so conftest.c
 			-nostdlib -nostartfiles
