@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -46,6 +46,7 @@ Cambridge, MA 02139, USA.  */
 
 /* Basic ports and info, initialized by startup.  */
 
+extern int _hurd_exec_flags;	/* Flags word passed in exec_startup.  */
 extern struct hurd_port *_hurd_ports;
 extern unsigned int _hurd_nports;
 extern volatile mode_t _hurd_umask;
