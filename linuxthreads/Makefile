@@ -1,4 +1,4 @@
-# Copyright (C) 1996-2001, 2002 Free Software Foundation, Inc.
+# Copyright (C) 1996-2002, 2003 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -53,6 +53,8 @@ omit-deps = $(unix-syscalls:%=ptw-%)
 libpthread-shared-only-routines = pt-allocrtsig
 
 libpthread-nonshared = pthread_atfork
+
+CFLAGS-pthread_atfork.c = -DNOT_IN_libc
 
 nodelete-yes = -Wl,--enable-new-dtags,-z,nodelete
 initfirst-yes = -Wl,--enable-new-dtags,-z,initfirst
