@@ -28,10 +28,10 @@ Cambridge, MA 02139, USA.  */
 long double
 __mpn_construct_long_double (mp_srcptr frac_ptr, int expt, int sign)
 {
-  union ieee754_long_double u;
+  union ieee854_long_double u;
   
   u.ieee.negative = sign;
-  u.ieee.exponent = expt + IEEE754_LONG_DOUBLE_BIAS;
+  u.ieee.exponent = expt + IEEE854_LONG_DOUBLE_BIAS;
 #if BITS_PER_MP_LIMB == 32
   u.ieee.mantissa1 = frac_ptr[0];
   u.ieee.mantissa0 = frac_ptr[1];
