@@ -1,5 +1,6 @@
 2004-12-21  Jakub Jelinek  <jakub@redhat.com>
 
+	[BZ #723]
 	* Makefile (tests): Add tst-align.
 	* tst-align.c: New test.
 	* sysdeps/i386/Makefile (CFLAGS-tst-align.c): Add
