@@ -18,10 +18,10 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <sysdep-cancel.h>	/* Must come before <fcntl.h>.  */
 #include <fcntl.h>
 #include <stdarg.h>
 
-#include <sysdep-cancel.h>
 #include <sys/syscall.h>
 #include "../kernel-features.h"
 
