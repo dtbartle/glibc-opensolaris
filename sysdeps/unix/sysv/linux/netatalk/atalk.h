@@ -1,4 +1,4 @@
-/* Copyright (C) 1996, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 92, 93, 95, 96, 97 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,31 +16,12 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-/* This file should define RB_* macros to be used as flag
-   bits in the argument to the `reboot' system call.  */
+#ifndef __NETATALK_ATALK_H
+#define __NETATALK_ATALK_H 1
 
-#ifndef _SYS_REBOOT_H
+#include <asm/types.h>
+#include <linux/atalk.h>
 
-#define _SYS_REBOOT_H	1
-#include <features.h>
+#define SOL_ATALK       258     /* sockopt level for atalk */
 
-/* Perform a hard reset now.  */
-#define RB_AUTOBOOT	0x01234567
-
-/* Halt the system.  */
-#define RB_HALT_SYSTEM	0xcdef0123
-
-/* Enable reboot using Ctrl-Alt-Delete keystroke.  */
-#define RB_ENABLE_CAD	0x89abcdef
-
-/* Disable reboot using Ctrl-Alt-Delete keystroke.  */
-#define RB_DISABLE_CAD	0
-
-__BEGIN_DECLS
-
-/* Reboot or halt the system.  */
-extern int reboot __P ((int __howto));
-
-__END_DECLS
-
-#endif	/* _SYS_REBOOT_H */
+#endif
