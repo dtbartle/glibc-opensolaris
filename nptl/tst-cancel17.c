@@ -156,7 +156,7 @@ do_test (void)
 
   if (pthread_create (&th, NULL, tf, &a) != 0)
     {
-      puts ("1st create failed");
+      puts ("2nd create failed");
       return 1;
     }
 
@@ -176,12 +176,12 @@ do_test (void)
 
   if (pthread_join (th, &status) != 0)
     {
-      puts ("1st join failed");
+      puts ("2nd join failed");
       return 1;
     }
   if (status != PTHREAD_CANCELED)
     {
-      puts ("1st thread not canceled");
+      puts ("2nd thread not canceled");
       return 1;
     }
 
