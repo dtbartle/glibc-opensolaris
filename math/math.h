@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ Cambridge, MA 02139, USA.  */
 __BEGIN_DECLS
 
 #define	__need_Emath
-#include <errno.h>
+#include <errnos.h>
 
 /* Get machine-dependent HUGE_VAL value (returned on overflow).  */
 #include <huge_val.h>
