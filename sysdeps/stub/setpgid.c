@@ -24,11 +24,12 @@ Cambridge, MA 02139, USA.  */
    If PID is zero, the current process's process group ID is set.
    If PGID is zero, the process ID of the process is used.  */
 int
-DEFUN(__setpgrp, (pid, pgid), int pid AND int pgid)
+DEFUN(__setpgid, (pid, pgid), int pid AND int pgid)
 {
   errno = ENOSYS;
   return -1;
 }
-stub_warning (setpgrp)
+stub_warning (setpgid)
 
-weak_alias (__setpgrp, setpgrp)
+weak_alias (__setpgid, setpgid)
+weak_alias (__setpgid, setpgrp)
