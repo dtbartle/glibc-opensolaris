@@ -45,12 +45,12 @@ static char rcsid[] = "$NetBSD: $";
 	iy = esy&0x7fff;		/* |y| */
 
 	if(((ix>=0x7ff00000)&&((ix-0x7ff00000)|lx)!=0) ||   /* x is nan */
-	   ((iy>=0x7fff)&&((hy|ly)|-(hy|ly))!=0))           /* y is nan */
+	   ((iy>=0x7fff)&&(hy|ly)!=0))        /* y is nan */
 	   return x+y;
 	if((long double) x==y) return y;	/* x=y, return y */
 	if((ix|lx)==0) {			/* x == 0 */
 	    double x2;
-	    INSERT_WORDS(x,esy&0x8000?0x80000000:0,1);/* return +-minsub */
+	    INSERT_WORDS(x,(esy&0x8000)<<16,1); /* return +-minsub */
 	    x2 = x*x;
 	    if(x2==x) return x2; else return x;	/* raise underflow flag */
 	}
