@@ -57,6 +57,7 @@ __mmap (caddr_t addr, size_t len, int prot, int flags, int fd, off_t offset)
       break;
 
     case MAP_FILE:
+    case 0:			/* Allow, e.g., just MAP_SHARED.  */
       {
 	mach_port_t robj, wobj;
 	if (err = HURD_DPORT_USE (fd, __io_map (port, &robj, &wobj)))
