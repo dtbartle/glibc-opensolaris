@@ -3306,11 +3306,11 @@ Void_t* cALLOc(n, elem_size) size_t n; size_t elem_size;
     if(mem == 0)
       return 0;
 #ifdef HAVE_MEMCPY
-    memset(mem, 0, sz);
+    return memset(mem, 0, sz);
 #else
     while(sz > 0) ((char*)mem)[--sz] = 0; /* rather inefficient */
-#endif
     return mem;
+#endif
   }
 #endif
 
