@@ -269,8 +269,7 @@ extern int alphasort (__const void *__e1, __const void *__e2)
 # else
 #  ifdef __REDIRECT
 extern int __REDIRECT (alphasort,
-		       (__const void *__e1, __const void *__e2)
-		       __THROW,
+		       (__const void *__e1, __const void *__e2) __THROW,
 		       alphasort64) __attribute_pure__;
 #  else
 #   define alphasort alphasort64
@@ -290,8 +289,7 @@ extern int versionsort (__const void *__e1, __const void *__e2)
 #  else
 #   ifdef __REDIRECT
 extern int __REDIRECT (versionsort,
-		       (__const void *__e1, __const void *__e2)
-		       __THROW,
+		       (__const void *__e1, __const void *__e2) __THROW,
 		       versionsort64) __attribute_pure__;
 #   else
 #    define versionsort versionsort64
