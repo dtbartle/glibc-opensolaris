@@ -32,7 +32,7 @@ _IO_fgetpos64 (fp, posp)
      _IO_fpos64_t *posp;
 {
 #ifdef _G_LSEEK64
-  _IO_fpos_t pos;
+  _IO_fpos64_t pos;
   CHECK_FILE (fp, EOF);
   _IO_cleanup_region_start ((void (*) __P ((void *))) _IO_funlockfile, fp);
   _IO_flockfile (fp);
