@@ -1,6 +1,6 @@
 # Rules for MiG interfaces that want to go into the C library.
 
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -25,9 +25,8 @@
 # This file sets:
 #	interface-headers	Names of generated interface header files.
 #	interface-routines	Names of generated interface routines.
-# All user stubs are put in individual files, prefixed with RPC_ (and the
-# function names prefixed with __), and a symbol-alias to the un-__'d form
-# generated; header for both is put in foo.h.  Server interfaces are
+# All user stubs are put in individual files, prefixed with RPC_; header
+# for both __ and non-__ names is put in foo.h.  Server interfaces are
 # written to foo_server.c and foo_server.h; the server functions are called
 # _S_rpcname.
 
@@ -99,6 +98,9 @@ vpath Machrules ../mach	# Find ourselves.
 
 ifndef transform-user-stub-output
 transform-user-stub-output = tmp
+define transform-user-stub
+echo "weak_alias (__$$call, $$call)" >> $(objpfx)tmp_$${call}.c;
+endef
 endif
 
 # Not an implicit rule so the stamps are never removed as intermediates!
@@ -144,16 +146,7 @@ $(objpfx)%.h: $(objpfx)%.__h $(objpfx)%.uh
 	(sed -e '$$d' $<; sed -e '1,2d' $(word 2,$^)) > $@-new
 	mv $@-new $@
 
-if-calls.c := $(strip $(foreach if,$(user-interfaces),$($(if)-calls:%=%.c)))
-ifdef if-calls.c
-$(addprefix $(objpfx),$(if-calls.c)): $(objpfx)%.c: # Machrules
-	(echo '#include <gnu-stabs.h>'; \
-	 echo 'symbol_alias (__$*, $*);') > $@-new
-	mv $@-new $@
-endif
-
 interface-routines := $(foreach if,$(user-interfaces),			\
-				$($(if)-calls)				\
 				$(addprefix RPC_,$($(if)-calls)))	\
 		      $(server-interfaces:%=%_server)
 interface-headers := $(user-interfaces:%=%.h) \
