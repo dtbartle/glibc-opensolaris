@@ -26,9 +26,10 @@ Cambridge, MA 02139, USA.  */
 
 #include <endian.h>
 
-#ifdef __BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
 #define	__nan_bytes		{ 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 }
-#else
+#endif
+#if __BYTE_ORDER == __LITTLE_ENDIAN
 #define	__nan_bytes		{ 0, 0, 0, 0, 0, 0, 0xf8, 0x7f }
 #endif
 
