@@ -59,7 +59,7 @@ __pthread_getspecific (key)
     {
       uintptr_t seq = data->seq;
 
-      if (seq != __pthread_keys[key].seq)
+      if (__builtin_expect (seq != __pthread_keys[key].seq, 0))
 	result = data->data = NULL;
     }
 
