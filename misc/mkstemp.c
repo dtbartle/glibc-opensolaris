@@ -19,6 +19,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef __GT_FILE
+# define __GT_FILE 0
+#endif
+
+int __gen_tempname ();
+
 /* Generate a unique temporary file name from TEMPLATE.
    The last six characters of TEMPLATE must be "XXXXXX";
    they are replaced with a string that makes the filename unique.
