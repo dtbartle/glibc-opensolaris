@@ -70,11 +70,16 @@ elf_machine_load_address (void)
   (dynamic_info)[DT_RELSZ]->d_un.d_val -= sizeof (Elf32_Rel);
 
 
+#ifndef PROF
 /* We add a declaration of this function here so that in dl-runtime.c
    the ELF_MACHINE_RUNTIME_TRAMPOLINE macro really can pass the parameters
-   in registers.  */
+   in registers.
+
+   We cannot use this scheme for profiling because the _mcount call
+   destroys the passed register information.  */
 static ElfW(Addr) fixup (struct link_map *l, ElfW(Word) reloc_offset)
      __attribute__ ((regparm (2), unused));
+#endif
 
 /* Set up the loaded object described by L so its unrelocated PLT
    entries will jump to the on-demand fixup code in dl-runtime.c.  */
@@ -101,7 +106,8 @@ elf_machine_runtime_setup (struct link_map *l, int lazy)
 
   /* This code is used in dl-runtime.c to call the `fixup' function
      and then redirect to the address it returns.  */
-#define ELF_MACHINE_RUNTIME_TRAMPOLINE asm ("\
+#ifndef PROF
+# define ELF_MACHINE_RUNTIME_TRAMPOLINE asm ("\
 	.globl _dl_runtime_resolve
 	.type _dl_runtime_resolve, @function
 _dl_runtime_resolve:
@@ -117,6 +123,28 @@ _dl_runtime_resolve:
 	ret $8			# Jump to function address.
 	.size _dl_runtime_resolve, .-_dl_runtime_resolve
 ");
+#else
+# define ELF_MACHINE_RUNTIME_TRAMPOLINE asm ("\
+	.globl _dl_runtime_resolve
+	.type _dl_runtime_resolve, @function
+_dl_runtime_resolve:
+	pushl %eax		# Preserve registers otherwise clobbered.
+	pushl %ecx
+	pushl %edx
+	movl 16(%esp), %edx	# Push the arguments for `fixup'
+	movl 12(%esp), %eax
+	pushl %edx
+	pushl %eax
+	call fixup		# Call resolver.
+	popl %edx		# Pop the parameters
+	popl %ecx
+	popl %edx		# Get register content back.
+	popl %ecx
+	xchgl %eax, (%esp)	# Get %eax contents end store function address.
+	ret $8			# Jump to function address.
+	.size _dl_runtime_resolve, .-_dl_runtime_resolve
+");
+#endif
 /* The PLT uses Elf32_Rel relocs.  */
 #define elf_machine_relplt elf_machine_rel
 }
@@ -203,8 +231,8 @@ _dl_start_user:\n\
    MAP is the object containing the reloc.  */
 
 static inline void
-elf_machine_rel (struct link_map *map, const Elf32_Rel *reloc,
-		 const Elf32_Sym *sym, const hash_name_pair *version)
+elf_machine_rel (struct link_map *map,
+		 const Elf32_Rel *reloc, const Elf32_Sym *sym)
 {
   Elf32_Addr *const reloc_addr = (void *) (map->l_addr + reloc->r_offset);
   Elf32_Addr loadbase;
@@ -212,15 +240,15 @@ elf_machine_rel (struct link_map *map, const Elf32_Rel *reloc,
   switch (ELF32_R_TYPE (reloc->r_info))
     {
     case R_386_COPY:
-      loadbase = RESOLVE (&sym, version, DL_LOOKUP_NOEXEC);
+      loadbase = RESOLVE (&sym, DL_LOOKUP_NOEXEC);
       memcpy (reloc_addr, (void *) (loadbase + sym->st_value), sym->st_size);
       break;
     case R_386_GLOB_DAT:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *reloc_addr = sym ? (loadbase + sym->st_value) : 0;
       break;
     case R_386_JMP_SLOT:
-      loadbase = RESOLVE (&sym, version, DL_LOOKUP_NOPLT);
+      loadbase = RESOLVE (&sym, DL_LOOKUP_NOPLT);
       *reloc_addr = sym ? (loadbase + sym->st_value) : 0;
       break;
     case R_386_32:
@@ -241,7 +269,7 @@ elf_machine_rel (struct link_map *map, const Elf32_Rel *reloc,
 	     built-in definitions used while loading those libraries.  */
 	  undo = map->l_addr + sym->st_value;
 #endif
-	loadbase = RESOLVE (&sym, version, 0);
+	loadbase = RESOLVE (&sym, 0);
 	*reloc_addr += (sym ? (loadbase + sym->st_value) : 0) - undo;
 	break;
       }
@@ -252,7 +280,7 @@ elf_machine_rel (struct link_map *map, const Elf32_Rel *reloc,
 	*reloc_addr += map->l_addr;
       break;
     case R_386_PC32:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *reloc_addr += ((sym ? (loadbase + sym->st_value) : 0) -
 		      (Elf32_Addr) reloc_addr);
       break;
