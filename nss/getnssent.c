@@ -45,7 +45,7 @@ __nss_getent (getent_r_function func, void **resbuf, char **buffer,
 	{
 	  /* We are out of memory.  Free the current buffer so that the
 	     process gets a chance for a normal termination.  */
-	  save = errno;
+	  int save = errno;
 	  free (*buffer);
 	  __set_errno (save);
 	}
