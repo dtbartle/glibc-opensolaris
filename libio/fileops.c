@@ -202,12 +202,63 @@ _IO_file_fopen (fp, filename, mode)
   fp->_fileno = fdesc;
   _IO_mask_flags (fp, read_write,_IO_NO_READS+_IO_NO_WRITES+_IO_IS_APPENDING);
   if (read_write & _IO_IS_APPENDING)
-    if (_IO_SEEKOFF (fp, (_IO_off_t)0, _IO_seek_end, _IOS_INPUT|_IOS_OUTPUT)
+    if (_IO_SEEKOFF (fp, (_IO_off64_t)0, _IO_seek_end, _IOS_INPUT|_IOS_OUTPUT)
 	== _IO_pos_BAD && errno != ESPIPE)
       return NULL;
   _IO_link_in (fp);
   return fp;
 }
+
+#ifdef _G_OPEN64
+_IO_FILE *
+_IO_file_fopen64 (fp, filename, mode)
+     _IO_FILE *fp;
+     const char *filename;
+     const char *mode;
+{
+  int oflags = 0, omode;
+  int read_write, fdesc;
+  int oprot = 0666;
+  if (_IO_file_is_open (fp))
+    return 0;
+  switch (*mode++)
+    {
+    case 'r':
+      omode = O_RDONLY;
+      read_write = _IO_NO_WRITES;
+      break;
+    case 'w':
+      omode = O_WRONLY;
+      oflags = O_CREAT|O_TRUNC;
+      read_write = _IO_NO_READS;
+      break;
+    case 'a':
+      omode = O_WRONLY;
+      oflags = O_CREAT|O_APPEND;
+      read_write = _IO_NO_READS|_IO_IS_APPENDING;
+      break;
+    default:
+      __set_errno (EINVAL);
+      return NULL;
+    }
+  if (mode[0] == '+' || (mode[0] == 'b' && mode[1] == '+'))
+    {
+      omode = O_RDWR;
+      read_write &= _IO_IS_APPENDING;
+    }
+  fdesc = _G_OPEN64 (filename, omode|oflags, oprot);
+  if (fdesc < 0)
+    return NULL;
+  fp->_fileno = fdesc;
+  _IO_mask_flags (fp, read_write,_IO_NO_READS+_IO_NO_WRITES+_IO_IS_APPENDING);
+  if (read_write & _IO_IS_APPENDING)
+    if (_IO_SEEKOFF (fp, (_IO_off64_t)0, _IO_seek_end, _IOS_INPUT|_IOS_OUTPUT)
+	== _IO_pos_BAD && errno != ESPIPE)
+      return NULL;
+  _IO_link_in (fp);
+  return fp;
+}
+#endif
 
 _IO_FILE *
 _IO_file_attach (fp, fd)
@@ -222,7 +273,7 @@ _IO_file_attach (fp, fd)
   /* Get the current position of the file. */
   /* We have to do that since that may be junk. */
   fp->_offset = _IO_pos_BAD;
-  if (_IO_SEEKOFF (fp, (_IO_off_t)0, _IO_seek_cur, _IOS_INPUT|_IOS_OUTPUT)
+  if (_IO_SEEKOFF (fp, (_IO_off64_t)0, _IO_seek_cur, _IOS_INPUT|_IOS_OUTPUT)
       == _IO_pos_BAD && errno != ESPIPE)
     return NULL;
   return fp;
@@ -265,7 +316,7 @@ _IO_do_write (fp, data, to_do)
     fp->_offset = _IO_pos_BAD;
   else if (fp->_IO_read_end != fp->_IO_write_base)
     {
-      _IO_pos_t new_pos
+      _IO_fpos64_t new_pos
 	= _IO_SYSSEEK (fp, fp->_IO_write_base - fp->_IO_read_end, 1);
       if (new_pos == _IO_pos_BAD)
 	return EOF;
@@ -406,8 +457,8 @@ _IO_file_sync (fp)
       if (_IO_in_backup (fp))
 	delta -= eGptr () - Gbase ();
 #endif
-      _IO_off_t new_pos = _IO_SYSSEEK (fp, delta, 1);
-      if (new_pos != (_IO_off_t) EOF)
+      _IO_off64_t new_pos = _IO_SYSSEEK (fp, delta, 1);
+      if (new_pos != (_IO_off64_t) EOF)
 	fp->_IO_read_end = fp->_IO_read_ptr;
 #ifdef ESPIPE
       else if (errno == ESPIPE)
@@ -424,15 +475,15 @@ _IO_file_sync (fp)
   return retval;
 }
 
-_IO_pos_t
+_IO_fpos64_t
 _IO_file_seekoff (fp, offset, dir, mode)
      _IO_FILE *fp;
-     _IO_off_t offset;
+     _IO_off64_t offset;
      int dir;
      int mode;
 {
-  _IO_pos_t result;
-  _IO_off_t delta, new_offset;
+  _IO_fpos64_t result;
+  _IO_off64_t delta, new_offset;
   long count;
   /* POSIX.1 8.2.3.7 says that after a call the fflush() the file
      offset of the underlying file must be exact.  */
@@ -477,7 +528,7 @@ _IO_file_seekoff (fp, offset, dir, mode)
       break;
     case _IO_seek_end:
       {
-	struct stat st;
+	struct _G_stat64 st;
 	if (_IO_SYSSTAT (fp, &st) == 0 && S_ISREG (st.st_mode))
 	  {
 	    offset += st.st_size;
@@ -494,8 +545,8 @@ _IO_file_seekoff (fp, offset, dir, mode)
       && !_IO_in_backup (fp))
     {
       /* Offset relative to start of main get area. */
-      _IO_pos_t rel_offset = (offset - fp->_offset
-			      + (fp->_IO_read_end - fp->_IO_read_base));
+      _IO_fpos64_t rel_offset = (offset - fp->_offset
+				 + (fp->_IO_read_end - fp->_IO_read_base));
       if (rel_offset >= 0)
 	{
 #if 0
@@ -592,13 +643,17 @@ _IO_file_read (fp, buf, size)
   return read (fp->_fileno, buf, size);
 }
 
-_IO_pos_t
+_IO_fpos64_t
 _IO_file_seek (fp, offset, dir)
      _IO_FILE *fp;
-     _IO_off_t offset;
+     _IO_off64_t offset;
      int dir;
 {
+#ifdef _G_LSEEK64
+  return _G_LSEEK64 (fp->_fileno, offset, dir);
+#else
   return lseek (fp->_fileno, offset, dir);
+#endif
 }
 
 int
@@ -606,7 +661,11 @@ _IO_file_stat (fp, st)
      _IO_FILE *fp;
      void *st;
 {
-  return fstat (fp->_fileno, (struct stat *) st);
+#ifdef _G_STAT64
+  return _G_FSTAT64 (fp->_fileno, (struct _G_stat64 *) st);
+#else
+  return fstat (fp->_fileno, (struct _G_stat64 *) st);
+#endif
 }
 
 int
@@ -812,5 +871,7 @@ struct _IO_jump_t _IO_file_jumps =
   JUMP_INIT(write, _IO_file_write),
   JUMP_INIT(seek, _IO_file_seek),
   JUMP_INIT(close, _IO_file_close),
-  JUMP_INIT(stat, _IO_file_stat)
+  JUMP_INIT(stat, _IO_file_stat),
+  JUMP_INIT(showmanyc, _IO_default_showmanyc),
+  JUMP_INIT(imbue, _IO_default_imbue)
 };
