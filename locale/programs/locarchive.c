@@ -422,7 +422,8 @@ open_archive (struct locarhandle *ah, bool readonly)
 
   /* Now we know how large the administrative information part is.
      Map all of it.  */
-  ah->addr = mmap64 (NULL, ah->len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  ah->addr = mmap64 (NULL, ah->len, PROT_READ | (readonly ? 0 : PROT_WRITE),
+		     MAP_SHARED, fd, 0);
   if (ah->addr == MAP_FAILED)
     error (EXIT_FAILURE, errno, _("cannot map archive header"));
 }
