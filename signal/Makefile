@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -24,14 +24,12 @@ subdir	:= signal
 headers	:= signal.h sys/signal.h signum.h sigcontext.h sigaction.h sigset.h
 
 routines	:= signal raise killpg \
-		   sigaction sigproc kill \
-		   __sigact __sigproc __kill \
+		   sigaction sigprocmask kill \
 		   sigpending sigsuspend \
 		   sigblock sigsetmask sigpause sigvec \
-		   __sigblock __sigstmsk __sigpause __sigvec \
-		   sigstack sigaltstk sigintr \
+		   sigstack sigaltstack sigintr \
 		   sigsetops sigempty sigfillset sigaddset sigdelset sigismem \
-		   sigret __sigret \
+		   sigreturn \
 		   gsignal ssignal
 
 tests		:= tst-signal
