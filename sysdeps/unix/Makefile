@@ -197,7 +197,7 @@ endif
 $(common-objpfx)ioctls: $(sysdep_dir)/unix/snarf-ioctls \
 			$(sysincludedir)/sys/ioctl.h $(ioctl-includes)
 	$(dir $<)$(notdir $<) $(filter-out $<,$^) \
-	| fgrep -xv "(`$(dir $<)$(notdir $<) $(termbits.h) \
+	| fgrep -xv "`($(dir $<)$(notdir $<) $(termbits.h) \
 					     $(..)termios/sys/ttydefaults.h; \
 		      echo NULL) \
 		     | sort | uniq`" \
