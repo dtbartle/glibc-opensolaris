@@ -18,6 +18,7 @@
    02111-1307 USA.  */
 
 #include <sysdep.h>
+#include <lowlevelbarrier.h>
 
 #define SYS_futex	240
 #define FUTEX_WAIT	0
@@ -28,11 +29,6 @@
 #else
 # define LOCK
 #endif
-
-#define CURR_EVENT	0
-#define MUTEX		4
-#define LEFT		8
-#define	INIT_COUNT	12
 
 
 	.text
