@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993, 1995 Free Software Foundation, Inc.
    Contributed by Torbjorn Granlund (tege@sics.se).
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -362,3 +362,8 @@ memcmp (s1, s2, len)
 
   return 0;
 }
+
+#ifdef weak_alias
+#undef bcmp
+weak_alias (memcmp, bcmp)
+#endif
