@@ -110,7 +110,7 @@ LDFLAGS-libCNS.so = $(LDFLAGS-soname-fname)
 LDFLAGS-libISOIR165.so = $(LDFLAGS-soname-fname)
 LDFLAGS-libJISX0213.so = $(LDFLAGS-soname-fname)
 
-distribute := gconv-modules extra-module.mk gap.awk gaptab.awk		    \
+distribute := gconv-modules extra-module.mk gap.awk gaptab.awk gconv.map    \
 	      gen-8bit.sh gen-8bit-gap.sh gen-8bit-gap-1.sh		    \
 	      TESTS $(filter-out testdata/CVS%, $(wildcard testdata/*))	    \
 	      TESTS2 run-iconv-test.sh tst-tables.sh tst-table.sh	    \
