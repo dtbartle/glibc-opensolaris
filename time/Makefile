@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -26,12 +26,10 @@ distribute := tzfile.h private.h scheck.c ialloc.c emkdir.c yearistype
 extra-objs = scheck.o ialloc.o emkdir.o zonenames $(tzfiles:%=z.%)
 
 routines	:= offtime asctime clock ctime difftime gmtime	\
-		   localtime mktime strftime time __tzset tzfile \
-		   __gettod settod adjtime getitmr \
-		   __getitmr __adjtime __settod \
-		   __setitmr tzset gettod setitmr \
-		   stime dysize timegm timelocal ftime
-aux		:= syms-time
+		   localtime mktime strftime time tzset tzfile	\
+		   gettimeofday settimeofday adjtime		\
+		   getitimer setitimer				\
+		   stime dysize timegm ftime
 
 others	:= ap zdump zic
 tests	:= test_time clocktest
