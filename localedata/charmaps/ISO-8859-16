@@ -284,7 +284,7 @@ CHARMAP
 </>/>>                 /xBB         <U00BB> RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
 <OE>                   /xBC         <U0152> LATIN CAPITAL LIGATURE OE
 <oe>                   /xBD         <U0153> LATIN SMALL LIGATURE OE
-<Z.>                   /xBE         <U017B> LATIN CAPITAL LETTER Z WITH DOT ABOVE
+<Y:>                   /xBE         <U0178> LATIN CAPITAL LETTER Y WITH DIAERESIS
 <z.>                   /xBF         <U017C> LATIN SMALL LETTER Z WITH DOT ABOVE
 <A!>                   /xC0         <U00C0> LATIN CAPITAL LETTER A WITH GRAVE
 <A'>                   /xC1         <U00C1> LATIN CAPITAL LETTER A WITH ACUTE
