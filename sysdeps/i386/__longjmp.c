@@ -44,8 +44,7 @@ REGS;
    setjmp call there to return VAL, or 1 if VAL is 0.  */
 void
 DEFUN(__longjmp, (env, val),
-      CONST __jmp_buf env AND
-      int val)
+      __jmp_buf env AND int val)
 {
   /* We specify explicit registers because, when not optimizing,
      the compiler will generate code that uses the frame pointer
