@@ -34,9 +34,9 @@ int
 __futimes (int fd, const struct timeval tvp[2])
 {
   static const char selffd[] = "/proc/self/fd/";
-  char buf[sizeof (selffd) + 3 * sizeof (int)];
-  buf[sizeof (buf) - 1] = '\0';
-  char *cp = _itoa_word (fd, buf + sizeof (buf) - 1, 10, 0);
+  char fname[sizeof (selffd) + 3 * sizeof (int)];
+  fname[sizeof (fname) - 1] = '\0';
+  char *cp = _itoa_word (fd, fname + sizeof (fname) - 1, 10, 0);
   cp = memcpy (cp - sizeof (selffd) + 1, selffd, sizeof (selffd) - 1);
 
 #ifdef __NR_utimes
@@ -51,12 +51,19 @@ __futimes (int fd, const struct timeval tvp[2])
      used kernel.  Use utime().  For this we have to convert to the
      data format utime() expects.  */
 #ifndef __ASSUME_UTIMES
-  struct utimbuf ut =
+  struct utimbuf buf;
+  struct utimbuf *times;
+
+  if (tvp != NULL)
     {
-      .actime = tvp[0].tv_sec + tvp[0].tv_usec >= 500000,
-      .modtime = tvp[1].tv_sec + tvp[1].tv_usec >= 500000
-    };
-  return INLINE_SYSCALL (utime, 2, cp, &ut);
+      times = &buf;
+      buf.actime = tvp[0].tv_sec + tvp[0].tv_usec >= 500000;
+      buf.modtime = tvp[1].tv_sec + tvp[1].tv_usec >= 500000;
+    }
+  else
+    times = NULL;
+
+  return INLINE_SYSCALL (utime, 2, cp, times);
 #endif
 }
 weak_alias (__futimes, futimes)
