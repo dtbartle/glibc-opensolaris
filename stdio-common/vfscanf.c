@@ -542,7 +542,9 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 		    }
 		}
 	      else if (base == 0)
-		base = 8;
+		  base = 8;
+	      else
+		  ADDW('0');	/* zero is part of the number */
 	    }
 
 	  if (base == 0)
