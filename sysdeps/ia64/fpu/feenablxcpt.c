@@ -27,7 +27,7 @@ feenableexcept (int excepts)
   fenv_t new_fpsr;
 
   /* Get the current fpsr.  */
-  __asm__ __volatile__ ("mov.m %0=ar.fpsr" : "=r " (old_fpsr));
+  __asm__ __volatile__ ("mov.m %0=ar.fpsr" : "=r" (old_fpsr));
 
   new_fpsr = old_fpsr & ~((fenv_t) excepts & FE_ALL_EXCEPT);
 
