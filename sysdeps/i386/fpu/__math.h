@@ -93,7 +93,7 @@ __MATH_INLINE double sin (double __x);
 __MATH_INLINE double
 sin (double __x)
 {
-  register double value;
+  register double __value;
   __asm __volatile__
     ("fsin"
      : "=t" (__value) : "0" (__x));
@@ -179,7 +179,7 @@ exp (double __x)
      "fsub	%%st(1)		# fract(x * log2(e))\n\t"
      "f2xm1			# 2^(fract(x * log2(e))) - 1\n\t"
      : "=t" (__value), "=u" (__exponent) : "0" (__x));
-  value += 1.0;
+  __value += 1.0;
   __asm __volatile__
     ("fscale"
      : "=t" (__value) : "0" (__value), "u" (__exponent));
