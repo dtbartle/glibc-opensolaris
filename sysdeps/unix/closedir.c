@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -33,14 +33,14 @@ DEFUN(closedir, (dirp), DIR *dirp)
   if (dirp == NULL)
     {
       errno = EINVAL;
-      return(-1);
+      return -1;
     }
 
   fd = dirp->__fd;
 
-  free((PTR) dirp->__data);
-  free((PTR) dirp);
+  free ((PTR) dirp->__data);
+  free ((PTR) dirp);
 
-  return(__close(fd));
+  return __close (fd);
 }
 
