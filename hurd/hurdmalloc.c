@@ -1,4 +1,8 @@
 #include <stdlib.h>
+#include <string.h>
+
+#define bcopy(s,d,n)	memcpy ((d), (s), (n)) /* No overlap handling.  */
+
 #include "hurdmalloc.h"		/* XXX see that file */
 
 #include <mach.h>
@@ -33,7 +37,10 @@
 /*
  * HISTORY
  * $Log$
- * Revision 1.8  1995/02/03 01:54:21  roland
+ * Revision 1.9  1995/02/13 16:36:08  roland
+ * Include string.h; #define bcopy using memcpy.
+ *
+ * Revision 1.8  1995/02/03  01:54:21  roland
  * Remove bogus bcopy decl.
  *
  * Revision 1.7  1995/01/26  04:22:02  roland
