@@ -2199,6 +2199,7 @@ fi
 
 
 
+
 if test "`(cd $srcdir; pwd)`" = "`pwd`"; then
   config_makefile=
 else
@@ -2387,6 +2388,7 @@ s%@profile@%$profile%g
 s%@omitfp@%$omitfp%g
 s%@bounded@%$bounded%g
 s%@static_nss@%$static_nss%g
+s%@nopic_initfini@%$nopic_initfini%g
 s%@DEFINES@%$DEFINES%g
 s%@VERSION@%$VERSION%g
 
