@@ -44,6 +44,12 @@ extern char **_environ;
 
 struct hurd_startup_data *_dl_hurd_data;
 
+unsigned int __hurd_threadvar_max = _HURD_THREADVAR_MAX;
+static unsigned long int threadvars[_HURD_THREADVAR_MAX];
+unsigned long int __hurd_threadvar_stack_offset
+  = (unsigned long int) &threadvars;
+
+
 Elf32_Addr
 _dl_sysdep_start (void **start_argptr,
 		  void (*dl_main) (const Elf32_Phdr *phdr, Elf32_Word phent,
