@@ -1794,9 +1794,9 @@ collate_finish (struct localedef_t *locale, struct charmap_t *charmap)
       while (sect != NULL && sect->rules == NULL);
     }
   while (sect != NULL);
-  /* We are currently not prepared for more than 256 rulesets.  But this
+  /* We are currently not prepared for more than 128 rulesets.  But this
      should never really be a problem.  */
-  assert (ruleidx <= 256);
+  assert (ruleidx <= 128);
 }
 
 
@@ -3084,9 +3084,9 @@ error while adding equivalent collating symbol"));
 			  while (sp->next != NULL)
 			    sp = sp->next;
 
-			  collate->error_section.next = NULL;
 			  sp->next = &collate->error_section;
 			}
+		      collate->error_section.next = NULL;
 		    }
 		}
 	      else
