@@ -35,7 +35,7 @@ pthread_sigmask (how, newmask, oldmask)
      blocked.  */
   if (newmask != NULL
       && (how == SIG_SETMASK || how == SIG_BLOCK)
-      && sigismember (newmask, SIGCANCEL))
+      && __builtin_expect (sigismember (newmask, SIGCANCEL), 0))
     {
       local_newmask = *newmask;
       sigdelset (&local_newmask, SIGCANCEL);
