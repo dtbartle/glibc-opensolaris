@@ -375,6 +375,7 @@ run_test (const char *locname)
 	    }
 	  CLASSTEST (alnum);
 	  CLASSTEST (alpha);
+	  CLASSTEST (blank);
 	  CLASSTEST (cntrl);
 	  CLASSTEST (digit);
 	  CLASSTEST (lower);
