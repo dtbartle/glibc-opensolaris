@@ -210,10 +210,13 @@ endif
 
 include ../Rules
 
-tests: $(objpfx)iconv-test.shout
+.PHONY: do-iconv-test
+tests: do-iconv-test
 
-$(objpfx)iconv-test.shout: run-iconv-test.sh $(objpfx)gconv-modules
-	$(SHELL) -e $< $(common-objdir) > $@
+do-iconv-test: run-iconv-test.sh $(objpfx)gconv-modules \
+	       $(addprefix $(objpfx),$(modules.so)) \
+	       $(common-objdir)/iconv/iconv_prog
+	$(SHELL) -e $< $(common-objdir) > $(objpfx)iconv-test.out
 
 $(objpfx)gconv-modules: gconv-modules
 	cp $^ $@
