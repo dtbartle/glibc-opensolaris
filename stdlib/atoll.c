@@ -18,7 +18,7 @@
 
 #include <stdlib.h>
 
-#undef	atol
+#undef	atoll
 
 
 /* Convert a string to a long int.  */
