@@ -202,4 +202,11 @@ extern error_t _hurd_fd_read (struct hurd_fd *fd, void *buf, size_t *nbytes);
 extern error_t _hurd_fd_write (struct hurd_fd *fd,
 			       const void *buf, size_t *nbytes);
 
+/* Call *RPC on PORT and/or CTTY; if a call on CTTY returns EBACKGROUND,
+   generate SIGTTIN/SIGTTOU or EIO as appropriate.  */
+
+extern error_t _hurd_ctty_input (io_t port, io_t ctty, error_t (*rpc) (io_t));
+extern error_t _hurd_ctty_output (io_t port, io_t ctty, error_t (*rpc) (io_t));
+
+
 #endif	/* hurd/fd.h */
