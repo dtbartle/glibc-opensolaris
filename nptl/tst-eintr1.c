@@ -77,7 +77,7 @@ tf1 (void *arg)
 static int
 do_test (void)
 {
-  setup_eintr (SIGUSR1);
+  setup_eintr (SIGUSR1, NULL);
 
   int i;
   for (i = 0; i < 10; ++i)
