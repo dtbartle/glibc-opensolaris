@@ -24,7 +24,7 @@ Cambridge, MA 02139, USA.  */
 
 /* Search for an entry with a matching group ID.  */
 struct group *
-DEFUN(getgrgid, (gid), register int gid)
+DEFUN(getgrgid, (gid), register gid_t gid)
 {
   static PTR info = NULL;
   register FILE *stream;
