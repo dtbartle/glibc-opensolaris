@@ -357,9 +357,8 @@ extern int _IO_file_overflow __P ((_IO_FILE *, int));
 #define _IO_file_is_open(__fp) ((__fp)->_fileno >= 0)
 extern void _IO_file_init __P ((_IO_FILE *));
 extern _IO_FILE* _IO_file_attach __P ((_IO_FILE *, int));
-extern _IO_FILE* _IO_file_fopen __P ((_IO_FILE *, const char *, const char *));
-extern _IO_FILE* _IO_file_fopen64 __P ((_IO_FILE *, const char *,
-					const char *));
+extern _IO_FILE* _IO_file_fopen __P ((_IO_FILE *, const char *, const char *,
+				      int));
 extern _IO_ssize_t _IO_file_write __P ((_IO_FILE *, const void *,
 					_IO_ssize_t));
 extern _IO_ssize_t _IO_file_read __P ((_IO_FILE *, void *, _IO_ssize_t));
@@ -443,6 +442,7 @@ extern void (*_IO_cleanup_registration_needed) __P ((void));
 /* When using this code in the GNU libc we must not pollute the name space.  */
 #  define mmap __mmap
 #  define munmap __munmap
+#  define ftruncate __ftruncate
 # endif
 
 # define ROUND_TO_PAGE(_S) \
