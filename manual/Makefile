@@ -110,6 +110,13 @@ subdir_%: % ;
 # For targets we don't define, do nothing.
 subdir_%: ;
 
+# Create stamp files if they don't exist, so the parent makefile's rules for
+# updating the library archives are happy with us, and never think we have
+# changed the library.
+.PHONY: lib
+lib: $(foreach o,$(object-suffixes),$(objpfx)stamp$o-$(subdir))
+$(objpfx)stamp%-$(subdir):; touch $@
+
 .PHONY: mostlyclean distclean realclean clean
 mostlyclean:
 	-rm -f libc.dvi libc.info*
