@@ -327,7 +327,7 @@ double __sin(double x){
 	}    /*   else  if (k <  0x7ff00000 )    */
 
 /*--------------------- |x| > 2^1024 ----------------------------------*/
-	else return NAN.x;
+	else return x / x;
 	return 0;         /* unreachable */
 }
 
@@ -570,7 +570,7 @@ double __cos(double x)
 
 
 
-  else return NAN.x; /* |x| > 2^1024 */
+  else return x / x; /* |x| > 2^1024 */
   return 0;
 
 }
