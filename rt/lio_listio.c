@@ -1,5 +1,5 @@
 /* Enqueue and list of read or write requests.
-   Copyright (C) 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1997, 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
@@ -70,8 +70,8 @@ lio_listio (mode, list, nent, sig)
     if (list[cnt] != NULL && list[cnt]->aio_lio_opcode != LIO_NOP)
       {
 	list[cnt]->aio_sigevent.sigev_notify = SIGEV_NONE;
-	requests[cnt] =  __aio_enqueue_request ((aiocb_union *) list[cnt],
-						list[cnt]->aio_lio_opcode);
+	requests[cnt] = __aio_enqueue_request ((aiocb_union *) list[cnt],
+					       list[cnt]->aio_lio_opcode);
 
 	if (requests[cnt] != NULL)
 	  /* Successfully enqueued.  */
@@ -81,6 +81,8 @@ lio_listio (mode, list, nent, sig)
 	     of the aiocb will tell more.  */
 	  result = -1;
       }
+    else
+      requests[cnt] = NULL;
 
   if (total == 0)
     {
@@ -106,8 +108,7 @@ lio_listio (mode, list, nent, sig)
 
       total = 0;
       for (cnt = 0; cnt < nent; ++cnt)
-	if (list[cnt] != NULL && list[cnt]->aio_lio_opcode != LIO_NOP
-	    && requests[cnt] != NULL)
+	if (requests[cnt] != NULL && list[cnt]->aio_lio_opcode != LIO_NOP)
 	  {
 	    waitlist[cnt].cond = &cond;
 	    waitlist[cnt].next = requests[cnt]->waiting;
@@ -153,8 +154,7 @@ lio_listio (mode, list, nent, sig)
 	  total = 0;
 
 	  for (cnt = 0; cnt < nent; ++cnt)
-	    if (list[cnt] != NULL && list[cnt]->aio_lio_opcode != LIO_NOP
-		&& requests[cnt] != NULL)
+	    if (requests[cnt] != NULL && list[cnt]->aio_lio_opcode != LIO_NOP)
 	      {
 		waitlist->list[cnt].cond = NULL;
 		waitlist->list[cnt].next = requests[cnt]->waiting;
