@@ -184,6 +184,18 @@ nscd_getpw_r (const char *key, size_t keylen, request_type type,
 	  /* Copy the various strings.  */
 	  memcpy (resultbuf->pw_name, pw_name, total);
 
+	  /* Try to detect corrupt databases.  */
+	  if (resultbuf->pw_name[pw_resp->pw_name_len - 1] != '\0'
+	      || resultbuf->pw_passwd[pw_resp->pw_passwd_len - 1] != '\0'
+	      || resultbuf->pw_gecos[pw_resp->pw_gecos_len - 1] != '\0'
+	      || resultbuf->pw_dir[pw_resp->pw_dir_len - 1] != '\0'
+	      || resultbuf->pw_shell[pw_resp->pw_shell_len - 1] != '\0')
+	    {
+	      /* We cannot use the database.  */
+	      retval = -1;
+	      goto out_close;
+	    }
+
 	  *result = resultbuf;
 	}
     }
