@@ -1769,7 +1769,7 @@ typedef struct
   { if (p != pend)							\
      {									\
        PATFETCH (c); 							\
-       while (ISDIGIT (c)) 						\
+       while ('0' <= c && c <= '9')					\
          { 								\
            if (num < 0)							\
               num = 0;							\
