@@ -1,5 +1,4 @@
 clone.S
-dl-procinfo.c
 kernel_stat.h
 getcontext.S
 setcontext.S
