@@ -17,7 +17,7 @@
    Boston, MA 02111-1307, USA.  */
 
 #include <errno.h>
-#include <resource.h>
+#include <sys/resource.h>
 
 #include <sysdep.h>
 #include <sys/syscall.h>
