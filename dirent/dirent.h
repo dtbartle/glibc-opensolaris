@@ -239,14 +239,14 @@ extern int dirfd (DIR *__dirp) __THROW;
 extern int scandir (__const char *__restrict __dir,
 		    struct dirent ***__restrict __namelist,
 		    int (*__selector) (__const struct dirent *),
-		    int (*__cmp) (__const void *, __const void *)) __THROW;
+		    int (*__cmp) (__const void *, __const void *));
 # else
 #  ifdef __REDIRECT
 extern int __REDIRECT (scandir,
 		       (__const char *__restrict __dir,
 			struct dirent ***__restrict __namelist,
 			int (*__selector) (__const struct dirent *),
-			int (*__cmp) (__const void *, __const void *)) __THROW,
+			int (*__cmp) (__const void *, __const void *)),
 		       scandir64);
 #  else
 #   define scandir scandir64
@@ -259,7 +259,7 @@ extern int __REDIRECT (scandir,
 extern int scandir64 (__const char *__restrict __dir,
 		      struct dirent64 ***__restrict __namelist,
 		      int (*__selector) (__const struct dirent64 *),
-		      int (*__cmp) (__const void *, __const void *)) __THROW;
+		      int (*__cmp) (__const void *, __const void *));
 # endif
 
 /* Function to compare two `struct dirent's alphabetically.  */
