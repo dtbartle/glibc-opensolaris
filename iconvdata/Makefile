@@ -182,7 +182,7 @@ distribute := 8bit-generic.c 8bit-gap.c gap.pl gaptab.pl gconv-modules	    \
 	      jis0208.c jis0212.c extra-module.mk euckr.c johab.c uhc.c	    \
 	      ksc5601.c ksc5601.h iso646.c big5.c eucjp.c gb2312.c gb2312.h \
 	      euccn.c euctw.c cns11643l1.c cns11643l1.h cns11643.h	    \
-	      cns11643.c run-iconv-test.sh $(wildcard testdata/*)	    \
+	      cns11643.c run-iconv-test.sh TESTS $(wildcard testdata/*)	    \
 	      ebcdic-dk-no.c ebcdic-dk-no-a.c ebcdic-es.c ebcdic-es-a.c	    \
 	      ebcdic-es-s.c ebcdic-fi-se.c ebcdic-fi-se-a.c ebcdic-fr.c	    \
 	      ebcdic-is-friss.c ebcdic-it.c ebcdic-pt.c ebcdic-uk.c	    \
