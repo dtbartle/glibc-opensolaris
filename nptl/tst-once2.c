@@ -77,7 +77,7 @@ do_test (void)
     }
 
   for (cnt = 0; cnt < N; ++cnt)
-    if (pthread_create (&th[cnt], NULL, tf, (void *) (long int) cnt) != 0)
+    if (pthread_create (&th[cnt], &at, tf, (void *) (long int) cnt) != 0)
       {
 	printf ("creation of thread %d failed\n", cnt);
 	return 1;
