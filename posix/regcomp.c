@@ -2095,10 +2095,16 @@ parse_expression (regexp, preg, token, syntax, nest, err)
       ++dfa->nbackref;
       dfa->has_mb_node = 1;
       break;
+    case OP_OPEN_DUP_NUM:
+      if (syntax & RE_CONTEXT_INVALID_DUP)
+	{
+	  *err = REG_BADRPT;
+	  return NULL;
+	}
+      /* FALLTHROUGH */
     case OP_DUP_ASTERISK:
     case OP_DUP_PLUS:
     case OP_DUP_QUESTION:
-    case OP_OPEN_DUP_NUM:
       if (syntax & RE_CONTEXT_INVALID_OPS)
 	{
 	  *err = REG_BADRPT;
