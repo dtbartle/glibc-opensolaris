@@ -164,15 +164,15 @@ void __docos(double x, double dx, double v[]) {
   if (x>0) {y=x; yy=dx;}
      else {y=-x; yy=-dx;}
   if (y<0.5*hp0.x)                                 /*  y< PI/4    */
-           {dubcos(y,yy,w); v[0]=w[0]; v[1]=w[1];}
+           {__dubcos(y,yy,w); v[0]=w[0]; v[1]=w[1];}
      else if (y<1.5*hp0.x) {                       /* y< 3/4 * PI */
        p=hp0.x-y;  /* p = PI/2 - y */
        yy=hp1.x-yy;
        y=p+yy;
        yy=(p-y)+yy;
-       if (y>0) {dubsin(y,yy,w); v[0]=w[0]; v[1]=w[1];}
+       if (y>0) {__dubsin(y,yy,w); v[0]=w[0]; v[1]=w[1];}
                                        /* cos(x) = sin ( 90 -  x ) */
-         else {dubsin(-y,-yy,w); v[0]=-w[0]; v[1]=-w[1];
+         else {__dubsin(-y,-yy,w); v[0]=-w[0]; v[1]=-w[1];
 	 }
      }
   else { /* y>= 3/4 * PI */
@@ -180,7 +180,7 @@ void __docos(double x, double dx, double v[]) {
     yy=2.0*hp1.x-yy;
     y=p+yy;
     yy=(p-y)+yy;
-    dubcos(y,yy,w);
+    __dubcos(y,yy,w);
     v[0]=-w[0];
     v[1]=-w[1];
   }
