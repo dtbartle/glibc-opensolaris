@@ -61,8 +61,8 @@ __new_sem_wait:
 	je	3b
 	negq	%rax
 #if USE___THREAD
-	movq	errno@gottpoff(%rip), %edx
-	movl	%eax, %fs:(%edx)
+	movq	errno@gottpoff(%rip), %rdx
+	movl	%eax, %fs:(%rdx)
 #else
 	movl	%eax, %edx
 	call	__errno_location@plt
