@@ -59,7 +59,7 @@ numeric_startup (struct linereader *lr, struct localedef_t *locale,
   if (lr != NULL)
     {
       lr->translate_strings = 1;
-      lr->return_widestr = 1;
+      lr->return_widestr = 0;
     }
 }
 
@@ -245,6 +245,7 @@ numeric_read (struct linereader *ldfile, struct localedef_t *result,
 	      break;							      \
 	    }								      \
 									      \
+	  lr->return_widestr = 1;					      \
 	  now = lr_token (ldfile, charmap, NULL);			      \
 	  if (now->tok != tok_string)					      \
 	    goto err_label;						      \
@@ -270,6 +271,7 @@ numeric_read (struct linereader *ldfile, struct localedef_t *result,
 	      if (now->val.str.startwc != NULL)				      \
 		numeric->cat##_wc = *now->val.str.startwc;		      \
 	    }								      \
+	  lr->return_widestr = 0;					      \
 	  break
 
 	  STR_ELEM (decimal_point);
