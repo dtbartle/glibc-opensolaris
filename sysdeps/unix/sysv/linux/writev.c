@@ -23,6 +23,9 @@
 #include <sys/uio.h>
 
 extern ssize_t __syscall_writev __P ((int, const struct iovec *, int));
+static ssize_t __atomic_writev_replacement __P ((int, const struct iovec *,
+						 int));
+
 
 /* Not all versions of the kernel support the large number of records.  */
 #ifndef UIO_FASTIOV
