@@ -195,7 +195,7 @@ internal_getent (struct STRUCTURE *result,
 	  H_ERRNO_SET (HOST_NOT_FOUND);
 	  return NSS_STATUS_NOTFOUND;
 	}
-      else if (((unsigned char *) data->linebuffer)[linebuflen - 1] != '\xff')
+      else if (((unsigned char *) data->linebuffer)[linebuflen - 1] != 0xff)
 	{
 	  /* The line is too long.  Give the user the opportunity to
 	     enlarge the buffer.  */
