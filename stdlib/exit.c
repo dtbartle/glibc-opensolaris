@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -21,19 +21,14 @@ Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 #include <unistd.h>
 #include "exit.h"
+#include "set-hooks.h"
 
-#ifdef	HAVE_GNU_LD
-CONST struct
-  {
-    size_t n;
-    void EXFUN((*fn[1]), (NOARGS));
-  } __libc_atexit;
-#endif
+DEFINE_HOOK (__libc_atexit, (void))
+
 
 /* Call all functions registered with `atexit' and `on_exit',
    in the reverse of the order in which they were registered
    perform stdio cleanup, and terminate program execution with STATUS.  */
-__NORETURN
 void
 DEFUN(exit, (status), int status)
 {
@@ -60,11 +55,7 @@ DEFUN(exit, (status), int status)
     }
 
 #ifdef	HAVE_GNU_LD
-  {
-    void EXFUN((*CONST *fn), (NOARGS));
-    for (fn = __libc_atexit.fn; *fn != NULL; ++fn)
-      (**fn) ();
-  }
+  RUN_HOOK (__libc_atexit, ());
 #else
   {
     extern void EXFUN(_cleanup, (NOARGS));
