@@ -290,7 +290,8 @@ typedef struct
 #define SHT_PREINIT_ARRAY 16		/* Array of pre-constructors */
 #define	SHT_NUM		  17		/* Number of defined types.  */
 #define SHT_LOOS	  0x60000000	/* Start OS-specific */
-#define SHT_LOSUNW	  0x6ffffffb	/* Sun-specific low bound.  */
+#define SHT_LOSUNW	  0x6ffffffa	/* Sun-specific low bound.  */
+#define SHT_SUNW_move	  0x6ffffffa
 #define SHT_SUNW_COMDAT   0x6ffffffb
 #define SHT_SUNW_syminfo  0x6ffffffc
 #define SHT_GNU_verdef	  0x6ffffffd	/* Version definition section.  */
