@@ -274,7 +274,7 @@ int mpranred(double x, mp_no *y, int p)
 /* Multi-Precision sin() function subroutine, for p=32.  It is     */
 /* based on the routines mpranred() and c32().                     */
 /*******************************************************************/
-double mpsin1(double x)
+double __mpsin1(double x)
 {
   int p;
   int n;
