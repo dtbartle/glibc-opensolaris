@@ -19,9 +19,10 @@ Cambridge, MA 02139, USA.  */
 
 #include <sysdep.h>
 
-ENTRY(fabs)
+ENTRY(__fabs)
 	.prologue 0
 	cpys	$f31,$f16,$f0
 	ret
 
-	END(fabs)
+	END(__fabs)
+weak_alias (__fabs, fabs)
