@@ -471,7 +471,7 @@ argument to <%s> must be a single character"),
 					    cmfile->token.val.str.start,
 					    cmfile->token.val.str.len);
 
-	  state = 3;
+	  state = 5;
 	  continue;
 
 	case 90:
