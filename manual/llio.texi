@@ -1558,7 +1558,7 @@ evaluated more than once.
 
 @comment sys/types.h
 @comment BSD
-@deftypefn Macro int FD_ISSET (int @var{filedes}, fd_set *@var{set})
+@deftypefn Macro int FD_ISSET (int @var{filedes}, const fd_set *@var{set})
 This macro returns a nonzero value (true) if @var{filedes} is a member
 of the file descriptor set @var{set}, and zero (false) otherwise.
 
