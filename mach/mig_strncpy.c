@@ -1,9 +1,10 @@
 /* Silly pointless function MiG needs.  */
 
 #include <mach.h>
+#include <string.h>
 
 vm_size_t
-__mig_strncpy (char *dest, const char *src, vm_size_t len)
+__mig_strncpy (char *dst, const char *src, vm_size_t len)
 {
   return __stpncpy (dst, src, len) - dst;
 }
