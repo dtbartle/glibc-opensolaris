@@ -22,6 +22,7 @@
 #include <bits/errno.h>
 #include <kernel-features.h>
 #include <bits/wordsize.h>
+#include <tcb-offsets.h>
 
 /* Clone the calling process, but without copying the whole address space.
    The calling process is suspended until the new process exits or is
@@ -29,9 +30,18 @@
    and the process ID of the new process to the old process.  */
 
 ENTRY (__vfork)
+	ear	%r4,%a0
+	l	%r3,PID(%r4)
+	lcr	%r1,%r3
+	st	%r1,PID(%r4)
+
 	/* Do vfork system call.  */
 	svc	SYS_ify (vfork)
 
+	ltr	%r2,%r2
+	je	1f
+	st	%r3,PID(%r4)
+1:
 	/* Check for error.  */
 	lhi	%r4,-4095
 	clr	%r2,%r4
