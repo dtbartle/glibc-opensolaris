@@ -54,17 +54,6 @@
 
 #define to_digit(Ch) ((Ch) - '0')
 
-
-/* We use this code also for the extended locale handling where the
-   function gets as an additional argument the locale which has to be
-   used.  To access the values we have to redefine the _NL_CURRENT
-   macro.  */
-#ifdef USE_IN_EXTENDED_LOCALE_MODEL
-# undef _NL_CURRENT
-# define _NL_CURRENT(category, item) \
-  (current->values[_NL_ITEM_INDEX (item)].string)
-#endif
-
 extern int __printf_fp (FILE *, const struct printf_info *,
 			const void **const);
 /* This function determines the number of digit groups in the output.
@@ -74,22 +63,14 @@ extern unsigned int __guess_grouping (unsigned int intdig_max,
 
 
 /* We have to overcome some problems with this implementation.  On the
-   one hand the strfmon() function is specified in XPG4 and of course
-   it has to follow this.  But on the other hand POSIX.2 specifies
-   some information in the LC_MONETARY category which should be used,
-   too.  Some of the information contradicts the information which can
-   be specified in format string.  */
-#ifndef USE_IN_EXTENDED_LOCALE_MODEL
+   one hand the strfmon() function is specified by in XPG4 and of
+   course it has to follow this.  But on the other hand POSIX.2
+   specifies some information in the LC_MONETARY category which should
+   be used, too.  Some of the information contradicts the information
+   which can be specified in format string.  */
 ssize_t
 strfmon (char *s, size_t maxsize, const char *format, ...)
-#else
-ssize_t
-__strfmon_l (char *s, size_t maxsize, __locale_t loc, const char *format, ...)
-#endif
 {
-#ifdef USE_IN_EXTENDED_LOCALE_MODEL
-  struct locale_data *current = loc->__locales[LC_MONETARY];
-#endif
 #ifdef USE_IN_LIBIO
   _IO_strfile f;
 #else
@@ -170,6 +151,13 @@ __strfmon_l (char *s, size_t maxsize, __locale_t loc, const char *format, ...)
 	    {
 	    case '=':			/* Set fill character.  */
 	      pad = *++fmt;
+	      if (pad == '\0')
+		{
+		  /* Premature EOS.  */
+		  __set_errno (EINVAL);
+		  va_end (ap);
+		  return -1;
+		}
 	      continue;
 	    case '^':			/* Don't group digits.  */
 	      group = 0;
