@@ -55,9 +55,15 @@ _hurd_fd_write (struct hurd_fd *fd, const void *buf, size_t *nbytes)
 		 err = EIO;
 	       else
 		 {
-		   /* Send a SIGTTOU signal to our process group.  */
-		   err = __USEPORT (CTTYID, _hurd_sig_post (0, SIGTTOU, port));
+		   /* Send a SIGTTOU signal to our process group.
+
+		      We must remember here not to clobber ERR, since
+		      the loop condition below uses it to recall that
+		      we should retry after a stop.  */
+
+		   __USEPORT (CTTYID, _hurd_sig_post (0, SIGTTOU, port));
 		   /* XXX what to do if error here? */
+
 		   /* At this point we should have just run the handler for
 		      SIGTTOU or resumed after being stopped.  Now this is
 		      still a "system call", so check to see if we should
@@ -68,6 +74,8 @@ _hurd_fd_write (struct hurd_fd *fd, const void *buf, size_t *nbytes)
 		   __spin_unlock (&ss->lock);
 		 }
 	     }
+	   /* If the last io_write generated a SIGTTOU,
+	      loop to try again to read some data.  */
 	 } while (err == EBACKGROUND);
        err;
      }));
