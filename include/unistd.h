@@ -20,6 +20,8 @@ extern ssize_t __libc_pwrite (int __fd, __const void *__buf, size_t __n,
 			      __off_t __offset);
 extern ssize_t __libc_pwrite64 (int __fd, __const void *__buf, size_t __n,
 				__off64_t __offset);
+extern ssize_t __libc_read (int __fd, void *__buf, size_t __n);
+extern ssize_t __libc_write (int __fd, __const void *__buf, size_t __n);
 extern int __pipe (int __pipedes[2]);
 extern unsigned int __sleep (unsigned int __seconds);
 extern int __chown (__const char *__file,
