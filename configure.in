@@ -424,6 +424,18 @@ if test "$INSTALL" = "${srcdir}/install-sh -c"; then
 fi
 AC_PROG_LN_S
 AC_CHECK_PROGS(MSGFMT, msgfmt gmsgfmt, :)
+if test "$MSGFMT" != ":"; then
+changequote(,)dnl Need [] for regexps.
+  if $MSGFMT --version | grep 'GNU gettext.*0\.[1-9][0-9]' >/dev/null 2>&1
+changequote([,])dnl
+  then : # msgfmt from gettext 0.10 or greater, works.
+  else
+    AC_MSG_WARN([
+*** (g)msgfmt is too old or wrong version (need gettext 0.10 or better).])
+    MSGFMT=":"
+  fi
+fi
+
 AC_CHECK_PROG(MAKEINFO, makeinfo, makeinfo)
 if test "$MAKEINFO"; then
 changequote(,)dnl Need [] for regexps.
