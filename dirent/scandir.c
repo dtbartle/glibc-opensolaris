@@ -44,6 +44,7 @@ scandir (dir, namelist, select, cmp)
   while ((d = __readdir (dp)) != NULL)
     if (select == NULL || (*select) (d))
       {
+	struct dirent *vnew;
 	size_t dsize;
 
 	/* Ignore errors from select or readdir */
@@ -58,20 +59,16 @@ scandir (dir, namelist, select, cmp)
 	      vsize *= 2;
 	    new = (struct dirent **) realloc (v, vsize * sizeof (*v));
 	    if (new == NULL)
-	      {
-	      lose:
-		__set_errno (ENOMEM);
-		break;
-	      }
+	      break;
 	    v = new;
 	  }
 
 	dsize = &d->d_name[_D_ALLOC_NAMLEN (d)] - (char *) d;
-	v[i] = (struct dirent *) malloc (dsize);
-	if (v[i] == NULL)
-	  goto lose;
+	vnew = (struct dirent *) malloc (dsize);
+	if (vnew == NULL)
+	  break;
 
-	memcpy (v[i++], d, dsize);
+	v[i++] = (struct dirent *) memcpy (vnew, d, dsize);
       }
 
   if (errno != 0)
