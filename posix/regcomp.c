@@ -3007,29 +3007,35 @@ parse_bracket_exp (regexp, dfa, token, syntax, err)
 	}
       first_round = 0;
 
+      /* Get information about the next token.  We need it in any case.  */
       token_len = peek_token_bracket (token, regexp, syntax);
-      if (BE (token->type == END_OF_RE, 0))
+
+      /* Do not check for ranges if we know they are not allowed.  */
+      if (start_elem.type != CHAR_CLASS && start_elem.type != EQUIV_CLASS)
 	{
-	  *err = REG_EBRACK;
-	  goto parse_bracket_exp_free_return;
-	}
-      if (token->type == OP_CHARSET_RANGE)
-	{
-	  re_string_skip_bytes (regexp, token_len); /* Skip '-'.  */
-	  token_len2 = peek_token_bracket (&token2, regexp, syntax);
-	  if (BE (token2.type == END_OF_RE, 0))
+	  if (BE (token->type == END_OF_RE, 0))
 	    {
 	      *err = REG_EBRACK;
 	      goto parse_bracket_exp_free_return;
 	    }
-	  if (token2.type == OP_CLOSE_BRACKET)
+	  if (token->type == OP_CHARSET_RANGE)
 	    {
-	      /* We treat the last '-' as a normal character.  */
-	      re_string_skip_bytes (regexp, -token_len);
-	      token->type = CHARACTER;
+	      re_string_skip_bytes (regexp, token_len); /* Skip '-'.  */
+	      token_len2 = peek_token_bracket (&token2, regexp, syntax);
+	      if (BE (token2.type == END_OF_RE, 0))
+		{
+		  *err = REG_EBRACK;
+		  goto parse_bracket_exp_free_return;
+		}
+	      if (token2.type == OP_CLOSE_BRACKET)
+		{
+		  /* We treat the last '-' as a normal character.  */
+		  re_string_skip_bytes (regexp, -token_len);
+		  token->type = CHARACTER;
+		}
+	      else
+		is_range_exp = 1;
 	    }
-	  else
-	    is_range_exp = 1;
 	}
 
       if (is_range_exp == 1)
@@ -3046,7 +3052,7 @@ parse_bracket_exp (regexp, dfa, token, syntax, err)
 	  token_len = peek_token_bracket (token, regexp, syntax);
 	  if (BE (token->type == END_OF_RE, 0))
 	    {
-	      *err = REG_BADPAT;
+	      *err = REG_EBRACK;
 	      goto parse_bracket_exp_free_return;
 	    }
 	  *err = build_range_exp (sbcset,
@@ -3112,6 +3118,11 @@ parse_bracket_exp (regexp, dfa, token, syntax, err)
 	      assert (0);
 	      break;
 	    }
+	}
+      if (BE (token->type == END_OF_RE, 0))
+	{
+	  *err = REG_EBRACK;
+	  goto parse_bracket_exp_free_return;
 	}
       if (token->type == OP_CLOSE_BRACKET)
 	break;
