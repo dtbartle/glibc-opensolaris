@@ -201,7 +201,7 @@ DEFUN(vfprintf, (s, format, args),
 
       /* String to be written.  */
       CONST char *str;
-      char unknown_error[256];	/* Buffer sometimes used by %m.  */
+      char errorbuf[1024];	/* Buffer sometimes used by %m.  */
 
       /* Auxiliary function to do output.  */
       printf_function *function;
@@ -624,19 +624,11 @@ DEFUN(vfprintf, (s, format, args),
 	    break;
 
 	  case 'm':
-#ifndef HAVE_GNU_LD
-#define _sys_errlist sys_errlist
-#define _sys_nerr sys_nerr
-#endif
-
-	    if (errno < 0 || errno > _sys_nerr)
-	      {
-		sprintf (unknown_error, "Unknown error %d", errno);
-		str = unknown_error;
-	      }
-	    else
-	      str = _sys_errlist[errno];
-	    goto string;
+	    {
+	      extern char *_strerror_internal __P ((int, char buf[1024]));
+	      str = _strerror_internal (errno, errorbuf);
+	      goto string;
+	    }
 
 	  default:
 	    /* Unrecognized format specifier.  */
