@@ -448,7 +448,7 @@ GLIBC_2.1 {
 
     # helper functions
     __libc_current_sigrtmin; __libc_current_sigrtmax; __libc_allocate_rtsig;
-    __libc_longjmp; __libc_setjmp; __libc_siglongjmp; __libc_sigsetjmp;
+    __libc_longjmp; __libc_siglongjmp;
 
     # Since we have new signals this structure changed.
     _sys_siglist; sys_siglist; sys_sigabbrev;
