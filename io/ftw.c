@@ -358,7 +358,7 @@ process_entry (struct ftw_data *data, struct dir_data *dir, const char *name,
 			}
 		      else
 			if (__chdir ("..") < 0)
-			  result = 1;
+			  result = -1;
 		    }
 		}
 	    }
