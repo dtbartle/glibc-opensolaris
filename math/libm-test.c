@@ -1318,6 +1318,36 @@ fmax_test (void)
 
 
 static void
+nextafter_test (void)
+{
+  MATHTYPE x;
+
+  check ("nextafter (+0, +0) = +0", FUNC(nextafter) (0, 0), 0);
+  check ("nextafter (-0, +0) = +0", FUNC(nextafter) (minus_zero, 0), 0);
+  check ("nextafter (+0, -0) = -0", FUNC(nextafter) (0, minus_zero),
+	 minus_zero);
+  check ("nextafter (-0, -0) = -0", FUNC(nextafter) (minus_zero, minus_zero),
+	 minus_zero);
+
+  check ("nextafter (9, 9) = 9",  FUNC(nextafter) (9, 9), 9);
+  check ("nextafter (-9, -9) = -9",  FUNC(nextafter) (-9, -9), -9);
+  check_isinfp ("nextafter (+inf, +inf) = +inf",
+		FUNC(nextafter) (plus_infty, plus_infty));
+  check_isinfn ("nextafter (-inf, -inf) = -inf",
+		FUNC(nextafter) (minus_infty, minus_infty));
+
+  x = rand () * 1.1;
+  check_isnan ("nextafter (NaN, x) = NaN", FUNC(nextafter) (nan_value, x));
+  check_isnan ("nextafter (x, NaN) = NaN", FUNC(nextafter) (x, nan_value));
+  check_isnan ("nextafter (NaN, NaN) = NaN", FUNC(nextafter) (nan_value,
+							      nan_value));
+
+  /* XXX We need the hexadecimal FP number representation here for further
+     tests.  */
+}
+
+
+static void
 inverse_func_pair_test (const char *test_name,
 			mathfunc f1, mathfunc inverse,
 			MATHTYPE x, MATHTYPE epsilon)
@@ -1496,6 +1526,15 @@ basic_tests (void)
   check_bool ("!isinf (-NAN)", !(isinf (-NAN)));
   check_bool ("NAN != NAN", NAN != NAN);
 
+  /*
+     And again with the value returned by the `nan' function.
+   */
+  check_bool ("isnan (NAN)", isnan (FUNC(nan) ("")));
+  check_bool ("isnan (-NAN)", isnan (-FUNC(nan) ("")));
+  check_bool ("!isinf (NAN)", !(isinf (FUNC(nan) (""))));
+  check_bool ("!isinf (-NAN)", !(isinf (-FUNC(nan) (""))));
+  check_bool ("NAN != NAN", FUNC(nan) ("") != FUNC(nan) (""));
+
   /* test if EPSILON is ok */
   x1 = MATHCONST (1.0);
   x2 = x1 + CHOOSE (LDBL_EPSILON, DBL_EPSILON, FLT_EPSILON);
@@ -1618,6 +1657,7 @@ main (int argc, char *argv[])
   fdim_test ();
   fmin_test ();
   fmax_test ();
+  nextafter_test ();
 
   identities ();
   inverse_functions ();
