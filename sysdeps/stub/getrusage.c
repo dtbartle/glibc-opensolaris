@@ -17,13 +17,14 @@ not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
+#include <sys/resource.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
 
-/* Duplicate FD, returning a new file descriptor open on the same file.  */
+/* Return resource usage information on process indicated by WHO
+   and put it in *USAGE.  Returns 0 for success, -1 for failure.  */
 int
-DEFUN(__dup, (fd), int fd)
+DEFUN(__getrusage, (who, usage),
+      enum __rusage_who who AND struct rusage *usage)
 {
   errno = ENOSYS;
   return -1;
@@ -34,6 +35,6 @@ DEFUN(__dup, (fd), int fd)
 
 #include <gnu-stabs.h>
 
-stub_warning(__dup);
+stub_warning(__getrusage);
 
 #endif	/* GNU stabs.  */

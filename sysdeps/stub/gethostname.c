@@ -18,12 +18,14 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <fcntl.h>
 #include <unistd.h>
 
-/* Duplicate FD, returning a new file descriptor open on the same file.  */
+/* Put the name of the current host in no more than LEN bytes of NAME.
+   The result is null-terminated if LEN is large enough for the full
+   name and the terminator.  */
 int
-DEFUN(__dup, (fd), int fd)
+DEFUN(__gethostname, (name, len),
+      char *name AND size_t len)
 {
   errno = ENOSYS;
   return -1;
@@ -34,6 +36,6 @@ DEFUN(__dup, (fd), int fd)
 
 #include <gnu-stabs.h>
 
-stub_warning(__dup);
+stub_warning(__gethostname);
 
 #endif	/* GNU stabs.  */

@@ -17,13 +17,13 @@ not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
+#include <stddef.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include <sys/types.h>
 
-/* Duplicate FD, returning a new file descriptor open on the same file.  */
 int
-DEFUN(__dup, (fd), int fd)
+DEFUN(__getdirentries, (fd, buf, nbytes, basep),
+      int fd AND char *buf AND size_t nbytes AND off_t *basep)
 {
   errno = ENOSYS;
   return -1;
@@ -34,6 +34,6 @@ DEFUN(__dup, (fd), int fd)
 
 #include <gnu-stabs.h>
 
-stub_warning(__dup);
+stub_warning(__getdirentries);
 
 #endif	/* GNU stabs.  */

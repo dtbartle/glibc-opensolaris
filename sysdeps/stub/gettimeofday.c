@@ -18,12 +18,14 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include <sys/time.h>
 
-/* Duplicate FD, returning a new file descriptor open on the same file.  */
+/* Get the current time of day and timezone information,
+   putting it into *TV and *TZ.  If TZ is NULL, *TZ is not filled.
+   Returns 0 on success, -1 on errors.  */
 int
-DEFUN(__dup, (fd), int fd)
+DEFUN(__gettimeofday, (tv, tz),
+      struct timeval *tv AND struct timezone *tz)
 {
   errno = ENOSYS;
   return -1;
@@ -34,6 +36,6 @@ DEFUN(__dup, (fd), int fd)
 
 #include <gnu-stabs.h>
 
-stub_warning(__dup);
+stub_warning(__gettimeofday);
 
 #endif	/* GNU stabs.  */
