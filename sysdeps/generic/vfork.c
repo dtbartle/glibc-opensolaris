@@ -19,7 +19,6 @@ Cambridge, MA 02139, USA.  */
 #include <ansidecl.h>
 #include <errno.h>
 #include <unistd.h>
-#include <gnu-stabs.h>
 
 /* If we don't have vfork, fork is close enough.  */
 
