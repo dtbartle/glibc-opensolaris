@@ -1,4 +1,4 @@
-/* Copyright (C) 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 Contributed by Ian Lance Taylor (ian@airs.com).
 
@@ -52,7 +52,7 @@ DEFUN (ftw_dir, (dirs, level, descriptors, dir, len, func),
   while ((entry = readdir (dirs[level])) != NULL)
     {
       struct stat s;
-      int flag, ret, newlev;
+      int flag, retval, newlev;
 
       ++got;
 
@@ -104,13 +104,13 @@ DEFUN (ftw_dir, (dirs, level, descriptors, dir, len, func),
       else
 	flag = FTW_F;
 
-      ret = (*func) (dir, &s, flag);
+      retval = (*func) (dir, &s, flag);
 
       if (flag == FTW_D)
 	{
-	  if (ret == 0)
-	    ret = ftw_dir (dirs, newlev, descriptors, dir,
-			   entry->d_namlen + len + 1, func);
+	  if (retval == 0)
+	    retval = ftw_dir (dirs, newlev, descriptors, dir,
+			      entry->d_namlen + len + 1, func);
 	  if (dirs[newlev] != NULL)
 	    {
 	      int save;
@@ -122,8 +122,8 @@ DEFUN (ftw_dir, (dirs, level, descriptors, dir, len, func),
 	    }
 	}
 
-      if (ret != 0)
-	return ret;
+      if (retval != 0)
+	return retval;
 
       if (dirs[level] == NULL)
 	{
@@ -161,7 +161,7 @@ DEFUN(ftw, (dir, func, descriptors),
   size_t len;
   char buf[PATH_MAX + 1];
   struct stat s;
-  int flag, ret;
+  int flag, retval;
   int i;
 
   if (descriptors <= 0)
@@ -196,12 +196,12 @@ DEFUN(ftw, (dir, func, descriptors),
   len = strlen (dir);
   memcpy ((PTR) buf, (PTR) dir, len + 1);
 
-  ret = (*func) (buf, &s, flag);
+  retval = (*func) (buf, &s, flag);
 
   if (flag == FTW_D)
     {
-      if (ret == 0)
-	ret = ftw_dir (dirs, 0, descriptors, buf, len, func);
+      if (retval == 0)
+	retval = ftw_dir (dirs, 0, descriptors, buf, len, func);
       if (dirs[0] != NULL)
 	{
 	  int save;
@@ -212,5 +212,5 @@ DEFUN(ftw, (dir, func, descriptors),
 	}
     }
 
-  return ret;
+  return retval;
 }
