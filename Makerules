@@ -351,7 +351,7 @@ lib%.so: lib%_pic.a
 # since we define our own `.init' section specially.
 LDFLAGS-c.so = -nostdlib
 # Give libc.so an entry point and make it directly runnable itself.
-LDFLAGS-c.so += -interp /lib/ld.so -e __libc_print_version
+LDFLAGS-c.so += -Wl,-interp -Wl,/lib/ld.so -e __libc_print_version
 endif
 
 libobjs: $(foreach o,$(object-suffixes),\
