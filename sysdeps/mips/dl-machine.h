@@ -183,7 +183,7 @@ elf_machine_got_rel (struct link_map *map)
 /* Set up the loaded object described by L so its stub function
    will jump to the on-demand fixup code in dl-runtime.c.  */
 
-static inline void
+static inline int
 elf_machine_runtime_setup (struct link_map *l, int lazy)
 {
   ElfW(Addr) *got;
@@ -213,6 +213,8 @@ elf_machine_runtime_setup (struct link_map *l, int lazy)
 
   /* Relocate global offset table.  */
   elf_machine_got_rel (l);
+
+  retunr lazy;
 }
 
 /* Get link_map for this object.  */
@@ -422,8 +424,8 @@ _dl_start_user:\n\
    MAP is the object containing the reloc.  */
 
 static inline void
-elf_machine_rel (struct link_map *map, const ElfW(Rel) *reloc,
-		 const ElfW(Sym) *sym, const hash_name_pair *version)
+elf_machine_rel (struct link_map *map,
+		 const ElfW(Rel) *reloc, const ElfW(Sym) *sym)
 {
   ElfW(Addr) *const reloc_addr = (void *) (map->l_addr + reloc->r_offset);
   ElfW(Addr) loadbase, undo;
@@ -454,7 +456,7 @@ elf_machine_rel (struct link_map *map, const ElfW(Rel) *reloc,
 	  else
 #endif
 	    undo = 0;
-	  loadbase = RESOLVE (&sym, version, 0);
+	  loadbase = RESOLVE (&sym, 0);
 	  *reloc_addr += (sym ? (loadbase + sym->st_value) : 0) - undo;
 	}
       break;

@@ -73,7 +73,7 @@ elf_machine_load_address (void)
 /* Set up the loaded object described by L so its unrelocated PLT
    entries will jump to the on-demand fixup code in dl-runtime.c.  */
 
-static inline void
+static inline int
 elf_machine_runtime_setup (struct link_map *l, int lazy)
 {
   Elf32_Addr *got;
@@ -94,8 +94,10 @@ elf_machine_runtime_setup (struct link_map *l, int lazy)
       got[2] = (Elf32_Addr) &_dl_runtime_resolve;
     }
 
-  /* This code is used in dl-runtime.c to call the `fixup' function
-     and then redirect to the address it returns.  */
+  return lazy;
+}
+/* This code is used in dl-runtime.c to call the `fixup' function
+   and then redirect to the address it returns.  */
 #define ELF_MACHINE_RUNTIME_TRAMPOLINE asm ("\
 | Trampoline for _dl_runtime_resolver
 	.globl _dl_runtime_resolve
@@ -118,7 +120,6 @@ _dl_runtime_resolve:
 #define ELF_MACHINE_RUNTIME_FIXUP_ARGS long int save_a0, long int save_a1
 /* The PLT uses Elf32_Rela relocs.  */
 #define elf_machine_relplt elf_machine_rela
-}
 
 
 /* Mask identifying addresses reserved for the user program,
@@ -199,8 +200,8 @@ _dl_start_user:
    MAP is the object containing the reloc.  */
 
 static inline void
-elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
-		  const Elf32_Sym *sym, const hash_name_pair *version)
+elf_machine_rela (struct link_map *map,
+		  const Elf32_Rela *reloc, const Elf32_Sym *sym)
 {
   Elf32_Addr *const reloc_addr = (void *) (map->l_addr + reloc->r_offset);
   Elf32_Addr loadbase;
@@ -208,29 +209,29 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
   switch (ELF32_R_TYPE (reloc->r_info))
     {
     case R_68K_COPY:
-      loadbase = RESOLVE (&sym, version, DL_LOOKUP_NOEXEC);
+      loadbase = RESOLVE (&sym, DL_LOOKUP_NOEXEC);
       memcpy (reloc_addr, (void *) (loadbase + sym->st_value), sym->st_size);
       break;
     case R_68K_GLOB_DAT:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *reloc_addr = sym ? (loadbase + sym->st_value) : 0;
       break;
     case R_68K_JMP_SLOT:
-      loadbase = RESOLVE (&sym, version, DL_LOOKUP_NOPLT);
+      loadbase = RESOLVE (&sym, DL_LOOKUP_NOPLT);
       *reloc_addr = sym ? (loadbase + sym->st_value) : 0;
       break;
     case R_68K_8:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *(char *) reloc_addr = ((sym ? (loadbase + sym->st_value) : 0)
 			      + reloc->r_addend);
       break;
     case R_68K_16:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *(short *) reloc_addr = ((sym ? (loadbase + sym->st_value) : 0)
 			       + reloc->r_addend);
       break;
     case R_68K_32:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *reloc_addr = ((sym ? (loadbase + sym->st_value) : 0)
 		     + reloc->r_addend);
       break;
@@ -238,17 +239,17 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
       *reloc_addr = map->l_addr + reloc->r_addend;
       break;
     case R_68K_PC8:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *(char *) reloc_addr = ((sym ? (loadbase + sym->st_value) : 0)
 			      + reloc->r_addend - (Elf32_Addr) reloc_addr);
       break;
     case R_68K_PC16:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *(short *) reloc_addr = ((sym ? (loadbase + sym->st_value) : 0)
 			       + reloc->r_addend - (Elf32_Addr) reloc_addr);
       break;
     case R_68K_PC32:
-      loadbase = RESOLVE (&sym, version, 0);
+      loadbase = RESOLVE (&sym, 0);
       *reloc_addr = ((sym ? (loadbase + sym->st_value) : 0)
 		     + reloc->r_addend - (Elf32_Addr) reloc_addr);
       break;
