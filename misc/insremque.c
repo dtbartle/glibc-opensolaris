@@ -1,4 +1,4 @@
-/* Copyright (C) 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -18,13 +18,7 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <stddef.h>
-
-struct qelem
-  {
-    struct qelem *q_forw;
-    struct qelem *q_back;
-    char q_data[1];
-  };
+#include <search.h>
 
 /* Insert ELEM into a doubly-linked list, after PREV.  */
 
