@@ -31,9 +31,10 @@ others = utmpd
 install-sbin = utmpd
 utmpd-routines := connection database error request xtmp
 
-distribute := utmp-private.h utmpd/xtmp.h utmpd/utmpd.h utmpd/utmpd-private.h
+distribute := utmp-private.h programs/xtmp.h programs/utmpd.h \
+	      programs/utmpd-private.h
 
-vpath %.c utmpd
+vpath %.c programs
 
 # Build the -lutil library with these extra functions.
 extra-libs      := libutil
