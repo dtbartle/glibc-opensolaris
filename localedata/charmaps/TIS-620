@@ -148,7 +148,7 @@ CHARMAP
 <th168>                /xA8   <U0E08> THAI CHARACTER CHO CHAN
 <th169>                /xA9   <U0E09> THAI CHARACTER CHO CHING
 <th170>                /xAA   <U0E0A> THAI CHARACTER CHO CHANG
-<th171>                /xAB   <U0E0B> THAI CHARACTER SO SO 
+<th171>                /xAB   <U0E0B> THAI CHARACTER SO SO
 <th172>                /xAC   <U0E0C> THAI CHARACTER CHO CHOE
 <th173>                /xAD   <U0E0D> THAI CHARACTER YO YING
 <th174>                /xAE   <U0E0E> THAI CHARACTER DO CHADA
@@ -225,7 +225,7 @@ CHARMAP
 <th249>                /xF9   <U0E59> THAI DIGIT NINE
 <th250>                /xFA   <U0E5A> THAI CHARACTER ANGKHANKHU
 <th251>                /xFB   <U0E5B> THAI CHARACTER KHOMUT
-<NUL>                  /x00   <U00r0> NUL
+<NUL>                  /x00   <U0000> NUL
 <SOH>                  /x01   <U0001> START OF HEADING (SOH)
 <STX>                  /x02   <U0002> START OF TEXT (STX)
 <ETX>                  /x03   <U0003> END OF TEXT (ETX)
