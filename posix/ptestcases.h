@@ -189,7 +189,7 @@
   { 4, 8, "abc*XYZ", "890abXYZ#*",  },
   { 4, 9, "abc*XYZ", "890abcXYZ#*",  },
   { 4, 15, "abc*XYZ", "890abccccccccXYZ#*",  },
--1|-1¦abc*XYZ¦890abc*XYZ#*¦
+  { -1, -1, "abc*XYZ", "890abc*XYZ#*",  },
   { 0, 0, "GA132", NULL, },
   { 2, 4, "\\(*bc\\)", "a*bc",  },
   { 1, 2, "\\(ab\\)", "abcde",  },
