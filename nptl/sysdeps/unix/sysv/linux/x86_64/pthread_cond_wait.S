@@ -126,7 +126,7 @@ __pthread_cond_wait:
 	testl	%eax, %eax
 	jne	12f
 
-	movq	(%rsp), %rdi
+	movq	8(%rsp), %rdi
 	addq	$1, total_seq(%rdi)
 
 	/* Install cancellation handler.  */
@@ -163,7 +163,6 @@ __pthread_cond_wait:
 	movq	$SYS_futex, %rax
 	movq	%r10, %rsi	/* movl $FUTEX_WAIT, %ecx */
 	syscall
-	subl	$wakeup_seq-cond_lock, %ebx
 
 	movq	(%rsp), %rdi
 	callq	__pthread_disable_asynccancel
@@ -202,7 +201,7 @@ __pthread_cond_wait:
 
 	/* Remove cancellation handler.  */
 11:	movq	32+CLEANUP_PREV(%rsp), %rdx
-	movq	%rdx, %gs:CLEANUP
+	movq	%rdx, %fs:CLEANUP
 
 	movq	16(%rsp), %rdi
 	callq	__pthread_mutex_lock_internal
@@ -227,9 +226,6 @@ __pthread_cond_wait:
 	addq	$cond_lock, %rdi
 #endif
 	callq	__lll_mutex_unlock_wake
-#if cond_lock != 0
-	subq	$cond_lock, %rdi
-#endif
 	jmp	4b
 
 	/* Locking in loop failed.  */
