@@ -62,10 +62,10 @@ static const double
 
 void dubsin(double x, double dx, double w[]);
 void docos(double x, double dx, double w[]);
-double mpsin(double x, double dx);
-double mpcos(double x, double dx);
-double mpsin1(double x);
-double mpcos1(double x);
+double __mpsin(double x, double dx);
+double __mpcos(double x, double dx);
+double __mpsin1(double x);
+double __mpcos1(double x);
 static double slow(double x);
 static double slow1(double x);
 static double slow2(double x);
@@ -590,7 +590,7 @@ static const double th2_36 = 206158430208.0;   /*    1.5*2**37   */
  else {
    dubsin(ABS(x),0,w);
    if (w[0] == w[0]+1.000000001*w[1]) return (x>0)?w[0]:-w[0];
-   else return (x>0)?mpsin(x,0):-mpsin(-x,0);
+   else return (x>0)?__mpsin(x,0):-__mpsin(-x,0);
  }
 }
 /*******************************************************************************/
@@ -627,7 +627,7 @@ static double slow1(double x) {
   else {
     dubsin(ABS(x),0,w);
     if (w[0] == w[0]+1.000000005*w[1]) return (x>0)?w[0]:-w[0];
-    else return (x>0)?mpsin(x,0):-mpsin(-x,0);
+    else return (x>0)?__mpsin(x,0):-__mpsin(-x,0);
   }
 }
 /**************************************************************************/
@@ -675,7 +675,7 @@ static double slow2(double x) {
     y2=(y-y1)-hp1.x;
     docos(y1,y2,w);
     if (w[0] == w[0]+1.000000005*w[1]) return (x>0)?w[0]:-w[0];
-    else return (x>0)?mpsin(x,0):-mpsin(-x,0);
+    else return (x>0)?__mpsin(x,0):-__mpsin(-x,0);
   }
 }
 /***************************************************************************/
@@ -722,7 +722,7 @@ static double sloww(double x,double dx, double orig) {
       (a>0)? dubsin(a,da,w) : dubsin(-a,-da,w);
       cor = (w[1]>0)? 1.000000001*w[1] + ABS(orig)*1.1e-40 : 1.000000001*w[1] - ABS(orig)*1.1e-40;
       if (w[0] == w[0]+cor) return (a>0)?w[0]:-w[0];
-      else return mpsin1(orig);
+      else return __mpsin1(orig);
     }
   }
 }
@@ -765,7 +765,7 @@ static double sloww1(double x, double dx, double orig) {
     dubsin(ABS(x),dx,w);
     cor = (w[1]>0)? 1.000000005*w[1]+1.1e-30*ABS(orig) : 1.000000005*w[1]-1.1e-30*ABS(orig);
     if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
-  else  return mpsin1(orig);
+  else  return __mpsin1(orig);
   }
 }
 /***************************************************************************/
@@ -808,7 +808,7 @@ static double sloww2(double x, double dx, double orig, int n) {
    docos(ABS(x),dx,w);
    cor = (w[1]>0)? 1.000000005*w[1]+1.1e-30*ABS(orig) : 1.000000005*w[1]-1.1e-30*ABS(orig);
    if (w[0] == w[0]+cor) return (n&2)?-w[0]:w[0];
-   else  return mpsin1(orig);
+   else  return __mpsin1(orig);
   }
 }
 /***************************************************************************/
@@ -838,7 +838,7 @@ static double bsloww(double x,double dx, double orig,int n) {
     (x>0)? dubsin(x,dx,w) : dubsin(-x,-dx,w);
     cor = (w[1]>0)? 1.000000001*w[1] + 1.1e-24 : 1.000000001*w[1] - 1.1e-24;
     if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
-    else return (n&1)?mpcos1(orig):mpsin1(orig);
+    else return (n&1)?__mpcos1(orig):__mpsin1(orig);
   }
 }
 
@@ -881,7 +881,7 @@ mynumber u;
    dubsin(ABS(x),dx,w);
    cor = (w[1]>0)? 1.000000005*w[1]+1.1e-24: 1.000000005*w[1]-1.1e-24;
    if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
-   else  return (n&1)?mpcos1(orig):mpsin1(orig);
+   else  return (n&1)?__mpcos1(orig):__mpsin1(orig);
  }
 }
 
@@ -925,7 +925,7 @@ mynumber u;
    docos(ABS(x),dx,w);
    cor = (w[1]>0)? 1.000000005*w[1]+1.1e-24 : 1.000000005*w[1]-1.1e-24;
    if (w[0] == w[0]+cor) return (n&2)?-w[0]:w[0];
-   else  return (n&1)?mpsin1(orig):mpcos1(orig);
+   else  return (n&1)?__mpsin1(orig):__mpcos1(orig);
  }
 }
 
@@ -965,7 +965,7 @@ static double cslow2(double x) {
     y=ABS(x);
     docos(y,0,w);
     if (w[0] == w[0]+1.000000005*w[1]) return w[0];
-    else return mpcos(x,0);
+    else return __mpcos(x,0);
   }
 }
 
@@ -1014,7 +1014,7 @@ static double csloww(double x,double dx, double orig) {
       (a>0)? dubsin(a,da,w) : dubsin(-a,-da,w);
       cor = (w[1]>0)? 1.000000001*w[1] + ABS(orig)*1.1e-40 : 1.000000001*w[1] - ABS(orig)*1.1e-40;
       if (w[0] == w[0]+cor) return (a>0)?w[0]:-w[0];
-      else return mpcos1(orig);
+      else return __mpcos1(orig);
     }
   }
 }
@@ -1058,7 +1058,7 @@ static double csloww1(double x, double dx, double orig) {
     dubsin(ABS(x),dx,w);
     cor = (w[1]>0)? 1.000000005*w[1]+1.1e-30*ABS(orig) : 1.000000005*w[1]-1.1e-30*ABS(orig);
     if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
-    else  return mpcos1(orig);
+    else  return __mpcos1(orig);
   }
 }
 
@@ -1103,7 +1103,7 @@ static double csloww2(double x, double dx, double orig, int n) {
     docos(ABS(x),dx,w);
     cor = (w[1]>0)? 1.000000005*w[1]+1.1e-30*ABS(orig) : 1.000000005*w[1]-1.1e-30*ABS(orig);
     if (w[0] == w[0]+cor) return (n)?-w[0]:w[0];
-    else  return mpcos1(orig);
+    else  return __mpcos1(orig);
   }
 }
 
