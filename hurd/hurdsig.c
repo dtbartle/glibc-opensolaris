@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -184,11 +184,13 @@ write_corefile (int signo, long int sigcode, int sigerror)
 /* Send a sig_post reply message if it hasn't already been sent.  */
 static inline void
 post_reply (mach_port_t *reply_port, mach_msg_type_name_t reply_port_type,
+	    int untraced,
 	    error_t result)
 {
   if (reply_port == NULL || *reply_port == MACH_PORT_NULL)
     return;
-  __sig_post_reply (*reply_port, reply_port_type, result);
+  (untraced ? __sig_post_untraced_reply : __sig_post_reply)
+    (*reply_port, reply_port_type, result);
   *reply_port = MACH_PORT_NULL;
 }
 
@@ -203,7 +205,8 @@ post_reply (mach_port_t *reply_port, mach_msg_type_name_t reply_port_type,
    thread.  */
 static void
 abort_thread (struct hurd_sigstate *ss, struct machine_thread_all_state *state,
-	      mach_port_t *reply_port, mach_msg_type_name_t reply_port_type)
+	      mach_port_t *reply_port, mach_msg_type_name_t reply_port_type,
+	      int untraced)
 {
   if (!(state->set & THREAD_ABORTED))
     {
@@ -214,7 +217,7 @@ abort_thread (struct hurd_sigstate *ss, struct machine_thread_all_state *state,
     }
 
   if (reply_port)
-    post_reply (reply_port, reply_port_type, 0);
+    post_reply (reply_port, reply_port_type, untraced, 0);
 
   machine_get_basic_state (ss->thread, state);
 }
@@ -260,7 +263,8 @@ interrupted_reply_port_location (struct machine_thread_all_state *thread_state)
 static mach_port_t
 abort_rpcs (struct hurd_sigstate *ss, int signo,
 	    struct machine_thread_all_state *state,
-	    mach_port_t *reply_port, mach_msg_type_name_t reply_port_type)
+	    mach_port_t *reply_port, mach_msg_type_name_t reply_port_type,
+	    int untraced)
 {
   mach_port_t msging_port;
   mach_port_t intr_port;
@@ -272,7 +276,7 @@ abort_rpcs (struct hurd_sigstate *ss, int signo,
 
   /* Abort the thread's kernel context, so any pending message send or
      receive completes immediately or aborts.  */
-  abort_thread (ss, state, reply_port, reply_port_type);
+  abort_thread (ss, state, reply_port, reply_port_type, untraced);
 
   if (_hurdsig_rcv_interrupted_p (state, &msging_port))
     {
@@ -355,7 +359,7 @@ abort_all_rpcs (int signo, struct machine_thread_all_state *state)
 	 record this by putting the reply port into SS->intr_port, or
 	 MACH_PORT_NULL if no interruption was done.  We will wait for
 	 all the replies below.  */
-      ss->intr_port = abort_rpcs (ss, signo, state, NULL, 0);
+      ss->intr_port = abort_rpcs (ss, signo, state, NULL, 0, 0);
 
   /* Wait for replies from all the successfully interrupted RPCs.  */
   for (ss = _hurd_sigstates; ss != NULL; ss = ss->next)
@@ -384,7 +388,8 @@ void
 _hurd_internal_post_signal (struct hurd_sigstate *ss,
 			    int signo, long int sigcode, int sigerror,
 			    mach_port_t reply_port,
-			    mach_msg_type_name_t reply_port_type)
+			    mach_msg_type_name_t reply_port_type,
+			    int untraced)
 {
   struct machine_thread_all_state thread_state;
   enum { stop, ignore, core, term, handle } act;
@@ -397,34 +402,26 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
   /* Reply to this sig_post message.  */
   inline void reply ()
     {
-      post_reply (&reply_port, reply_port_type, 0);
+      post_reply (&reply_port, reply_port_type, untraced, 0);
     }
 
-  /* Wake up a sigsuspend call that is blocking SS->thread.  */
-  inline void sigwakeup (void)
+  /* Suspend the process with SIGNO.  */
+  void suspend (void)
     {
-      if (ss->suspended != MACH_PORT_NULL)
-	{
-	  /* There is a sigsuspend waiting.  Tell it to wake up.  */
-	  error_t err;
-	  mach_msg_header_t msg;
-	  err = __mach_port_insert_right (__mach_task_self (),
-					  ss->suspended, ss->suspended,
-					  MACH_MSG_TYPE_MAKE_SEND);
-	  assert_perror (err);
-	  msg.msgh_bits = MACH_MSGH_BITS (MACH_MSG_TYPE_MOVE_SEND, 0);
-	  msg.msgh_remote_port = ss->suspended;
-	  msg.msgh_local_port = MACH_PORT_NULL;
-	  /* These values do not matter.  */
-	  msg.msgh_id = 8675309; /* Jenny, Jenny.  */
-	  msg.msgh_seqno = 17;	/* Random.  */
-	  ss->suspended = MACH_PORT_NULL;
-	  err = __mach_msg (&msg, MACH_SEND_MSG, sizeof msg, 0,
-			    MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE,
-			    MACH_PORT_NULL);
-	  assert_perror (err);
-	}
-      __mutex_unlock (&ss->lock);
+      /* Stop all other threads and mark ourselves stopped.  */
+      __USEPORT (PROC,
+		 ({
+		   /* Hold the siglock while stopping other threads to be
+		      sure it is not held by another thread afterwards.  */
+		   __mutex_unlock (&ss->lock);
+		   __mutex_lock (&_hurd_siglock);
+		   __proc_dostop (port, _hurd_msgport_thread);
+		   __mutex_unlock (&_hurd_siglock);
+		   abort_all_rpcs (signo, &thread_state);
+		   __proc_mark_stop (port, signo);
+		 }));
+      __mutex_lock (&ss->lock);
+      _hurd_stopped = 1;
     }
 
  post_signal:
@@ -458,6 +455,26 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
       /* No preemption.  Do normal handling.  */
 
       handler = ss->actions[signo].sa_handler;
+
+      if (!untraced && (_hurd_exec_flags & EXEC_TRACED))
+	{
+	  /* We are being traced.  Stop to tell the debugger of the signal.  */
+	  if (_hurd_stopped)
+	    {
+	      /* Already stopped.  Mark the signal as pending;
+		 when resumed, we will notice it and stop again.  */
+	      __sigaddset (&ss->pending, signo);
+	      /* Save the code to be given to the handler when SIGNO is
+		 unblocked.  */
+	      ss->pending_data[signo].code = sigcode;
+	      ss->pending_data[signo].error = sigerror;
+	    }
+	  else
+	    suspend ();
+	  __mutex_unlock (&ss->lock);
+	  reply ();
+	  return;
+	}
 
       if (handler == SIG_DFL)
 	/* Figure out the default action for this signal.  */
@@ -525,13 +542,16 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
 	/* Stop signals clear a pending SIGCONT even if they
 	   are handled or ignored (but not if preempted).  */
 	ss->pending &= ~sigmask (SIGCONT);
-      else if (signo == SIGCONT)
+      else
 	{
-	  /* Even if handled or ignored (but not preempted),
-	     SIGCONT clears stop signals and resumes the process.  */
-	  ss->pending &= ~STOPSIGS;
-	  if (_hurd_stopped)
+	  if (signo == SIGCONT)
+	    /* Even if handled or ignored (but not preempted), SIGCONT clears
+	       stop signals and resumes the process.  */
+	    ss->pending &= ~STOPSIGS;
+
+	  if (_hurd_stopped && act != stop && (untraced || signo == SIGCONT))
 	    {
+	      /* Resume the process from being stopped.  */
 	      thread_t *threads;
 	      mach_msg_type_number_t nthreads, i;
 	      error_t err;
@@ -576,7 +596,8 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
       (signo != SIGKILL && _hurd_stopped))
     {
       __sigaddset (&ss->pending, signo);
-      /* Save the code to be given to the handler when SIGNO is unblocked.  */
+      /* Save the code to be given to the handler when SIGNO is
+	 unblocked.  */
       ss->pending_data[signo].code = sigcode;
       ss->pending_data[signo].error = sigerror;
       act = ignore;
@@ -586,25 +607,14 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
   switch (act)
     {
     case stop:
-      if (! _hurd_stopped)
-	{
-	  /* Stop all other threads and mark ourselves stopped.  */
-	  __USEPORT (PROC,
-		     ({
-		       /* Hold the siglock while stopping other threads to be
-			  sure it is not held by another thread afterwards.  */
-		       __mutex_unlock (&ss->lock);
-		       __mutex_lock (&_hurd_siglock);
-		       __proc_dostop (port, _hurd_msgport_thread);
-		       __mutex_unlock (&_hurd_siglock);
-		       abort_all_rpcs (signo, &thread_state);
-		       __proc_mark_stop (port, signo);
-		     }));
-	  _hurd_stopped = 1;
-	}
-
-      __mutex_lock (&ss->lock);
-      sigwakeup ();		/* Wake up sigsuspend.  */
+      if (_hurd_stopped)
+	/* We are already stopped, but receiving an untraced stop
+	   signal.  Instead of resuming and suspending again, just
+	   notify the proc server of the new stop signal.  */
+	__USEPORT (PROC, __proc_mark_stop (port, signo));
+      else
+	/* Suspend the process.  */
+	suspend ();
       break;
 
     case ignore:
@@ -649,10 +659,12 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
 	   RPC is in progress, abort_rpcs will do this.  But we must always
 	   do it before fetching the thread's state, because
 	   thread_get_state is never kosher before thread_abort.  */
-	abort_thread (ss, &thread_state, &reply_port, reply_port_type);
+	abort_thread (ss, &thread_state,
+		      &reply_port, reply_port_type, untraced);
 
 	wait_for_reply = (abort_rpcs (ss, signo, &thread_state,
-				      &reply_port, reply_port_type)
+				      &reply_port, reply_port_type,
+				      untraced)
 			  != MACH_PORT_NULL);
 
 	/* Call the machine-dependent function to set the thread up
@@ -714,8 +726,7 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
   if (signo != 0)
     reply ();
 
-  /* We get here only if we are handling or ignoring the signal;
-     otherwise we are stopped or dead by now.  We still hold SS->lock.
+  /* We get here unless the signal was fatal.  We still hold SS->lock.
      Check for pending signals, and loop to post them.  */
 #define PENDING	(!_hurd_stopped && (pending = ss->pending & ~ss->blocked))
   if (PENDING)
@@ -731,14 +742,12 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
 	  }
     }
 
-  /* No more signals pending; SS->lock is still locked.  */
-  sigwakeup ();
-
   /* No pending signals left undelivered for this thread.
      If we were sent signal 0, we need to check for pending
      signals for all threads.  */
   if (signo == 0)
     {
+      __mutex_unlock (&ss->lock);
       __mutex_lock (&_hurd_siglock);
       for (ss = _hurd_sigstates; ss != NULL; ss = ss->next)
 	{
@@ -749,22 +758,45 @@ _hurd_internal_post_signal (struct hurd_sigstate *ss,
 	}
       __mutex_unlock (&_hurd_siglock);
     }
+  else
+    {
+      /* No more signals pending; SS->lock is still locked.
+	 Wake up any sigsuspend call that is blocking SS->thread.  */
+      if (ss->suspended != MACH_PORT_NULL)
+	{
+	  /* There is a sigsuspend waiting.  Tell it to wake up.  */
+	  error_t err;
+	  mach_msg_header_t msg;
+	  err = __mach_port_insert_right (__mach_task_self (),
+					  ss->suspended, ss->suspended,
+					  MACH_MSG_TYPE_MAKE_SEND);
+	  assert_perror (err);
+	  msg.msgh_bits = MACH_MSGH_BITS (MACH_MSG_TYPE_MOVE_SEND, 0);
+	  msg.msgh_remote_port = ss->suspended;
+	  msg.msgh_local_port = MACH_PORT_NULL;
+	  /* These values do not matter.  */
+	  msg.msgh_id = 8675309; /* Jenny, Jenny.  */
+	  msg.msgh_seqno = 17;	/* Random.  */
+	  ss->suspended = MACH_PORT_NULL;
+	  err = __mach_msg (&msg, MACH_SEND_MSG, sizeof msg, 0,
+			    MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE,
+			    MACH_PORT_NULL);
+	  assert_perror (err);
+	}
+      __mutex_unlock (&ss->lock);
+    }
 
   /* All pending signals delivered to all threads.
      Now we can send the reply message even for signal 0.  */
   reply ();
 }
+
+/* Decide whether REFPORT enables the sender to send us a SIGNO signal.
+   Returns zero if so, otherwise the error code to return to the sender.  */
 
-/* Implement the sig_post RPC from <hurd/msg.defs>;
-   sent when someone wants us to get a signal.  */
-kern_return_t
-_S_sig_post (mach_port_t me,
-	     mach_port_t reply_port, mach_msg_type_name_t reply_port_type,
-	     int signo,
-	     mach_port_t refport)
+static error_t
+signal_allowed (int signo, mach_port_t refport)
 {
-  struct hurd_sigstate *ss;
-
   if (signo < 0 || signo >= NSIG)
     return EINVAL;
 
@@ -852,12 +884,51 @@ _S_sig_post (mach_port_t me,
   /* Deallocate the REFPORT send right; we are done with it.  */
   __mach_port_deallocate (__mach_task_self (), refport);
 
-  /* Get a hold of the designated signal-receiving thread.  */
-  ss = _hurd_thread_sigstate (_hurd_sigthread);
+  return 0;
+}
 
-  /* Post the signal; this will reply when the signal can be considered
-     delivered.  */
-  _hurd_internal_post_signal (ss, signo, 0, 0, reply_port, reply_port_type);
+/* Implement the sig_post RPC from <hurd/msg.defs>;
+   sent when someone wants us to get a signal.  */
+kern_return_t
+_S_sig_post (mach_port_t me,
+	     mach_port_t reply_port, mach_msg_type_name_t reply_port_type,
+	     int signo,
+	     mach_port_t refport)
+{
+  error_t err;
+
+  if (err = signal_allowed (signo, refport))
+    return err;
+
+  /* Post the signal to the designated signal-receiving thread.  This will
+     reply when the signal can be considered delivered.  */
+  _hurd_internal_post_signal (_hurd_thread_sigstate (_hurd_sigthread),
+			      signo, 0, 0, reply_port, reply_port_type,
+			      0); /* Stop if traced.  */
+
+  return MIG_NO_REPLY;		/* Already replied.  */
+}
+
+/* Implement the sig_post_untraced RPC from <hurd/msg.defs>;
+   sent when the debugger wants us to really get a signal
+   even if we are traced.  */
+kern_return_t
+_S_sig_post_untraced (mach_port_t me,
+		      mach_port_t reply_port,
+		      mach_msg_type_name_t reply_port_type,
+		      int signo,
+		      mach_port_t refport)
+{
+  error_t err;
+
+  if (err = signal_allowed (signo, refport))
+    return err;
+
+  /* Post the signal to the designated signal-receiving thread.  This will
+     reply when the signal can be considered delivered.  */
+  _hurd_internal_post_signal (_hurd_thread_sigstate (_hurd_sigthread),
+			      signo, 0, 0, reply_port, reply_port_type,
+			      1); /* Untraced flag. */
 
   return MIG_NO_REPLY;		/* Already replied.  */
 }
