@@ -43,8 +43,10 @@ extern int __have_no_stat64;
 #endif
 
 /* Get information about the file FD in BUF.  */
+extern int ___fxstat64 (int vers, int fd, struct stat64 *buf);
+
 int
-__fxstat64 (int vers, int fd, struct stat64 *buf)
+___fxstat64 (int vers, int fd, struct stat64 *buf)
 {
   int result;
 #if __ASSUME_STAT64_SYSCALL > 0
@@ -82,3 +84,12 @@ __fxstat64 (int vers, int fd, struct stat64 *buf)
   return result;
 #endif
 }
+
+#include <shlib-compat.h>
+
+versioned_symbol (libc, ___fxstat64, __fxstat64, GLIBC_2_2);
+
+#if SHLIB_COMPAT(libc, GLIBC_2_1, GLIBC_2_2)
+strong_alias (___fxstat64, __old__fxstat64)
+compat_symbol (libc, __old__fxstat64, __fxstat64, GLIBC_2_1);
+#endif
