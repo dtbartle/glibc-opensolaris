@@ -2042,8 +2042,7 @@ typedef Elf32_Addr Elf32_Conflict;
 /* Keep this the last entry.  */
 #define R_390_NUM       19
 
-/* CRIS relocations.  For descriptions, see binutils or gdb:
-   include/elf/cris.h */
+/* CRIS relocations.  */
 #define R_CRIS_NONE		0
 #define R_CRIS_8		1
 #define R_CRIS_16		2
