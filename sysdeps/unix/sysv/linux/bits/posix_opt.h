@@ -87,4 +87,10 @@
 /* POSIX shared memory objects are implemented.  */
 #define _POSIX_SHARED_MEMORY_OBJECTS	1
 
+/* GNU libc provides regular expression handling.  */
+#define _POSIX_REGEXP	1
+
+/* We have a POSIX shell.  */
+#define _POSIX_SHELL	1
+
 #endif /* bits/posix_opt.h */
