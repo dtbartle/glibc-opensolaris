@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -95,7 +95,6 @@ DEFUN(__stdio_seek, (cookie, pos, whence),
   struct hurd_fd *fd = cookie;
   if (! fd)
     return __hurd_fail (EBADF);
-  __spin_lock (&fd->port.lock);
   err = HURD_FD_PORT_USE (fd, __io_seek (port, *pos, whence, pos));
   return err ? fd_fail (fd, err) : 0;
 }
@@ -105,12 +104,8 @@ DEFUN(__stdio_seek, (cookie, pos, whence),
 int
 DEFUN(__stdio_close, (cookie), PTR cookie)
 {
-  error_t error;
-  if (cookie)
-    error = _hurd_fd_close (cookie);
-  else
-    error = EBADF;
-  return error ? __hurd_fail (error) : 0;
+  error_t error = cookie ? _hurd_fd_close (cookie) : EBADF;
+  return error ? __fd_fail (fd, error) : 0;
 }
 
 
