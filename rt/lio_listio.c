@@ -69,7 +69,7 @@ lio_listio (mode, list, nent, sig)
   for (cnt = 0; cnt < nent; ++cnt)
     if (list[cnt] != NULL && list[cnt]->aio_lio_opcode != LIO_NOP)
       {
-	list[cnt]->aio_sigevent = *sig;
+	list[cnt]->aio_sigevent.sigev_notify = SIGEV_NONE;
 	requests[cnt] =  __aio_enqueue_request ((aiocb_union *) list[cnt],
 						list[cnt]->aio_lio_opcode);
 
