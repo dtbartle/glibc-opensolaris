@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or modify
@@ -42,7 +42,10 @@ main ()
   for (i = 0; i < sys_nerr; ++i)
     printf ("    \"%s\",\n", sys_errlist[i]);
 
-  puts ("    NULL\n  };");
+  puts ("    NULL\n  };\n");
+
+  puts ("weak_alias (_sys_errlist, sys_errlist)");
+  puts ("weak_alias (_sys_nerr, sys_nerr)");
 
   exit (0);
 }
