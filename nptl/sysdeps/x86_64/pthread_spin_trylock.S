@@ -36,5 +36,5 @@ pthread_spin_trylock:
 	cmpxchgl %ecx, (%rdi)
 	movl	$EBUSY, %eax
 	cmovel	%ecx, %eax
-	ret
+	retq
 	.size	pthread_spin_trylock,.-pthread_spin_trylock
