@@ -178,7 +178,7 @@ main (int argc, char *argv[])
 
 	if (verbose)
 	  printf ("%s:\n", argv[remaining]);
-	if (strcmp (argc[remaining], "-") == 0)
+	if (strcmp (argv[remaining], "-") == 0)
 	  fd = 0;
 	else
 	  {
