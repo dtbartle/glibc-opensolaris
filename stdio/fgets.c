@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -28,11 +28,11 @@ Cambridge, MA 02139, USA.  */
    to S, the function returns NULL without appending the null character.
    If there is a file error, always return NULL.  */
 char *
-DEFUN(fgets, (s, n, stream), char *s AND size_t n AND register FILE *stream)
+DEFUN(fgets, (s, n, stream), char *s AND int n AND register FILE *stream)
 {
   register char *p = s;
 
-  if (!__validfp(stream) || s == NULL || n == 0)
+  if (!__validfp(stream) || s == NULL || n <= 0)
     {
       errno = EINVAL;
       return NULL;
