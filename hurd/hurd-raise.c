@@ -30,14 +30,17 @@ _hurd_raise_signal (struct hurd_sigstate *ss,
 		    int signo, long int sigcode, int sigerror)
 {
   if (ss == NULL)
-    ss = _hurd_self_sigstate ();
+    {
+      ss = _hurd_self_sigstate ();
+      __spin_lock (&ss->lock);
+    }
 
   /* Mark SIGNO as pending to be delivered.  */
   __sigaddset (&ss->pending, signo);
   ss->pending_data[signo].code = sigcode;
   ss->pending_data[signo].error = sigerror;
 
-  __mutex_unlock (&ss->lock);
+  __spin_unlock (&ss->lock);
 
   /* Send a message to the signal thread so it
      will wake up and check for pending signals.  */
