@@ -100,7 +100,7 @@ __lll_timedwait_tid (int *tidp, const struct timespec *abstime)
 {
   int tid;
 
-  if (abstime->tv_nsec >= 1000000000)
+  if (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000)
     return EINVAL;
 
   /* Repeat until thread terminated.  */
