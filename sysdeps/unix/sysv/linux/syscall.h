@@ -1,4 +1,4 @@
-/* Copyright (C) 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -23,13 +23,5 @@ Cambridge, MA 02139, USA.  */
    But instead of duplicating this we use the information available
    from the kernel sources.  */
 #include <asm/unistd.h>
-
-/* Among the system calls defined there are
-	_setdomainname	
-	_fchdir	
-	_readv	
-	_writev	
-   (This is a hack for the autoconf mechanism.  Don't change a single
-    character, esp white spaces, unless you know what you are doing!)  */
 
 #endif
