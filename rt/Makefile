@@ -30,7 +30,9 @@ librt-routines := aio_cancel aio_error aio_fsync aio_misc aio_read	\
 
 librt-map := librt.map
 
+ifeq ($(have-thread-library),yes)
 tests := tst-aio
+endif
 
 # Make sure that everything is distributed independent of configuration.
 distribute := aio_misc.h $(librt-routines:=.c) $(librt-map)
