@@ -1,4 +1,4 @@
-/* Copyright (C) 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -23,4 +23,10 @@ Cambridge, MA 02139, USA.  */
 
 /* If we don't have vfork, fork is close enough.  */
 
-function_alias (__vfork, __fork, __pid_t, (), DEFUN_VOID(__vfork))
+__pid_t
+__vfork __P ((void))
+{
+  return __fork ();
+}
+
+weak_alias (__vfork, vfork)
