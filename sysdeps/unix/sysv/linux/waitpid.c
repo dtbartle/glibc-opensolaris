@@ -16,14 +16,26 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sysdep.h>
+#include <errno.h>
+#include <sysdep-cancel.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <nptl/pthreadP.h>
+#include <tls.h>
 
 __pid_t
 __libc_waitpid (__pid_t pid, int *stat_loc, int options)
 {
-  return __wait4 (pid, stat_loc, options, NULL);
+  if (SINGLE_THREAD_P)
+    return INLINE_SYSCALL (wait4, 4, pid, stat_loc, options, NULL);
+
+  int oldtype = LIBC_CANCEL_ASYNC ();
+
+  int result = INLINE_SYSCALL (wait4, 4, pid, stat_loc, options, NULL);
+
+  LIBC_CANCEL_RESET (oldtype);
+
+  return result;
 }
 weak_alias (__libc_waitpid, __waitpid)
 libc_hidden_weak (__waitpid)
