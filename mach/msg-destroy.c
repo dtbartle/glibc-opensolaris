@@ -26,7 +26,10 @@
 /*
  * HISTORY
  * $Log$
- * Revision 1.2  1993/08/03 06:13:18  roland
+ * Revision 1.3  1995/01/23 22:16:52  roland
+ * (mach_msg_destroy): Define as weak alias for __mach_msg_destroy.
+ *
+ * Revision 1.2  1993/08/03  06:13:18  roland
  * entered into RCS
  *
  * Revision 2.4  91/05/14  17:53:15  mrt
@@ -126,6 +129,8 @@ __mach_msg_destroy(msg)
 	}
     }
 }
+
+weak_alias (__mach_msg_destroy, mach_msg_destroy)
 
 static void
 mach_msg_destroy_port(port, type)
