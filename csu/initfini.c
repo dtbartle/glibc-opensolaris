@@ -34,11 +34,18 @@ Cambridge, MA 02139, USA.  */
 
 #include <stdlib.h>
 
+/* We are compiled with -DGLOBAL=static to generate the versions used for
+   shared libraries' .init and .fini sections, which do not have entry
+   point symbols.  */
+#ifndef GLOBAL
+#define GLOBAL
+#endif
+
 /* These declarations make the functions go in the right sections when
    we define them below.  GCC syntax does not allow the attribute
    specifications to be in the function definitions themselves.  */
-void _init (void) __attribute__ ((section (".init")));
-void _fini (void) __attribute__ ((section (".fini")));
+GLOBAL void _init (void) __attribute__ ((section (".init")));
+GLOBAL void _fini (void) __attribute__ ((section (".fini")));
 
 /* End the here document containing the initial common code.
    Then move the output file crtcommon.tmp to crti.s-new and crtn.s-new.  */
@@ -48,7 +55,7 @@ cp -f crti.s-new crtn.s-new");
 
 /* Append the .init prologue to crti.s-new.  */
 asm ("cat >> crti.s-new <<\\EOF.crti.init");
-void
+GLOBAL void
 _init (void)
 {
   /* End the here document containing the .init prologue code.
@@ -66,7 +73,7 @@ asm ("\nEOF.crtn.init\
 \n\
 cat >> crti.s-new <<\\EOF.crti.fini");
 
-void
+GLOBAL void
 _fini (void)
 {
   /* End the here document containing the .fini prologue code.
