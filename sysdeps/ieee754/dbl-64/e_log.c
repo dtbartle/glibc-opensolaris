@@ -192,7 +192,7 @@ double __ieee754_log(double x) {
     __dbl_mp(x,&mpx,p);  __dbl_mp(y,&mpy,p);
     __mplog(&mpx,&mpy,p);
     __dbl_mp(e[i].d,&mperr,p);
-    add(&mpy,&mperr,&mpy1,p);  sub(&mpy,&mperr,&mpy2,p);
+    __add(&mpy,&mperr,&mpy1,p);  __sub(&mpy,&mperr,&mpy2,p);
     __mp_dbl(&mpy1,&y1,p);       __mp_dbl(&mpy2,&y2,p);
     if (y1==y2)   return y1;
   }
