@@ -103,7 +103,7 @@
   .text;								      \
   ENTRY (name)								      \
     DO_CALL (syscall_name, args);					      \
-    negl %rax
+    negq %rax
 
 #undef	PSEUDO_END_ERRVAL
 #define	PSEUDO_END_ERRVAL(name) \
