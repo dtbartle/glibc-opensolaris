@@ -1,3 +1,1 @@
-#include <sysdeps/posix/__sigvec.c>
-
-weak_alias (__sigvec, sigvec)
+#include <sysdeps/posix/sigvec.c>
