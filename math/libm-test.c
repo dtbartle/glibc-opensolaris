@@ -865,7 +865,7 @@ log10_test (void)
 	     CHOOSE (1e-18L, 0, 0));
   check_eps ("log10 (10) == 1", FUNC(log10) (10.0), 1,
 	     CHOOSE (1e-18L, 0, 0));
-  check_esp ("log10 (100) == 2", FUNC(log10) (100.0), 2,
+  check_eps ("log10 (100) == 2", FUNC(log10) (100.0), 2,
 	     CHOOSE (1e-18L, 0, 0));
   check ("log10 (10000) == 4", FUNC(log10) (10000.0), 4);
   check_eps ("log10 (e) == M_LOG10E", FUNC(log10) (M_E), M_LOG10E,
