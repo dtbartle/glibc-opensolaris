@@ -47,3 +47,5 @@ Cambridge, MA 02139, USA.  */
   chmk $SYS_/**/syscall_name						      \
   bcs error
 #endif
+
+#define MOVE(x,y)	movl x , y
