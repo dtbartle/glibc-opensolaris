@@ -156,6 +156,32 @@ main (void)
 		fpclassify (f));
 	result = 1;
       }
+
+    f = FLT_MAX;
+    if (fpclassify (f) != FP_NORMAL)
+      {
+	printf ("fpclassify (FLT_MAX) failed: %d\n", fpclassify (f));
+	result = 1;
+      }
+    f = nextafterf (f, INFINITY);
+    if (fpclassify (f) != FP_INFINITE)
+      {
+	printf ("fpclassify (FLT_MAX+epsilon) failed: %d\n", fpclassify (f));
+	result = 1;
+      }
+
+    f = -FLT_MAX;
+    if (fpclassify (f) != FP_NORMAL)
+      {
+	printf ("fpclassify (-FLT_MAX) failed: %d\n", fpclassify (f));
+	result = 1;
+      }
+    f = nextafterf (f, -INFINITY);
+    if (fpclassify (f) != FP_INFINITE)
+      {
+	printf ("fpclassify (-FLT_MAX-epsilon) failed: %d\n", fpclassify (f));
+	result = 1;
+      }
   }
   {
     double d;
@@ -197,6 +223,32 @@ main (void)
       {
 	printf ("fpclassify (-DBL_MIN-epsilon+epsilon) failed: %d\n",
 		fpclassify (d));
+	result = 1;
+      }
+
+    d = DBL_MAX;
+    if (fpclassify (d) != FP_NORMAL)
+      {
+	printf ("fpclassify (DBL_MAX) failed: %d\n", fpclassify (d));
+	result = 1;
+      }
+    d = nextafter (d, INFINITY);
+    if (fpclassify (d) != FP_INFINITE)
+      {
+	printf ("fpclassify (DBL_MAX+epsilon) failed: %d\n", fpclassify (d));
+	result = 1;
+      }
+
+    d = -DBL_MAX;
+    if (fpclassify (d) != FP_NORMAL)
+      {
+	printf ("fpclassify (-DBL_MAX) failed: %d\n", fpclassify (d));
+	result = 1;
+      }
+    d = nextafter (d, -INFINITY);
+    if (fpclassify (d) != FP_INFINITE)
+      {
+	printf ("fpclassify (-DBL_MAX-epsilon) failed: %d\n", fpclassify (d));
 	result = 1;
       }
   }
@@ -243,6 +295,33 @@ main (void)
       {
 	printf ("fpclassify (-LDBL_MIN-epsilon+epsilon) failed: %d (%La)\n",
 		fpclassify (ld), ld);
+	result = 1;
+      }
+
+    ld = LDBL_MAX;
+    if (fpclassify (ld) != FP_NORMAL)
+      {
+	printf ("fpclassify (LDBL_MAX) failed: %d\n", fpclassify (ld));
+	result = 1;
+      }
+    ld = nextafterl (ld, INFINITY);
+    if (fpclassify (ld) != FP_INFINITE)
+      {
+	printf ("fpclassify (LDBL_MAX+epsilon) failed: %d\n", fpclassify (ld));
+	result = 1;
+      }
+
+    ld = -LDBL_MAX;
+    if (fpclassify (ld) != FP_NORMAL)
+      {
+	printf ("fpclassify (-LDBL_MAX) failed: %d\n", fpclassify (ld));
+	result = 1;
+      }
+    ld = nextafterl (ld, -INFINITY);
+    if (fpclassify (ld) != FP_INFINITE)
+      {
+	printf ("fpclassify (-LDBL_MAX-epsilon) failed: %d\n",
+		fpclassify (ld));
 	result = 1;
       }
   }
