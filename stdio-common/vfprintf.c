@@ -660,6 +660,8 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	    {								      \
 	      if (is_long_num)						      \
 		number.word = va_arg (ap, unsigned long int);		      \
+	      else if (is_char)						      \
+	        number.word = (unsigned char) va_arg (ap, unsigned int);      \
 	      else if (!is_short)					      \
 		number.word = va_arg (ap, unsigned int);		      \
 	      else							      \
