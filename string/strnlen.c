@@ -1,5 +1,5 @@
 /* Find the length of STRING, but scan at most MAXLEN characters.
-   Copyright (C) 1996, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1996, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -23,8 +23,9 @@
    If no '\0' terminator is found in that many characters, return MAXLEN.  */
 
 size_t
-strnlen (const char *string, size_t maxlen)
+__strnlen (const char *string, size_t maxlen)
 {
   const char *end = memchr (string, '\0', maxlen);
   return end ? end - string : maxlen;
 }
+weak_alias (__strnlen, strnlen)
