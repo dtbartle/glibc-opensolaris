@@ -143,6 +143,7 @@ struct binding
 {
   struct binding *next;
   char *dirname;
+  char *codeset;
 #ifdef __GNUC__
   char domainname[0];
 #else
@@ -154,7 +155,8 @@ extern int _nl_msg_cat_cntr;
 
 struct loaded_l10nfile *_nl_find_domain PARAMS ((const char *__dirname,
 						 char *__locale,
-						 const char *__domainname))
+						 const char *__domainname,
+					      struct binding *__domainbinding))
      internal_function;
 void _nl_load_domain PARAMS ((struct loaded_l10nfile *__domain))
      internal_function;
