@@ -18,6 +18,7 @@
    02111-1307 USA.  */
 
 #include <dlfcn.h>
+#include <errno.h>
 #include <pthread.h>
 #include <signal.h>
 #include <semaphore.h>
