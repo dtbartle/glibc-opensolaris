@@ -96,6 +96,7 @@ typedef struct pthread_handle_struct * pthread_handle;
 struct pthread_handle_struct {
   int h_spinlock;               /* Spinlock for sychronized access */
   pthread_descr h_descr;        /* Thread descriptor or NULL if invalid */
+  char * h_bottom;              /* Lowest address in the stack thread */
 };
 
 /* The type of messages sent to the thread manager thread */
@@ -159,6 +160,11 @@ extern pthread_descr __pthread_main_thread;
    the initial thread. */
 
 extern char *__pthread_initial_thread_bos;
+
+/* Indicate whether at least one thread has a user-defined stack (if 1),
+   or all threads have stacks supplied by LinuxThreads (if 0). */
+
+extern int __pthread_nonstandard_stacks;
 
 /* File descriptor for sending requests to the thread manager.
    Initially -1, meaning that pthread_initialize must be called. */
@@ -233,6 +239,8 @@ static inline int invalid_handle(pthread_handle h, pthread_t id)
 
 /* Recover thread descriptor for the current thread */
 
+extern pthread_descr __pthread_find_self (void) __attribute__ ((const));
+
 static inline pthread_descr thread_self (void) __attribute__ ((const));
 static inline pthread_descr thread_self (void)
 {
@@ -245,6 +253,8 @@ static inline pthread_descr thread_self (void)
   else if (sp >= __pthread_manager_thread_bos
 	   && sp < __pthread_manager_thread_tos)
     return &__pthread_manager_thread;
+  else if (__pthread_nonstandard_stacks)
+    return __pthread_find_self();
   else
     return (pthread_descr)(((unsigned long)sp | (STACK_SIZE-1))+1) - 1;
 #endif
