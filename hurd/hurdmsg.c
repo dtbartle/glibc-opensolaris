@@ -375,7 +375,6 @@ _S_msg_set_environment (mach_port_t msgport, mach_port_t auth,
   int _hurd_split_args (char *, mach_msg_type_number_t, char **);
   int envc;
   char **envp;
-  error_t err;
 
   AUTHCHECK;
 
