@@ -1,9 +1,13 @@
 /* Copyright (c) 1993 Carlos Leandro and Rui Salgueiro
  *	Dep. Matematica Universidade de Coimbra, Portugal, Europe
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  */
 /*
- * Copyright (c) 1983 Regents of the University of California.
- * All rights reserved.
+ * Copyright (c) 1983, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +39,8 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)getnetnamadr.c	1.4 (Coimbra) 93/06/03";
+static char sccsid[] = "@(#)getnetbyaddr.c	8.1 (Berkeley) 6/4/93";
+static char sccsid_[] = "from getnetnamadr.c	1.4 (Coimbra) 93/06/03";
 static char rcsid[] = "$Id$";
 #endif /* LIBC_SCCS and not lint */
 
@@ -59,7 +64,11 @@ extern int errno;
 #endif
 
 struct netent *_getnetbyaddr __P((long net, int type));
+#if defined(sun)
+struct netent *_getnetbyname __P((char *name));
+#else
 struct netent *_getnetbyname __P((const char *name));
+#endif
 
 #define BYADDR 0
 #define BYNAME 1
@@ -88,22 +97,16 @@ getnetanswer(answer, anslen, net_i)
 	int net_i;
 {
 
-	register HEADER	*hp;
-	register u_char	*cp;
-	register int	n;
-	u_char		*eom;
-	int		type, class, buflen, ancount, qdcount,
-			haveanswer, i, nchar,
-			getclass = C_ANY,
-			net_length = 0;
-	char		aux1[30], aux2[30], ans[30],
-			*in, *st, *pauxt, *bp, **ap,
-			*paux1 = &aux1[0],
-			*paux2 = &aux2[0],
-			flag = 0;
-static	struct netent	net_entry;
-static	char		*net_aliases[MAXALIASES],
-			netbuf[BUFSIZ+1];
+	register HEADER *hp;
+	register u_char *cp;
+	register int n;
+	u_char *eom;
+	int type, class, buflen, ancount, qdcount, haveanswer, i, nchar,
+		getclass = C_ANY, net_length = 0;
+	char aux1[30], aux2[30], ans[30], *in, *st, *pauxt, *bp, **ap,
+		*paux1 = &aux1[0], *paux2 = &aux2[0], flag = 0;
+static	struct netent net_entry;
+static	char *net_aliases[MAXALIASES], netbuf[BUFSIZ+1];
 
 	/*
 	 * find first satisfactory answer
@@ -131,12 +134,10 @@ static	char		*net_aliases[MAXALIASES],
 			h_errno = HOST_NOT_FOUND;
 		else
 			h_errno = TRY_AGAIN;
-
-		return ((struct netent *) NULL);
+		return (NULL);
 	}
-	while (qdcount-- > 0){
+	while (qdcount-- > 0)
 		cp += __dn_skipname(cp, eom) + QFIXEDSZ;
-        }
 	ap = net_aliases;
 	*ap = NULL;
 	net_entry.n_aliases = net_aliases;
@@ -160,25 +161,24 @@ static	char		*net_aliases[MAXALIASES],
 			}
 			cp += n; 
 			*ap++ = bp;
-			bp += (strlen(bp) + 1);
-			net_entry.n_addrtype = (class == C_IN)
-						? AF_INET
-						: AF_UNSPEC;
+			bp += strlen(bp) + 1;
+			net_entry.n_addrtype =
+				(class == C_IN) ? AF_INET : AF_UNSPEC;
 			haveanswer++;
 		}
 	}
 	if (haveanswer) {
 		*ap = NULL;
 		switch (net_i) {
-		   case BYADDR :
+		case BYADDR:
 			net_entry.n_name = *net_entry.n_aliases;
 			net_entry.n_net = 0L;
 			break;
-		   case BYNAME :
+		case BYNAME:
 			in = *net_entry.n_aliases;
 			net_entry.n_name = &ans[0];
 			aux2[0] = '\0';
-			for (i = 0;  i < 4;  i++) {
+			for (i = 0; i < 4; i++) {
 				for (st = in, nchar = 0;
 				     *st != '.';
 				     st++, nchar++)
@@ -186,9 +186,9 @@ static	char		*net_aliases[MAXALIASES],
 				if (nchar != 1 || *in != '0' || flag) {
 					flag = 1;
 					(void)strncpy(paux1,
-						      (i==0) ?in :in-1,
-						      (i==0) ?nchar :nchar+1);
-					paux1[(i==0) ?nchar :nchar+1] = '\0';
+						      (i==0) ? in : in-1,
+						      (i==0) ?nchar : nchar+1);
+					paux1[(i==0) ? nchar : nchar+1] = '\0';
 					pauxt = paux2;
 					paux2 = strcat(paux1, paux2);
 					paux1 = pauxt;
@@ -196,13 +196,13 @@ static	char		*net_aliases[MAXALIASES],
 				in = ++st;
 			}		  
 			net_entry.n_net = inet_network(paux2);
+			break;
 		}
 		net_entry.n_aliases++;
 		return (&net_entry);
-	} else {
-		h_errno = TRY_AGAIN;
-		return ((struct netent *) NULL);
 	}
+	h_errno = TRY_AGAIN;
+	return (NULL);
 }
 
 struct netent *
@@ -210,38 +210,35 @@ getnetbyaddr(net, net_type)
 	register long net;
 	register int net_type;
 {
-	unsigned int	netbr[4];
-	int		nn, anslen;
-	querybuf	buf;
-	char		qbuf[MAXDNAME];
-	unsigned long	net2;
-	struct netent	*net_entry;
+	unsigned int netbr[4];
+	int nn, anslen;
+	querybuf buf;
+	char qbuf[MAXDNAME];
+	unsigned long net2;
+	struct netent *net_entry;
 
 	if (net_type != AF_INET)
 		return (_getnetbyaddr(net, net_type));
 
-	for (nn = 4, net2 = net;  net2;  net2 >>= 8) {
+	for (nn = 4, net2 = net; net2; net2 >>= 8)
 		netbr[--nn] = net2 & 0xff;
-	}
 	switch (nn) {
-		case 3: 	/* Class A */
-			(void)sprintf(qbuf, "0.0.0.%u.in-addr.arpa",
-				      netbr[3]);
-			break;
-		case 2: 	/* Class B */
-			(void)sprintf(qbuf, "0.0.%u.%u.in-addr.arpa",
-				      netbr[3], netbr[2]);
-			break;
-		case 1: 	/* Class C */
-			(void)sprintf(qbuf, "0.%u.%u.%u.in-addr.arpa",
-				      netbr[3], netbr[2], netbr[1]);
-			break;
-		case 0: 	/* Class D - E */
-			(void)sprintf(qbuf, "%u.%u.%u.%u.in-addr.arpa",
-				      netbr[3], netbr[2], netbr[1], netbr[0]);
-			break;
+	case 3: 	/* Class A */
+		sprintf(qbuf, "0.0.0.%u.in-addr.arpa", netbr[3]);
+		break;
+	case 2: 	/* Class B */
+		sprintf(qbuf, "0.0.%u.%u.in-addr.arpa", netbr[3], netbr[2]);
+		break;
+	case 1: 	/* Class C */
+		sprintf(qbuf, "0.%u.%u.%u.in-addr.arpa", netbr[3], netbr[2],
+		    netbr[1]);
+		break;
+	case 0: 	/* Class D - E */
+		sprintf(qbuf, "%u.%u.%u.%u.in-addr.arpa", netbr[3], netbr[2],
+		    netbr[1], netbr[0]);
+		break;
 	}
-	anslen = res_query(qbuf, C_IN, T_PTR, buf.buf, sizeof buf.buf);
+	anslen = res_query(qbuf, C_IN, T_PTR, (u_char *)&buf, sizeof(buf));
 	if (anslen < 0) {
 #ifdef DEBUG
 		if (_res.options & RES_DEBUG)
@@ -249,35 +246,37 @@ getnetbyaddr(net, net_type)
 #endif
 		if (errno == ECONNREFUSED)
 			return (_getnetbyaddr(net, net_type));
-		return (_getnetbyaddr(net, net_type));
+		return (NULL);
 	}
 	net_entry = getnetanswer(&buf, anslen, BYADDR);
 	if (net_entry) {
 		unsigned u_net = net;	/* maybe net should be unsigned ? */
 
 		/* Strip trailing zeros */
-		while ((u_net & 0xff) == 0 && u_net != 0) {
+		while ((u_net & 0xff) == 0 && u_net != 0)
 			u_net >>= 8;
-		}
 		net_entry->n_net = u_net;
 		return (net_entry);
-	} else {
-		return (_getnetbyaddr(net, net_type));
 	}
+	return (_getnetbyaddr(net, net_type));
 }
 
 struct netent *
 getnetbyname(net)
+#if defined(sun)
+	register char *net;
+#else
 	register const char *net;
+#endif
 {
-	unsigned int	netbr[4];
-	int		anslen;
-	querybuf	buf;
-	char		qbuf[MAXDNAME];
-	struct netent	*net_entry;
-       
-	(void)strcpy(&qbuf[0],net);
-	anslen = res_search(qbuf, C_IN, T_PTR, buf.buf, sizeof buf.buf);
+	unsigned int netbr[4];
+	int anslen;
+	querybuf buf;
+	char qbuf[MAXDNAME];
+	struct netent *net_entry;
+
+	strcpy(&qbuf[0],net);
+	anslen = res_search(qbuf, C_IN, T_PTR, (u_char *)&buf, sizeof(buf));
 	if (anslen < 0) {
 #ifdef DEBUG
 		if (_res.options & RES_DEBUG)
@@ -290,6 +289,5 @@ getnetbyname(net)
 	net_entry = getnetanswer(&buf, anslen, BYNAME);
 	if (net_entry)
 		return (net_entry);
-	else
-		return (_getnetbyname(net));
+	return (_getnetbyname(net));
 }
