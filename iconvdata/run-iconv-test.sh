@@ -55,7 +55,7 @@ while read from to targets; do
 
     # All tests ok.
     echo "$from -> $t -> $to ok"
-    rm -f $name1 $name2
+    rm -f $temp1 $temp2
   done
 done < TESTS
 
