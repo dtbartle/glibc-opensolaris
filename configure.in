@@ -29,6 +29,12 @@ AC_ARG_WITH(gnu-as, dnl
   --with-gnu-as		  if using GNU as (in the binutils package),
 	    gnu_as=yes, gnu_as=no)
 test $gnu_binutils = yes && gnu_as=yes gnu_ld=yes
+AC_ARG_WITH(elf, dnl
+  --with-elf		  if using the ELF object format,
+	    elf=yes, elf=no)
+AC_ARG_WITH(weak-symbols, dnl
+  --with-weak-symbols	  if weak symbols are available in as and ld,
+	    weak=yes, weak=no)
 
 AC_CANONICAL_HOST
 # We keep the original values in `$config_*' and never modify them, so we
@@ -378,6 +384,13 @@ fi
 if test $gnu_as = yes; then
   AC_DEFINE(HAVE_GNU_AS)
 fi
+if test $elf = yes; then
+  AC_DEFINE(HAVE_ELF)
+fi
+if test $weak = yes; then
+  AC_DEFINE(HAVE_WEAK_SYMBOLS)
+fi
+
 
 if test "`(cd $srcdir; pwd)`" = "`pwd`"; then
   config_makefile=
