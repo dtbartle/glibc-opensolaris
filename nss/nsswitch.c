@@ -431,8 +431,8 @@ nss_lookup_function (service_user *ni, const char *fct_name)
 # undef DEFINE_GET
 # undef DEFINE_GETBY
 # define DEFINE_ENT(h,nm)						      \
-	    { #h"_get"#nm"ent_r", _nss_##h##_get##nm##ent_r },	      \
-	    { #h"_end"#nm"ent", _nss_##h##_end##nm##ent },	      \
+	    { #h"_get"#nm"ent_r", _nss_##h##_get##nm##ent_r },		      \
+	    { #h"_end"#nm"ent", _nss_##h##_end##nm##ent },		      \
 	    { #h"_set"#nm"ent", _nss_##h##_set##nm##ent },
 # define DEFINE_GET(h,nm)						      \
 	    { #h"_get"#nm"_r", _nss_##h##_get##nm##_r },
