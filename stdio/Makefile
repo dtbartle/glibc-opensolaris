@@ -56,8 +56,8 @@ mpn-headers = longlong.h gmp.h gmp-impl.h gmp-mparam.h asm-syntax.h
 routines := $(strip $(routines) $(mpn-routines))	\
 	    dbl2mpn ldbl2mpn				\
 	    mpn2flt mpn2dbl mpn2ldbl
-aux	:= errlist siglist defs glue mp_clz_tab
-distribute = $(mpn-headers) mpn-copy.mk _itoa.h
+aux	:= errlist siglist defs glue mp_clz_tab fpioconst 
+distribute = $(mpn-headers) mpn-copy.mk _itoa.h fpioconst.h
 
 tests := tst-printf tstscanf test_rdwr test-popen tstgetln test-fseek \
 	 temptest tst-fileno xbug errnobug \
