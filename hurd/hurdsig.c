@@ -890,10 +890,10 @@ signal_allowed (int signo, mach_port_t refport)
 /* Implement the sig_post RPC from <hurd/msg.defs>;
    sent when someone wants us to get a signal.  */
 kern_return_t
-_S_sig_post (mach_port_t me,
-	     mach_port_t reply_port, mach_msg_type_name_t reply_port_type,
-	     int signo,
-	     mach_port_t refport)
+_S_msg_sig_post (mach_port_t me,
+		 mach_port_t reply_port, mach_msg_type_name_t reply_port_type,
+		 int signo,
+		 mach_port_t refport)
 {
   error_t err;
 
@@ -913,11 +913,11 @@ _S_sig_post (mach_port_t me,
    sent when the debugger wants us to really get a signal
    even if we are traced.  */
 kern_return_t
-_S_sig_post_untraced (mach_port_t me,
-		      mach_port_t reply_port,
-		      mach_msg_type_name_t reply_port_type,
-		      int signo,
-		      mach_port_t refport)
+_S_msg_sig_post_untraced (mach_port_t me,
+			  mach_port_t reply_port,
+			  mach_msg_type_name_t reply_port_type,
+			  int signo,
+			  mach_port_t refport)
 {
   error_t err;
 
