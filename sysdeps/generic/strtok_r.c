@@ -1,6 +1,6 @@
-/* Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+/* Reentrant string tokenizer.  Generic version.
+Copyright (C) 1991, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
-Contributed by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.
 
 The GNU C Library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public License as
@@ -17,48 +17,58 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
-#include <wchar.h>
 #include <errno.h>
+#include <string.h>
 
 
-/* Parse WCS into tokens separated by characters in DELIM.  If WCS is
-   NULL, the last string wcstok() was called with is used.  */
-wchar_t *
-wcstok (wcs, delim, ptr)
-     wchar_t *wcs;
-     const wchar_t *delim;
-     wchar_t **save_ptr;
+/* Parse S into tokens separated by characters in DELIM.
+   If S is NULL, the saved pointer in SAVE_PTR is used as
+   the next starting point.  For example:
+	char s[] = "-abc-=-def";
+	char *sp;
+	x = strtok_r(s, "-", &sp);	// x = "abc", sp = "=-def"
+	x = strtok_r(NULL, "-=", &sp);	// x = "def", sp = NULL
+	x = strtok_r(NULL, "=", &sp);	// x = NULL
+		// s = "abc\0-def\0"
+*/
+char *
+strtok_r (s, delim, save_ptr)
+     char *s;
+     const char *delim;
+     char **save_ptr;
 {
-  wchar_t *result;
+  char *token;
 
-  if (wcs == NULL)
-    if (*save_ptr == NULL)
-      {
-	errno = EINVAL;
-	return NULL;
-      }
-    else
-      wcs = *save_ptr;
+  if (s == NULL)
+    {
+      if (*save_ptr == NULL)
+	{
+	  errno = EINVAL;
+	  return NULL;
+	}
+      else
+	s = *save_ptr;
+    }
 
   /* Scan leading delimiters.  */
-  wcs += wcsspn (wcs, delim);
-  if (*wcs == L'\0')
+  s += strspn (s, delim);
+  if (*s == '\0')
     {
       *save_ptr = NULL;
       return NULL;
     }
 
-  /* Find the end of the token.	 */
-  result = wcs;
-  wcs = wcspbrk (result, delim);
-  if (wcs == NULL)
-    /* This token finishes the string.	*/
+  /* Find the end of the token.  */
+  token = s;
+  s = strpbrk (token, delim);
+  if (s == NULL)
+    /* This token finishes the string.  */
     *save_ptr = NULL;
   else
     {
       /* Terminate the token and make *SAVE_PTR point past it.  */
-      *wcs = L'\0';
-      *save_ptr = wcs + 1;
+      *s = '\0';
+      *save_ptr = s + 1;
     }
-  return result;
+  return token;
 }
