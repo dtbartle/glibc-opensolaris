@@ -72,7 +72,7 @@ main (int argc, char *argv[])
 		tests[n].n, tests[n].str);
     }
 
-  if (swprintf (buf, nbuf, L"%.0s",L"foo") != 0
+  if (swprintf (buf, nbuf, L"%.0s", "foo") != 0
       || wcslen (buf) != 0)
     {
       printf ("swprintf (buf, %Zu, L\"%%.0s\", \"foo\") create some output\n",
