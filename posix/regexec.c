@@ -176,16 +176,18 @@ re_match (buffer, string, length, start, regs)
     struct re_registers *regs;
 {
   reg_errcode_t result;
-  int i, nregs, rval, eflags = 0;
+  int i, tmp_nregs, nregs, rval, eflags = 0;
   regmatch_t *pmatch;
 
   eflags |= (buffer->not_bol) ? REG_NOTBOL : 0;
   eflags |= (buffer->not_eol) ? REG_NOTEOL : 0;
 
   /* We need at least 1 register.  */
-  nregs = ((regs == NULL) ? 1
-           : ((regs->num_regs > buffer->re_nsub) ? buffer->re_nsub + 1
-              : regs->num_regs + 1));
+  tmp_nregs = ((buffer->no_sub || regs == NULL || regs->num_regs < 1) ? 1
+               : regs->num_regs);
+  nregs = ((tmp_nregs < buffer->re_nsub + 1
+            && buffer->regs_allocated == REGS_FIXED) ? tmp_nregs
+           : buffer->re_nsub + 1);
   pmatch = re_malloc (regmatch_t, nregs);
   if (pmatch == NULL)
     return -2;
@@ -200,8 +202,7 @@ re_match (buffer, string, length, start, regs)
         { /* No.  So allocate them with malloc.  We need one
              extra element beyond `num_regs' for the `-1' marker
              GNU code uses.  */
-          regs->num_regs = ((RE_NREGS > buffer->re_nsub + 1) ? RE_NREGS
-                            : buffer->re_nsub + 1);
+          regs->num_regs = buffer->re_nsub + 1;
           regs->start = re_malloc (regoff_t, regs->num_regs);
           regs->end = re_malloc (regoff_t, regs->num_regs);
           if (regs->start == NULL || regs->end == NULL)
@@ -238,7 +239,9 @@ re_match (buffer, string, length, start, regs)
   /* Restore registers.  */
   if (regs != NULL)
     {
-      for (i = 0; i <= nregs; ++i)
+      int max_regs = ((regs->num_regs < buffer->re_nsub + 1) ? regs->num_regs
+                      : buffer->re_nsub + 1);
+      for (i = 0; i < max_regs; ++i)
         {
           regs->start[i] = pmatch[i].rm_so;
           regs->end[i] = pmatch[i].rm_eo;
@@ -303,7 +306,7 @@ re_search (bufp, string, size, startpos, range, regs)
      struct re_registers *regs;
 {
   reg_errcode_t result;
-  int i, nregs, real_range, rval, eflags = 0;
+  int i, tmp_nregs, nregs, real_range, rval, eflags = 0;
   regmatch_t *pmatch;
 
   eflags |= (bufp->not_bol) ? REG_NOTBOL : 0;
@@ -314,10 +317,14 @@ re_search (bufp, string, size, startpos, range, regs)
     return -1;
 
   /* We need at least 1 register.  */
-  nregs = ((regs == NULL) ? 1
-           : ((regs->num_regs > bufp->re_nsub) ? bufp->re_nsub + 1
-              : regs->num_regs + 1));
+  tmp_nregs = ((bufp->no_sub || regs == NULL || regs->num_regs < 1) ? 1
+               : regs->num_regs);
+  nregs = ((tmp_nregs < bufp->re_nsub + 1
+            && bufp->regs_allocated == REGS_FIXED) ? tmp_nregs
+           : bufp->re_nsub + 1);
   pmatch = re_malloc (regmatch_t, nregs);
+  if (BE (pmatch == NULL, 0))
+    return -2;
 
   /* Correct range if we need.  */
   real_range = ((startpos + range > size) ? size - startpos
@@ -338,8 +345,7 @@ re_search (bufp, string, size, startpos, range, regs)
         { /* No.  So allocate them with malloc.  We need one
              extra element beyond `num_regs' for the `-1' marker
              GNU code uses.  */
-          regs->num_regs = ((RE_NREGS > bufp->re_nsub + 1) ? RE_NREGS
-                            : bufp->re_nsub + 1);
+          regs->num_regs = bufp->re_nsub + 1;
           regs->start = re_malloc (regoff_t, regs->num_regs);
           regs->end = re_malloc (regoff_t, regs->num_regs);
           if (regs->start == NULL || regs->end == NULL)
@@ -376,7 +382,9 @@ re_search (bufp, string, size, startpos, range, regs)
   /* Restore registers.  */
   if (regs != NULL)
     {
-      for (i = 0; i <= bufp->re_nsub; ++i)
+      int max_regs = ((regs->num_regs < bufp->re_nsub + 1) ? regs->num_regs
+                      : bufp->re_nsub + 1);
+      for (i = 0; i < max_regs; ++i)
         {
           regs->start[i] = pmatch[i].rm_so;
           regs->end[i] = pmatch[i].rm_eo;
