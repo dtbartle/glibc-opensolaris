@@ -134,7 +134,7 @@ extern char *tzname[];
    add one for integer division truncation;
    add one more for a minus sign if t is signed.  */
 #define INT_STRLEN_BOUND(t) \
-  ((sizeof (t) * CHAR_BIT - TYPE_SIGNED (t)) * 302 / 100 + 1 + TYPE_SIGNED (t))
+ ((sizeof (t) * CHAR_BIT - TYPE_SIGNED (t)) * 302 / 1000 + 1 + TYPE_SIGNED (t))
 
 #define TM_YEAR_BASE 1900
 
