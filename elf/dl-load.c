@@ -149,6 +149,7 @@ local_strdup (const char *s)
 size_t
 _dl_dst_count (const char *name, int is_path)
 {
+  const char *const start = name;
   size_t cnt = 0;
 
   do
@@ -159,14 +160,20 @@ _dl_dst_count (const char *name, int is_path)
 
 	 Note that it is no bug that the strings in the first two `strncmp'
 	 calls are longer than the sequence which is actually tested.  */
-      if ((((!__libc_enable_secure
-	     && strncmp (&name[1], "ORIGIN}", 6) == 0 && (len = 7) != 0)
+      if ((((strncmp (&name[1], "ORIGIN}", 6) == 0
+	     && (!__libc_enable_secure
+		 || ((name[7] == '\0' || (is_path && name[7] == ':'))
+		     && (name == start || (is_path && name[-1] == ':'))))
+	     && (len = 7) != 0)
 	    || (strncmp (&name[1], "PLATFORM}", 8) == 0 && (len = 9) != 0))
 	   && (name[len] == '\0' || name[len] == '/'
 	       || (is_path && name[len] == ':')))
 	  || (name[1] == '{'
-	      && ((!__libc_enable_secure
-		   && strncmp (&name[2], "ORIGIN}", 7) == 0 && (len = 9) != 0)
+	      && ((strncmp (&name[2], "ORIGIN}", 7) == 0
+		   && (!__libc_enable_secure
+		       || ((name[9] == '\0' || (is_path && name[9] == ':'))
+			   && (name == start || (is_path && name[-1] == ':'))))
+		   && (len = 9) != 0)
 		  || (strncmp (&name[2], "PLATFORM}", 9) == 0
 		      && (len = 11) != 0))))
 	++cnt;
@@ -183,6 +190,7 @@ char *
 _dl_dst_substitute (struct link_map *l, const char *name, char *result,
 		    int is_path)
 {
+  const char *const start = name;
   char *last_elem, *wp;
 
   /* Now fill the result path.  While copying over the string we keep
@@ -210,7 +218,12 @@ _dl_dst_substitute (struct link_map *l, const char *name, char *result,
 			  && (len = 11) != 0))))
 	    {
 	      repl = ((len == 7 || name[2] == 'O')
-		      ? (__libc_enable_secure ? NULL : l->l_origin)
+		      ? (__libc_enable_secure
+			 && ((name[len] != '\0'
+			      && (!is_path || name[len] != ':'))
+			     || (name != start
+				 && (!is_path || name[-1] != ':')))
+			 ? NULL : l->l_origin)
 		      : _dl_platform);
 
 	      if (repl != NULL && repl != (const char *) -1)
