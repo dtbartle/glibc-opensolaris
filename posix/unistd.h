@@ -270,7 +270,7 @@ extern int execlp __P ((__const char *__file, ...));
 
 
 /* Terminate program execution with the low-order 8 bits of STATUS.  */
-extern __NORETURN void _exit __P ((int __status));
+extern void _exit __P ((int __status)) __attribute__ ((__noreturn__));
 
 
 /* Get the `_PC_*' symbols for the NAME argument to `pathconf' and `fpathconf';
@@ -304,24 +304,22 @@ extern __pid_t getpid __P ((void));
 extern __pid_t __getppid __P ((void));
 extern __pid_t getppid __P ((void));
 
-/* Get the process group ID of process PID.  */
-extern __pid_t __getpgrp __P ((__pid_t __pid));
-
-#ifndef	__FAVOR_BSD
 /* Get the process group ID of the calling process.  */
 extern __pid_t getpgrp __P ((void));
-#else /* Favor BSD.  */
-#define	getpgrp(pid)	__getpgrp(pid)
-#endif
 
 /* Set the process group ID of the process matching PID to PGID.
    If PID is zero, the current process's process group ID is set.
    If PGID is zero, the process ID of the process is used.  */
-extern int __setpgrp __P ((__pid_t __pid, __pid_t __pgid));
 extern int setpgid __P ((__pid_t __pid, __pid_t __pgid));
 
+/* Get the process group ID of process PID.  */
+extern __pid_t __getpgid __P ((__pid_t __pid));
+#ifdef __USE_GNU
+extern __pid_t getpgid __P ((__pid_t __pid));
+#endif
+
 #ifdef	__USE_BSD
-/* Set the process group of PID to PGRP.  */
+/* Another name for `setpgid'.  */
 extern int setpgrp __P ((__pid_t __pid, __pid_t __pgrp));
 #endif /* Use BSD.  */
 
