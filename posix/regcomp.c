@@ -724,7 +724,6 @@ re_compile_internal (preg, pattern, length, syntax)
       dfa = re_realloc (preg->buffer, re_dfa_t, 1);
       if (dfa == NULL)
 	return REG_ESPACE;
-      memset (dfa, '\0', sizeof (re_dfa_t));
       preg->allocated = sizeof (re_dfa_t);
     }
   preg->buffer = (unsigned char *) dfa;
@@ -781,6 +780,9 @@ init_dfa (dfa, pat_len)
      int pat_len;
 {
   int table_size;
+
+  memset (dfa, '\0', sizeof (re_dfa_t));
+
   dfa->nodes_alloc = pat_len + 1;
   dfa->nodes = re_malloc (re_token_t, dfa->nodes_alloc);
 
