@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -38,12 +38,6 @@ DEFUN(__setitimer, (which, new, old),
   errno = ENOSYS;
   return -1;
 }
+stub_warning (setitimer)
 
-
-#ifdef	 HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
-stub_warning(__setitimer);
-
-#endif	/* GNU stabs.  */
+weak_alias (__setitimer, setitimer)
