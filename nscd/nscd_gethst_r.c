@@ -216,9 +216,9 @@ nscd_gethst_r (const char *key, size_t keylen, request_type type,
       n = 2;
 
       /* These things must be aligned or ntohl will cause havoc.  */
-      align = ((__alignof__ (char *) - (cp - ((char *) 0)))
-	       & (__alignof__ (char *) - 1));
-      cp += align;
+      align1 = ((__alignof__ (char *) - (cp - ((char *) 0)))
+		& (__alignof__ (char *) - 1));
+      cp += align1;
 
       if (type == GETHOSTBYADDR || type == GETHOSTBYNAME)
 	{
