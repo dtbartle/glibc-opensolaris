@@ -43,6 +43,14 @@ do_test (void)
       exit (1);
     }
 
+  pthread_rwlockattr_t rwa;
+
+  if (pthread_rwlockattr_init (&rwa) != 0)
+    {
+      puts ("rwlockattr_init failed");
+      exit (1);
+    }
+
   /* XXX Remove if default value is clear.  */
   pthread_attr_setinheritsched (&a, PTHREAD_INHERIT_SCHED);
   pthread_attr_setschedpolicy (&a, SCHED_OTHER);
@@ -173,6 +181,27 @@ contentionscope changed to %d by invalid setscope call\n", s);
 	    {
 	      printf ("\
 pshared changed to %d by invalid mutexattr_setpshared call\n", s);
+	      exit (1);
+	    }
+
+	  e = pthread_rwlockattr_setpshared (&rwa, r);
+
+	  if (e == 0)
+	    {
+	      printf ("rwlockattr_setpshared with value %ld succeeded\n", r);
+	      exit (1);
+	    }
+
+	  if (pthread_rwlockattr_getpshared (&rwa, &s) != 0)
+	    {
+	      puts ("rwlockattr_getpshared failed");
+	      exit (1);
+	    }
+
+	  if (s != PTHREAD_PROCESS_PRIVATE)
+	    {
+	      printf ("\
+pshared changed to %d by invalid rwlockattr_setpshared call\n", s);
 	      exit (1);
 	    }
 	}
