@@ -36,10 +36,11 @@ static char rcsid[] = "$NetBSD: $";
 	int32_t se,hx,lx;
 	GET_LDOUBLE_WORDS(se,hx,lx,x);
 	se = (se & 0x7fff) << 1;
-	lx |= hx;
-	/* The additional &hx is required because Intel's extended format
-	   has the normally implicit 1 explicit present.  Sigh!  */
-	se |= (u_int32_t)((lx|(-lx))&hx)>>31;
+	/* The additional & 0x7fffffff is required because Intel's
+	   extended format has the normally implicit 1 explicit
+	   present.  Sigh!  */
+	lx |= hx & 0x7fffffff;
+	se |= (u_int32_t)(lx|(-lx))>>31;
 	se = 0xfffe - se;
 	return (int)((u_int32_t)(se))>>16;
 }
