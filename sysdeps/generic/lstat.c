@@ -20,10 +20,12 @@ Cambridge, MA 02139, USA.  */
 #include <errno.h>
 #include <stddef.h>
 #include <sys/stat.h>
-#include <gnu-stabs.h>
 
-function_alias (__lstat, __stat, int, (file, buf),
-		DEFUN(__lstat, (file, buf),
-		      CONST char *file AND struct stat *buf))
+int
+DEFUN(__lstat, (file, buf),
+      CONST char *file AND struct stat *buf)
+{
+  return __stat (file, buf);
+}
 
 weak_alias (__lstat, lstat)
