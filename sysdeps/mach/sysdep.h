@@ -35,6 +35,7 @@ Cambridge, MA 02139, USA.  */
    bogons arriving on it don't foul up future RPCs.  */
 
 #ifndef ASSEMBLER
+#define FATAL_PREPARE_INCLUDE <mach/mig_support.h>
 #define FATAL_PREPARE __mig_dealloc_reply_port (MACH_PORT_NULL)
 #endif
 
