@@ -45,5 +45,5 @@ DEFUN(psignal, (sig, s), int sig AND register CONST char *s)
   if (sig >= 0 && sig < NSIG)
     (void) fprintf (stderr, "%s%s%s\n", s, colon, _(_sys_siglist[sig]));
   else
-    (void) fprintf (stderr, _"%s%sUnknown signal %d\n"), s, colon, sig);
+    (void) fprintf (stderr, _("%s%sUnknown signal %d\n"), s, colon, sig);
 }
