@@ -99,7 +99,6 @@
    names as their own. Because these are device dependent it is a good
    idea _NOT_ to issue them to random objects and hope.  */
 
-#define SIOCPROTOPRIVATE	0x89E0	/* to 89EF */
 #define SIOCDEVPRIVATE 		0x89F0	/* to 89FF */
 
 /*
