@@ -371,8 +371,6 @@ elf_machine_rel (struct link_map *map, const Elf32_Rel *reloc,
 						   refsym->st_size));
 	  break;
 	default:
-	  /* We add these checks in the version to relocate ld.so only
-	     if we are still debugging.  */
 	  _dl_reloc_bad_type (map, r_type, 0);
 	  break;
 	}
