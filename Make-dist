@@ -205,7 +205,7 @@ endif
 configure: configure.in aclocal.m4; $(autoconf-it)
 %/configure: %/configure.in aclocal.m4; $(autoconf-it)
 
-dist: $(tardir).tar.gz
+dist: $(tardir).tar.bz2
 
 subdir_dist: dist.tar
 dist.tar: README $(tardir) $(+tsrcs)
@@ -222,6 +222,9 @@ $(tardir).tar: dist.tar subdir_dist
 
 %.gz: %
 	gzip -9 -v -c $< > $@
+
+%.bz2: %
+	bzip2 -9 -v -c $< > $@
 
 foo:=$(shell echo subdirs=$(subdirs) >&2)
 dist-subdirs := $(addprefix dist-,$(subdirs)) # dist-manual
