@@ -305,6 +305,38 @@ johab_sym_hanja_to_ucs (uint_fast32_t idx, uint_fast32_t c1, uint_fast32_t c2)
       *outptr++ = ch;							      \
     else								      \
       {									      \
+	if (ch >= 0xac00 && ch <= 0xd7a3)				      \
+	  {								      \
+	    ch -= 0xac00;						      \
+									      \
+	    ch = (init_to_bit[ch / 588]	  /* 21 * 28 = 588 */		      \
+		  + mid_to_bit[(ch / 28) % 21]/* (ch % (21 * 28)) / 28 */     \
+		  + final_to_bit[ch %  28]);  /* (ch % (21 * 28)) % 28 */     \
+									      \
+	    if (NEED_LENGTH_TEST && outptr + 2 > outend)		      \
+	      {								      \
+		result = GCONV_FULL_OUTPUT;				      \
+		break;							      \
+	      }								      \
+									      \
+	    *outptr++ = ch / 256;					      \
+	    *outptr++ = ch % 256;					      \
+	  }								      \
+	/* KS C 5601-1992 Annex 3 regards  0xA4DA(Hangul Filler : U3164)      \
+	   as symbol */							      \
+	else if (ch >= 0x3131 && ch <= 0x3163)				      \
+	  {								      \
+	    ch = jamo_from_ucs_table[ch - 0x3131];			      \
+									      \
+	    if (NEED_LENGTH_TEST && outptr + 2 > outend)		      \
+	      {								      \
+		result = GCONV_FULL_OUTPUT;				      \
+		break;							      \
+	      }								      \
+									      \
+	    *outptr++ = ch / 256;					      \
+	    *outptr++ = ch % 256;					      \
+	  }								      \
 	if ((ch >= 0x4e00 && ch <= 0x9fa5) || (ch >= 0xf900 && ch <= 0xfa0b)) \
 	  {								      \
 	    size_t written;						      \
@@ -334,7 +366,7 @@ johab_sym_hanja_to_ucs (uint_fast32_t idx, uint_fast32_t c1, uint_fast32_t c2)
 									      \
 	    outptr += 2;						      \
 	  }								      \
-	else if (0) /* XXX */						      \
+	else								      \
 	  {								      \
 	    size_t written;						      \
 									      \
@@ -362,35 +394,6 @@ johab_sym_hanja_to_ucs (uint_fast32_t idx, uint_fast32_t c1, uint_fast32_t c2)
 	    outptr[0] += 0xe0;						      \
 									      \
 	    outptr += 2;						      \
-	  }								      \
-	else								      \
-	  {								      \
-	    if (ch >= 0xac00 && ch <= 0xd7a3)				      \
-	      {								      \
-		ch -= 0xac00;						      \
-									      \
-		ch = (init_to_bit[ch / 588]	  /* 21 * 28 = 588 */	      \
-		      + mid_to_bit[(ch / 28) % 21]/* (ch % (21 * 28)) / 28 */ \
-		      + final_to_bit[ch %  28]);  /* (ch % (21 * 28)) % 28 */ \
-	      }								      \
-	    /* KS C 5601-1992 Annex 3 regards  0xA4DA(Hangul Filler : U3164)  \
-	       as symbol */						      \
-	    else if (ch >= 0x3131 && ch <= 0x3163)			      \
-	      ch = jamo_from_ucs_table[ch - 0x3131];			      \
-	    else							      \
-	      {								      \
-		result = GCONV_ILLEGAL_INPUT;				      \
-		break;							      \
-	      }								      \
-									      \
-	    if (NEED_LENGTH_TEST && outptr + 2 > outend)		      \
-	      {								      \
-		result = GCONV_FULL_OUTPUT;				      \
-		break;							      \
-	      }								      \
-									      \
-	    *outptr++ = ch / 256;					      \
-	    *outptr++ = ch % 256;					      \
 	  }								      \
       }									      \
 									      \
