@@ -34,10 +34,6 @@ Cambridge, MA 02139, USA.  */
 #define	LONGLONG	long
 #endif
 
-#ifdef USE_IN_LIBIO
-# include <libioP.h>
-# include <libio.h>
-
 /* Those are flags in the conversion format. */
 # define LONG		0x01	/* l: long or double */
 # define LONGDBL	0x02	/* L: long long or long double */
@@ -47,6 +43,10 @@ Cambridge, MA 02139, USA.  */
 # define NOSKIP		0x20	/* do not skip blanks */
 # define WIDTH		0x40	/* width */
 
+
+#ifdef USE_IN_LIBIO
+# include <libioP.h>
+# include <libio.h>
 
 # define va_list	_IO_va_list
 # define ungetc(c, s)	_IO_ungetc (c, s)
@@ -111,9 +111,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
   register int do_assign;	/* Whether to do an assignment.  */
   register int width;		/* Maximum field width.  */
   int group_flag;		/* %' modifier flag.  */
-#ifdef USE_IN_LIBIO
   int flags;			/* Trace flags for current format element.  */
-#endif
 
   /* Type modifiers.  */
   int is_short, is_long, is_long_double;
@@ -145,6 +143,10 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
   /* Character-buffer pointer.  */
   register char *str, **strptr;
   size_t strsize;
+  /* We must not react on white spaces immediately because they can
+     possibly be matched even if in the input stream no character is
+     available anymore.  */
+  int skip_space = 0;
   /* Workspace.  */
   char *tw;			/* Temporary pointer.  */
   char *wp = NULL;		/* Workspace.  */
@@ -220,27 +222,37 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
       fc = *f++;
       if (fc != '%')
 	{
+	  /* Remember to skip spaces.  */
+	  if (isspace (fc))
+	    {
+	      skip_space = 1;
+	      continue;
+	    }
+
 	  /* Characters other than format specs must just match.  */
 	  if (c == EOF)
 	    input_error ();
-	  if (isspace (fc))
+
+	  /* We saw an white space as the last character in the format
+	     string.  Now it's time to skip all leading white
+	     spaces.  */
+	  if (skip_space)
 	    {
-	      /* Whitespace characters match any amount of whitespace.  */
 	      while (isspace (c))
-		inchar ();
-	      continue;
+		(void) inchar ();
+	      skip_space = 0;
 	    }
+
 	  else if (c == fc)
 	    (void) inchar ();
 	  else
 	    conv_error ();
+
 	  continue;
 	}
 
-#ifdef USE_IN_LIBIO
-      /* That is the start of the coversion string. */
+      /* This is the start of the conversion string. */
       flags = 0;
-#endif
 
       /* Initialize state of modifiers.  */
       argpos = 0;
@@ -273,9 +285,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	switch (*f++)
 	  {
 	  case '*':
-#ifdef USE_IN_LIBIO
 	    flags = SUPPRESS;
-#endif
 	    do_assign = 0;
 	    break;
 	  case '\'':
@@ -283,11 +293,9 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	    break;
 	  }
 
-#ifdef USE_IN_LIBIO
       /* We have seen width. */
       if (isdigit (*f))
 	flags |= WIDTH;
-#endif
 
       /* Find the maximum field width.  */
       width = 0;
@@ -306,44 +314,36 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	  {
 	  case 'h':
 	    /* int's are short int's.  */
-#ifdef USE_IN_LIBIO
 	    if (flags & ~(SUPPRESS | WIDTH))
 	      /* Signal illegal format element.  */
 	      conv_error ();
 	    flags |= SHORT;
-#endif
 	    is_short = 1;
 	    break;
 	  case 'l':
 	    if (is_long)
 	      {
 		/* A double `l' is equivalent to an `L'.  */
-#ifdef USE_IN_LIBIO
-		if ((flags & ~(SUPPRESS | WIDTH)) && (flags & LONGDBL))
+		if ((flags & ~(SUPPRESS | WIDTH)))
 		  conv_error ();
 		flags &= ~LONG;
 		flags |= LONGDBL;
-#endif
 		is_longlong = 1;
 	      }
 	    else
 	      {
 		/* int's are long int's.  */
-#ifdef USE_IN_LIBIO
 		flags |= LONG;
-#endif
 		is_long = 1;
 	      }
 	    break;
 	  case 'q':
 	  case 'L':
 	    /* double's are long double's, and int's are long long int's.  */
-#ifdef USE_IN_LIBIO
 	    if (flags & ~(SUPPRESS | WIDTH))
 	      /* Signal illegal format element.  */
 	      conv_error ();
 	    flags |= LONGDBL;
-#endif
 	    is_long_double = 1;
 	    break;
 	  case 'a':
@@ -359,10 +359,14 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 
       /* Find the conversion specifier.  */
       fc = *f++;
-      if (fc != '[' && fc != 'c' && fc != 'n')
-	/* Eat whitespace.  */
-	while (isspace (c))
-	  (void) inchar ();
+      if (skip_space || (fc != '[' && fc != 'c' && fc != 'n'))
+	{
+	  /* Eat whitespace.  */
+	  while (isspace (c))
+	    (void) inchar ();
+	  skip_space = 0;
+	}
+
       switch (fc)
 	{
 	case '%':	/* Must match a literal '%'.  */
@@ -448,7 +452,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 			    {						      \
 			      /* We lose.  Oh well.			      \
 				 Terminate the string and stop converting,    \
-				 so at least we don't swallow any input.  */  \
+				 so at least we don't skip any input.  */  \
 			      (*strptr)[strsize] = '\0';		      \
 			      ++done;					      \
 			      conv_error ();				      \
@@ -743,6 +747,12 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	  goto number;
 	}
     }
+
+  /* The last thing we saw int the format string was a white space.
+     Consume the last white spaces.  */
+  if (skip_space)
+    while (isspace (c))
+      (void) inchar ();
 
   return ((c == EOF || ungetc (c, s)), done);
 }
