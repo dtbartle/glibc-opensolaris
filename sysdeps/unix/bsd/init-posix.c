@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -32,9 +32,5 @@ DEFUN_VOID(__init_posix)
 }
 
 #ifdef	HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
 text_set_element(__libc_subinit, __init_posix);
-
 #endif
