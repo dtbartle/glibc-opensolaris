@@ -55,6 +55,10 @@ unsigned int error_message_count;
    function without parameters instead.  */
 void (*error_print_progname) () = NULL;
 
+#ifdef _LIBC
+#define program_name program_invocation_name
+#endif
+
 /* The calling program should define program_name and set it to the
    name of the executing program.  */
 extern char *program_name;
