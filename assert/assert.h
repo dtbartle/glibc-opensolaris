@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -56,28 +56,31 @@ Cambridge, MA 02139, USA.  */
 __BEGIN_DECLS
 
 /* This prints an "Assertion failed" message and aborts.  */
-extern __NORETURN int __assert_fail __P ((__const char *__assertion,
-					  __const char *__file,
-					  unsigned int __line,
-					  __const char *__function));
+extern void __assert_fail __P ((__const char *__assertion,
+				__const char *__file,
+				unsigned int __line,
+				__const char *__function))
+     __attribute__ ((__noreturn__));
 
 /* Likewise, but prints the error text for ERRNUM.  */
-extern __NORETURN int __assert_perror_fail __P ((int __errnum,
-						 __const char *__file,
-						 unsigned int __line,
-						 __const char *__function));
+extern void __assert_perror_fail __P ((int __errnum,
+				       __const char *__file,
+				       unsigned int __line,
+				       __const char *__function))
+     __attribute__ ((__noreturn__));
 
 __END_DECLS
 
-#define	assert(expr) 							      \
-  ((void) ((expr) || __assert_fail (__STRING(expr),			      \
-				    __FILE__, __LINE__, __ASSERT_FUNCTION)))
+#define	assert(expr)							      \
+  ((void) ((expr) ||							      \
+	   (__assert_fail (__STRING(expr),				      \
+			   __FILE__, __LINE__, __ASSERT_FUNCTION), 0)))
 
 #ifdef	__USE_GNU
 #define assert_perror(errnum)						      \
-  ((void) ((errnum) && __assert_perror_fail ((errnum),			      \
-					     __FILE__, __LINE__,	      \
-					     __ASSERT_FUNCTION)))
+  ((void) ((errnum) && (__assert_perror_fail ((errnum),			      \
+					      __FILE__, __LINE__,	      \
+					      __ASSERT_FUNCTION), 0)))
 #endif
 
 /* Version 2.4 and later of GCC define a magical variable `__PRETTY_FUNCTION__'
