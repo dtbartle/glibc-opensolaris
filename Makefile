@@ -37,12 +37,14 @@ configure: configure.in
 
 include Makeconfig
 
+ifndef avoid-generated
 include $(objpfx)sysd-dirs
 define \n
 
 
 endef
 sysdep-subdirs := $(subst $(\n), ,$(sysdep-subdirs))
+endif
 
 # These are the subdirectories containing the library source.
 +ansi_dirs	:= assert ctype locale math setjmp \
@@ -167,7 +169,7 @@ parent-mostlyclean: common-mostlyclean # common-mostlyclean is in Makerules.
 	-rm -f $(libc.a) $(addprefix $(objpfx),$(install-lib))
 parent-clean: parent-mostlyclean common-clean
 	-rm -f $(addprefix $(common-objpfx),$(common-generated))
-	-rm -f $(addprefix $(+sysdir_pfx),sysd-Makefile sysd-dirs sysdirs)
+	-rm -f $(addprefix $(+sysdir_pfx),sysd-Makefile sysd-dirs sysd-rules)
 
 clean: parent-clean
 # This is done this way rather than having `subdir_clean' be a
@@ -185,7 +187,7 @@ realclean distclean: parent-clean
 # dependency of this target so that libc.a will be removed before the
 # subdirectories are dealt with and so they won't try to remove object
 # files from it when it's going to be removed anyway.
-	@$(MAKE) distclean-1 no_deps=t distclean-1=$@
+	@$(MAKE) distclean-1 no_deps=t distclean-1=$@ avoid-generated=yes
 
 # Subroutine of distclean and realclean.
 distclean-1: subdir_$(distclean-1)
@@ -195,6 +197,7 @@ distclean-1: subdir_$(distclean-1)
 ifdef objdir
 	-rm -f $(objpfx)Makefile
 endif
+	-rm -f $(sysdep-$(distclean-1))
 
 .PHONY: echo_subdirs
 echo_subdirs:;@echo '$(subdirs)'
