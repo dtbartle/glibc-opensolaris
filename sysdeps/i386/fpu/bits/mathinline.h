@@ -87,14 +87,14 @@
 
 #  define isless(x, y) \
      ({ register char __result;						      \
-	__asm__ ("fucompp; fnstsw; sahf; setb %%al"			      \
-		 : "=a" (__result) : "u" (y), "t" (x) : "cc", "st", "st(1)"); \
+	__asm__ ("fucompp; fnstsw; testb $0x45, %%ah; setz %%al"	      \
+		 : "=a" (__result) : "u" (x), "t" (y) : "cc", "st", "st(1)"); \
 	__result; })
 
 #  define islessequal(x, y) \
      ({ register char __result;						      \
-	__asm__ ("fucompp; fnstsw; sahf; setbe %%al"			      \
-		 : "=a" (__result) : "u" (y), "t" (x) : "cc", "st", "st(1)"); \
+	__asm__ ("fucompp; fnstsw; testb $0x05, %%ah; setz %%al"	      \
+		 : "=a" (__result) : "u" (x), "t" (y) : "cc", "st", "st(1)"); \
 	__result; })
 
 #  define islessgreater(x, y) \
