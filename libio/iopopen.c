@@ -104,7 +104,7 @@ typedef struct _IO_proc_file _IO_proc_file;
 static struct _IO_proc_file *proc_file_chain = NULL;
 
 _IO_FILE *
-_IO_proc_open (fp, command, mode)
+_IO_new_proc_open (fp, command, mode)
      _IO_FILE *fp;
      const char *command;
      const char *mode;
@@ -177,7 +177,7 @@ _IO_proc_open (fp, command, mode)
 }
 
 _IO_FILE *
-_IO_popen (command, mode)
+_IO_new_popen (command, mode)
      const char *command;
      const char *mode;
 {
@@ -199,23 +199,19 @@ _IO_popen (command, mode)
   fp = &new_f->fpx.file.file;
   _IO_init (fp, 0);
   _IO_JUMPS (fp) = &_IO_proc_jumps;
-  _IO_file_init (fp);
+  _IO_new_file_init (fp);
 #if  !_IO_UNIFIED_JUMPTABLES
   new_f->fpx.file.vtable = NULL;
 #endif
-  if (_IO_proc_open (fp, command, mode) != NULL)
+  if (_IO_new_proc_open (fp, command, mode) != NULL)
     return fp;
   _IO_un_link (fp);
   free (new_f);
   return NULL;
 }
 
-#ifdef strong_alias
-strong_alias (_IO_popen, popen);
-#endif
-
 int
-_IO_proc_close (fp)
+_IO_new_proc_close (fp)
      _IO_FILE *fp;
 {
   /* This is not name-space clean. FIXME! */
@@ -257,23 +253,40 @@ _IO_proc_close (fp)
 
 struct _IO_jump_t _IO_proc_jumps = {
   JUMP_INIT_DUMMY,
-  JUMP_INIT(finish, _IO_file_finish),
-  JUMP_INIT(overflow, _IO_file_overflow),
-  JUMP_INIT(underflow, _IO_file_underflow),
+  JUMP_INIT(finish, _IO_new_file_finish),
+  JUMP_INIT(overflow, _IO_new_file_overflow),
+  JUMP_INIT(underflow, _IO_new_file_underflow),
   JUMP_INIT(uflow, _IO_default_uflow),
   JUMP_INIT(pbackfail, _IO_default_pbackfail),
-  JUMP_INIT(xsputn, _IO_file_xsputn),
+  JUMP_INIT(xsputn, _IO_new_file_xsputn),
   JUMP_INIT(xsgetn, _IO_default_xsgetn),
-  JUMP_INIT(seekoff, _IO_file_seekoff),
+  JUMP_INIT(seekoff, _IO_new_file_seekoff),
   JUMP_INIT(seekpos, _IO_default_seekpos),
-  JUMP_INIT(setbuf, _IO_file_setbuf),
-  JUMP_INIT(sync, _IO_file_sync),
+  JUMP_INIT(setbuf, _IO_new_file_setbuf),
+  JUMP_INIT(sync, _IO_new_file_sync),
   JUMP_INIT(doallocate, _IO_file_doallocate),
   JUMP_INIT(read, _IO_file_read),
-  JUMP_INIT(write, _IO_file_write),
+  JUMP_INIT(write, _IO_new_file_write),
   JUMP_INIT(seek, _IO_file_seek),
-  JUMP_INIT(close, _IO_proc_close),
+  JUMP_INIT(close, _IO_new_proc_close),
   JUMP_INIT(stat, _IO_file_stat),
   JUMP_INIT(showmanyc, _IO_default_showmanyc),
   JUMP_INIT(imbue, _IO_default_imbue)
 };
+
+#if defined PIC && DO_VERSIONING
+strong_alias (_IO_new_popen, __new_popen)
+default_symbol_version (_IO_new_popen, _IO_popen, GLIBC_2.1);
+default_symbol_version (__new_popen, popen, GLIBC_2.1);
+default_symbol_version (_IO_new_proc_open, _IO_proc_open, GLIBC_2.1);
+default_symbol_version (_IO_new_proc_close, _IO_proc_close, GLIBC_2.1);
+#else
+# ifdef strong_alias
+strong_alias (_IO_new_popen, popen)
+# endif
+# ifdef weak_alias
+weak_alias (_IO_new_popen, _IO_popen)
+weak_alias (_IO_new_proc_open, _IO_proc_open)
+weak_alias (_IO_new_proc_close, _IO_proc_close)
+# endif
+#endif
