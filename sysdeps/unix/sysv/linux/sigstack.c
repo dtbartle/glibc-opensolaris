@@ -61,6 +61,8 @@ sigstack (ss, oss)
 
   return result;
 }
+
+link_warning (gets, "the `sigstack' function is dangerous.  `sigaltstack' should be used instead.")
 #else
 # include <sysdeps/generic/sigstack.c>
 #endif
