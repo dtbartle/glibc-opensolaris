@@ -1216,7 +1216,7 @@ representation @math{d.d@dots{}d@mul{}2^e} (we assume IEEE
 floating-point numbers with base 2) the ULP is represented by
 
 @tex
-$$\frac{|{\mathrm d.d\dots d - (z/2^e)|}{2^{p-1}}$$
+$${|d.d\dots d - (z/2^e)|}\over {2^{p-1}}$$
 @end tex
 @ifnottex
 @smallexample
