@@ -29,60 +29,13 @@ _hurd_fd_read (struct hurd_fd *fd, void *buf, size_t *nbytes)
   char *data;
   mach_msg_type_number_t nread;
 
+  error_t readfd (io_t port)
+    {
+      return __io_read (port, &data, &nread, -1, *nbytes);
+    }
+
   data = buf;
-  err = HURD_FD_PORT_USE
-    (fd,
-     ({
-       do
-	 {
-	   err = __io_read (ctty != MACH_PORT_NULL ? ctty : port,
-			    &data, &nread, -1, *nbytes);
-	   if (ctty != MACH_PORT_NULL && err == EBACKGROUND)
-	     {
-	       /* We are a background job and tried to read from the tty.
-		  We should probably get a SIGTTIN signal.  */
-	       struct hurd_sigstate *ss;
-	       if (_hurd_orphaned)
-		 /* Our process group is orphaned.  Don't stop; just fail.  */
-		 err = EIO;
-	       else
-		 {
-		   ss = _hurd_self_sigstate ();
-		   __spin_lock (&ss->lock);
-		   if (__sigismember (&ss->blocked, SIGTTIN) ||
-		       ss->actions[SIGTTIN].sa_handler == SIG_IGN)
-		     /* We are blocking or ignoring SIGTTIN.  Just fail.  */
-		     err = EIO;
-		   __spin_unlock (&ss->lock);
-		 }
-	       if (err == EBACKGROUND)
-		 {
-		   /* Send a SIGTTIN signal to our process group.
-
-		      We must remember here not to clobber ERR, since
-		      the loop condition below uses it to recall that
-		      we should retry after a stop.  */
-
-		   __USEPORT (CTTYID, _hurd_sig_post (0, SIGTTIN, port));
-		   /* XXX what to do if error here? */
-
-		   /* At this point we should have just run the handler for
-		      SIGTTIN or resumed after being stopped.  Now this is
-		      still a "system call", so check to see if we should
-		      restart it.  */
-		   __spin_lock (&ss->lock);
-		   if (!(ss->actions[SIGTTIN].sa_flags & SA_RESTART))
-		     err = EINTR;
-		   __spin_unlock (&ss->lock);
-		 }
-	     }
-	   /* If the last io_read generated a SIGTTIN,
-	      loop to try again to read some data.  */
-	 } while (err == EBACKGROUND);
-       err;
-     }));
-
-  if (err)
+  if (err = HURD_FD_PORT_USE (fd, _hurd_ctty_input (port, ctty, readfd)))
     return err;
 
   if (data != buf)
