@@ -120,7 +120,7 @@ main (void)
   result |= test_expr ("G.ran", 2);
   result |= test_expr ("G.\\{1\\}ran", 2);
   result |= test_expr ("G.*ran", 3);
-  result = test_expr ("[הבאג]", 0);
+  result |= test_expr ("[הבאג]", 0);
 
   /* Free the resources.  */
   free (umem);
