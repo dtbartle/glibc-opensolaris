@@ -54,6 +54,11 @@ Version 2.1
 * The localedata addon is now part of glibc.
 
 * An implementation of profiling shared libraries was added by Ulrich Drepper.
+
+* Thorsten Kukuk provided an implementation for a caching daemon for NSS
+  (nscd).
+
+* Tim Waugh provided an implementation of the POSIX.2 wordexp function family.
 
 Version 2.0.5
 
