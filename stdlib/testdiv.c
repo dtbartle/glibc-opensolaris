@@ -18,6 +18,7 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 int
 DEFUN_VOID(main)
