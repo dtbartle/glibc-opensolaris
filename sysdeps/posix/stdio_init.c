@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -39,13 +39,6 @@ DEFUN(__stdio_init_stream, (stream), FILE *stream)
   /* Find out what sort of file this is.  */
   if (__fstat (fd, &statb) < 0)
       return;
-
-  if (S_ISFIFO (statb.st_mode))
-    {
-      /* It's a named pipe (FIFO).  Make it unbuffered.  */
-      stream->__userbuf = 1;
-      return;
-    }
 
   if (S_ISCHR (statb.st_mode))
     {
