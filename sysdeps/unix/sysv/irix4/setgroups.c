@@ -1,4 +1,4 @@
-/* Copyright (C) 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1994 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -21,9 +21,11 @@ Cambridge, MA 02139, USA.  */
 #include <sys/types.h>
 #include <grp.h>
 
+extern int __syssgi __P ((int, ...));
+
 /* Set the group set for the current user to GROUPS (N of them).  */
 int
 DEFUN(setgroups, (n, groups), size_t n AND CONST gid_t *groups)
 {
-  return syssgi(SGI_SETGROUPS, n, groups);
+  return __syssgi (SGI_SETGROUPS, n, groups);
 }   
