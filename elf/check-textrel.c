@@ -97,13 +97,15 @@ AB(handle_file) (const char *fname, int fd)
      bit set.  */
   for (cnt = 0; (cnt + 1) * sizeof (E(Dyn)) - 1 < pmemsz; ++cnt)
     {
-      if (dyn[cnt].d_tag == DT_NULL)
+      unsigned int tag = SWAP (dyn[cnt].d_tag);
+
+      if (tag == DT_NULL)
 	/* We reached the end.  */
 	break;
 
-      if (dyn[cnt].d_tag == DT_TEXTREL
-	  || (dyn[cnt].d_tag == DT_FLAGS
-	      && (dyn[cnt].d_un.d_val & DF_TEXTREL) != 0))
+      if (tag == DT_TEXTREL
+	  || (tag == DT_FLAGS
+	      && (SWAP (dyn[cnt].d_un.d_val) & DF_TEXTREL) != 0))
 	{
 	  /* Urgh!  The DSO has text relocations.  */
 	  printf ("%s: text relocations used\n", fname);
