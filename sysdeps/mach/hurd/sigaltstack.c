@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ DEFUN(sigaltstack, (ss, oss),
       CONST struct sigaltstack *argss AND struct sigaltstack *oss)
 {
   struct hurd_sigstate *s;
-  struct sigaltstack ss;
+  struct sigaltstack ss, old;
 
   /* Fault before taking any locks.  */
   if (argss != NULL)
@@ -37,21 +37,26 @@ DEFUN(sigaltstack, (ss, oss),
     *(volatile struct sigaltstack *) oss = *oss;
 
   s = _hurd_self_sigstate ();
+  __spin_lock (&s->lock);
 
   if (argss != NULL &&
       (ss.ss_flags & SA_DISABLE) && (s->sigaltstack.ss_flags & SA_ONSTACK))
     {
       /* Can't disable a stack that is in use.  */
-      __mutex_unlock (&s->lock);
+      __spin_unlock (&s->lock);
       errno = EINVAL;
       return -1;
     }
 
-  if (oss != NULL)
-    *oss = s->sigaltstack;
+  old = s->sigaltstack;
+
   if (argss != NULL)
     s->sigaltstack = ss;
-  __mutex_unlock (&s->lock);
+
+  __spin_unlock (&s->lock);
+
+  if (oss != NULL)
+    *oss = old;
 
   return 0;
 }
