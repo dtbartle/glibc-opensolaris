@@ -74,7 +74,8 @@ extern int __vprintf_chk (int __flag, __const char *__restrict __format,
 
 extern char *__gets_chk (char *__str, size_t) __wur;
 extern char *__REDIRECT (__gets_alias, (char *__str), gets) __wur;
-extern __inline __wur char *
+
+extern __always_inline __wur char *
 gets (char *__str)
 {
   if (__bos (__str) != (size_t) -1)
@@ -87,7 +88,8 @@ extern char *__fgets_chk (char *__restrict __s, size_t __size, int __n,
 extern char *__REDIRECT (__fgets_alias,
 			 (char *__restrict __s, int __n,
 			  FILE *__restrict __stream), fgets) __wur;
-extern __inline __wur char *
+
+extern __always_inline __wur char *
 fgets (char *__restrict __s, int __n, FILE *__restrict __stream)
 {
   if (__bos (__s) != (size_t) -1
@@ -102,7 +104,8 @@ extern char *__fgets_unlocked_chk (char *__restrict __s, size_t __size,
 extern char *__REDIRECT (__fgets_unlocked_alias,
 			 (char *__restrict __s, int __n,
 			  FILE *__restrict __stream), fgets_unlocked) __wur;
-extern __inline __wur char *
+
+extern __always_inline __wur char *
 fgets_unlocked (char *__restrict __s, int __n, FILE *__restrict __stream)
 {
   if (__bos (__s) != (size_t) -1
