@@ -21,10 +21,10 @@ Cambridge, MA 02139, USA.  */
 
 /* This machine-dependent file defines these inline functions.  */
 
-static void elf_machine_rel (Elf32_Addr loadaddr, Elf32_Dyn *info[DT_NUM],
+static void elf_machine_rel (struct link_map *map,
 			     const Elf32_Rel *reloc, 
 			     Elf32_Addr sym_loadaddr, const Elf32_Sym *sym);
-static void elf_machine_rela (Elf32_Addr loadaddr, Elf32_Dyn *info[DT_NUM],
+static void elf_machine_rela (struct link_map *map,
 			      const Elf32_Rela *reloc, 
 			      Elf32_Addr sym_loadaddr, const Elf32_Sym *sym);
 static Elf32_Addr *elf_machine_got (void);
@@ -60,18 +60,18 @@ elf_get_dynamic_info (Elf32_Dyn *dyn, Elf32_Dyn *info[DT_NUM])
 	    info[DT_PLTREL]->d_un.d_val == DT_RELA);
 }
 
-/* Perform the relocations specified by DYNAMIC on the running program
+/* Perform the relocations specified by MAP on the running program
    image.  If LAZY is nonzero, don't relocate PLT entries.  *RESOLVE is
    called to resolve symbol values; it modifies its argument pointer to
    point to the defining symbol, and returns the base load address of the
    defining object.  */
 
 static inline void
-elf_dynamic_relocate (Elf32_Dyn *dynamic[DT_NUM], Elf32_Addr loadaddr,
+elf_dynamic_relocate (struct link_map *map,
 		      int lazy, Elf32_Addr (*resolve) (const Elf32_Sym **))
 {
   const Elf32_Sym *const symtab
-    = (const Elf32_Sym *) dynamic[DT_SYMTAB]->d_un.d_ptr;
+    = (const Elf32_Sym *) map->l_info[DT_SYMTAB]->d_un.d_ptr;
 
   inline Elf32_Addr symvalue (Elf32_Word info, const Elf32_Sym **definer)
     {
@@ -84,36 +84,37 @@ elf_dynamic_relocate (Elf32_Dyn *dynamic[DT_NUM], Elf32_Addr loadaddr,
   /* Perform Elf32_Rel relocations in the section found by RELTAG, SZTAG.  */
   inline void do_rel (Elf32_Word reltag, Elf32_Word sztag)
     {
-      const Elf32_Rel *r = (const Elf32_Rel *) dynamic[reltag]->d_un.d_ptr;
-      const Elf32_Rel *end = &r[dynamic[sztag]->d_un.d_val / sizeof *r];
+      const Elf32_Rel *r = (const Elf32_Rel *) map->l_info[reltag]->d_un.d_ptr;
+      const Elf32_Rel *end = &r[map->l_info[sztag]->d_un.d_val / sizeof *r];
       while (r < end)
 	{
 	  const Elf32_Sym *definer;
 	  Elf32_Addr loadbase = symvalue (r->r_info, &definer);
-	  elf_machine_rel (loadaddr, dynamic, r, loadbase, definer);
+	  elf_machine_rel (map, r, loadbase, definer);
 	  ++r;
 	}
     }
   /* Perform Elf32_Rela relocations in the section found by RELTAG, SZTAG.  */
   inline void do_rela (Elf32_Word reltag, Elf32_Word sztag)
     {
-      const Elf32_Rela *r = (const Elf32_Rela *) dynamic[reltag]->d_un.d_ptr;
-      const Elf32_Rela *end = &r[dynamic[sztag]->d_un.d_val / sizeof *r];
+      const Elf32_Rela *r
+	= (const Elf32_Rela *) map->l_info[reltag]->d_un.d_ptr;
+      const Elf32_Rela *end = &r[map->l_info[sztag]->d_un.d_val / sizeof *r];
       while (r < end)
 	{
 	  const Elf32_Sym *definer;
 	  Elf32_Addr loadbase = symvalue (r->r_info, &definer);
-	  elf_machine_rela (loadaddr, dynamic, r, loadbase, definer);
+	  elf_machine_rela (map, r, loadbase, definer);
 	  ++r;
 	}
     }
 
-  if (dynamic[DT_RELA])
+  if (map->l_info[DT_RELA])
     do_rela (DT_RELA, DT_RELASZ);
-  if (dynamic[DT_REL])
+  if (map->l_info[DT_REL])
     do_rel (DT_REL, DT_RELSZ);
-  if (dynamic[DT_JMPREL] && ! lazy)
+  if (map->l_info[DT_JMPREL] && ! lazy)
     /* Relocate the PLT right now.  */
-    (dynamic[DT_PLTREL]->d_un.d_val == DT_REL ? do_rel : do_rela)
+    (map->l_info[DT_PLTREL]->d_un.d_val == DT_REL ? do_rel : do_rela)
       (DT_JMPREL, DT_PLTRELSZ);
 }
