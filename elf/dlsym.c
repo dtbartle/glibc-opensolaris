@@ -27,8 +27,8 @@ void *
 dlsym (void *handle, const char *name)
 {
   struct link_map *map = handle;
-  Elf32_Addr loadbase;
-  const Elf32_Sym *ref = NULL;
+  ElfW(Addr) loadbase;
+  const ElfW(Sym) *ref = NULL;
   void doit (void)
     {
       struct link_map *scope[2] = { map, NULL };
