@@ -20,4 +20,5 @@
 struct dirent
   {
     char d_name[1];		/* Variable length.  */
+    int d_fileno;
   };
