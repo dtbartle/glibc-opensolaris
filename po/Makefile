@@ -20,9 +20,8 @@
 
 subdir := po
 
-# List of languages that are currently broken (just run msgfmt from
-# GNU gettext 0.10.36 on them to see why)
-BROKEN_LINGUAS = el
+# Add names of the languages with broken .po files here.
+BROKEN_LINGUAS = 
 
 # List of languages for which we have message catalogs of translations.
 ALL_LINGUAS := $(filter-out $(BROKEN_LINGUAS),$(basename $(wildcard *.po)))
