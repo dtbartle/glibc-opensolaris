@@ -987,8 +987,9 @@ __strcat_g (char *__dest, __const char *__src)
 		    __builtin_constant_p (src) && __builtin_constant_p (n)    \
 		    ? (strlen (src) < ((size_t) (n))			      \
 		       ? strcat (__dest, src)				      \
-		       : (memcpy (strchr (__dest, '\0'),		      \
-				  (__const char *) src, n), __dest))	      \
+		       : (*((char *)__mempcpy (strchr (__dest, '\0'),	      \
+					       (__const char *) src, n)) = 0, \
+			   __dest))					      \
 		    : __strncat_g (__dest, src, n); }))
 
 __STRING_INLINE char *__strncat_g (char *__dest, __const char __src[],
