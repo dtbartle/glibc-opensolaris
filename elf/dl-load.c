@@ -277,7 +277,7 @@ expand_dynamic_string_token (struct link_map *l, const char *s)
   size_t total;
   char *result;
 
-  /* Determine the nubmer of DST elements.  */
+  /* Determine the number of DST elements.  */
   cnt = DL_DST_COUNT (s, 1);
 
   /* If we do not have to replace anything simply copy the string.  */
