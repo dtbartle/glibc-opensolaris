@@ -27,7 +27,7 @@
 
 #ifndef atomic_compare_and_exchange_acq
 # define atomic_compare_and_exchange_acq(mem, newval, oldval) \
-  ({ __typeof (__arch_compare_and_exchange_8_acq (mem, newval, oldval))	      \
+  ({ __typeof (__arch_compare_and_exchange_32_acq (mem, newval, oldval))      \
 	 __result;							      \
      if (sizeof (*mem) == 1)						      \
        __result = __arch_compare_and_exchange_8_acq (mem, newval, oldval);    \
