@@ -17,17 +17,17 @@ territory  "India"
 revision   "0.1"
 date       "2003-01-10"
 %
-category  "gj_IN:2000";LC_IDENTIFICATION
-category  "gj_IN:2000";LC_CTYPE
-category  "gj_IN:2000";LC_COLLATE
-category  "gj_IN:2000";LC_TIME
-category  "gj_IN:2000";LC_NUMERIC
-category  "gj_IN:2000";LC_MONETARY
-category  "gj_IN:2000";LC_MESSAGES
-category  "gj_IN:2000";LC_PAPER
-category  "gj_IN:2000";LC_NAME
-category  "gj_IN:2000";LC_ADDRESS
-category  "gj_IN:2000";LC_TELEPHONE
+category  "gu_IN:2000";LC_IDENTIFICATION
+category  "gu_IN:2000";LC_CTYPE
+category  "gu_IN:2000";LC_COLLATE
+category  "gu_IN:2000";LC_TIME
+category  "gu_IN:2000";LC_NUMERIC
+category  "gu_IN:2000";LC_MONETARY
+category  "gu_IN:2000";LC_MESSAGES
+category  "gu_IN:2000";LC_PAPER
+category  "gu_IN:2000";LC_NAME
+category  "gu_IN:2000";LC_ADDRESS
+category  "gu_IN:2000";LC_TELEPHONE
 
 END LC_IDENTIFICATION
 
