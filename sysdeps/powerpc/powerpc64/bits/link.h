@@ -23,11 +23,49 @@
 
 #if __ELF_NATIVE_CLASS == 32
 
-#error "fill in ppc32 data"
+/* Registers for entry into PLT on PPC32.  */
+typedef struct La_ppc32_regs
+{
+  uint64_t lr_reg[8];
+  double lr_fp[8];
+  uint32_t lr_vreg[12][4];
+  uint64_t lr_r1;
+  uint64_t lr_lr;
+} La_ppc32_regs;
+
+/* Return values for calls from PLT on PPC32.  */
+typedef struct La_ppc32_retval
+{
+  uint64_t lrv_r3;
+  uint64_t lrv_r4;
+  double lrv_fp[8];
+  uint32_t lrv_v2[4];
+} La_ppc32_retval;
+
+
+__BEGIN_DECLS
+
+extern Elf32_Addr la_ppc32_gnu_pltenter (Elf32_Sym *__sym,
+					 unsigned int __ndx,
+					 uintptr_t *__refcook,
+					 uintptr_t *__defcook,
+					 La_ppc32_regs *__regs,
+					 unsigned int *__flags,
+					 const char *__symname,
+					 long int *__framesizep);
+extern unsigned int la_ppc32_gnu_pltexit (Elf32_Sym *__sym,
+					  unsigned int __ndx,
+					  uintptr_t *__refcook,
+					  uintptr_t *__defcook,
+					  const La_ppc32_regs *__inregs,
+					  La_ppc32_retval *__outregs,
+					  const char *symname);
+
+__END_DECLS
 
 #else
 
-/* Registers for entry into PLT on x86-64.  */
+/* Registers for entry into PLT on PPC64.  */
 typedef struct La_ppc64_regs
 {
   uint64_t lr_reg[8];
@@ -37,7 +75,7 @@ typedef struct La_ppc64_regs
   uint64_t lr_lr;
 } La_ppc64_regs;
 
-/* Return values for calls from PLT on x86-64.  */
+/* Return values for calls from PLT on PPC64.  */
 typedef struct La_ppc64_retval
 {
   uint64_t lrv_r3;
