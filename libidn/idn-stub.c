@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dlfcn.h>
+#include <gnu/lib-names.h>
 #include <bits/libc-lock.h>
 
 /* Get specification for idna_to_ascii_lz. */
@@ -61,7 +62,7 @@ __idna_to_ascii_lz (const char *input, char **output, int flags)
       /* Retest in case some other thread arrived here at the same time.  */
       if (h == NULL)
 	{
-	  h = __libc_dlopen ("libcidn.so");
+	  h = __libc_dlopen (LIBCIDN_SO);
 
 	  if (h == NULL)
 	    h = (void *) 1l;
