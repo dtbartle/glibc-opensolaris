@@ -2203,6 +2203,9 @@ pow_test (void)
 
   check_eps ("pow (0.7, 1.2) == 0.65180...", FUNC(pow) (0.7, 1.2),
 	     0.65180494056638638188L, CHOOSE(4e-17L, 0, 0));
+
+  check_isnan_exc ("pow (-7.49321e+133, -9.80818e+16) == NaN plus invalid exception",
+		   FUNC(pow) (-7.49321e+133, -9.80818e+16), INVALID_EXCEPTION);
 }
 
 
