@@ -292,6 +292,8 @@ _nl_load_domain (domain_file)
 	    outcharset = (*_nl_current[LC_CTYPE])->values[_NL_ITEM_INDEX (CODESET)].string;
 
 # ifdef _LIBC
+	  outcharset = norm_add_slashes (outcharset);
+	  charset = norm_add_slashes (charset);
 	  if (__gconv_open (outcharset, charset, &domain->conv,
 			    GCONV_AVOID_NOCONV)
 	      != __GCONV_OK)
