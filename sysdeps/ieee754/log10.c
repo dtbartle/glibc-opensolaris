@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ Cambridge, MA 02139, USA.  */
 #include <math.h>
 
 /* Return the base-ten logarithm of X.  */
-__CONSTVALUE double
+double
 DEFUN(log10, (x), double x)
 {
   CONST double inverse_ln10 = 4.3429448190325181667e-1;	/* 1 / log(10) */
