@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -128,7 +128,7 @@ DEFUN(fseek, (stream, offset, whence),
 #endif
       if (o < 0 ?
 	  (-o <= stream->__bufp - stream->__buffer) :
-	  o < stream->__get_limit - stream->__bufp)
+	  o <= stream->__get_limit - stream->__bufp)
 	{
 	  stream->__bufp += o;
 	  return 0;
