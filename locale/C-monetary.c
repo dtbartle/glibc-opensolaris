@@ -27,7 +27,7 @@ const struct locale_data _nl_C_LC_MONETARY =
   {
     { string: "" },
     { string: "" },
-    { string: "" },
+    { string: "." },
     { string: "" },
     { string: "\177" },
     { string: "" },
