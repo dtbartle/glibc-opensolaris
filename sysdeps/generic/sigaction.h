@@ -19,7 +19,7 @@ Cambridge, MA 02139, USA.  */
 /* These definitions match those used by the 4.4 BSD kernel.
    If the operating system has a `sigaction' system call that correctly
    implements the POSIX.1 behavior, there should be a system-dependent
-   version of this file that defines `struct sigaction' and the `__SA_*'
+   version of this file that defines `struct sigaction' and the `SA_*'
    constants appropriately.  */
 
 /* Structure describing the action to be taken when a signal arrives.  */
@@ -36,7 +36,15 @@ struct sigaction
   };
 
 /* Bits in `sa_flags'.  */
-#define	__SA_ONSTACK	0x1	/* Take signal on signal stack.  */
-#define	__SA_RESTART	0x2	/* Don't restart syscall on signal return.  */
-#define	__SA_DISABLE	0x4	/* Disable alternate signal stack.  */
-#define	__SA_NOCLDSTOP	0x8	/* Don't send SIGCHLD when children stop.  */
+#ifdef	__USE_BSD
+#define	SA_ONSTACK	0x1	/* Take signal on signal stack.  */
+#define	SA_RESTART	0x2	/* Don't restart syscall on signal return.  */
+#define	SA_DISABLE	0x4	/* Disable alternate signal stack.  */
+#endif
+#define	SA_NOCLDSTOP	0x8	/* Don't send SIGCHLD when children stop.  */
+
+
+/* Values for the HOW argument to `sigprocmask'.  */
+#define	SIG_BLOCK	1	/* Block signals.  */
+#define	SIG_UNBLOCK	2	/* Unblock signals.  */
+#define	SIG_SETMASK	3	/* Set the set of blocked signals.  */
