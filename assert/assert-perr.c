@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ extern const char *__assert_program_name; /* In assert.c.  */
    	a.c:10: foobar: Unexpected error: Computer bought the farm
    It then aborts program execution via a call to `abort'.  */
 
-__NORETURN int
+void
 __assert_perror_fail (int errnum,
 		      const char *file, unsigned int line,
 		      const char *function)
@@ -48,8 +48,4 @@ __assert_perror_fail (int errnum,
   (void) fflush (stderr);
 
   abort ();
-
-  /* This function never returns, so making it void would make sense,
-     but returning something makes the assert macro easier to write.  */
-  return 0;
 }
