@@ -250,7 +250,8 @@ not correspond to a valid name in ISO 4217"),
   if (monetary->cat == -2 && ! be_quiet && ! nothing)			      \
     error (0, 0, _("%s: field `%s' not defined"),			      \
 	   "LC_MONETARY", #cat);					      \
-  else if ((monetary->cat < min || monetary->cat > max) && !be_quiet)	      \
+  else if ((monetary->cat < min || monetary->cat > max) && !be_quiet	      \
+	   && !nothing)							      \
     error (0, 0, _("\
 %s: value for field `%s' must be in range %d...%d"),			      \
 	   "LC_MONETARY", #cat, min, max)
