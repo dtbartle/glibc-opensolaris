@@ -533,7 +533,7 @@ extern int putw __P ((int __w, FILE *__stream));
 
 
 /* Get a newline-terminated string of finite length from STREAM.  */
-extern char *fgets __P ((char *__s, size_t __n, FILE *__stream));
+extern char *fgets __P ((char *__s, int __n, FILE *__stream));
 
 /* Get a newline-terminated string from stdin, removing the newline.
    DO NOT USE THIS FUNCTION!!  There is no limit on how much it will read.  */
