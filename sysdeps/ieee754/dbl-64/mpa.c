@@ -86,8 +86,8 @@ int  __cr(const mp_no *x, const mp_no *y, int p) {
 
   if      (X[0] > Y[0])  i= 1;
   else if (X[0] < Y[0])  i=-1;
-  else if (X[0] < ZERO ) i= acr(y,x,p);
-  else                   i= acr(x,y,p);
+  else if (X[0] < ZERO ) i= __acr(y,x,p);
+  else                   i= __acr(x,y,p);
 
   return i;
 }
