@@ -17,10 +17,6 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-/* These are the bits used by 4.4 BSD and its derivatives.  On systems
-   (such as GNU) where these facilities are not system services but can be
-   emulated in the C library, these are the definitions we emulate.  */
-
 #ifndef	_SYS_MMAN_H
 
 #define	_SYS_MMAN_H	1
