@@ -50,9 +50,15 @@
 /****************************************************************/
 static void ss32(mp_no *x, mp_no *y, int p) {
   int i;
-  double a,b;
-  static const mp_no mpone = {1,1.0,1.0};
-  mp_no mpt1,mpt2,x2,gor,sum ,mpk={1,1.0};
+  double a;
+#if 0
+  double b;
+  static const mp_no mpone = {1,{1.0,1.0}};
+#endif
+  mp_no mpt1,x2,gor,sum ,mpk={1,{1.0}};
+#if 0
+  mp_no mpt2;
+#endif
   for (i=1;i<=p;i++) mpk.d[i]=0;
 
   mul(x,x,&x2,p);
@@ -74,9 +80,15 @@ static void ss32(mp_no *x, mp_no *y, int p) {
 /**********************************************************************/
 static void cc32(mp_no *x, mp_no *y, int p) {
   int i;
-  double a,b;
-  static const mp_no mpone = {1,1.0,1.0};
-  mp_no mpt1,mpt2,x2,gor,sum ,mpk={1,1.0};
+  double a;
+#if 0
+  double b;
+  static const mp_no mpone = {1,{1.0,1.0}};
+#endif
+  mp_no mpt1,x2,gor,sum ,mpk={1,{1.0}};
+#if 0
+  mp_no mpt2;
+#endif
   for (i=1;i<=p;i++) mpk.d[i]=0;
 
   mul(x,x,&x2,p);
@@ -97,7 +109,7 @@ static void cc32(mp_no *x, mp_no *y, int p) {
 /* c32()   computes both sin(x), cos(x) as Multi precision numbers         */
 /***************************************************************************/
 void __c32(mp_no *x, mp_no *y, mp_no *z, int p) {
-  static const mp_no mpt={1,1.0,2.0}, one={1,1.0,1.0};
+  static const mp_no mpt={1,{1.0,2.0}}, one={1,{1.0,1.0}};
   mp_no u,t,t1,t2,c,s;
   int i;
   cpy(x,&u,p);
@@ -130,9 +142,9 @@ double __sin32(double x, double res, double res1) {
   add(&a,&b,&c,p);
   if (x>0.8)
   { sub(&hp,&c,&a,p);
-    c32(&a,&b,&c,p);
+    __c32(&a,&b,&c,p);
   }
-  else c32(&c,&a,&b,p);     /* b=sin(0.5*(res+res1))  */
+  else __c32(&c,&a,&b,p);     /* b=sin(0.5*(res+res1))  */
   dbl_mp(x,&c,p);           /* c = x                  */
   sub(&b,&c,&a,p);
   /* if a>0 return min(res,res1), otherwise return max(res,res1) */
@@ -154,14 +166,14 @@ double __cos32(double x, double res, double res1) {
   add(&a,&b,&c,p);
   if (x>2.4)
   { sub(&pi,&c,&a,p);
-    c32(&a,&b,&c,p);
+    __c32(&a,&b,&c,p);
     b.d[0]=-b.d[0];
   }
   else if (x>0.8)
        { sub(&hp,&c,&a,p);
-         c32(&a,&c,&b,p);
+         __c32(&a,&c,&b,p);
        }
-  else c32(&c,&b,&a,p);     /* b=cos(0.5*(res+res1))  */
+  else __c32(&c,&b,&a,p);     /* b=cos(0.5*(res+res1))  */
   dbl_mp(x,&c,p);    /* c = x                  */
   sub(&b,&c,&a,p);
              /* if a>0 return max(res,res1), otherwise return min(res,res1) */
@@ -181,9 +193,9 @@ double __mpsin(double x, double dx) {
   dbl_mp(x,&a,p);
   dbl_mp(dx,&b,p);
   add(&a,&b,&c,p);
-  if (x>0.8) { sub(&hp,&c,&a,p); c32(&a,&b,&c,p); }
-  else c32(&c,&a,&b,p);     /* b = sin(x+dx)     */
-  mp_dbl(&b,&y,p);
+  if (x>0.8) { sub(&hp,&c,&a,p); __c32(&a,&b,&c,p); }
+  else __c32(&c,&a,&b,p);     /* b = sin(x+dx)     */
+  __mp_dbl(&b,&y,p);
   return y;
 }
 
@@ -201,10 +213,10 @@ double __mpcos(double x, double dx) {
   add(&a,&b,&c,p);
   if (x>0.8)
   { sub(&hp,&c,&b,p);
-    c32(&b,&a,&c,p);
+    __c32(&b,&a,&c,p);
   }
-  else c32(&c,&a,&b,p);     /* a = cos(x+dx)     */
-  mp_dbl(&a,&y,p);
+  else __c32(&c,&a,&b,p);     /* a = cos(x+dx)     */
+  __mp_dbl(&a,&y,p);
   return y;
 }
 
@@ -219,7 +231,7 @@ int mpranred(double x, mp_no *y, int p)
   number v;
   double t,xn;
   int i,k,n;
-  static const mp_no one = {1,1.0,1.0};
+  static const mp_no one = {1,{1.0,1.0}};
   mp_no a,b,c;
 
   if (ABS(x) < 2.8e14) {
@@ -270,25 +282,25 @@ double mpsin1(double x)
   double y;
   p=32;
   n=mpranred(x,&u,p);               /* n is 0, 1, 2 or 3 */
-  c32(&u,&c,&s,p);
+  __c32(&u,&c,&s,p);
   switch (n) {                      /* in which quarter of unit circle y is*/
   case 0:
-    mp_dbl(&s,&y,p);
+    __mp_dbl(&s,&y,p);
     return y;
     break;
 
   case 2:
-    mp_dbl(&s,&y,p);
+    __mp_dbl(&s,&y,p);
     return -y;
     break;
 
   case 1:
-    mp_dbl(&c,&y,p);
+    __mp_dbl(&c,&y,p);
     return y;
     break;
 
   case 3:
-    mp_dbl(&c,&y,p);
+    __mp_dbl(&c,&y,p);
     return -y;
     break;
 
@@ -310,26 +322,26 @@ double mpcos1(double x)
 
   p=32;
   n=mpranred(x,&u,p);              /* n is 0, 1, 2 or 3 */
-  c32(&u,&c,&s,p);
+  __c32(&u,&c,&s,p);
   switch (n) {                     /* in what quarter of unit circle y is*/
 
   case 0:
-    mp_dbl(&c,&y,p);
+    __mp_dbl(&c,&y,p);
     return y;
     break;
 
   case 2:
-    mp_dbl(&c,&y,p);
+    __mp_dbl(&c,&y,p);
     return -y;
     break;
 
   case 1:
-    mp_dbl(&s,&y,p);
+    __mp_dbl(&s,&y,p);
     return -y;
     break;
 
   case 3:
-    mp_dbl(&s,&y,p);
+    __mp_dbl(&s,&y,p);
     return y;
     break;
 
