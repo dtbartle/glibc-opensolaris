@@ -58,7 +58,7 @@ static const struct argp_option options[] =
   { NULL, 0, NULL, 0, N_("Information:") },
   { "list", 'l', NULL, 0, N_("list all known coded character sets") },
   { NULL, 0, NULL, 0, N_("Output control:") },
-  { NULL, 'c', NULL, N_("omit invalid characters from output") },
+  { NULL, 'c', NULL, 0, N_("omit invalid characters from output") },
   { "output", 'o', "FILE", 0, N_("output file") },
   { "silent", 's', NULL, 0, N_("supress warnings") },
   { "verbose", OPT_VERBOSE, NULL, 0, N_("print progress information") },
