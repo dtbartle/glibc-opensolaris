@@ -41,8 +41,8 @@ truncate64 (path, length)
   if (! have_no_truncate64)
 #endif
     {
-      int result = INLINE_SYSCALL (truncate64, 3, path, length >> 32,
-				   length & 0xffffffff);
+      int result = INLINE_SYSCALL (truncate64, 3, path, length & 0xffffffff,
+				   length >> 32);
 
 #ifndef __ASSUME_TRUNCATE64_SYSCALL
       if (result != -1 || errno != ENOSYS)
