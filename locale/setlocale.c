@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 92, 95-99, 2000 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 92, 95-99, 2000, 2002 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -118,7 +118,7 @@ static const char *_nl_current_names[] =
 
 
 /* Lock for protecting global data.  */
-__libc_lock_define_initialized (, __libc_setlocale_lock)
+__libc_lock_define_initialized (, __libc_setlocale_lock attribute_hidden)
 
 /* Defined in loadmsgcat.c.  */
 extern int _nl_msg_cat_cntr;
