@@ -35,25 +35,28 @@
    Both are weak references; if &_nl_current_CATEGORY is zero,
    then nothing is using the locale data.  */
 #define DEFINE_CATEGORY(category, category_name, items, a, b, c, d) \
-extern struct locale_data *_nl_current_##category;			      \
-extern struct locale_data _nl_C_##category;				      \
+extern const struct locale_data *_nl_current_##category;		      \
+extern const struct locale_data _nl_C_##category;			      \
 weak_extern (_nl_current_##category) weak_extern (_nl_C_##category)
 #include "categories.def"
 #undef	DEFINE_CATEGORY
 
 /* Array indexed by category of pointers to _nl_current_CATEGORY slots.
    Elements are zero for categories whose data is never used.  */
-static struct locale_data * *const _nl_current[] =
+static const struct locale_data * *const _nl_current[] =
   {
 #define DEFINE_CATEGORY(category, category_name, items, a, b, c, d) \
     [category] = &_nl_current_##category,
 #include "categories.def"
 #undef	DEFINE_CATEGORY
+    /* We need this additional element to simplify the code.  It must
+       simply be != NULL.  */
+    [LC_ALL] = (const struct locale_data **) ~0ul
   };
 
 /* Array indexed by category of pointers to _nl_C_CATEGORY slots.
    Elements are zero for categories whose data is never used.  */
-struct locale_data *const _nl_C[] =
+const struct locale_data *const _nl_C[] =
   {
 #define DEFINE_CATEGORY(category, category_name, items, a, b, c, d) \
     [category] = &_nl_C_##category,
@@ -147,7 +150,7 @@ clever_copy (const char *string)
 
 /* Construct a new composite name.  */
 static inline char *
-new_composite_name (int category, const char *newnames[LC_ALL])
+new_composite_name (int category, char *newnames[LC_ALL])
 {
   size_t last_len;
   size_t cumlen = 0;
@@ -157,9 +160,9 @@ new_composite_name (int category, const char *newnames[LC_ALL])
 
   for (i = 0; i < LC_ALL; ++i)
     {
-      const char *name = (category == LC_ALL ? newnames[i] :
-			  category == i ? newnames[0] :
-			  _nl_current_names[i]);
+      char *name = (category == LC_ALL ? newnames[i] :
+		    category == i ? newnames[0] :
+		    (char *) _nl_current_names[i]);
       last_len = strlen (name);
       cumlen += _nl_category_name_sizes[i] + 1 + last_len + 1;
       if (i > 0 && same && strcmp (name, newnames[0]) != 0)
@@ -184,9 +187,9 @@ new_composite_name (int category, const char *newnames[LC_ALL])
   for (i = 0; i < LC_ALL; ++i)
     {
       /* Add "CATEGORY=NAME;" to the string.  */
-      const char *name = (category == LC_ALL ? newnames[i] :
-			  category == i ? newnames[0] :
-			  _nl_current_names[i]);
+      char *name = (category == LC_ALL ? newnames[i] :
+		    category == i ? newnames[0] :
+		    (char *) _nl_current_names[i]);
       p = __stpcpy (p, _nl_category_names[i]);
       *p++ = '=';
       p = __stpcpy (p, name);
@@ -211,7 +214,7 @@ setname (int category, const char *name)
 
 /* Put DATA in *_nl_current[CATEGORY].  */
 static inline void
-setdata (int category, struct locale_data *data)
+setdata (int category, const struct locale_data *data)
 {
   if (_nl_current[category] != NULL)
     {
@@ -264,8 +267,8 @@ setlocale (int category, const char *locale)
 	 for the individual categories can be selected by using a
 	 composite locale name.  This is a semi-colon separated list
 	 of entries of the form `CATEGORY=VALUE'.  */
-      const char *newnames[LC_ALL];
-      struct locale_data *newdata[LC_ALL];
+      char *newnames[LC_ALL];
+      const struct locale_data *newdata[LC_ALL];
 
       /* Set all name pointers to the argument name.  */
       for (category = 0; category < LC_ALL; ++category)
@@ -323,11 +326,6 @@ setlocale (int category, const char *locale)
 
 	    if (newdata[category] == NULL)
 	      break;
-
-	    /* We must not simply free a global locale since we have
-	       no control over the usage.  So we mark it as
-	       un-deletable.  */
-	    newdata[category]->usage_count = MAX_USAGE_COUNT;
 	  }
 	else
 	  {
@@ -361,8 +359,8 @@ setlocale (int category, const char *locale)
     }
   else
     {
-      struct locale_data *newdata = NULL;
-      const char *newname = locale;
+      const struct locale_data *newdata = NULL;
+      char *newname = (char *) locale;
 
       /* Protect global data.  */
       __libc_lock_lock (__libc_setlocale_lock);
@@ -371,13 +369,9 @@ setlocale (int category, const char *locale)
 	{
 	  /* Only actually load the data if anything will use it.  */
 	  newdata = _nl_find_locale (locale_path, locale_path_len, category,
-				     &newname);
+				     (char **) &newname);
 	  if (newdata == NULL)
 	    goto abort_single;
-
-	  /* We must not simply free a global locale since we have no
-	     control over the usage.  So we mark it as un-deletable.  */
-	  newdata->usage_count = MAX_USAGE_COUNT;
 	}
 
       /* Create new composite name.  */
@@ -400,6 +394,6 @@ setlocale (int category, const char *locale)
       /* Critical section left.  */
       __libc_lock_unlock (__libc_setlocale_lock);
 
-      return (char *) newname;
+      return newname;
     }
 }
