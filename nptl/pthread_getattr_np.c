@@ -132,6 +132,23 @@ pthread_getattr_np (thread_id, attr)
 
   iattr->flags |= ATTR_FLAG_STACKADDR;
 
+  if (ret == 0)
+    {
+      iattr->cpuset = (cpu_set_t *) malloc (sizeof (cpu_set_t));
+      if (iattr->cpuset == NULL)
+	ret = ENOMEM;
+      else
+	{
+	  ret = pthread_getaffinity_np (thread_id, iattr->cpuset);
+	  if (ret == ENOSYS)
+	    {
+	      free (iattr->cpuset);
+	      iattr->cpuset = NULL;
+	      ret = 0;
+	    }
+	}
+    }
+
   lll_unlock (thread->lock);
 
   pthread_cleanup_pop (0);
