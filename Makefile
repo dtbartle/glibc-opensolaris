@@ -212,7 +212,7 @@ distribute  := README INSTALL NOTES COPYING.LIB COPYING ChangeLog NEWS	\
 	       ansidecl.h mkinstalldirs move-if-change install-sh	\
 	       configure configure.in aclocal.m4 config.sub config.guess\
 	       config.make.in config-name.in Makefile.in \
-	       munch-tmpl.c munch.awk gnu-stabs.h sysdep.h set-hooks.h
+	       munch-tmpl.c munch.awk sysdep.h set-hooks.h libc-symbols.h
 
 distribute := $(strip $(distribute))
 generated := $(generated) stubs.h
