@@ -2576,7 +2576,7 @@ if eval "test \"`echo '$''{'pic_default'+set}'`\" = set"; then
 else
   pic_default=yes
 cat > conftest.c <<EOF
-#if defined(__PIC__) || defined(__pic__) || defined(PIC) || defined(pic)
+#if defined __PIC__ || defined __pic__ || defined PIC || defined pic
 # error PIC is default.
 #endif
 EOF
