@@ -20,14 +20,12 @@ Cambridge, MA 02139, USA.  */
 #include <errno.h>
 #include <signal.h>
 
-
-/* Set the handler for the signal SIG to HANDLER,
-   returning the old handler, or SIG_ERR on error.  */
-__sighandler_t
-DEFUN(signal, (sig, handler), int sig AND __sighandler_t handler)
+/* Block signals in MASK, returning the old mask.  */
+int
+DEFUN(__sigblock, (mask), int mask)
 {
   errno = ENOSYS;
-  return SIG_ERR;
+  return -1;
 }
 
 
@@ -35,6 +33,6 @@ DEFUN(signal, (sig, handler), int sig AND __sighandler_t handler)
 
 #include <gnu-stabs.h>
 
-stub_warning(signal);
+stub_warning(__sigblock);
 
 #endif	/* GNU stabs.  */

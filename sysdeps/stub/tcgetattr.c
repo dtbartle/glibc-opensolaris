@@ -18,16 +18,27 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <signal.h>
+#include <stddef.h>
+#include <termios.h>
 
-
-/* Set the handler for the signal SIG to HANDLER,
-   returning the old handler, or SIG_ERR on error.  */
-__sighandler_t
-DEFUN(signal, (sig, handler), int sig AND __sighandler_t handler)
+/* Put the state of FD into *TERMIOS_P.  */
+int
+DEFUN(__tcgetattr, (fd, termios_p),
+      int fd AND struct termios *termios_p)
 {
+  if (fd < 0)
+    {
+      errno = EBADF;
+      return(-1);
+    }
+  if (termios_p == NULL)
+    {
+      errno = EINVAL;
+      return(-1);
+    }
+
   errno = ENOSYS;
-  return SIG_ERR;
+  return(-1);
 }
 
 
@@ -35,6 +46,6 @@ DEFUN(signal, (sig, handler), int sig AND __sighandler_t handler)
 
 #include <gnu-stabs.h>
 
-stub_warning(signal);
+stub_warning(__tcgetattr);
 
 #endif	/* GNU stabs.  */

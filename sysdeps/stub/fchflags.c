@@ -18,16 +18,21 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <signal.h>
+#include <stddef.h>
+#include <sys/stat.h>
 
-
-/* Set the handler for the signal SIG to HANDLER,
-   returning the old handler, or SIG_ERR on error.  */
-__sighandler_t
-DEFUN(signal, (sig, handler), int sig AND __sighandler_t handler)
+/* Change the flags of the file FD refers to to FLAGS.  */
+int
+DEFUN(fchflags, (fd, flags), int fd AND int flags)
 {
+  if (fd < 0)
+    {
+      errno = EINVAL;
+      return -1;
+    }
+
   errno = ENOSYS;
-  return SIG_ERR;
+  return -1;
 }
 
 
@@ -35,6 +40,6 @@ DEFUN(signal, (sig, handler), int sig AND __sighandler_t handler)
 
 #include <gnu-stabs.h>
 
-stub_warning(signal);
+stub_warning(fchflags);
 
 #endif	/* GNU stabs.  */

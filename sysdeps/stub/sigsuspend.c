@@ -21,13 +21,13 @@ Cambridge, MA 02139, USA.  */
 #include <signal.h>
 
 
-/* Set the handler for the signal SIG to HANDLER,
-   returning the old handler, or SIG_ERR on error.  */
-__sighandler_t
-DEFUN(signal, (sig, handler), int sig AND __sighandler_t handler)
+/* Change the set of blocked signals to SET,
+   wait until a signal arrives, and restore the set of blocked signals.  */
+int
+DEFUN(sigsuspend, (set), CONST sigset_t *set)
 {
   errno = ENOSYS;
-  return SIG_ERR;
+  return -1;
 }
 
 
@@ -35,6 +35,6 @@ DEFUN(signal, (sig, handler), int sig AND __sighandler_t handler)
 
 #include <gnu-stabs.h>
 
-stub_warning(signal);
+stub_warning(sigsuspend);
 
 #endif	/* GNU stabs.  */
