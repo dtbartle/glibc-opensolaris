@@ -316,12 +316,14 @@ extern void _hurd_siginfo_handler (int);
    Each argument is an expression which returns an error code; each
    expression may be evaluated several times.  FETCH_MSGPORT_EXPR should
    fetch the appropriate message port and store it in the local variable
-   `msgport'.  FETCH_REFPORT_EXPR should fetch the appropriate message port
-   and store it in the local variable `refport' (if no reference port is
-   needed in the call, then FETCH_REFPORT_EXPR should be simply
-   KERN_SUCCESS or 0).  Both of these are assumed to create user
-   references, which this macro deallocates.  RPC_EXPR should perform the
-   desired RPC operation using `msgport' and `refport'.
+   `msgport'; it will be deallocated after use.  FETCH_REFPORT_EXPR should
+   fetch the appropriate message port and store it in the local variable
+   `refport' (if no reference port is needed in the call, then
+   FETCH_REFPORT_EXPR should be simply KERN_SUCCESS or 0); if
+   DEALLOC_REFPORT evaluates to nonzero it will be deallocated after use,
+   otherwise the FETCH_REFPORT_EXPR must take care of user references to
+   `refport'.  RPC_EXPR should perform the desired RPC operation using
+   `msgport' and `refport'.
 
    The reason for the complexity is that a process's message port and
    reference port may change between fetching those ports and completing an
@@ -332,7 +334,9 @@ extern void _hurd_siginfo_handler (int);
    either of these cases, we retry the entire operation, discarding the old
    message and reference ports and fetch them anew.  */
 
-#define HURD_MSGPORT_RPC(fetch_msgport_expr, fetch_refport_expr, rpc_expr)   \
+#define HURD_MSGPORT_RPC(fetch_msgport_expr,				      \
+			 fetch_refport_expr, dealloc_refport,		      \
+			 rpc_expr) 					      \
 ({									      \
     error_t __err;							      \
     mach_port_t msgport, refport = MACH_PORT_NULL;			      \
@@ -350,7 +354,7 @@ extern void _hurd_siginfo_handler (int);
 	  }								      \
 	__err = (rpc_expr);						      \
 	__mach_port_deallocate (__mach_task_self (), msgport);		      \
-	if (refport != MACH_PORT_NULL)					      \
+	if ((dealloc_refport) && refport != MACH_PORT_NULL)		      \
 	  __mach_port_deallocate (__mach_task_self (), refport);    	      \
       } while (__err == MACH_SEND_INVALID_DEST ||			      \
 	       __err == MIG_SERVER_DIED);				      \
