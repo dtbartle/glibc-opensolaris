@@ -313,16 +313,18 @@ of this helper program; chances are you did not intend to run this program.\n",
 	  _exit (0);
 	}
 
-      {
-	/* Call the initializer for the compatibility version of the
-	   dynamic linker.  We use a weak reference here so _dl_compat_init
-	   need not be defined.  There is no additional initialization
-	   required for the ABI-compliant dynamic linker.  */
+      if (rtld_map.l_info[DT_INIT])
+	{
+	  /* Call the initializer for the compatibility version of the
+	     dynamic linker.  There is no additional initialization
+	     required for the ABI-compliant dynamic linker.  */
 
-	extern void _dl_compat_init (void) __attribute__ ((weak));
-	if (&_dl_compat_init)
-	  _dl_compat_init ();
-      }
+	  (*(void (*) (void)) (rtld_map.l_addr +
+			       rtld_map.l_info[DT_INIT]->d_un.d_ptr)) ();
+
+	  /* Clear the field so a future dlopen won't run it again.  */
+	  rtld_map.l_info[DT_INIT] = NULL;
+	}
     }
   const char *errstring;
   const char *errobj;
@@ -347,6 +349,18 @@ _dl_r_debug_state (void)
 {
 }
 
+/* Define our own stub for the localization function used by strerror.
+   English-only in the dynamic linker keeps it smaller.  */
+
+char *
+__dgettext (const char *domainname, const char *msgid)
+{
+  assert (domainname == _libc_intl_domainname);
+  return (char *) msgid;
+}
+weak_symbol (__dgettext)
+weak_alias (__dgettext, dgettext)
+
 #ifndef NDEBUG
 
 /* Define (weakly) our own assert failure function which doesn't use stdio.
