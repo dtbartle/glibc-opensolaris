@@ -103,7 +103,7 @@ double __ieee754_pow(double x, double y) {
   if (u.i[HIGH_HALF] < 0) {
     k = checkint(y);
     if (k==0) return NaNQ.x;                              /* y not integer and x<0 */
-    return (k==1)?upow(-x,y):-upow(-x,y);                      /* if y even or odd */
+    return (k==1)?__ieee754_pow(-x,y):-__ieee754_pow(-x,y); /* if y even or odd */
   }
   /* x>0 */
   qx = u.i[HIGH_HALF]&0x7fffffff;  /*   no sign   */
