@@ -1,5 +1,5 @@
 /* File descriptors.
-Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -201,49 +201,5 @@ extern error_t _hurd_fd_close (struct hurd_fd *fd);
 extern error_t _hurd_fd_read (struct hurd_fd *fd, void *buf, size_t *nbytes);
 extern error_t _hurd_fd_write (struct hurd_fd *fd,
 			       const void *buf, size_t *nbytes);
-
-
-/* User-registered handlers for specific `ioctl' requests.  */
-
-#define	__need___va_list
-#include <stdarg.h>
-
-/* Structure that records an ioctl handler.  */
-
-struct ioctl_handler
-  {
-    int first_request, last_request; /* Range of handled request values.  */
-
-    /* Handler function, called like ioctl to do its entire job.  */
-    int (*handler) (int fd, int request, void *arg);
-
-    struct ioctl_handler *next;	/* Next handler.  */
-  };
-
-
-/* Register HANDLER to handle ioctls with REQUEST values between
-   FIRST_REQUEST and LAST_REQUEST inclusive.  Returns zero if successful.
-   Return nonzero and sets `errno' for an error.  */
-
-extern int hurd_register_ioctl_handler (int first_request, int last_request,
-					int (*handler) (int fd, int request,
-							void *arg));
-
-
-/* Define a library-internal handler for ioctl commands between FIRST and
-   LAST inclusive.  The last element gratuitously references HANDLER to
-   avoid `defined but not used' warnings.  */
-
-#define	_HURD_HANDLE_IOCTLS(handler, first, last)			      \
-  static const struct ioctl_handler handler##_ioctl_handler =		      \
-    { (first), (last), (int (*) (int, int, void *)) (handler),	      \
-	(&(handler), &(handler##_ioctl_handler), NULL) };		      \
-  text_set_element (_hurd_ioctl_handler_lists, ##handler##_ioctl_handler)
-
-/* Define a library-internal handler for a single ioctl command.  */
-
-#define _HURD_HANDLE_IOCTL(handler, ioctl) \
-  _HURD_HANDLE_IOCTLS (handler, (ioctl), (ioctl))
-
 
 #endif	/* hurd/fd.h */
