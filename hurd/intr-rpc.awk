@@ -41,4 +41,5 @@ END \
 	  intrcall "(" args "));";
 	print "}";
       }
+    print "weak_alias (__" call ", " call ")"
   }
