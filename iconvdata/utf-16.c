@@ -196,6 +196,22 @@ gconv_end (struct __gconv_step *data)
   {									      \
     uint32_t c = get32 (inptr);						      \
 									      \
+    if (__builtin_expect (c >= 0xd800 && c < 0xe000, 0))		      \
+      {									      \
+	/* Surrogate characters in UCS-4 input are not valid.		      \
+	   We must catch this.  If we let surrogates pass through,	      \
+	   attackers could make a security hole exploit by		      \
+	   synthesizing any desired plane 1-16 character.  */		      \
+	if (! ignore_errors_p ())					      \
+	  {								      \
+	    result = __GCONV_ILLEGAL_INPUT;				      \
+	    break;							      \
+	  }								      \
+	inptr += 4;							      \
+	++*irreversible;						      \
+	continue;							      \
+      }									      \
+									      \
     if (swap)								      \
       {									      \
 	if (__builtin_expect (c, 0) >= 0x10000)				      \
