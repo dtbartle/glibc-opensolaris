@@ -177,10 +177,10 @@ localtime_r (t, tp)
    introduce additional dependencies.  */
 /* The SGI compiler reportedly barfs on the trailing null
    if we use a string constant as the initializer.  28 June 1997, rms.  */
-static const char spaces[16] = /* "                "*/
-  { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
-static const char zeroes[16] =  /*"0000000000000000"*/
-  { '0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'};
+static const char spaces[16] = /* "                " */
+  { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ' };
+static const char zeroes[16] = /* "0000000000000000" */
+  { '0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0' };
 
 # define memset_space(P, Len) \
   do {									      \
