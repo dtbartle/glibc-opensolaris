@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -17,6 +17,8 @@ not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
 #include <sysdeps/unix/sysdep.h>
+
+#ifdef	ASSEMBLER
 
 #ifdef	NO_UNDERSCORES
 /* Since C identifiers are not normally prefixed with an underscore
@@ -44,3 +46,5 @@ Cambridge, MA 02139, USA.  */
 #define	r0		%o0
 #define	r1		%o1
 #define	MOVE(x,y)	mov x, y
+
+#endif	/* ASSEMBLER */
