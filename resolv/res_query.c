@@ -111,8 +111,10 @@ res_query(name, class, type, answer, anslen)
 
 	hp->rcode = NOERROR;	/* default */
 
-	if ((_res.options & RES_INIT) == 0 && res_init() == -1)
+	if ((_res.options & RES_INIT) == 0 && res_init() == -1) {
+		h_errno = NETDB_INTERNAL;
 		return (-1);
+	}
 #ifdef DEBUG
 	if (_res.options & RES_DEBUG)
 		printf(";; res_query(%s, %d, %d)\n", name, class, type);
@@ -145,21 +147,21 @@ res_query(name, class, type, answer, anslen)
 			    ntohs(hp->ancount));
 #endif
 		switch (hp->rcode) {
-			case NXDOMAIN:
-				h_errno = HOST_NOT_FOUND;
-				break;
-			case SERVFAIL:
-				h_errno = TRY_AGAIN;
-				break;
-			case NOERROR:
-				h_errno = NO_DATA;
-				break;
-			case FORMERR:
-			case NOTIMP:
-			case REFUSED:
-			default:
-				h_errno = NO_RECOVERY;
-				break;
+		case NXDOMAIN:
+			h_errno = HOST_NOT_FOUND;
+			break;
+		case SERVFAIL:
+			h_errno = TRY_AGAIN;
+			break;
+		case NOERROR:
+			h_errno = NO_DATA;
+			break;
+		case FORMERR:
+		case NOTIMP:
+		case REFUSED:
+		default:
+			h_errno = NO_RECOVERY;
+			break;
 		}
 		return (-1);
 	}
@@ -185,22 +187,23 @@ res_search(name, class, type, answer, anslen)
 	int trailing_dot, ret, saved_herrno;
 	int got_nodata = 0, got_servfail = 0, tried_as_is = 0;
 
-	if ((_res.options & RES_INIT) == 0 && res_init() == -1)
+	if ((_res.options & RES_INIT) == 0 && res_init() == -1) {
+		h_errno = NETDB_INTERNAL;
 		return (-1);
-
+	}
 	errno = 0;
 	h_errno = HOST_NOT_FOUND;	/* default, if we never query */
 	dots = 0;
-	for (cp = name;  *cp;  cp++)
+	for (cp = name; *cp; cp++)
 		dots += (*cp == '.');
 	trailing_dot = 0;
-	if ((cp > name) && (*--cp == '.'))
+	if (cp > name && *--cp == '.')
 		trailing_dot++;
 
 	/*
 	 * if there aren't any dots, it could be a user-level alias
 	 */
-	if ((!dots) && (cp = __hostalias(name)))
+	if (!dots && (cp = __hostalias(name)) != NULL)
 		return (res_query(cp, class, type, answer, anslen));
 
 	/*
@@ -222,9 +225,8 @@ res_search(name, class, type, answer, anslen)
 	 *	- there is at least one dot, there is no trailing dot,
 	 *	  and RES_DNSRCH is set.
 	 */
-	if (((!dots) && _res.options & RES_DEFNAMES) ||
-	    (dots && (!trailing_dot) && _res.options & RES_DNSRCH)
-	    ) {
+	if ((!dots && (_res.options & RES_DEFNAMES)) ||
+	    (dots && !trailing_dot && (_res.options & RES_DNSRCH))) {
 		int done = 0;
 
 		for (domain = (const char * const *)_res.dnsrch;
@@ -289,7 +291,6 @@ res_search(name, class, type, answer, anslen)
 		ret = res_querydomain(name, NULL, class, type, answer, anslen);
 		if (ret > 0)
 			return (ret);
-		saved_herrno = h_errno;
 	}
 
 	/* if we got here, we didn't satisfy the search.
@@ -339,10 +340,8 @@ res_querydomain(name, domain, class, type, answer, anslen)
 			nbuf[n] = '\0';
 		} else
 			longname = name;
-	} else {
-		sprintf(nbuf, "%.*s.%.*s",
-			MAXDNAME, name, MAXDNAME, domain);
-	}
+	} else
+		sprintf(nbuf, "%.*s.%.*s", MAXDNAME, name, MAXDNAME, domain);
 
 	return (res_query(longname, class, type, answer, anslen));
 }
@@ -362,17 +361,20 @@ __hostalias(name)
 		return (NULL);
 	buf[sizeof(buf) - 1] = '\0';
 	while (fgets(buf, sizeof(buf), fp)) {
-		for (cp1 = buf; *cp1 && !isspace(*cp1); ++cp1);
+		for (cp1 = buf; *cp1 && !isspace(*cp1); ++cp1)
+			;
 		if (!*cp1)
 			break;
 		*cp1 = '\0';
 		if (!strcasecmp(buf, name)) {
-			while (isspace(*++cp1));
+			while (isspace(*++cp1))
+				;
 			if (!*cp1)
 				break;
-			for (cp2 = cp1 + 1; *cp2 && !isspace(*cp2); ++cp2);
+			for (cp2 = cp1 + 1; *cp2 && !isspace(*cp2); ++cp2)
+				;
 			abuf[sizeof(abuf) - 1] = *cp2 = '\0';
-			(void)strncpy(abuf, cp1, sizeof(abuf) - 1);
+			strncpy(abuf, cp1, sizeof(abuf) - 1);
 			fclose(fp);
 			return (abuf);
 		}
