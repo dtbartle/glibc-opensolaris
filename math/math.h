@@ -28,7 +28,7 @@ Cambridge, MA 02139, USA.  */
 __BEGIN_DECLS
 
 #define	__need_Emath
-#include <errnos.h>
+#include <errno.h>
 
 /* Get machine-dependent HUGE_VAL value (returned on overflow).  */
 #include <huge_val.h>
