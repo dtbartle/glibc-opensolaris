@@ -392,7 +392,7 @@ extern int pthread_getaffinity_np (pthread_t __th, size_t __cpusetsize,
    same ONCE_CONTROL argument. ONCE_CONTROL must point to a static or
    extern variable initialized to PTHREAD_ONCE_INIT.  */
 extern int pthread_once (pthread_once_t *__once_control,
-			 void (*__init_routine) (void)) __THROW;
+			 void (*__init_routine) (void));
 
 
 /* Functions for handling cancellation.
