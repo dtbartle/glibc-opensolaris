@@ -116,7 +116,7 @@ unfmh();			/* XXX */
 	   for example "-/lib/libc.so=123" says that the contents of
 	   /lib/libc.so are found in a memory object whose port name
 	   in our task is 123.  */
-	while (_dl_argc > 2 && _dl_argv[1][0] == '-')
+	while (_dl_argc > 2 && _dl_argv[1][0] == '-' && _dl_argv[1][1] != '-')
 	  {
 	    char *lastslash, *memobjname, *p;
 	    struct link_map *l;
