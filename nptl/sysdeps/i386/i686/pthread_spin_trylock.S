@@ -17,26 +17,5 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#define EBUSY	16
-
-
-#ifdef UP
-# define LOCK
-#else
-# define LOCK lock
-#endif
-
-	.globl	pthread_spin_trylock
-	.type	pthread_spin_trylock,@function
-	.align	16
-pthread_spin_trylock:
-	movl	4(%esp), %edx
-	movl	$1, %eax
-	xorl	%ecx, %ecx
-	LOCK
-	cmpxchgl %ecx, (%edx)
-	movl	$EBUSY, %edx
-	movl	%ecx, %eax
-	cmovne	%edx, %eax
-	ret
-	.size	pthread_spin_trylock,.-pthread_spin_trylock
+#define HAVE_CMOV	1
+#include "../i486/pthread_spin_trylock.S"
