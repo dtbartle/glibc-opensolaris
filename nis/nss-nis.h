@@ -25,34 +25,15 @@
 
 
 /* Convert YP error number to NSS error number.  */
-static enum nss_status yperr2nss_tab[] =
-{
-  [YPERR_SUCCESS] = NSS_STATUS_SUCCESS,
-  [YPERR_BADARGS] = NSS_STATUS_UNAVAIL,
-  [YPERR_RPC]     = NSS_STATUS_UNAVAIL,
-  [YPERR_DOMAIN]  = NSS_STATUS_UNAVAIL,
-  [YPERR_MAP]     = NSS_STATUS_UNAVAIL,
-  [YPERR_KEY]     = NSS_STATUS_NOTFOUND,
-  [YPERR_YPERR]   = NSS_STATUS_UNAVAIL,
-  [YPERR_RESRC]   = NSS_STATUS_TRYAGAIN,
-  [YPERR_NOMORE]  = NSS_STATUS_NOTFOUND,
-  [YPERR_PMAP]    = NSS_STATUS_UNAVAIL,
-  [YPERR_YPBIND]  = NSS_STATUS_UNAVAIL,
-  [YPERR_YPSERV]  = NSS_STATUS_UNAVAIL,
-  [YPERR_NODOM]   = NSS_STATUS_UNAVAIL,
-  [YPERR_BADDB]   = NSS_STATUS_UNAVAIL,
-  [YPERR_VERS]    = NSS_STATUS_UNAVAIL,
-  [YPERR_ACCESS]  = NSS_STATUS_UNAVAIL,
-  [YPERR_BUSY]    = NSS_STATUS_TRYAGAIN
-};
-#define YPERR_COUNT (sizeof (yperr2nss_tab) / sizeof (yperr2nss_tab[0]))
+extern const enum nss_status __yperr2nss_tab[];
+extern const unsigned int __yperr2nss_count;
 
 static inline enum nss_status
 yperr2nss (int errval)
 {
-  if ((unsigned int) errval > YPERR_COUNT)
+  if ((unsigned int) errval > __yperr2nss_count)
     return NSS_STATUS_UNAVAIL;
-  return yperr2nss_tab[errval];
+  return __yperr2nss_tab[errval];
 }
 
 #endif /* nis/nss-nis.h */
