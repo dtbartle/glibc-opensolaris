@@ -68,7 +68,7 @@ td_thr_get_info (const td_thrhandle_t *th, td_thrinfo_t *infop)
      results for the fields we do not fill in.  */
   memset (infop, '\0', sizeof (td_thrinfo_t));
 
-  infop->ti_tid = th->th_unique;
+  infop->ti_tid = (thread_t) th->th_unique;
   infop->ti_tls = (char *) tls;
   infop->ti_pri = ((uintptr_t) schedpolicy == SCHED_OTHER
 		   ? 0 : (uintptr_t) schedprio);
