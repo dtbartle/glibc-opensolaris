@@ -32,7 +32,7 @@ routines	:=							      \
 	abs labs							      \
 	div ldiv							      \
 	mblen mbstowcs mbtowc wcstombs wctomb				      \
-	__random random rand srand					      \
+	random rand 							      \
 	strtod strtol strtoul strtoq strtouq				      \
 	system
 
