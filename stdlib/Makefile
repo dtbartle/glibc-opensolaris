@@ -47,7 +47,7 @@ routines	:=							      \
 	a64l l64a							      \
 	rpmatch strfmon strfmon_l getsubopt xpg_basename fmtmsg		      \
 	strtoimax strtoumax wcstoimax wcstoumax				      \
-	getcontext setcontext
+	getcontext setcontext makecontext swapcontext
 
 distribute	:= exit.h grouping.h abort-instr.h
 tests		:= tst-strtol tst-strtod testmb testrand testsort testdiv \
