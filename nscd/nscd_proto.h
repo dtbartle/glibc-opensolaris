@@ -56,5 +56,7 @@ extern int __nscd_gethostbyaddr_r (const void *addr, socklen_t len, int type,
 				   struct hostent *resultbuf,
 				   char *buffer, size_t buflen,
 				   struct hostent **result, int *h_errnop);
+extern int __nscd_getai (const char *key, struct nscd_ai_result **result,
+			 int *h_errnop);
 
 #endif /* _NSCD_PROTO_H */
