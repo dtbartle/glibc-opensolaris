@@ -70,10 +70,7 @@ fgetgrent (FILE *stream)
 
       /* Reset the stream.  */
       if (fsetpos (stream, &pos) != 0)
-	{
-	  buffer = NULL;
-	  break;
-	}
+	buffer = NULL;
     }
 
   if (buffer == NULL)
