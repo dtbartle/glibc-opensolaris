@@ -40,8 +40,8 @@
 #define TO_LOOP			to_iso2022kr_loop
 #define MIN_NEEDED_FROM		1
 #define MAX_NEEDED_FROM		3
-#define MIN_NEEDED_TO		3
-#define MAX_NEEDED_TO		3
+#define MIN_NEEDED_TO		4
+#define MAX_NEEDED_TO		4
 #define PREPARE_LOOP \
   int save_set;								      \
   int set = data->statep->count;					      \
@@ -127,7 +127,7 @@ enum
     if (ch == ESC)							      \
       {									      \
 	/* We don't really have to handle escape sequences since all the      \
-	   switching is done using the SI and SO bytes.  Butwe have to	      \
+	   switching is done using the SI and SO bytes.  But we have to	      \
 	   recognize `Esc $ ) C' since this is a kind of flag for this	      \
 	   encoding.  We simply ignore it.  */				      \
 	if (inptr + 1 > inend						      \
