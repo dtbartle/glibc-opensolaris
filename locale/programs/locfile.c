@@ -970,7 +970,7 @@ write_locale_data (const char *output_path, const char *category,
   for (cnt = 0; cnt < n_elem; cnt += step)
     {
       step = n_elem - cnt;
-      if (maxiov <= 0)
+      if (maxiov > 0)
 	step = MIN (maxiov, step);
 
       if (writev (fd, &vec[cnt], step) < 0)
