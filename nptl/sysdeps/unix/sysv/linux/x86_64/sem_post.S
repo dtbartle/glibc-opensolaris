@@ -33,10 +33,10 @@
 
 	.text
 
-	.globl	__new_sem_post
-	.type	__new_sem_post,@function
+	.globl	sem_post
+	.type	sem_post,@function
 	.align	16
-__new_sem_post:
+sem_post:
 	movl	$1, %edx
 	LOCK
 	xaddl	%edx, (%rdi)
@@ -63,10 +63,4 @@ __new_sem_post:
 
 	orl	$-1, %eax
 	retq
-	.size	__new_sem_post,.-__new_sem_post
-	.symver	__new_sem_post, sem_post@@GLIBC_2.1
-#if SHLIB_COMPAT(libpthread, GLIBC_2_0, GLIBC_2_1)
-	.global	__old_sem_post
-__old_sem_post = __new_sem_post
-	.symver	__old_sem_post, sem_post@GLIBC_2.0
-#endif
+	.size	sem_post,.-sem_post
