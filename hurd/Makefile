@@ -54,7 +54,7 @@ sig	= hurdsig hurdfault faultexc siginfo hurd-raise preempt-sig \
 	  trampoline longjmp-ts catch-exc exc2signal hurdkill
 dtable	= dtable port2fd new-fd alloc-fd intern-fd \
 	  getdport openport \
-	  fd-close fd-read fd-write hurdioctl
+	  fd-close fd-read fd-write hurdioctl ctty-input ctty-output
 
 # XXX this is a temporary hack; see hurdmalloc.h
 routines += hurdmalloc
