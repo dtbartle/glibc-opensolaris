@@ -29,7 +29,7 @@ fedisableexcept (int excepts)
   /* Get the current fpsr.  */
   __asm__ __volatile__ ("mov.m %0=ar.fpsr" : "=r" (old_fpsr));
 
-  new_fpsr = old_fpsr |= FE_ALL_EXCEPT;
+  new_fpsr = old_fpsr | ((fenv_t) excepts & FE_ALL_EXCEPT);
 
   __asm__ __volatile__ ("mov.m ar.fpsr=%0" :: "r" (new_fpsr) : "memory");
 
