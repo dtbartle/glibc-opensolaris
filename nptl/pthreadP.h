@@ -322,8 +322,6 @@ extern int __pthread_kill (pthread_t threadid, int signo);
 extern void __pthread_exit (void *value);
 extern int __pthread_setcanceltype (int type, int *oldtype);
 extern int __pthread_enable_asynccancel (void) attribute_hidden;
-extern void __pthread_enable_asynccancel_2 (int *oldvalp)
-     internal_function attribute_hidden;
 extern void __pthread_disable_asynccancel (int oldtype)
      internal_function attribute_hidden;
 
