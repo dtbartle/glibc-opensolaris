@@ -2799,7 +2799,8 @@ echo "$ac_t""$stdio" 1>&6
 # Search only in includedir.
 echo $ac_n "checking for old glibc 2.0.x headers""... $ac_c" 1>&6
 echo "configure:2802: checking for old glibc 2.0.x headers" >&5
-if test -e "${includedir}/elfclass.h" -a -e "${includedir}/fcntlbits.h"; then
+if eval test -e "${includedir}/elfclass.h" -a -e "${includedir}/fcntlbits.h"
+then
   old_glibc_headers=yes
 else
   old_glibc_headers=no
@@ -2849,7 +2850,7 @@ if test $shared = default; then
 fi
 
 echo $ac_n "checking whether -fPIC is default""... $ac_c" 1>&6
-echo "configure:2853: checking whether -fPIC is default" >&5
+echo "configure:2854: checking whether -fPIC is default" >&5
 if eval "test \"`echo '$''{'pic_default'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
