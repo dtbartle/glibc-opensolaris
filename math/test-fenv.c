@@ -134,9 +134,9 @@ print_rounding (int rounding)
       printf ("DOWNWARD");
       break;
 #endif
-#ifdef FE_TOWARDSZERO
-    case FE_TOWARDSZERO:
-      printf ("TOWARDSZERO");
+#ifdef FE_TOWARDZERO
+    case FE_TOWARDZERO:
+      printf ("TOWARDZERO");
       break;
 #endif
     }
