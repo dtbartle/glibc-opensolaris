@@ -145,13 +145,13 @@ struct _pthread_descr_struct {
   int p_nr;                     /* Index of descriptor in __pthread_handles */
   int p_report_events;		/* Nonzero if events must be reported.  */
   td_eventbuf_t p_eventbuf;     /* Data for event.  */
-  struct __res_state *p_resp;	/* Pointer to resolver state */
-  struct __res_state p_res;	/* per-thread resolver state */
-  /* New elements must be added at the end.  */
   struct pthread_atomic p_resume_count; /* number of times restart() was
 					   called on thread */
   char p_woken_by_cancel;       /* cancellation performed wakeup */
   pthread_extricate_if *p_extricate; /* See above */
+  struct __res_state *p_resp;	/* Pointer to resolver state */
+  struct __res_state p_res;	/* per-thread resolver state */
+  /* New elements must be added at the end.  */
 } __attribute__ ((aligned(32))); /* We need to align the structure so that
 				    doubles are aligned properly.  This is 8
 				    bytes on MIPS and 16 bytes on MIPS64.
