@@ -61,9 +61,9 @@
 /* Emit stabs definition lines.  We use F(0,1) since for gcc this means
    `a function returning int'.  */
 #define STABS_FUN(name) STABS_FUN2(name, name##:F(0,1))
-#define STABS_FUN2(name, namestr)					     \
+#define STABS_FUN2(name, namestr)					      \
   .stabs #namestr,36,0,0,name;
-#define STABS_FUN_END(name)						     \
+#define STABS_FUN_END(name)						      \
   1: .stabs "",36,0,0,1b-name;
 
 /* If compiled for profiling, call `mcount' at the start of each function.  */
