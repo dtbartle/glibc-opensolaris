@@ -31,7 +31,6 @@
 #include <bp-sym.h>
 
 #include <dl-dst.h>
-#include <dl-tls.h>
 
 
 extern ElfW(Addr) _dl_sysdep_start (void **start_argptr,
