@@ -56,7 +56,7 @@ __sigreturn (struct sigcontext *scp)
 	 thread will examine us while we are blocked in the sig_post RPC.  */
       ss->intr_port = MACH_PORT_NULL;
       __mutex_unlock (&ss->lock);
-      __sig_post (_hurd_msgport, 0, __mach_task_self ());
+      __msg_sig_post (_hurd_msgport, 0, __mach_task_self ());
       /* If a pending signal was handled, sig_post never returned.  */
       __mutex_lock (&ss->lock);
     }
