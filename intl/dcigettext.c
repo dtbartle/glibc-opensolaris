@@ -230,7 +230,7 @@ transcmp (const void *p1, const void *p2)
   result = strcmp (s1->msgid, s2->msgid);
   if (result == 0)
     {
-      result = strcmp (s1->msgid, s2->msgid);
+      result = strcmp (s1->domain, s2->domain);
       if (result == 0)
 	{
 	  result = s1->plindex - s2->plindex;
@@ -362,7 +362,7 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 #if defined HAVE_TSEARCH || defined _LIBC
   struct known_translation_t *search;
   struct known_translation_t **foundp = NULL;
-  size_t msgid_len = strlen (msgid1) + 1;
+  size_t msgid_len;
 #endif
   size_t domainname_len;
 
@@ -373,6 +373,8 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
   __libc_rwlock_rdlock (_nl_state_lock);
 
 #if defined HAVE_TSEARCH || defined _LIBC
+  msgid_len = strlen (msgid1) + 1;
+
   if (plural == 0)
     {
       /* Try to find the translation among those which we found at
