@@ -347,7 +347,7 @@
 #endif
 
 /* The utimes syscall has been available for some architectures forever.  */
-#if defined __alpha__ || defined __ia64__ || defined __hppa_ \
+#if defined __alpha__ || defined __ia64__ || defined __hppa__ \
     || defined __sparc__
 # define __ASSUME_UTIMES	1
 #endif
