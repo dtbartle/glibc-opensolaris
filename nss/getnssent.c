@@ -26,7 +26,6 @@ __nss_getent (getent_r_function func, void **resbuf, char **buffer,
 	      size_t buflen, size_t *buffer_size, int *h_errnop)
 {
   void *result;
-  int save;
 
   if (*buffer == NULL)
     {
@@ -55,10 +54,6 @@ __nss_getent (getent_r_function func, void **resbuf, char **buffer,
 
   if (*buffer == NULL)
     result = NULL;
-
-  /* Release lock.  Preserve error value.  */
-  save = errno;
-  __set_errno (save);
 
   return result;
 }
