@@ -2706,7 +2706,7 @@ rm -f conftest*
 fi
 
 echo "$ac_t""$libc_cv_gcc_builtin_expect" 1>&6
-if "$libc_vc_gcc_builtin_expect" = yes; then
+if test "$libc_vc_gcc_builtin_expect" = yes; then
   cat >> confdefs.h <<\EOF
 #define HAVE_BUILTIN_EXPECT 1
 EOF
