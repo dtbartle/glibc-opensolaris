@@ -438,10 +438,40 @@ re_string_reconstruct (pstr, idx, eflags, newline)
 	  if (pstr->mb_cur_max > 1)
 	    {
 	      int wcs_idx;
-	      wint_t wc;
-	      pstr->valid_len = re_string_skip_chars (pstr, idx, &wc) - idx;
-	      for (wcs_idx = 0; wcs_idx < pstr->valid_len; ++wcs_idx)
-		pstr->wcs[wcs_idx] = WEOF;
+	      wint_t wc = WEOF;
+
+	      if (pstr->is_utf8)
+		{
+		  const unsigned char *raw, *p, *end;
+
+		  /* Special case UTF-8.  Multi-byte chars start with any
+		     byte other than 0x80 - 0xbf.  */
+		  raw = pstr->raw_mbs + pstr->raw_mbs_idx;
+		  end = raw + (pstr->valid_len > offset - pstr->mb_cur_max
+			       ? pstr->valid_len : offset - pstr->mb_cur_max);
+		  for (p = raw + offset - 1; p >= end; --p)
+		    if ((*p & 0xc0) != 0x80)
+		      {
+			mbstate_t cur_state;
+			wchar_t wc2;
+
+			memset (&cur_state, 0, sizeof (cur_state));
+			if (mbrtowc (&wc2, p, raw + offset - p, &cur_state)
+			    == raw + offset - p)
+			  {
+			    memset (&pstr->cur_state, '\0',
+				    sizeof (mbstate_t));
+			    wc = wc2;
+			  }
+			break;
+		      }
+		}
+	      if (wc == WEOF)
+		{
+		  pstr->valid_len = re_string_skip_chars (pstr, idx, &wc) - idx;
+		  for (wcs_idx = 0; wcs_idx < pstr->valid_len; ++wcs_idx)
+		    pstr->wcs[wcs_idx] = WEOF;
+		}
 	      if (pstr->trans && wc <= 0xff)
 		wc = pstr->trans[wc];
 	      pstr->tip_context = (IS_WIDE_WORD_CHAR (wc) ? CONTEXT_WORD
