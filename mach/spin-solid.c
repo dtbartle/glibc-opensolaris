@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -25,3 +25,4 @@ __spin_lock_solid (spin_lock_t *lock)
     /* Yield to another thread (system call).  */
     __swtch_pri ();
 }
+weak_alias (__spin_lock_solid, spin_lock_solid);
