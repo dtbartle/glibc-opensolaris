@@ -29,9 +29,9 @@ Cambridge, MA 02139, USA.  */
 #include <ctype.h>
 #include <float.h>
 #include <gmp-mparam.h>
-#include <gmp.h>
-#include <gmp-impl.h>
-#include <longlong.h>
+#include "../stdlib/gmp.h"
+#include "../stdlib/gmp-impl.h"
+#include "../stdlib/longlong.h"
 #include "../locale/localeinfo.h"
 #include <limits.h>
 #include <math.h>
