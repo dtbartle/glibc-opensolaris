@@ -233,7 +233,7 @@ extern int __nscd_open_socket (const char *key, size_t keylen,
 extern struct mapped_database *__nscd_get_map_ref (request_type type,
 						   const char *name,
 						   struct locked_map_ptr *mapptr,
-						   int *gc_cyclep);
+						   volatile int *gc_cyclep);
 
 /* Unmap database.  */
 extern void __nscd_unmap (struct mapped_database *mapped);
