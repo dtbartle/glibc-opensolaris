@@ -172,6 +172,67 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
+
+  if (pthread_attr_getschedpolicy (&a, &s) != 0)
+    {
+      puts ("1st attr_getschedpolicy failed");
+      exit (1);
+    }
+  /* XXX What is the correct default value.  */
+  if (s != SCHED_OTHER && s != SCHED_FIFO && s != SCHED_RR)
+    {
+      puts ("incorrect default value for schedpolicy");
+      exit (1);
+    }
+
+  if (pthread_attr_setschedpolicy (&a, SCHED_RR) != 0)
+    {
+      puts ("1st attr_setschedpolicy failed");
+      exit (1);
+    }
+  if (pthread_attr_getschedpolicy (&a, &s) != 0)
+    {
+      puts ("2nd attr_getschedpolicy failed");
+      exit (1);
+    }
+  if (s != SCHED_RR)
+    {
+      printf ("schedpolicy set to SCHED_RR, but got %d\n", s);
+      exit (1);
+    }
+
+  if (pthread_attr_setschedpolicy (&a, SCHED_FIFO) != 0)
+    {
+      puts ("2nd attr_setschedpolicy failed");
+      exit (1);
+    }
+  if (pthread_attr_getschedpolicy (&a, &s) != 0)
+    {
+      puts ("3rd attr_getschedpolicy failed");
+      exit (1);
+    }
+  if (s != SCHED_FIFO)
+    {
+      printf ("schedpolicy set to SCHED_FIFO, but got %d\n", s);
+      exit (1);
+    }
+
+  if (pthread_attr_setschedpolicy (&a, SCHED_OTHER) != 0)
+    {
+      puts ("3rd attr_setschedpolicy failed");
+      exit (1);
+    }
+  if (pthread_attr_getschedpolicy (&a, &s) != 0)
+    {
+      puts ("4th attr_getschedpolicy failed");
+      exit (1);
+    }
+  if (s != SCHED_OTHER)
+    {
+      printf ("schedpolicy set to SCHED_OTHER, but got %d\n", s);
+      exit (1);
+    }
+
   return 0;
 }
 
