@@ -1,5 +1,5 @@
 /* Map in a shared object's segments from the file.
-   Copyright (C) 1995-2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 1995-2002, 2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -826,8 +826,6 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
   /* Initialize to keep the compiler happy.  */
   const char *errstring = NULL;
   int errval = 0;
-  struct r_debug *r = _dl_debug_initialize (0, nsid);
-  bool make_consistent = false;
 
   /* Get file information.  */
   if (__builtin_expect (__fxstat64 (_STAT_VER, fd, &st) < 0, 0))
@@ -836,12 +834,6 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
     call_lose_errno:
       errval = errno;
     call_lose:
-      if (make_consistent)
-	{
-	  r->r_state = RT_CONSISTENT;
-	  _dl_debug_state ();
-	}
-
       lose (errval, fd, name, realname, l, errstring);
     }
 
@@ -911,39 +903,6 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 	}
     }
 #endif
-
-  /* Signal that we are going to add new objects.  */
-  if (r->r_state == RT_CONSISTENT)
-    {
-#ifdef SHARED
-      /* Auditing checkpoint: we are going to add new objects.  */
-      if (__builtin_expect (GLRO(dl_naudit) > 0, 0))
-	{
-	  struct link_map *head = GL(dl_ns)[nsid]._ns_loaded;
-	  /* Do not call the functions for any auditing object.  */
-	  if (head->l_auditing == 0)
-	    {
-	      struct audit_ifaces *afct = GLRO(dl_audit);
-	      for (unsigned int cnt = 0; cnt < GLRO(dl_naudit); ++cnt)
-		{
-		  if (afct->activity != NULL)
-		    afct->activity (&head->l_audit[cnt].cookie, LA_ACT_ADD);
-
-		  afct = afct->next;
-		}
-	    }
-	}
-#endif
-
-      /* Notify the debugger we have added some objects.  We need to
-	 call _dl_debug_initialize in a static program in case dynamic
-	 linking has not been used before.  */
-      r->r_state = RT_ADD;
-      _dl_debug_state ();
-      make_consistent = true;
-    }
-  else
-    assert (r->r_state == RT_ADD);
 
   /* Enter the new object in the list of loaded objects.  */
   l = _dl_new_object (realname, name, l_type, loader, mode, nsid);
@@ -1084,7 +1043,7 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 	    }
 
 # ifdef SHARED
-	  if (l->l_prev == NULL || (mode & __RTLD_AUDIT) != 0)
+	  if (l->l_prev == NULL)
 	    /* We are loading the executable itself when the dynamic linker
 	       was executed directly.  The setup will happen later.  */
 	    break;
@@ -1358,14 +1317,14 @@ cannot allocate TLS data structures for initial thread");
 	 protection of the variable which contains the flags used in
 	 the mprotect calls.  */
 #ifdef HAVE_Z_RELRO
-      if ((mode & (__RTLD_DLOPEN | __RTLD_AUDIT)) == __RTLD_DLOPEN)
+      if (mode & __RTLD_DLOPEN)
 	{
 	  uintptr_t p = ((uintptr_t) &__stack_prot) & ~(GLRO(dl_pagesize) - 1);
 	  size_t s = (uintptr_t) &__stack_prot - p + sizeof (int);
 
 	  __mprotect ((void *) p, s, PROT_READ|PROT_WRITE);
 	  if (__builtin_expect (__check_caller (RETURN_ADDRESS (0),
-						allow_ldso) == 0,
+						allow_ldso|allow_libc) == 0,
 				0))
 	    __stack_prot |= PROT_READ|PROT_WRITE|PROT_EXEC;
 	  __mprotect ((void *) p, s, PROT_READ);
@@ -1468,27 +1427,6 @@ cannot enable executable stack as shared object requires");
     add_name_to_object (l, ((const char *) D_PTR (l, l_info[DT_STRTAB])
 			    + l->l_info[DT_SONAME]->d_un.d_val));
 
-#ifdef SHARED
-  /* Auditing checkpoint: we have a new object.  */
-  if (__builtin_expect (GLRO(dl_naudit) > 0, 0)
-      && !GL(dl_ns)[l->l_ns]._ns_loaded->l_auditing)
-    {
-      struct audit_ifaces *afct = GLRO(dl_audit);
-      for (unsigned int cnt = 0; cnt < GLRO(dl_naudit); ++cnt)
-	{
-	  if (afct->objopen != NULL)
-	    {
-	      l->l_audit[cnt].bindflags
-		= afct->objopen (l, nsid, &l->l_audit[cnt].cookie);
-
-	      l->l_audit_any_plt |= l->l_audit[cnt].bindflags != 0;
-	    }
-
-	  afct = afct->next;
-	}
-    }
-#endif
-
   return l;
 }
 
@@ -1536,8 +1474,7 @@ print_search_path (struct r_search_path_elem **list,
    this could mean there is something wrong in the installation and the
    user might want to know about this.  */
 static int
-open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
-	     int whatcode)
+open_verify (const char *name, struct filebuf *fbp)
 {
   /* This is the expected ELF header.  */
 #define ELF32_CLASS ELFCLASS32
@@ -1566,34 +1503,13 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
     ElfW(Word) type;
     char vendor[4];
   } expected_note = { 4, 16, 1, "GNU" };
+  int fd;
   /* Initialize it to make the compiler happy.  */
   const char *errstring = NULL;
   int errval = 0;
 
-#ifdef SHARED
-  /* Give the auditing libraries a chance.  */
-  if (__builtin_expect (GLRO(dl_naudit) > 0, 0) && whatcode != 0
-      && loader->l_auditing == 0)
-    {
-      struct audit_ifaces *afct = GLRO(dl_audit);
-      for (unsigned int cnt = 0; cnt < GLRO(dl_naudit); ++cnt)
-	{
-	  if (afct->objsearch != NULL)
-	    {
-	      name = afct->objsearch (name, &loader->l_audit[cnt].cookie,
-				      whatcode);
-	      if (name == NULL)
-		/* Ignore the path.  */
-		return -1;
-	    }
-
-	  afct = afct->next;
-	}
-    }
-#endif
-
   /* Open the file.  We always open files read-only.  */
-  int fd = __open (name, O_RDONLY);
+  fd = __open (name, O_RDONLY);
   if (fd != -1)
     {
       ElfW(Ehdr) *ehdr;
@@ -1751,7 +1667,7 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
 static int
 open_path (const char *name, size_t namelen, int preloaded,
 	   struct r_search_path_struct *sps, char **realname,
-	   struct filebuf *fbp, struct link_map *loader, int whatcode)
+	   struct filebuf *fbp)
 {
   struct r_search_path_elem **dirs = sps->dirs;
   char *buf;
@@ -1795,16 +1711,12 @@ open_path (const char *name, size_t namelen, int preloaded,
 	  if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_LIBS, 0))
 	    _dl_debug_printf ("  trying file=%s\n", buf);
 
-	  fd = open_verify (buf, fbp, loader, whatcode);
+	  fd = open_verify (buf, fbp);
 	  if (this_dir->status[cnt] == unknown)
 	    {
 	      if (fd != -1)
 		this_dir->status[cnt] = existing;
-	      /* Do not update the directory information when loading
-		 auditing code.  We must try to disturb the program as
-		 little as possible.  */
-	      else if (loader == NULL
-		       || GL(dl_ns)[loader->l_ns]._ns_loaded->l_audit == 0)
+	      else
 		{
 		  /* We failed to open machine dependent library.  Let's
 		     test whether there is any directory at all.  */
@@ -1822,7 +1734,7 @@ open_path (const char *name, size_t namelen, int preloaded,
 	    }
 
 	  /* Remember whether we found any existing directory.  */
-	  here_any |= this_dir->status[cnt] != nonexisting;
+	  here_any |= this_dir->status[cnt] == existing;
 
 	  if (fd != -1 && __builtin_expect (preloaded, 0)
 	      && INTUSE(__libc_enable_secure))
@@ -1943,32 +1855,6 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 			      loader->l_name[0]
 			      ? loader->l_name : rtld_progname, loader->l_ns);
 
-#ifdef SHARED
-  /* Give the auditing libraries a chance to change the name before we
-     try anything.  */
-  if (__builtin_expect (GLRO(dl_naudit) > 0, 0)
-      && (loader == NULL || loader->l_auditing == 0))
-    {
-      struct audit_ifaces *afct = GLRO(dl_audit);
-      for (unsigned int cnt = 0; cnt < GLRO(dl_naudit); ++cnt)
-	{
-	  if (afct->objsearch != NULL)
-	    {
-	      name = afct->objsearch (name, &loader->l_audit[cnt].cookie,
-				      LA_SER_ORIG);
-	      if (name == NULL)
-		{
-		  /* Do not try anything further.  */
-		  fd = -1;
-		  goto no_file;
-		}
-	    }
-
-	  afct = afct->next;
-	}
-    }
-#endif
-
   if (strchr (name, '/') == NULL)
     {
       /* Search for NAME in several places.  */
@@ -1989,7 +1875,7 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	  for (l = loader; fd == -1 && l; l = l->l_loader)
 	    if (cache_rpath (l, &l->l_rpath_dirs, DT_RPATH, "RPATH"))
 	      fd = open_path (name, namelen, preloaded, &l->l_rpath_dirs,
-			      &realname, &fb, loader, LA_SER_RUNPATH);
+			      &realname, &fb);
 
 	  /* If dynamically linked, try the DT_RPATH of the executable
              itself.  NB: we do this for lookups in any namespace.  */
@@ -1999,24 +1885,21 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	      if (l && l->l_type != lt_loaded && l != loader
 		  && cache_rpath (l, &l->l_rpath_dirs, DT_RPATH, "RPATH"))
 		fd = open_path (name, namelen, preloaded, &l->l_rpath_dirs,
-				&realname, &fb, loader ?: l, LA_SER_RUNPATH);
+				&realname, &fb);
 	    }
 	}
 
       /* Try the LD_LIBRARY_PATH environment variable.  */
       if (fd == -1 && env_path_list.dirs != (void *) -1)
 	fd = open_path (name, namelen, preloaded, &env_path_list,
-			&realname, &fb,
-			loader ?: GL(dl_ns)[LM_ID_BASE]._ns_loaded,
-			LA_SER_LIBPATH);
+			&realname, &fb);
 
       /* Look at the RUNPATH information for this binary.  */
       if (fd == -1 && loader != NULL
 	  && cache_rpath (loader, &loader->l_runpath_dirs,
 			  DT_RUNPATH, "RUNPATH"))
 	fd = open_path (name, namelen, preloaded,
-			&loader->l_runpath_dirs, &realname, &fb, loader,
-			LA_SER_RUNPATH);
+			&loader->l_runpath_dirs, &realname, &fb);
 
       if (fd == -1
 	  && (__builtin_expect (! preloaded, 1)
@@ -2064,9 +1947,7 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 
 	      if (cached != NULL)
 		{
-		  fd = open_verify (cached,
-				    &fb, loader ?: GL(dl_ns)[nsid]._ns_loaded,
-				    LA_SER_CONFIG);
+		  fd = open_verify (cached, &fb);
 		  if (__builtin_expect (fd != -1, 1))
 		    {
 		      realname = local_strdup (cached);
@@ -2086,7 +1967,7 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	      || __builtin_expect (!(l->l_flags_1 & DF_1_NODEFLIB), 1))
 	  && rtld_search_dirs.dirs != (void *) -1)
 	fd = open_path (name, namelen, preloaded, &rtld_search_dirs,
-			&realname, &fb, l, LA_SER_DEFAULT);
+			&realname, &fb);
 
       /* Add another newline when we are tracing the library loading.  */
       if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_LIBS, 0))
@@ -2102,16 +1983,12 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
 	fd = -1;
       else
 	{
-	  fd = open_verify (realname, &fb,
-			    loader ?: GL(dl_ns)[nsid]._ns_loaded, 0);
+	  fd = open_verify (realname, &fb);
 	  if (__builtin_expect (fd, 0) == -1)
 	    free (realname);
 	}
     }
 
-#ifdef SHARED
- no_file:
-#endif
   /* In case the LOADER information has only been provided to get to
      the appropriate RUNPATH/RPATH information we do not need it
      anymore.  */

@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2004, 2005 Free Software Foundation, Inc.
+# Copyright (C) 1995-2002, 2003, 2004 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -20,8 +20,8 @@
 
 subdir		:= elf
 
-headers		= elf.h bits/elfclass.h link.h bits/link.h
-routines	= $(dl-routines) dl-support dl-iteratephdr \
+headers		= elf.h bits/elfclass.h link.h
+routines	= $(dl-routines) dl-open dl-close dl-support dl-iteratephdr \
 		  dl-addr enbl-secure dl-profstub \
 		  dl-origin dl-libc dl-sym dl-tsd
 
@@ -30,7 +30,7 @@ routines	= $(dl-routines) dl-support dl-iteratephdr \
 dl-routines	= $(addprefix dl-,load cache lookup object reloc deps \
 			          runtime error init fini debug misc \
 				  version profile conflict tls origin \
-				  execstack caller open close trampoline)
+				  execstack caller)
 all-dl-routines = $(dl-routines) $(sysdep-dl-routines)
 # But they are absent from the shared libc, because that code is in ld.so.
 elide-routines.os = $(all-dl-routines) dl-support enbl-secure dl-origin
@@ -83,8 +83,7 @@ distribute	:= rtld-Rules \
 		   tst-array2dep.c tst-piemod1.c \
 		   tst-execstack-mod.c tst-dlmodcount.c \
 		   check-textrel.c dl-sysdep.h test-dlopenrpathmod.c \
-		   tst-deep1mod1.c tst-deep1mod2.c tst-deep1mod3.c \
-		   tst-auditmod1.c
+		   tst-deep1mod1.c tst-deep1mod2.c tst-deep1mod3.c
 
 CFLAGS-dl-runtime.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-dl-lookup.c = -fexceptions -fasynchronous-unwind-tables
@@ -155,8 +154,7 @@ tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
 	 circleload1 tst-tls3 tst-tls4 tst-tls5 tst-tls6 tst-tls7 tst-tls8 \
 	 tst-tls10 tst-tls11 tst-tls12 tst-tls13 tst-tls14 tst-align \
 	 tst-align2 $(tests-execstack-$(have-z-execstack)) tst-dlmodcount \
-	 tst-dlopenrpath tst-deep1 tst-dlmopen1 tst-dlmopen2 tst-dlmopen3 \
-	 tst-audit1
+	 tst-dlopenrpath tst-deep1 tst-dlmopen1 tst-dlmopen2 tst-dlmopen3
 #	 reldep9
 test-srcs = tst-pathopt
 tests-vis-yes = vismain
@@ -191,7 +189,7 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		tst-alignmod tst-alignmod2 \
 		$(modules-execstack-$(have-z-execstack)) \
 		tst-dlopenrpathmod tst-deep1mod1 tst-deep1mod2 tst-deep1mod3 \
-		tst-dlmopen1mod tst-auditmod1
+		tst-dlmopen1mod
 ifeq (yes,$(have-initfini-array))
 modules-names += tst-array2dep
 endif
@@ -781,6 +779,3 @@ $(objpfx)tst-dlmopen2.out: $(objpfx)tst-dlmopen1mod.so
 
 $(objpfx)tst-dlmopen3: $(libdl)
 $(objpfx)tst-dlmopen3.out: $(objpfx)tst-dlmopen1mod.so
-
-$(objpfx)tst-audit1.out: $(objpfx)tst-auditmod1.so
-tst-audit1-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so

@@ -1,5 +1,5 @@
 /* 
-   Copyright (C) 1995, 2005 Free Software Foundation
+   Copyright (C) 1995 Free Software Foundation
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

@@ -1,4 +1,4 @@
-/* Copyright (c) 1999, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+/* Copyright (c) 1999, 2002, 2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@suse.de>, 1999.
 

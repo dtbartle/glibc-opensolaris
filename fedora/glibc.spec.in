@@ -1,4 +1,4 @@
-%define glibcrelease 10
+%define glibcrelease 3.fc3
 %define auxarches i586 i686 athlon sparcv9 alphaev6
 %define prelinkarches noarch
 %define nptlarches i386 i686 athlon x86_64 ia64 s390 s390x sparcv9 ppc ppc64
@@ -10,7 +10,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %{glibcversion}
 Release: %{glibcrelease}
-License: LGPL
+Copyright: LGPL
 Group: System Environment/Libraries
 %define glibcsrcdir %{glibcname}-%{glibcdate}
 Source0: %{glibcsrcdir}.tar.bz2
@@ -840,12 +840,9 @@ for i in $RPM_BUILD_ROOT%{_prefix}/bin/{xtrace,memusage}; do
 done
 
 grep '%{_prefix}/%{_lib}/lib.*_p\.a' < rpm.filelist > profile.filelist || :
-grep '%{_infodir}' < rpm.filelist | grep -v '%{_infodir}/dir' > devel.filelist
-grep '%{_prefix}/include/gnu/stubs-[32164]\+\.h' < rpm.filelist >> devel.filelist || :
-
-grep '%{_prefix}/include' < rpm.filelist |
-	egrep -v '%{_prefix}/include/(nptl|gnu/stubs-[32164]+\.h)' \
-		> headers.filelist
+egrep "(%{_prefix}/include)|(%{_infodir})" < rpm.filelist |
+	grep -v %{_prefix}/include/nptl |
+	grep -v %{_infodir}/dir > devel.filelist
 
 mv rpm.filelist rpm.filelist.full
 grep -v '%{_prefix}/%{_lib}/lib.*_p.a' rpm.filelist.full |
@@ -855,6 +852,10 @@ grep '%{_prefix}/%{_lib}/lib.*\.a' < rpm.filelist >> devel.filelist
 grep '%{_prefix}/%{_lib}/.*\.o' < rpm.filelist >> devel.filelist
 grep '%{_prefix}/%{_lib}/lib.*\.so' < rpm.filelist >> devel.filelist
 grep '%{_mandir}' < rpm.filelist >> devel.filelist
+
+grep '%{_prefix}/include' < devel.filelist > headers.filelist
+grep -v '%{_prefix}/include' < devel.filelist > devel.filelist.tmp
+mv -f devel.filelist.tmp devel.filelist
 
 mv rpm.filelist rpm.filelist.full
 grep -v '%{_prefix}/%{_lib}/lib.*\.a' < rpm.filelist.full |
@@ -1056,11 +1057,11 @@ for f in `find $RPM_BUILD_ROOT/%{_lib} -type l`; do
 done
 
 echo Sorting source file lists. Might take a while...
-xargs -0 -n 1 echo < $sf | LC_ALL=C grep -v '/<internal>$' | LC_ALL=C sort -u > $sf.sorted
-xargs -0 -n 1 echo < $csf | LC_ALL=C grep -v '/<internal>$' | LC_ALL=C sort -u > $csf.sorted
+xargs -0 -n 1 echo < $sf | LANG=C sort -u > $sf.sorted
+xargs -0 -n 1 echo < $csf | LANG=C sort -u > $csf.sorted
 mkdir -p $RPM_BUILD_ROOT/usr/src/debug
 cat $sf.sorted $csf.sorted \
-  | (cd $RPM_BUILD_DIR; LC_ALL=C sort -u | cpio -pdm ${RPM_BUILD_ROOT}/usr/src/debug)
+  | (cd $RPM_BUILD_DIR; LANG=C sort -u | cpio -pdm ${RPM_BUILD_ROOT}/usr/src/debug)
 # stupid cpio creates new directories in mode 0700, fixup
 find $RPM_BUILD_ROOT/usr/src/debug -type d -print | xargs chmod a+rx
 
@@ -1269,81 +1270,52 @@ rm -f *.filelist*
 %endif
 
 %changelog
-* Sat Feb 12 2005 Jakub Jelinek <jakub@redhat.com> 2.3.4-10
-- hopefully fix interaction with prelink (#147655)
-
-* Fri Feb 11 2005 Jakub Jelinek <jakub@redhat.com> 2.3.4-9
+* Wed Feb 16 2005 Roland McGrath <roland@redhat.com> 2.3.4-3.fc3
 - update from CVS
-  - bi-arch <gnu/stubs.h> (BZ#715)
-
-* Fri Feb 11 2005 Jakub Jelinek <jakub@redhat.com> 2.3.4-8
-- update from CVS
-  - bi-arch <gnu/lib-names.h> (BZ#632)
-  - fix libdl on s390 and maybe other platforms
   - fix initstate{,_r} (BZ#710)
-  - fix <gnu/stubs.h> generation (BZ#157)
-- define CMSPAR in bits/termios.h (#147533)
-
-* Tue Feb  8 2005 Jakub Jelinek <jakub@redhat.com> 2.3.4-7
-- update from CVS
-  - fix TLS handling in linuxthreads
-
-* Tue Feb  8 2005 Jakub Jelinek <jakub@redhat.com> 2.3.4-6
-- update from CVS
-  - ld.so auditing
   - fix segfault if chrooted app attempts to dlopen a library
-    and no standard library directory exists at all (#147067, #144303)
+    and no standard library directory exists at all (#147067, #144303, BZ#738)
   - fix initgroups when nscd is running, but has group caching disabled
-    (#146588)
+    (#146588, BZ#741)
   - fix pthread_key_{create,destroy} in LinuxThreads when pthread_create
-    has not been called yet (#146710)
+    has not been called yet (#146710, BZ#739)
   - fix ppc64 swapcontext and setcontext (#146736, BZ#700)
-  - service nscd cosmetic fixes (#146776)
-  - fix IA-32 and x86-64 stack alignment in DSO constructors (#145689)
-  - fix zdump -v segfaults on x86-64 (#146210)
-  - avoid calling sigaction (SIGPIPE, ...) inside syslog (#146021, IT#56686)
+  - service nscd cosmetic fixes (#146776, BZ#742)
+  - fix s390{,x} string.h (BZ#743)
+  - fix IA-32 and x86-64 stack alignment in DSO constructors (#145689, BZ#735)
+  - fix zdump -v segfaults on x86-64 (#146210, BZ#736)
+  - update IA-64 libm from Intel v2.1 (#142494, BZ#592)
+  - avoid calling sigaction (SIGPIPE, ...) inside syslog
+    (#146021, IT#56686, BZ#671)
+  - declare ftruncate for POSIX 2003 (BZ#640)
   - fix errno values for futimes (BZ#633)
   - unconditionally include <features.h> in malloc.h (BZ#650)
   - change regex \B handling to match old GNU regex as well as perl/grep's dfa
     (from empty string inside of word to empty string not at a word boundary,
      BZ#693)
   - slightly optimize i686 TLS accesses, use direct TLS %gs access in sem_*
-    and allow building -mno-tls-direct-seg-refs glibc that is free of direct TLS
-    %gs access with negative offsets
-  - fix addseverity
-  - fix fmemopen
-  - fix rewinddir
-  - increase svc{tcp,unix}_create listen backlog
-
-* Thu Jan  6 2005 Jakub Jelinek <jakub@redhat.com> 2.3.4-5
-- update from CVS
-  - add some warn_unused_result marking
-  - make ftruncate available even for just -D_POSIX_C_SOURCE=200112L
-    (BZ#640)
-
-* Thu Jan  6 2005 Jakub Jelinek <jakub@redhat.com> 2.3.4-4
-- update from CVS
+    and allow building -mno-tls-direct-seg-refs glibc that is free of
+    direct TLS %gs access with negative offsets (BZ#737)
+  - fix addseverity (BZ#731)
+  - fix fmemopen (BZ#730)
+  - fix rewinddir (BZ#734)
+  - increase svc{tcp,unix}_create listen backlog (BZ#733)
+  - fix vDSO l_map_end/l_text_end computation (BZ#729)
   - fix IA-32 stack alignment for LinuxThreads thread functions
-    and functions passed to clone(2) directly
-  - fix ecvt{,_r} on denormals (#143279)
-  - fix __tls_get_addr typo
-  - fix rounding in IA-64 alarm (#143710)
+    and functions passed to clone(2) directly (BZ#723)
+  - fix ecvt{,_r} on denormals (#143279, BZ#725)
+  - fix __tls_get_addr typo (BZ#726)
+  - fix rounding in IA-64 alarm (#143710, BZ#626)
   - don't reinitialize __environ in __libc_start_main, so that
     effects of setenv/putenv done in DSO initializers are preserved
-    (#144037, IT#57403)
-  - fix fmemopen
-  - fix vDSO l_map_end and l_text_end values
-  - IA64 libm update (#142494)
-- fix ppc rint/ceil etc. (BZ#602)
+    (#144037, IT#57403, BZ#727)
+  - fix ppc/ppc64 rint and other rounding functions (#144931, BZ#602)
 
-* Tue Dec 21 2004 Jakub Jelinek <jakub@redhat.com> 2.3.4-3
-- rebuilt
-
-* Mon Dec 20 2004 Jakub Jelinek <jakub@redhat.com> 2.3.4-2
+* Mon Dec 19 2004 Jakub Jelinek <jakub@redhat.com> 2.3.4-2
 - work around rpm bug some more, this time by copying
   iconvconfig to iconvconfig.%%{_target_cpu}.
 
-* Mon Dec 20 2004 Jakub Jelinek <jakub@redhat.com> 2.3.4-1
+* Mon Dec 19 2004 Jakub Jelinek <jakub@redhat.com> 2.3.4-1
 - update from CVS
   - glibc 2.3.4 release
   - add -o and --nostdlib options to iconvconfig

@@ -1,5 +1,5 @@
 /* Convert text in given files from the specified from-set to the to-set.
-   Copyright (C) 1998-2003, 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 1998-2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
@@ -239,30 +239,26 @@ main (int argc, char *argv[])
 	      if (from_wrong)
 		{
 		  if (to_wrong)
-		    error (0, 0,
+		    error (EXIT_FAILURE, 0,
 			   _("\
 conversion from `%s' and to `%s' are not supported"),
 			   from_pretty, to_pretty);
 		  else
-		    error (0, 0,
+		    error (EXIT_FAILURE, 0,
 			   _("conversion from `%s' is not supported"),
 			   from_pretty);
 		}
 	      else
 		{
 		  if (to_wrong)
-		    error (0, 0,
+		    error (EXIT_FAILURE, 0,
 			   _("conversion to `%s' is not supported"),
 			   to_pretty);
 		  else
-		    error (0, 0,
+		    error (EXIT_FAILURE, 0,
 			   _("conversion from `%s' to `%s' is not supported"),
 			   from_pretty, to_pretty);
 		}
-
-	      argp_help (&argp, stderr, ARGP_HELP_SEE,
-			 program_invocation_short_name);
-	      exit (1);
 	    }
 	  else
 	    error (EXIT_FAILURE, errno,
