@@ -711,11 +711,8 @@ add_locales_to_archive (nlist, list, replace)
 			     directory and it therefore must contain a
 			     regular file with the same name except a
 			     "SYS_" prefix.  */
-			  strcpy (stpcpy (stpcpy (stpcpy (stpcpy (fullname,
-								  fname),
-							  "/"),
-						  d->d_name),
-					  "/SYS_"),
+			  char *t = stpcpy (stpcpy (fullname, fname), "/");
+			  strcpy (stpcpy (stpcpy (t, d->d_name), "/SYS_"),
 				  d->d_name);
 
 			  if (stat64 (fullname, &st) == -1)
@@ -765,11 +762,10 @@ add_locales_to_archive (nlist, list, replace)
 
 	    if (S_ISDIR (st.st_mode))
 	      {
+		char *t;
 		close (fd);
-		strcpy (stpcpy (stpcpy (stpcpy (stpcpy (fullname, fname),
-						"/"),
-					locnames[cnt]),
-				"/SYS_"),
+		t = stpcpy (stpcpy (fullname, fname), "/");
+		strcpy (stpcpy (stpcpy (t, locnames[cnt]), "/SYS_"),
 			locnames[cnt]);
 
 		fd = open64 (fullname, O_RDONLY);
