@@ -1766,12 +1766,13 @@ unknown character class `%s' in category `LC_CTYPE'"),
 		  if (get_character (now, charmap, repertoire, &seq, &wch))
 		    goto err_label;
 
-		  if (seq != NULL && seq->nbytes == 1)
+		  if ((!ignore_content && seq != NULL && seq->nbytes == 1)
 		    /* Yep, we can store information about this byte
 		       sequence.  */
 		    ctype->class256_collection[seq->bytes[0]] |= class256_bit;
 
-		  if (wch != ILLEGAL_CHAR_VALUE && class_bit != 0)
+		  if ((!ignore_content && wch != ILLEGAL_CHAR_VALUE
+		       && class_bit != 0)
 		    /* We have the UCS4 position.  */
 		    *find_idx (ctype, &ctype->class_collection,
 			       &ctype->class_collection_max,
