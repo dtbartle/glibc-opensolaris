@@ -17,21 +17,23 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#ifndef	_HURD_FD_H
-
-#define	_HURD_FD_H	1
+#ifndef	_HURD_IOCTL_H
+#define	_HURD_IOCTL_H	1
 
 #define	__need___va_list
 #include <stdarg.h>
 
-/* Structure that records an ioctl handler.  */
 
+/* Type of handler function, called like ioctl to do its entire job.  */
+typedef int (*ioctl_handler_t) (int fd, int request, void *arg);
+
+/* Structure that records an ioctl handler.  */
 struct ioctl_handler
   {
     int first_request, last_request; /* Range of handled request values.  */
 
     /* Handler function, called like ioctl to do its entire job.  */
-    int (*handler) (int fd, int request, void *arg);
+    ioctl_handler_t handler;
 
     struct ioctl_handler *next;	/* Next handler.  */
   };
@@ -42,8 +44,7 @@ struct ioctl_handler
    Return nonzero and sets `errno' for an error.  */
 
 extern int hurd_register_ioctl_handler (int first_request, int last_request,
-					int (*handler) (int fd, int request,
-							void *arg));
+					ioctl_handler_t handler);
 
 
 /* Define a library-internal handler for ioctl commands between FIRST and
@@ -64,7 +65,7 @@ extern int hurd_register_ioctl_handler (int first_request, int last_request,
 
 /* Lookup the handler for the given ioctl request.  */
 
-int *(_hurd_lookup_ioctl_handler (int request)) (int, int, void *);
+ioctl_handler_t _hurd_lookup_ioctl_handler (int request);
 
 
 #endif	/* hurd/ioctl.h */
