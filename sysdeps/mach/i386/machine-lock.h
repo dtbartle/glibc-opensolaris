@@ -22,7 +22,7 @@ Cambridge, MA 02139, USA.  */
 
 /* The type of a spin lock variable.  */
 
-typedef volatile int __spin_lock_t;
+typedef __volatile int __spin_lock_t;
 
 /* Value to initialize `__spin_lock_t' variables to.  */
 
@@ -39,8 +39,8 @@ _EXTERN_INLINE void
 __spin_unlock (__spin_lock_t *__lock)
 {
    register int __unlocked;
-   __asm__ volatile ("xchgl %0, %1"
-		     : "=&r" (__unlocked), "=m" (*__lock) : "0" (0));
+   __asm__ __volatile ("xchgl %0, %1"
+		       : "=&r" (__unlocked), "=m" (*__lock) : "0" (0));
 }
 
 /* Try to lock LOCK; return nonzero if we locked it, zero if another has.  */
@@ -49,8 +49,8 @@ _EXTERN_INLINE int
 __spin_try_lock (__spin_lock_t *__lock)
 {
   register int __locked;
-  __asm__ volatile ("xchgl %0, %1"
-		    : "=&r" (__locked), "=m" (*__lock) : "0" (1));
+  __asm__ __volatile ("xchgl %0, %1"
+		      : "=&r" (__locked), "=m" (*__lock) : "0" (1));
   return !__locked;
 }
 
