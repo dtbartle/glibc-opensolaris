@@ -159,8 +159,8 @@ extern struct opaque_auth _null_auth;
  *	int *aup_gids;
  */
 extern AUTH *authunix_create (char *__machname, __uid_t __uid, __gid_t __gid,
-			      int __len, __gid_t *__aup_gids) __THROW;
-extern AUTH *authunix_create_default (void) __THROW;
+			      int __len, __gid_t *__aup_gids);
+extern AUTH *authunix_create_default (void);
 extern AUTH *authnone_create (void) __THROW;
 extern AUTH *authdes_create (const char *__servername, u_int __window,
 			     struct sockaddr *__syncaddr, des_block *__ckey)
