@@ -184,7 +184,7 @@ libc_hidden_proto (ruserpass)
 /* The following definition has been removed from the public header
    since we don't want people to use them.  */
 
-#define AI_DEFAULT    (AI_V4MAPPED | AI_ADDRCONFIG)
+#define AI_DEFAULT    (AI_V4MAPPED | AI_ADDRCONFIG | AI_IDN)
 
 #include <inet/netgroup.h>
 
