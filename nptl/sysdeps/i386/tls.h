@@ -1,4 +1,4 @@
-/* Definition for thread-local data handling.  nptl /i386 version.
+/* Definition for thread-local data handling.  nptl/i386 version.
    Copyright (C) 2002 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -280,22 +280,22 @@ union user_desc_init
 
 /* Same as THREAD_SETMEM, but the member offset can be non-constant.  */
 # define THREAD_SETMEM(descr, member, value) \
-  ({ if (sizeof (value) == 1)						      \
+  ({ if (sizeof (descr->member) == 1)					      \
        asm volatile ("movb %0,%%gs:%P1" :				      \
 		     : "iq" (value),					      \
 		       "i" (offsetof (struct pthread, member)));	      \
-     else if (sizeof (value) == 4)					      \
+     else if (sizeof (descr->member) == 4)				      \
        asm volatile ("movl %0,%%gs:%P1" :				      \
 		     : "ir" (value),					      \
 		       "i" (offsetof (struct pthread, member)));	      \
      else								      \
        {								      \
-	 if (sizeof (value) != 8)					      \
+	 if (sizeof (descr->member) != 8)				      \
 	   /* There should not be any value with a size other than 1,	      \
 	      4 or 8.  */						      \
 	   abort ();							      \
 									      \
-	 asm volatile ("movl %%eax,%%gs:%P1\n\n"			      \
+	 asm volatile ("movl %%eax,%%gs:%P1\n\t"			      \
 		       "movl %%edx,%%gs:%P2" :				      \
 		       : "A" (value),					      \
 			 "i" (offsetof (struct pthread, member)),	      \
@@ -305,17 +305,17 @@ union user_desc_init
 
 /* Set member of the thread descriptor directly.  */
 # define THREAD_SETMEM_NC(descr, member, value) \
-  ({ if (sizeof (value) == 1)						      \
+  ({ if (sizeof (descr->member) == 1)					      \
        asm volatile ("movb %0,%%gs:(%1)" :				      \
 		     : "iq" (value),					      \
 		       "r" (offsetof (struct pthread, member)));	      \
-     else if (sizeof (value) == 4)					      \
+     else if (sizeof (descr->member) == 4)				      \
        asm volatile ("movl %0,%%gs:(%1)" :				      \
 		     : "ir" (value),					      \
 		       "r" (offsetof (struct pthread, member)));	      \
      else								      \
        {								      \
-	 if (sizeof (value) != 8)					      \
+	 if (sizeof (descr->member) != 8)				      \
 	   /* There should not be any value with a size other than 1,	      \
 	      4 or 8.  */						      \
 	   abort ();							      \
