@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ enum
   _ISpunct = 1 << 6,			/* Punctuation.  */
   _NOgraph = 1 << 7,			/* Printing but nongraphical.  */
   _ISblank = 1 << 8,			/* Blank (usually SPC and TAB).  */
-  _ISalpha = _ISupper | _ISlower, 	/* Alphabetic.  */
+  _ISalpha = 1 << 9,			/* Alphabetic.  */
   _ISalnum = _ISalpha | _ISdigit,	/* Alphanumeric.  */
   _ISxdigit = _ISdigit | _IShex,	/* Hexadecimal numeric.  */
   _ISgraph = _ISalnum | _ISpunct,	/* Graphical.  */
