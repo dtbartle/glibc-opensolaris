@@ -92,6 +92,9 @@ tf (void *arg)
       error (0, 0, "pthread_attr_getstack returned range does not cover thread's stack");
       result = tf;
     }
+  else
+    printf ("thread stack %p-%p (0x%zx)\n", stackaddr, stackaddr + stacksize,
+	    stacksize);
 
   size_t guardsize1, guardsize2;
   err = pthread_attr_getguardsize (&a, &guardsize1);
@@ -114,6 +117,8 @@ tf (void *arg)
 		 guardsize1, guardsize2);
 	  result = tf;
 	}
+      else
+	printf ("thread guardsize %zd\n", guardsize1);
     }
 
   int scope1, scope2;
@@ -262,6 +267,9 @@ do_test (void)
       error (0, 0, "pthread_attr_getstack returned range does not cover main's stack");
       result = 1;
     }
+  else
+    printf ("initial thread stack %p-%p (0x%zx)\n", stackaddr,
+	    stackaddr + stacksize, stacksize);
 
   size_t guardsize;
   err = pthread_attr_getguardsize (&a, &guardsize);
