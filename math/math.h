@@ -42,64 +42,64 @@ __BEGIN_DECLS
 /* Trigonometric functions.  */
 
 /* Arc cosine of X.  */
-extern __CONSTVALUE double acos __P ((double __x));
+extern double acos __P ((double __x)) __attribute__ ((__const__));
 /* Arc sine of X.  */
-extern __CONSTVALUE double asin __P ((double __x));
+extern double asin __P ((double __x)) __attribute__ ((__const__));
 /* Arc tangent of X.  */
-extern __CONSTVALUE double atan __P ((double __x));
+extern double atan __P ((double __x)) __attribute__ ((__const__));
 /* Arc tangent of Y/X.  */
-extern __CONSTVALUE double atan2 __P ((double __y, double __x));
+extern double atan2 __P ((double __y, double __x)) __attribute__ ((__const__));
 
 /* Cosine of X.  */
-extern __CONSTVALUE double cos __P ((double __x));
+extern double cos __P ((double __x)) __attribute__ ((__const__));
 /* Sine of X.  */
-extern __CONSTVALUE double sin __P ((double __x));
+extern double sin __P ((double __x)) __attribute__ ((__const__));
 /* Tangent of X.  */
-extern __CONSTVALUE double tan __P ((double __x));
+extern double tan __P ((double __x)) __attribute__ ((__const__));
 
 
 /* Hyperbolic functions.  */
 
 /* Hyperbolic cosine of X.  */
-extern __CONSTVALUE double cosh __P ((double __x));
+extern double cosh __P ((double __x)) __attribute__ ((__const__));
 /* Hyperbolic sine of X.  */
-extern __CONSTVALUE double sinh __P ((double __x));
+extern double sinh __P ((double __x)) __attribute__ ((__const__));
 /* Hyperbolic tangent of X.  */
-extern __CONSTVALUE double tanh __P ((double __x));
+extern double tanh __P ((double __x)) __attribute__ ((__const__));
 
 #ifdef	__USE_MISC
 /* Hyperbolic arc cosine of X.  */
-extern __CONSTVALUE double acosh __P ((double __x));
+extern double acosh __P ((double __x)) __attribute__ ((__const__));
 /* Hyperbolic arc sine of X.  */
-extern __CONSTVALUE double asinh __P ((double __x));
+extern double asinh __P ((double __x)) __attribute__ ((__const__));
 /* Hyperbolic arc tangent of X.  */
-extern __CONSTVALUE double atanh __P ((double __x));
+extern double atanh __P ((double __x)) __attribute__ ((__const__));
 #endif
 
 /* Exponential and logarithmic functions.  */
 
 /* Exponentional function of X.  */
-extern __CONSTVALUE double exp __P ((double __x));
+extern double exp __P ((double __x)) __attribute__ ((__const__));
 
 /* Break VALUE into a normalized fraction and an integral power of 2.  */
 extern double frexp __P ((double __value, int *__exp));
 
 /* X times (two to the EXP power).  */
-extern __CONSTVALUE double ldexp __P ((double __x, int __exp));
+extern double ldexp __P ((double __x, int __exp)) __attribute__ ((__const__));
 
 /* Natural logarithm of X.  */
-extern __CONSTVALUE double log __P ((double __x));
+extern double log __P ((double __x)) __attribute__ ((__const__));
 
 /* Base-ten logarithm of X.  */
-extern __CONSTVALUE double log10 __P ((double __x));
+extern double log10 __P ((double __x)) __attribute__ ((__const__));
 
 #ifdef	__USE_MISC
 /* Return exp(X) - 1.  */
-extern __CONSTVALUE double __expm1 __P ((double __x));
-extern __CONSTVALUE double expm1 __P ((double __x));
+extern double __expm1 __P ((double __x)) __attribute__ ((__const__));
+extern double expm1 __P ((double __x)) __attribute__ ((__const__));
 
 /* Return log(1 + X).  */
-extern __CONSTVALUE double log1p __P ((double __x));
+extern double log1p __P ((double __x)) __attribute__ ((__const__));
 #endif
 
 /* Break VALUE into integral and fractional parts.  */
@@ -109,41 +109,41 @@ extern double modf __P ((double __value, double *__iptr));
 /* Power functions.  */
 
 /* Return X to the Y power.  */
-extern __CONSTVALUE double pow __P ((double __x, double __y));
+extern double pow __P ((double __x, double __y)) __attribute__ ((__const__));
 
 /* Return the square root of X.  */
-extern __CONSTVALUE double sqrt __P ((double __x));
+extern double sqrt __P ((double __x)) __attribute__ ((__const__));
 
 #ifdef	__USE_MISC
 /* Return the cube root of X.  */
-extern __CONSTVALUE double cbrt __P ((double __x));
+extern double cbrt __P ((double __x)) __attribute__ ((__const__));
 #endif
 
 
 /* Nearest integer, absolute value, and remainder functions.  */
 
 /* Smallest integral value not less than X.  */
-extern __CONSTVALUE double ceil __P ((double __x));
+extern double ceil __P ((double __x)) __attribute__ ((__const__));
 
 /* Absolute value of X.  */
-extern __CONSTVALUE double fabs __P ((double __x));
+extern double fabs __P ((double __x)) __attribute__ ((__const__));
 
 /* Largest integer not greater than X.  */
-extern __CONSTVALUE double floor __P ((double __x));
+extern double floor __P ((double __x)) __attribute__ ((__const__));
 
 /* Floating-point modulo remainder of X/Y.  */
-extern __CONSTVALUE double fmod __P ((double __x, double __y));
+extern double fmod __P ((double __x, double __y)) __attribute__ ((__const__));
 
 
 /* Return 0 if VALUE is finite or NaN, +1 if it
    is +Infinity, -1 if it is -Infinity.  */
-extern __CONSTVALUE int __isinf __P ((double __value));
+extern int __isinf __P ((double __value)) __attribute__ ((__const__));
 
 /* Return nonzero if VALUE is not a number.  */
-extern __CONSTVALUE int __isnan __P ((double __value));
+extern int __isnan __P ((double __value)) __attribute__ ((__const__));
 
 /* Return nonzero if VALUE is finite and not NaN.  */
-extern __CONSTVALUE int __finite __P ((double __value));
+extern int __finite __P ((double __value)) __attribute__ ((__const__));
 #ifdef	__OPTIMIZE__
 #define	__finite(value)	(!__isinf(value))
 #endif
@@ -157,30 +157,33 @@ extern __CONSTVALUE int __finite __P ((double __value));
 extern double __infnan __P ((int __error));
 
 /* Return X with its signed changed to Y's.  */
-extern __CONSTVALUE double __copysign __P ((double __x, double __y));
+extern double __copysign __P ((double __x, double __y))
+     __attribute__ ((__const__));
 
 /* Return X times (2 to the Nth power).  */
-extern __CONSTVALUE double __scalb __P ((double __x, int __n));
+extern double __scalb __P ((double __x, int __n))
+     __attribute__ ((__const__));
 
 #ifdef	__OPTIMIZE__
 #define	__scalb(x, n)	ldexp ((x), (n))
 #endif
 
 /* Return the remainder of X/Y.  */
-extern __CONSTVALUE double __drem __P ((double __x, double __y));
+extern double __drem __P ((double __x, double __y))
+     __attribute__ ((__const__));
 
 /* Return the base 2 signed integral exponent of X.  */
-extern __CONSTVALUE double __logb __P ((double __x));
+extern double __logb __P ((double __x)) __attribute__ ((__const__));
 
 #ifdef	__USE_MISC
 
 /* Return the integer nearest X in the direction of the
    prevailing rounding mode.  */
-extern __CONSTVALUE double __rint __P ((double __x));
-extern __CONSTVALUE double rint __P ((double __x));
+extern double __rint __P ((double __x)) __attribute__ ((__const__));
+extern double rint __P ((double __x)) __attribute__ ((__const__));
 
 /* Return `sqrt(X*X + Y*Y)'.  */
-extern __CONSTVALUE double hypot __P ((double __x, double __y));
+extern double hypot __P ((double __x, double __y)) __attribute__ ((__const__));
 
 struct __cabs_complex
 {
@@ -188,16 +191,17 @@ struct __cabs_complex
 };
 
 /* Return `sqrt(X*X + Y*Y)'.  */
-extern __CONSTVALUE double cabs __P ((struct __cabs_complex));
+extern double cabs __P ((struct __cabs_complex)) __attribute__ ((__const__));
 
-extern __CONSTVALUE int isinf __P ((double __value));
-extern __CONSTVALUE int isnan __P ((double __value));
-extern __CONSTVALUE int finite __P ((double __value));
-extern __CONSTVALUE double infnan __P ((int __error));
-extern __CONSTVALUE double copysign __P ((double __x, double __y));
-extern __CONSTVALUE double scalb __P ((double __x, int __n));
-extern __CONSTVALUE double drem __P ((double __x, double __y));
-extern __CONSTVALUE double logb __P ((double __x));
+extern int isinf __P ((double __value)) __attribute__ ((__const__));
+extern int isnan __P ((double __value)) __attribute__ ((__const__));
+extern int finite __P ((double __value)) __attribute__ ((__const__));
+extern double infnan __P ((int __error)) __attribute__ ((__const__));
+extern double copysign __P ((double __x, double __y))
+     __attribute__ ((__const__));
+extern double scalb __P ((double __x, int __n)) __attribute__ ((__const__));
+extern double drem __P ((double __x, double __y)) __attribute__ ((__const__));
+extern double logb __P ((double __x)) __attribute__ ((__const__));
 
 #ifdef	__OPTIMIZE__
 #define	isinf(value)	__isinf(value)
@@ -218,51 +222,72 @@ extern __CONSTVALUE double logb __P ((double __x));
    ANSI Standard reserves these as `float' and
    `long double' versions of the above functions.  */
 
-extern __CONSTVALUE float acosf __P ((float __x));
-extern __CONSTVALUE float asinf __P ((float __x));
-extern __CONSTVALUE float atanf __P ((float __x));
-extern __CONSTVALUE float atan2f __P ((float __y, float __x));
-extern __CONSTVALUE float cosf __P ((float __x));
-extern __CONSTVALUE float sinf __P ((float __x));
-extern __CONSTVALUE float tanf __P ((float __x));
-extern __CONSTVALUE float coshf __P ((float __x));
-extern __CONSTVALUE float sinhf __P ((float __x));
-extern __CONSTVALUE float tanhf __P ((float __x));
-extern __CONSTVALUE float expf __P ((float __x));
+extern float acosf __P ((float __x)) __attribute__ ((__const__));
+extern float asinf __P ((float __x)) __attribute__ ((__const__));
+extern float atanf __P ((float __x)) __attribute__ ((__const__));
+extern float atan2f __P ((float __y, float __x)) __attribute__ ((__const__));
+extern float cosf __P ((float __x)) __attribute__ ((__const__));
+extern float sinf __P ((float __x)) __attribute__ ((__const__));
+extern float tanf __P ((float __x)) __attribute__ ((__const__));
+extern float coshf __P ((float __x)) __attribute__ ((__const__));
+extern float sinhf __P ((float __x)) __attribute__ ((__const__));
+extern float tanhf __P ((float __x)) __attribute__ ((__const__));
+extern float expf __P ((float __x)) __attribute__ ((__const__));
 extern float frexpf __P ((float __value, int *__exp));
-extern __CONSTVALUE float ldexpf __P ((float __x, int __exp));
-extern __CONSTVALUE float logf __P ((float __x));
-extern __CONSTVALUE float log10f __P ((float __x));
+extern float ldexpf __P ((float __x, int __exp)) __attribute__ ((__const__));
+extern float logf __P ((float __x)) __attribute__ ((__const__));
+extern float log10f __P ((float __x)) __attribute__ ((__const__));
 extern float modff __P ((float __value, float *__iptr));
-extern __CONSTVALUE float powf __P ((float __x, float __y));
-extern __CONSTVALUE float sqrtf __P ((float __x));
-extern __CONSTVALUE float ceilf __P ((float __x));
-extern __CONSTVALUE float fabsf __P ((float __x));
-extern __CONSTVALUE float floorf __P ((float __x));
-extern __CONSTVALUE float fmodf __P ((float __x, float __y));
+extern float powf __P ((float __x, float __y)) __attribute__ ((__const__));
+extern float sqrtf __P ((float __x)) __attribute__ ((__const__));
+extern float ceilf __P ((float __x)) __attribute__ ((__const__));
+extern float fabsf __P ((float __x)) __attribute__ ((__const__));
+extern float floorf __P ((float __x)) __attribute__ ((__const__));
+extern float fmodf __P ((float __x, float __y)) __attribute__ ((__const__));
 
-extern __CONSTVALUE __long_double_t acosl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t asinl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t atanl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t atan2l __P ((__long_double_t __y, __long_double_t __x));
-extern __CONSTVALUE __long_double_t cosl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t sinl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t tanl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t coshl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t sinhl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t tanhl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t expl __P ((__long_double_t __x));
+extern __long_double_t acosl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t asinl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t atanl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t atan2l __P ((__long_double_t __y, __long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t cosl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t sinl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t tanl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t coshl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t sinhl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t tanhl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t expl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
 extern __long_double_t frexpl __P ((__long_double_t __value, int *__exp));
-extern __CONSTVALUE __long_double_t ldexpl __P ((__long_double_t __x, int __exp));
-extern __CONSTVALUE __long_double_t logl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t log10l __P ((__long_double_t __x));
-extern __long_double_t modfl __P ((__long_double_t __value, __long_double_t * __ip));
-extern __CONSTVALUE __long_double_t powl __P ((__long_double_t __x, __long_double_t __y));
-extern __CONSTVALUE __long_double_t sqrtl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t ceill __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t fabsl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t floorl __P ((__long_double_t __x));
-extern __CONSTVALUE __long_double_t fmodl __P ((__long_double_t __x, __long_double_t __y));
+extern __long_double_t ldexpl __P ((__long_double_t __x, int __exp))
+     __attribute__ ((__const__));
+extern __long_double_t logl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t log10l __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t modfl __P ((__long_double_t __value,
+				   __long_double_t *__ip));
+extern __long_double_t powl __P ((__long_double_t __x, __long_double_t __y))
+     __attribute__ ((__const__));
+extern __long_double_t sqrtl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t ceill __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t fabsl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t floorl __P ((__long_double_t __x))
+     __attribute__ ((__const__));
+extern __long_double_t fmodl __P ((__long_double_t __x, __long_double_t __y))
+     __attribute__ ((__const__));
 #endif /* 0 */
 
 /* Get machine-dependent inline versions (if there are any).  */
