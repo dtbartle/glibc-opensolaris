@@ -29,6 +29,10 @@ extern const char *__assert_program_name; /* In assert.c.  */
    	a.c:10: foobar: Unexpected error: Computer bought the farm
    It then aborts program execution via a call to `abort'.  */
 
+#ifdef FATAL_PREPARE_INCLUDE
+#include FATAL_PREPARE_INCLUDE
+#endif
+
 void
 __assert_perror_fail (int errnum,
 		      const char *file, unsigned int line,
