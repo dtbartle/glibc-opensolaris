@@ -80,7 +80,7 @@ DEFUN (ftw_dir, (dirs, level, descriptors, dir, len, func),
 
       if (stat (dir, &s) < 0)
 	{
-	  if (errno != EACCES)
+	  if (errno != EACCES && errno != ENOENT)
 	    return -1;
 	  flag = FTW_NS;
 	}
@@ -174,7 +174,7 @@ DEFUN(ftw, (dir, func, descriptors),
 
   if (stat (dir, &s) < 0)
     {
-      if (errno != EACCES)
+      if (errno != EACCES && errno != ENOENT)
 	return -1;
       flag = FTW_NS;
     }
