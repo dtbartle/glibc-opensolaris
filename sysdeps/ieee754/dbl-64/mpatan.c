@@ -67,7 +67,7 @@ void __mpatan(mp_no *x, mp_no *y, int p) {
 
                                  /* Reduce x m times */
     __mul(x,x,&mpsm,p);
-    if (m==0) cpy(x,&mps,p);
+    if (m==0) __cpy(x,&mps,p);
     else {
       for (i=0; i<m; i++) {
 	__add(&mpone,&mpsm,&mpt1,p);
