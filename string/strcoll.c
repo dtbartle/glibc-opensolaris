@@ -17,7 +17,6 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#include <endian.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,11 +24,7 @@
 #ifndef STRING_TYPE
 # define STRING_TYPE char
 # define USTRING_TYPE unsigned char
-# ifdef USE_IN_EXTENDED_LOCALE_MODEL
-#  define STRCOLL __strcoll_l
-# else
-#  define STRCOLL strcoll
-# endif
+# define STRCOLL strcoll
 # define STRCMP strcmp
 #endif
 
@@ -41,35 +36,11 @@
 /* Compare S1 and S2, returning less than, equal to or
    greater than zero if the collated form of S1 is lexicographically
    less than, equal to or greater than the collated form of S2.  */
-#ifndef USE_IN_EXTENDED_LOCALE_MODEL
 int
 STRCOLL (s1, s2)
      const STRING_TYPE *s1;
      const STRING_TYPE *s2;
-#else
-int
-STRCOLL (s1, s2, l)
-     const STRING_TYPE *s1;
-     const STRING_TYPE *s2;
-     __locale_t l;
-#endif
 {
-#ifdef USE_IN_EXTENDED_LOCALE_MODEL
-  struct locale_data *current = l->__locales[LC_COLLATE];
-# if BYTE_ORDER == BIG_ENDIAN
-  const u_int32_t *collate_table = (const u_int32_t *)
-    current->values[_NL_ITEM_INDEX (_NL_COLLATE_TABLE_EB)].string;
-  const u_int32_t *collate_extra = (const u_int32_t *)
-    current->values[_NL_ITEM_INDEX (_NL_COLLATE_EXTRA_EB)].string;
-# elif BYTE_ORDER == LITTLE_ENDIAN
-  const u_int32_t *collate_table = (const u_int32_t *)
-    current->values[_NL_ITEM_INDEX (_NL_COLLATE_TABLE_EL)].string;
-  const u_int32_t *collate_extra = (const u_int32_t *)
-    current->values[_NL_ITEM_INDEX (_NL_COLLATE_EXTRA_EL)].string;
-# else
-#  error bizarre byte order
-# endif
-#endif
   weight_t *s1forw = NULL;
   weight_t *s1backw = NULL;
   weight_t *s2forw = NULL;
