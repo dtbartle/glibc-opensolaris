@@ -1,5 +1,5 @@
 /* Read-write lock implementation.
-   Copyright (C) 1998 Free Software Foundation, Inc.
+   Copyright (C) 1998, 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Xavier Leroy <Xavier.Leroy@inria.fr>
    and Ulrich Drepper <drepper@cygnus.com>, 1998.
@@ -60,7 +60,7 @@ rwlock_add_to_list(pthread_descr self, pthread_rwlock_t *rwlock)
 {
   pthread_readlock_info *info = self->p_readlock_free;
 
-  if (info != NULL) 
+  if (info != NULL)
     self->p_readlock_free = info->pr_next;
   else
     info = malloc(sizeof *info);
@@ -100,7 +100,7 @@ rwlock_remove_from_list(pthread_descr self, pthread_rwlock_t *rwlock)
 	  return info;
 	}
     }
-  
+
   return NULL;
 }
 
@@ -137,7 +137,7 @@ rwlock_can_rdlock(pthread_rwlock_t *rwlock, int have_lock_already)
  * This function helps support brain-damaged recursive read locking
  * semantics required by Unix 98, while maintaining write priority.
  * This basically determines whether this thread already holds a read lock
- * already. It returns 1 if so, otherwise it returns 0.  
+ * already. It returns 1 if so, otherwise it returns 0.
  *
  * If the thread has any ``untracked read locks'' then it just assumes
  * that this lock is among them, just to be safe, and returns 1.
@@ -259,7 +259,7 @@ pthread_rwlock_rdlock (pthread_rwlock_t *rwlock)
       else
 	self->p_untracked_readlock_count++;
     }
-  
+
   return 0;
 }
 
@@ -276,7 +276,13 @@ pthread_rwlock_tryrdlock (pthread_rwlock_t *rwlock)
 
   __pthread_lock (&rwlock->__rw_lock, self);
 
-  if (rwlock_can_rdlock(rwlock, have_lock_already))
+  /* 0 is passed to here instead of have_lock_already.
+     This is to meet Single Unix Spec requirements:
+     if writers are waiting, pthread_rwlock_tryrdlock
+     does not acquire a read lock, even if the caller has
+     one or more read locks already. */
+
+  if (rwlock_can_rdlock(rwlock, 0))
     {
       ++rwlock->__rw_readers;
       retval = 0;
@@ -294,7 +300,7 @@ pthread_rwlock_tryrdlock (pthread_rwlock_t *rwlock)
 	    self->p_untracked_readlock_count++;
 	}
     }
-  
+
   return retval;
 }
 
