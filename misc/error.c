@@ -28,6 +28,7 @@
 #include <libintl.h>
 #ifdef _LIBC
 # include <wchar.h>
+# define mbsrtowcs __mbsrtowcs
 #endif
 
 #if HAVE_VPRINTF || HAVE_DOPRNT || _LIBC
