@@ -1,4 +1,4 @@
-/* Copyright (C) 1997, 1998, 2000 Free Software Foundation, Inc.
+/* Copyright (C) 1997, 1998, 2000, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 # error "Never include <bits/statvfs.h> directly; use <sys/statvfs.h> instead."
 #endif
 
-#include <bits/types.h>  /* For __fsid_t, __fsblkcnt_t and __fsfilcnt_t.  */
+#include <bits/types.h>  /* For __fsblkcnt_t and __fsfilcnt_t.  */
 
 struct statvfs
   {
@@ -41,11 +41,13 @@ struct statvfs
     __fsfilcnt64_t f_ffree;
     __fsfilcnt64_t f_favail;
 #endif
-    __fsid_t f_fsid;
+    unsigned long int f_fsid;
+    int __f_unused;
     unsigned long int f_flag;
     unsigned long int f_namemax;
     int __f_spare[6];
   };
+#define _STATVFSBUF_F_UNUSED
 
 #ifdef __USE_LARGEFILE64
 struct statvfs64
@@ -58,7 +60,8 @@ struct statvfs64
     __fsfilcnt64_t f_files;
     __fsfilcnt64_t f_ffree;
     __fsfilcnt64_t f_favail;
-    __fsid_t f_fsid;
+    unsigned long int f_fsid;
+    int __f_unused;
     unsigned long int f_flag;
     unsigned long int f_namemax;
     int __f_spare[6];
