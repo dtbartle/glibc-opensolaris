@@ -18,12 +18,16 @@
    02111-1307 USA.  */
 
 #include <setjmp.h>
+#include <stdint.h>
 #include <unwind.h>
 
-#define _JMPBUF_CFA_UNWINDS(_jmpbuf, _context) \
-  ({ void *_cfa = (void *) _Unwind_GetCFA (_context);			\
-     (_cfa < (void *)(((long *)(_jmpbuf))[0])				\
-      || (_cfa == (void *)(((long *)(_jmpbuf))[0])			\
-	  && (void *) _Unwind_GetBSP (_context)				\
-	     >= (void *)(((long *)(_jmpbuf))[17])));			\
+#define _JMPBUF_CFA_UNWINDS_ADJ(_jmpbuf, _context, _adj) \
+  ({ uintptr_t _cfa = (uintptr_t) _Unwind_GetCFA (_context) - (_adj);	\
+     (_cfa < (uintptr_t)(((long *)(_jmpbuf))[0]) - (_adj)		\
+      || (_cfa == (uintptr_t)(((long *)(_jmpbuf))[0]) - (_adj)		\
+	  && (uintptr_t) _Unwind_GetBSP (_context) - (_adj)		\
+	     >= (uintptr_t)(((long *)(_jmpbuf))[17]) - (_adj)));	\
   })
+
+#define _JMPBUF_UNWINDS_ADJ(_jmpbuf, _address, _adj) \
+  ((uintptr_t)(_address) - (_adj) < (uintptr_t)(((long *)_jmpbuf)[0]) - (_adj))
