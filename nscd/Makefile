@@ -94,9 +94,13 @@ CFLAGS-selinux.c += -fpie
 CFLAGS-initgrcache.c += -fpie
 CFLAGS-gai.c += -fpie
 
+ifeq (yes,$(have-z-relro))
+relro-LDFLAGS += -Wl,-z,now
+endif
+
 $(objpfx)nscd: $(addprefix $(objpfx),$(nscd-modules:=.o))
 	$(LINK.o) -pie -Wl,-O1 \
-	  $(sysdep-LDFLAGS) $(config-LDFLAGS) \
+	  $(sysdep-LDFLAGS) $(config-LDFLAGS) $(relro-LDFLAGS) \
 	  $(extra-B-$(@F:lib%.so=%).so) -B$(csu-objpfx) \
 	  $(extra-B-$(@F:lib%.so=%).so) $(load-map-file) \
 	  $(LDFLAGS) $(LDFLAGS-$(@F)) \
