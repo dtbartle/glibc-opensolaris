@@ -153,7 +153,7 @@ prune_cache (struct database *table, time_t now)
 	    {
 	      /* The file changed.  Invalidate all entries.  */
 	      now = LONG_MAX;
-	      st.st_mtime = table->file_mtime;
+	      table->file_mtime= st.st_mtime;
 	    }
 	}
     }
