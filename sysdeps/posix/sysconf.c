@@ -76,7 +76,7 @@ __sysconf (name)
 #endif
 
     case _SC_TZNAME_MAX:
-      return MAX (__tzname_max (), _POSIX_TZNAME_MAX);;
+      return MAX (__tzname_max (), _POSIX_TZNAME_MAX);
 
     case _SC_JOB_CONTROL:
 #ifdef	_POSIX_JOB_CONTROL
