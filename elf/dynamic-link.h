@@ -118,9 +118,9 @@ elf_get_dynamic_info (struct link_map *l)
 	 Since these l_info entries are only tested for NULL pointers it
 	 is ok if they point to the DT_FLAGS entry.  */
       l->l_flags = info[DT_FLAGS]->d_un.d_val;
-      if l->l_(flags & DF_SYMBOLIC)
+      if (l->l_flags & DF_SYMBOLIC)
 	info[DT_SYMBOLIC] = info[DT_FLAGS];
-      if l->l_(flags & DF_TEXTREL)
+      if (l->l_flags & DF_TEXTREL)
 	info[DT_TEXTREL] = info[DT_FLAGS];
       if (l->l_flags & DF_BIND_NOW)
 	info[DT_BIND_NOW] = info[DT_FLAGS];
