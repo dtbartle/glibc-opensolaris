@@ -94,7 +94,7 @@ int
 printf_size (FILE *fp, const struct printf_info *info, const void *const *args)
 {
   /* Units for the both formats.  */
-  static const char units[2][8] =
+  static const char units[2][9] =
   {
     " kmgtpezy",	/* For binary format.  */
     " KMGTPEZY"		/* For decimal format.  */
