@@ -497,23 +497,44 @@ FUNCTION_NAME (struct __gconv_step *step, struct __gconv_step_data *data,
 		      SAVE_RESET_STATE (0);
 # endif
 
-		      /* XXX Handle unaligned access here as well.  */
-		      if (FROM_DIRECTION)
-			/* Run the conversion loop.  */
-			nstatus = FROM_LOOP (step, data,
-					     (const unsigned char **) inptrp,
-					     (const unsigned char *) inend,
-					     (unsigned char **) &outbuf,
-					     (unsigned char *) outerr,
-					     lirreversiblep EXTRA_LOOP_ARGS);
+		      if (__builtin_expect (!unaligned, 1))
+			{
+			  if (FROM_DIRECTION)
+			    /* Run the conversion loop.  */
+			    nstatus = FROM_LOOP (step, data, inptrp, inend,
+						 &outbuf,
+						 (unsigned char *) outerr,
+						 lirreversiblep
+						 EXTRA_LOOP_ARGS);
+			  else
+			    /* Run the conversion loop.  */
+			    nstatus = TO_LOOP (step, data, inptrp, inend,
+					       &outbuf,
+					       (unsigned char *) outerr,
+					       lirreversiblep
+					       EXTRA_LOOP_ARGS);
+			}
+# if !defined _STRING_ARCH_unaligned \
+     && MIN_NEEDED_FROM != 1 && MAX_NEEDED_FROM % MIN_NEEDED_FROM == 0 \
+     && MIN_NEEDED_TO != 1 && MAX_NEEDED_TO % MIN_NEEDED_TO == 0
 		      else
-			/* Run the conversion loop.  */
-			nstatus = TO_LOOP (step, data,
-					   (const unsigned char **) inptrp,
-					   (const unsigned char *) inend,
-					   (unsigned char **) &outbuf,
-					   (unsigned char *) outerr,
-					   lirreversiblep EXTRA_LOOP_ARGS);
+			{
+			  if (FROM_DIRECTION)
+			    /* Run the conversion loop.  */
+			    nstatus = GEN_unaligned (FROM_LOOP) (step, data,
+								 inptrp, inend,
+								 (unsigned char *) outerr,
+								 lirreversiblep
+								 EXTRA_LOOP_ARGS);
+			  else
+			    /* Run the conversion loop.  */
+			    nstatus = GEN_unaligned (TO_LOOP) (step, data,
+							       inptrp, inend,
+							       (unsigned char *) outerr,
+							       lirreversiblep
+							       EXTRA_LOOP_ARGS);
+			}
+# endif
 
 		      /* We must run out of output buffer space in this
 			 rerun.  */
