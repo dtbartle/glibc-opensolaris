@@ -23,7 +23,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/mman.h>		/* Check if MAP_ANON is defined.  */
-#include "../stdio-common/_itoa.h"
+#include <stdio-common/_itoa.h>
 #include <assert.h>
 #include "dynamic-link.h"
 
