@@ -404,7 +404,7 @@ int pthread_getattr_np (pthread_t thread, pthread_attr_t *attr)
 # endif
 #endif
 
-  if (attr->__stackaddr == NULL)
+  if (descr == __pthread_initial_thread)
     {
       /* Defined in ld.so.  */
       extern void *__libc_stack_end;
