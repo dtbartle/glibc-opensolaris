@@ -857,14 +857,14 @@ __strsep_g (char **__s, __const char *__reject)
 # include <stdlib.h>
 
 # define __strdup(s) \
-  (__extension__ (__builtin_constant_p (s) && __string2_1bptr_p (s)
-		  ? (((__const unsigned char *) (s))[0] == '\0'
-		     ? return (char *) calloc (1, 1);
-		     : ({ size_t len = strlen (s) + 1;
-			  char *retval = (char *) malloc (len);
-			  if (retval != NULL)
-			    retval = (char *) memcpy (retval, s, len);
-			  retval; }))
+  (__extension__ (__builtin_constant_p (s) && __string2_1bptr_p (s)	      \
+		  ? (((__const unsigned char *) (s))[0] == '\0'		      \
+		     ? return (char *) calloc (1, 1);			      \
+		     : ({ size_t len = strlen (s) + 1;			      \
+			  char *retval = (char *) malloc (len);		      \
+			  if (retval != NULL)				      \
+			    retval = (char *) memcpy (retval, s, len);	      \
+			  retval; }))					      \
 		  : strdup (s)))
 
 # if defined __USE_SVID || defined __USE_BSD || defined __USE_XOPEN_EXTENDED
