@@ -126,7 +126,6 @@ addhstaiX (struct database_dyn *db, int fd, request_header *req,
 
       if (fct != NULL)
 	{
- printf("fct=%p\n",fct);
 	  struct hostent th[2];
 
 	  /* Collect IPv6 information first.  */
@@ -203,7 +202,47 @@ addhstaiX (struct database_dyn *db, int fd, request_header *req,
 		}
 	      else
 		{
-		  // XXX use gethostbyaddr
+		  struct hostent *he = NULL;
+		  int herrno;
+		  struct hostent he_mem;
+		  void *addr;
+		  size_t addrlen;
+		  int addrfamily;
+
+		  if (status[1] == NSS_STATUS_SUCCESS)
+		    {
+		      addr = th[1].h_addr_list[0];
+		      addrlen = sizeof (struct in_addr);
+		      addrfamily = AF_INET;
+		    }
+		  else
+		    {
+		      addr = th[0].h_addr_list[0];
+		      addrlen = sizeof (struct in6_addr);
+		      addrfamily = AF_INET6;
+		    }
+
+		  size_t tmpbuflen = 512;
+		  char *tmpbuf = alloca (tmpbuflen);
+		  int rc;
+		  while (1)
+		    {
+		      rc = __gethostbyaddr_r (addr, addrlen, addrfamily,
+					      &he_mem, tmpbuf, tmpbuflen,
+					      &he, &herrno);
+		      if (rc != ERANGE || herrno != NETDB_INTERNAL)
+			break;
+		      tmpbuf = extend_alloca (tmpbuf, tmpbuflen,
+					      tmpbuflen * 2);
+		    }
+
+		  if (rc == 0)
+		    {
+		      if (he != NULL)
+			canon = he->h_name;
+		      else
+			canon = key;
+		    }
 		}
 	      size_t canonlen = canon == NULL ? 0 : (strlen (canon) + 1);
 
