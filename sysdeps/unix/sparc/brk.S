@@ -1,4 +1,4 @@
-/* Copyright (C) 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -51,3 +51,5 @@ error:	sethi %hi(C_SYMBOL_NAME(errno)), %g1
 	sub %g0, 1, %o0
 	retl
 	nop			/* Fill the delay slot.  */
+
+weak_alias (__brk, brk)
