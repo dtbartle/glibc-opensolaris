@@ -1925,7 +1925,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	     be punished.  */
 	  tw = (wchar_t *) f;	/* Marks the beginning.  */
 
-	  if (*f == ']' || *f == '-')
+	  if (*f == L']')
 	    ++f;
 
 	  while ((fc = *f++) != L'\0' && fc != L']');
@@ -2009,16 +2009,22 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 			}
 		      else
 			{
-			  if (*runp == runp[1] && !not_in)
+			  if (*runp == c && !not_in)
 			    break;
-			  if (*runp != runp[1] && not_in)
+			  if (*runp == c && not_in)
 			    {
-			      ungetwc (c ,s);
+			      ungetwc (c, s);
 			      goto out;
 			    }
 			}
 
 		      ++runp;
+		    }
+
+		  if (runp == wp && !not_in)
+		    {
+		      ungetwc (c, s);
+		      goto out;
 		    }
 
 		  if (!(flags & SUPPRESS))
@@ -2219,16 +2225,22 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 			}
 		      else
 			{
-			  if (*runp == runp[1] && !not_in)
+			  if (*runp == c && !not_in)
 			    break;
-			  if (*runp != runp[1] && not_in)
+			  if (*runp == c && not_in)
 			    {
-			      ungetwc (c ,s);
+			      ungetwc (c, s);
 			      goto out2;
 			    }
 			}
 
 		      ++runp;
+		    }
+
+		  if (runp == wp && !not_in)
+		    {
+		      ungetwc (c, s);
+		      goto out2;
 		    }
 
 		  if (!(flags & SUPPRESS))
