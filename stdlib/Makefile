@@ -30,7 +30,7 @@ routines	:=							      \
 	getenv putenv setenv						      \
 	exit on_exit atexit						      \
 	abs labs llabs							      \
-	div ldiv 							      \
+	div ldiv lldiv							      \
 	mblen mbstowcs mbtowc wcstombs wctomb				      \
 	random random_r rand 						      \
 	drand48 erand48 lrand48 nrand48 mrand48 jrand48			      \
