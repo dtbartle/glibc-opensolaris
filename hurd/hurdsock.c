@@ -1,6 +1,6 @@
 /* _hurd_socket_server - Find the server for a socket domain.
 
-Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -23,7 +23,6 @@ Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 #include <string.h>
 #include <hurd/paths.h>
-#include <gnu-stabs.h>
 #include <stdio.h>
 #include "stdio/_itoa.h"
 #include <cthreads.h>		/* For `struct mutex'.  */
@@ -101,8 +100,6 @@ _hurd_socket_server (int domain, int dead)
   return server;
 }
 
-#include <gnu-stabs.h>
-
 static void
 init (void)
 {
