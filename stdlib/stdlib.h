@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -81,6 +81,15 @@ extern long int strtol __P ((__const char *__nptr, char **__endptr,
 /* Convert a string to an unsigned long integer.  */
 extern unsigned long int strtoul __P ((__const char *__nptr,
 				       char **__endptr, int __base));
+
+#if defined (__GNUC__) && defined (__USE_BSD)
+/* Convert a string to a quadword integer.  */
+extern long long int strtoq __P ((__const char *__nptr, char **__endptr,
+				  int __base));
+/* Convert a string to an unsigned quadword integer.  */
+extern unsigned long long int strtouq __P ((__const char *__nptr,
+					    char **__endptr, int __base));
+#endif /* GCC and use BSD.  */
 
 #if defined (__OPTIMIZE__) && __GNUC__ >= 2
 extern __inline double atof (__const char *__nptr)
