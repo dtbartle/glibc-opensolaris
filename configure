@@ -2683,8 +2683,8 @@ EOF
   ;;
 esac
 
-echo $ac_n "checking for DWARF2 unwind info support""... $ac_c" 1>&6
-echo "configure:2688: checking for DWARF2 unwind info support" >&5
+echo $ac_n "checking for __builtin_expect""... $ac_c" 1>&6
+echo "configure:2688: checking for __builtin_expect" >&5
 if eval "test \"`echo '$''{'libc_cv_gcc_builtin_expect'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2711,7 +2711,7 @@ if "$libc_vc_gcc_builtin_expect" = yes
 #define HAVE_BUILTIN_EXPECT 1
 EOF
 
-esac
+fi
 
 ### End of automated tests.
 ### Now run sysdeps configure fragments.
