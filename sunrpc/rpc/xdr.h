@@ -132,7 +132,7 @@ struct XDR
 	/* lets you reposition the stream */
 	long *(*x_inline) __P ((XDR * __xdrs, int len));
 	/* buf quick ptr to buffered data */
-	void (*x_destroy) __P ((__const XDR * __xdrs));
+	void (*x_destroy) __P ((XDR * __xdrs));
 	/* free privates of this xdr_stream */
       }
      *x_ops;
