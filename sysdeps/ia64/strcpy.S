@@ -1,21 +1,34 @@
-/*
- *
- * Optimized version of the standard strcpy() function
- *
- * Contributed by Dan Pop <Dan.Pop@cern.ch>
- *
- * Return: dest
- *
- * Inputs:
- *      in0:    dest
- *      in1:    src
- *
- * In this form, it assumes little endian mode.  For big endian mode, the
- * the two shifts in .l2 must be inverted:
- *
- *	shl   	value = r[1], sh1   	// value = w0 << sh1
- *	shr.u   tmp = r[0], sh2   	// tmp = w1 >> sh2
- *
+/* Optimized version of the standard strcpy() function.
+   This file is part of the GNU C Library.
+   Copyright (C) 2000 Free Software Foundation, Inc.
+   Contributed by Dan Pop <Dan.Pop@cern.ch>.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU C Library; see the file COPYING.LIB.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
+
+/* Return: dest
+
+   Inputs:
+        in0:    dest
+        in1:    src
+
+   In this form, it assumes little endian mode.  For big endian mode, the
+   the two shifts in .l2 must be inverted:
+
+	shl   	value = r[1], sh1   	// value = w0 << sh1
+	shr.u   tmp = r[0], sh2   	// tmp = w1 >> sh2
  */
 
 #include <sysdep.h>

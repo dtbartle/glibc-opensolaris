@@ -1,25 +1,37 @@
-/*
- *
- * Optimized version of the standard memcmp() function
- *
- * Contributed by Dan Pop <Dan.Pop@cern.ch>
- *
- * Return: the result of the comparison
- *
- * Inputs:
- *      in0:    dest (aka s1)
- *      in1:    src  (aka s2)
- *      in2:    byte count
- *
- * In this form, it assumes little endian mode.  For big endian mode, the
- * the two shifts in .l2 must be inverted:
- *
- *	shl   	tmp1[0] = r[1 + MEMLAT], sh1   // tmp1 = w0 << sh1
- *	shr.u   tmp2[0] = r[0 + MEMLAT], sh2   // tmp2 = w1 >> sh2
- *
- * and all the mux1 instructions should be replaced by plain mov's.
- *
- */
+/* Optimized version of the standard memcmp() function.
+   This file is part of the GNU C Library.
+   Copyright (C) 2000 Free Software Foundation, Inc.
+   Contributed by Dan Pop <Dan.Pop@cern.ch>.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU C Library; see the file COPYING.LIB.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
+
+/* Return: the result of the comparison
+
+   Inputs:
+        in0:    dest (aka s1)
+        in1:    src  (aka s2)
+        in2:    byte count
+
+   In this form, it assumes little endian mode.  For big endian mode, the
+   the two shifts in .l2 must be inverted:
+
+	shl   	tmp1[0] = r[1 + MEMLAT], sh1   // tmp1 = w0 << sh1
+	shr.u   tmp2[0] = r[0 + MEMLAT], sh2   // tmp2 = w1 >> sh2
+
+   and all the mux1 instructions should be replaced by plain mov's.  */
 
 #include <sysdep.h>
 #undef ret

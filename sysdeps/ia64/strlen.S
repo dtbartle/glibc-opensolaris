@@ -1,24 +1,37 @@
-/*
- * Optimized version of the standard strlen() function
- *
- * Contributed by Dan Pop <Dan.Pop@cern.ch>
- *
- * Return: the length of the input string
- *
- * Input:
- *      in0:    str
- *
- * Look for the null character byte by byte, until we reach a word aligned
- * address, then search word by word, using the czx instruction.  We're
- * also doing one word of read ahead, which could cause problems if the
- * null character is on the last word of a page and the next page is not
- * mapped in the process address space.  Hence the use of the speculative
- * load.
- *
- * This implementation assumes little endian mode.  For big endian mode,
- * the instruction czx1.r should be replaced by czx1.l.
- *
- */
+/* Optimized version of the standard strlen() function.
+   This file is part of the GNU C Library.
+   Copyright (C) 2000 Free Software Foundation, Inc.
+   Contributed by Dan Pop <Dan.Pop@cern.ch>.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU C Library; see the file COPYING.LIB.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
+
+/* Return: the length of the input string
+
+   Input:
+        in0:    str
+
+   Look for the null character byte by byte, until we reach a word aligned
+   address, then search word by word, using the czx instruction.  We're
+   also doing one word of read ahead, which could cause problems if the
+   null character is on the last word of a page and the next page is not
+   mapped in the process address space.  Hence the use of the speculative
+   load.
+
+   This implementation assumes little endian mode.  For big endian mode,
+   the instruction czx1.r should be replaced by czx1.l.  */
 
 #include <sysdep.h>
 #undef ret
@@ -43,41 +56,41 @@ ENTRY(strlen)
 	;;
 	sub	loopcnt = 8, tmp	// loopcnt = 8 - tmp
 	cmp.eq	p6, p0 = tmp, r0
-(p6)	br.cond.sptk	str_aligned;;
+(p6)	br.cond.sptk	.str_aligned;;
 	adds	loopcnt = -1, loopcnt;;
 	mov	ar.lc = loopcnt
-l1:
+.l1:
 	ld1	val2 = [str], 1
 	;;
 	cmp.eq	p6, p0 = val2, r0
-(p6)	br.cond.spnt	restore_and_exit
+(p6)	br.cond.spnt	.restore_and_exit
 	adds	len = 1, len
-	br.cloop.dptk	l1
-str_aligned:
-	mov	origadd = str	// origadd = orig
+	br.cloop.dptk	.l1
+.str_aligned:
+	mov	origadd = str		// origadd = orig
 	ld8	val1 = [str], 8;;
 	nop.b	0
 	nop.b 	0
-l2:	ld8.s	val2 = [str], 8	// don't bomb out here
+l2:	ld8.s	val2 = [str], 8		// don't bomb out here
 	czx1.r	pos0 = val1	
 	;;
 	cmp.ne	p6, p0 = 8, pos0
-(p6)	br.cond.spnt foundit
-	chk.s	val2, recovery
-back:
+(p6)	br.cond.spnt .foundit
+	chk.s	val2, .recovery
+.back:
 	mov	val1 = val2	
 	br.cond.dptk l2
-foundit:
+.foundit:
 	sub	tmp = str, origadd	// tmp = crt address - orig
 	add	len = len, pos0;;
 	add	len = len, tmp;;
 	adds	len = -16, len
-restore_and_exit:
-	mov ar.pfs = saved_pfs	// restore the PFS
+.restore_and_exit:
+	mov ar.pfs = saved_pfs		// restore the PFS
 	mov ar.lc = saved_lc		// restore the loop counter
 	br.ret.sptk.many b0
-recovery:
+.recovery:
 	adds	str = -8, str;;
-	ld8	val2 = [str], 8	// bomb out here
-	br.cond.sptk	back
+	ld8	val2 = [str], 8		// bomb out here
+	br.cond.sptk	.back
 END(strlen)

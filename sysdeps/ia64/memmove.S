@@ -1,25 +1,37 @@
-/*
- *
- * Optimized version of the standard memmove() function
- *
- * Contributed by Dan Pop <Dan.Pop@cern.ch>
- *
- * Return: dest
- *
- * Inputs:
- *      in0:    dest
- *      in1:    src
- *      in2:    byte count
- *
- * The core of the function is the memcpy implementation used in memcpy.S.
- * When bytes have to be copied backwards, only the easy case, when 
- * all arguments are multiples of 8, is optimised.
- *
- * In this form, it assumes little endian mode.  For big endian mode,
- * sh1 must be computed using an extra instruction: sub sh1 = 64, sh1
- * or the UM.be bit should be cleared at the beginning and set at the end.
- *
- */
+/* Optimized version of the standard memmove() function.
+   This file is part of the GNU C Library.
+   Copyright (C) 2000 Free Software Foundation, Inc.
+   Contributed by Dan Pop <Dan.Pop@cern.ch>.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU C Library; see the file COPYING.LIB.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
+
+/* Return: dest
+
+   Inputs:
+        in0:    dest
+        in1:    src
+        in2:    byte count
+
+   The core of the function is the memcpy implementation used in memcpy.S.
+   When bytes have to be copied backwards, only the easy case, when 
+   all arguments are multiples of 8, is optimised.
+
+   In this form, it assumes little endian mode.  For big endian mode,
+   sh1 must be computed using an extra instruction: sub sh1 = 64, sh1
+   or the UM.be bit should be cleared at the beginning and set at the end.  */
 
 #include <sysdep.h>
 #undef ret

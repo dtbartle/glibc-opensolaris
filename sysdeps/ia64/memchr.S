@@ -1,31 +1,44 @@
-/*
- * Optimized version of the standard memchr() function
- *
- * Contributed by Dan Pop <Dan.Pop@cern.ch>
- *
- * Return: the address of the first occurence of chr in str or NULL
- *
- * Inputs:
- *	in0:	str
- *	in1:	chr
- *	in2:	byte count
- *
- * This implementation assumes little endian mode.  For big endian mode,
- * the instruction czx1.r should be replaced by czx1.l.
- *
- * The algorithm is fairly straightforward: search byte by byte until we
- * we get to a word aligned address, then search word by word as much as
- * possible; the remaining few bytes are searched one at a time.
- *
- * The word by word search is performed by xor-ing the word with a word
- * containing chr in every byte.  If there is a hit, the result will 
- * contain a zero byte in the corresponding position.  The presence and 
- * position of that zero byte is detected with a czx instruction.
- *
- * All the loops in this function could have had the internal branch removed
- * if br.ctop and br.cloop could be predicated :-(
- *
- */
+/* Optimized version of the standard memchr() function.
+   This file is part of the GNU C Library.
+   Copyright (C) 2000 Free Software Foundation, Inc.
+   Contributed by Dan Pop <Dan.Pop@cern.ch>.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU C Library; see the file COPYING.LIB.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
+
+/* Return: the address of the first occurence of chr in str or NULL
+
+   Inputs:
+  	in0:	str
+  	in1:	chr
+  	in2:	byte count
+
+   This implementation assumes little endian mode.  For big endian mode,
+   the instruction czx1.r should be replaced by czx1.l.
+
+   The algorithm is fairly straightforward: search byte by byte until we
+   we get to a word aligned address, then search word by word as much as
+   possible; the remaining few bytes are searched one at a time.
+
+   The word by word search is performed by xor-ing the word with a word
+   containing chr in every byte.  If there is a hit, the result will 
+   contain a zero byte in the corresponding position.  The presence and 
+   position of that zero byte is detected with a czx instruction.
+
+   All the loops in this function could have had the internal branch removed
+   if br.ctop and br.cloop could be predicated :-(.  */
 
 #include <sysdep.h>
 #undef ret
