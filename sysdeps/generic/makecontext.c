@@ -19,14 +19,12 @@
 #include <errno.h>
 #include <ucontext.h>
 
-int
-getcontext (ucp)
-     ucontext_t *ucp;
+void
+makecontext (ucontext_t *ucp, void (*func) (void), int argc, ...)
 {
   __set_errno (ENOSYS);
-  return -1;
 }
 
 
-stub_warning (getcontext)
+stub_warning (makecontext)
 #include <stub-tag.h>

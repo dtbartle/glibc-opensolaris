@@ -21,7 +21,7 @@
 
 int
 setcontext (ucp)
-     const ucontext *ucp;
+     const ucontext_t *ucp;
 {
   __set_errno (ENOSYS);
   return -1;

@@ -20,13 +20,14 @@
 #include <ucontext.h>
 
 int
-getcontext (ucp)
-     ucontext_t *ucp;
+swapcontext (oucp, ucp)
+     ucontext_t *oucp;
+     const ucontext_t *ucp;
 {
   __set_errno (ENOSYS);
   return -1;
 }
 
 
-stub_warning (getcontext)
+stub_warning (swapcontext)
 #include <stub-tag.h>
