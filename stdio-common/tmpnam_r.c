@@ -20,30 +20,18 @@ Cambridge, MA 02139, USA.  */
 #include <string.h>
 
 
-/* Generate a unique filename in P_tmpdir.
-
-   This function is *not* thread safe!  */
+/* Generate a unique filename in P_tmpdir.  If S is NULL return NULL.
+   This makes this function thread safe.  */
 char *
-tmpnam (char *s)
+tmpnam_r (char *s)
 {
-  /* By using two buffers we manage to be thread safe in the case
-     where S != NULL.  */
-  static char buf[L_tmpnam];
-  char *tmpbuf[L_tmpnam];
-  char *result;
+  if (s == NULL)
+    return NULL;
 
   /* In the following call we use the buffer pointed to by S if
      non-NULL although we don't know the size.  But we limit the size
-     to FILENAME_MAX characters in any case.  */
-  result = __stdio_gen_tempname (s ?: tmpbuf, L_tmpnam, (const char *) NULL,
-				 (const char *) NULL, 0,
-				 (size_t *) NULL, (FILE **) NULL);
-
-  if (result != NULL && s == NULL)
-    {
-      memcpy (buf, result, L_tmpnam);
-      result = buf;
-    }
-
-  return result;
+     to L_tmpnam characters in any case.  */
+  return __stdio_gen_tempname (s, L_tmpnam, (const char *) NULL,
+			       (const char *) NULL, 0,
+			       (size_t *) NULL, (FILE **) NULL);
 }
