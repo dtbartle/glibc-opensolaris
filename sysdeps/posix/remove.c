@@ -28,9 +28,9 @@ remove (file)
   /* First try to unlink since this is more frequently the necessary action. */
   if (__unlink (file) != 0
       /* If it is indeed a directory...  */
-      && errno == EISDIR
-      /* ...try to remove it.  */
-      && __rmdir (file) != 0)
+      && (errno != EISDIR
+	  /* ...try to remove it.  */
+	  || __rmdir (file) != 0))
     /* Cannot remove the object for whatever reason.  */
     return -1;
 
