@@ -25,7 +25,7 @@ GLIBC_2.0 {
     __sigsetjmp; _setjmp; __sigaddset; __sigdelset; __sigismember;
     __sysv_signal; __bsd_getpgrp; _longjmp; _mcount;
     __divqu; __remqu; __divqs; __remqs; __divlu; __remlu; __divls;
-    __remls;
+    __remls; __divl; __reml; __divq; __remq; __divqu; __remqu;
 
     # functions which have an additional interface since they are
     # are cancelable.
