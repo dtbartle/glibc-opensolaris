@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <netinet/in.h>
+#include <sys/param.h>
 #include <sys/socket.h>
 
 
@@ -47,6 +48,7 @@ getipv4sourcefilter (int s, struct in_addr interface, struct in_addr group,
 
   imsf->imsf_multiaddr = group;
   imsf->imsf_interface = interface;
+  imsf->imsf_numsrc = *numsrc;
 
   int result = __getsockopt (s, SOL_IP, IP_MSFILTER, imsf, &needed);
 
@@ -55,9 +57,9 @@ getipv4sourcefilter (int s, struct in_addr interface, struct in_addr group,
   if (result == 0)
     {
       *fmode = imsf->imsf_fmode;
-      *numsrc = imsf->imsf_numsrc;
       memcpy (slist, imsf->imsf_slist,
-	      imsf->imsf_numsrc * sizeof (struct in_addr));
+	      MIN (*numsrc, imsf->imsf_numsrc) * sizeof (struct in_addr));
+      *numsrc = imsf->imsf_numsrc;
     }
 
   if (use_malloc)
