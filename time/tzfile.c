@@ -64,6 +64,7 @@ static struct leap *leaps;
 
 /* Decode the four bytes at PTR as a signed integer in network byte order.  */
 static inline int
+__attribute ((always_inline))
 decode (const void *ptr)
 {
   if ((BYTE_ORDER == BIG_ENDIAN) && sizeof (int) == 4)
