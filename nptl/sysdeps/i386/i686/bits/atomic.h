@@ -57,14 +57,14 @@ typedef uintmax_t uatomic_max_t;
 
 #define __arch_compare_and_exchange_8_acq(mem, newval, oldval) \
   ({ unsigned char ret;							      \
-     __asm __volatile (LOCK "cmpxchgb %2, %1; setne %0"			      \
+     __asm __volatile (LOCK "cmpxchgb %b2, %1; setne %0"		      \
 		       : "=a" (ret), "=m" (*mem)			      \
 		       : "q" (newval), "1" (*mem), "0" (oldval));	      \
      ret; })
 
 #define __arch_compare_and_exchange_16_acq(mem, newval, oldval) \
   ({ unsigned char ret;							      \
-     __asm __volatile (LOCK "cmpxchgw %2, %1; setne %0"			      \
+     __asm __volatile (LOCK "cmpxchgw %w2, %1; setne %0"		      \
 		       : "=a" (ret), "=m" (*mem)			      \
 		       : "r" (newval), "1" (*mem), "0" (oldval));	      \
      ret; })
@@ -121,11 +121,11 @@ typedef uintmax_t uatomic_max_t;
 #define atomic_exchange_and_add(mem, value) \
   ({ __typeof (*mem) result;						      \
      if (sizeof (*mem) == 1)						      \
-       __asm __volatile (LOCK "xaddb %0, %1"				      \
+       __asm __volatile (LOCK "xaddb %b0, %1"				      \
 			 : "=r" (result), "=m" (*mem)			      \
 			 : "0" (value), "1" (*mem));			      \
      else if (sizeof (*mem) == 2)					      \
-       __asm __volatile (LOCK "xaddw %0, %1"				      \
+       __asm __volatile (LOCK "xaddw %w0, %1"				      \
 			 : "=r" (result), "=m" (*mem)			      \
 			 : "0" (value), "1" (*mem));			      \
      else if (sizeof (*mem) == 4)					      \
@@ -150,11 +150,11 @@ typedef uintmax_t uatomic_max_t;
 	    else if (__builtin_constant_p (value) && (value) == 1)	      \
 	      atomic_decrement (mem);					      \
 	    else if (sizeof (*mem) == 1)				      \
-	      __asm __volatile (LOCK "addb %1, %0"			      \
+	      __asm __volatile (LOCK "addb %b1, %0"			      \
 				: "=m" (*mem)				      \
 				: "ir" (value), "0" (*mem));		      \
 	    else if (sizeof (*mem) == 2)				      \
-	      __asm __volatile (LOCK "addw %1, %0"			      \
+	      __asm __volatile (LOCK "addw %w1, %0"			      \
 				: "=m" (*mem)				      \
 				: "ir" (value), "0" (*mem));		      \
 	    else if (sizeof (*mem) == 4)				      \
@@ -178,11 +178,11 @@ typedef uintmax_t uatomic_max_t;
 #define atomic_add_negative(mem, value) \
   ({ unsigned char __result;						      \
      if (sizeof (*mem) == 1)						      \
-       __asm __volatile (LOCK "addb %2, %0; sets %1"			      \
+       __asm __volatile (LOCK "addb %b2, %0; sets %1"			      \
 			 : "=m" (*mem), "=qm" (__result)		      \
-			 : "ir" (value), "0" (*mem));			      \
+			 : "iq" (value), "0" (*mem));			      \
      else if (sizeof (*mem) == 2)					      \
-       __asm __volatile (LOCK "addw %2, %0; sets %1"			      \
+       __asm __volatile (LOCK "addw %w2, %0; sets %1"			      \
 			 : "=m" (*mem), "=qm" (__result)		      \
 			 : "ir" (value), "0" (*mem));			      \
      else if (sizeof (*mem) == 4)					      \
@@ -197,11 +197,11 @@ typedef uintmax_t uatomic_max_t;
 #define atomic_add_zero(mem, value) \
   ({ unsigned char __result;						      \
      if (sizeof (*mem) == 1)						      \
-       __asm __volatile (LOCK "addb %2, %0; setz %1"			      \
+       __asm __volatile (LOCK "addb %b2, %0; setz %1"			      \
 			 : "=m" (*mem), "=qm" (__result)		      \
 			 : "ir" (value), "0" (*mem));			      \
      else if (sizeof (*mem) == 2)					      \
-       __asm __volatile (LOCK "addw %2, %0; setz %1"			      \
+       __asm __volatile (LOCK "addw %w2, %0; setz %1"			      \
 			 : "=m" (*mem), "=qm" (__result)		      \
 			 : "ir" (value), "0" (*mem));			      \
      else if (sizeof (*mem) == 4)					      \
@@ -215,11 +215,11 @@ typedef uintmax_t uatomic_max_t;
 
 #define atomic_increment(mem) \
   (void) ({ if (sizeof (*mem) == 1)					      \
-	      __asm __volatile (LOCK "incb %0"				      \
+	      __asm __volatile (LOCK "incb %b0"				      \
 				: "=m" (*mem)				      \
 				: "0" (*mem));				      \
 	    else if (sizeof (*mem) == 2)				      \
-	      __asm __volatile (LOCK "incw %0"				      \
+	      __asm __volatile (LOCK "incw %w0"				      \
 				: "=m" (*mem)				      \
 				: "0" (*mem));				      \
 	    else if (sizeof (*mem) == 4)				      \
@@ -242,11 +242,11 @@ typedef uintmax_t uatomic_max_t;
 #define atomic_increment_and_test(mem) \
   ({ unsigned char __result;						      \
      if (sizeof (*mem) == 1)						      \
-       __asm __volatile (LOCK "incb %0; sete %1"			      \
+       __asm __volatile (LOCK "incb %0; sete %b1"			      \
 			 : "=m" (*mem), "=qm" (__result)		      \
 			 : "0" (*mem));					      \
      else if (sizeof (*mem) == 2)					      \
-       __asm __volatile (LOCK "incw %0; sete %1"			      \
+       __asm __volatile (LOCK "incw %0; sete %w1"			      \
 			 : "=m" (*mem), "=qm" (__result)		      \
 			 : "0" (*mem));					      \
      else if (sizeof (*mem) == 4)					      \
@@ -260,11 +260,11 @@ typedef uintmax_t uatomic_max_t;
 
 #define atomic_decrement(mem) \
   (void) ({ if (sizeof (*mem) == 1)					      \
-	      __asm __volatile (LOCK "decb %0"				      \
+	      __asm __volatile (LOCK "decb %b0"				      \
 				: "=m" (*mem)				      \
 				: "0" (*mem));				      \
 	    else if (sizeof (*mem) == 2)				      \
-	      __asm __volatile (LOCK "decw %0"				      \
+	      __asm __volatile (LOCK "decw %w0"				      \
 				: "=m" (*mem)				      \
 				: "0" (*mem));				      \
 	    else if (sizeof (*mem) == 4)				      \
@@ -287,11 +287,11 @@ typedef uintmax_t uatomic_max_t;
 #define atomic_decrement_and_test(mem) \
   ({ unsigned char __result;						      \
      if (sizeof (*mem) == 1)						      \
-       __asm __volatile (LOCK "decb %0; sete %1"			      \
+       __asm __volatile (LOCK "decb %b0; sete %1"			      \
 			 : "=m" (*mem), "=qm" (__result)		      \
 			 : "0" (*mem));					      \
      else if (sizeof (*mem) == 2)					      \
-       __asm __volatile (LOCK "decw %0; sete %1"			      \
+       __asm __volatile (LOCK "decw %w0; sete %1"			      \
 			 : "=m" (*mem), "=qm" (__result)		      \
 			 : "0" (*mem));					      \
      else if (sizeof (*mem) == 4)					      \
@@ -305,11 +305,11 @@ typedef uintmax_t uatomic_max_t;
 
 #define atomic_bit_set(mem, bit) \
   (void) ({ if (sizeof (*mem) == 1)					      \
-	      __asm __volatile (LOCK "orb %2, %0"			      \
+	      __asm __volatile (LOCK "orb %b2, %0"			      \
 				: "=m" (*mem)				      \
 				: "0" (*mem), "i" (1 << (bit)));	      \
 	    else if (sizeof (*mem) == 2)				      \
-	      __asm __volatile (LOCK "orw %2, %0"			      \
+	      __asm __volatile (LOCK "orw %w2, %0"			      \
 				: "=m" (*mem)				      \
 				: "0" (*mem), "i" (1 << (bit)));	      \
 	    else if (sizeof (*mem) == 4)				      \
