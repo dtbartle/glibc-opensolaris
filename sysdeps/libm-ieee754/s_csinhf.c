@@ -37,8 +37,10 @@ __csinhf (__complex__ float x)
 	  float exp_val = __expf (__real__ x);
 	  float rec_exp_val = 1.0 / exp_val;
 
-	  __real__ retval = (exp_val - rec_exp_val) * __cosf (__imag__ x);
-	  __imag__ retval = (exp_val - rec_exp_val) * __sinf (__imag__ x);
+	  __real__ retval = (0.5 * (exp_val - rec_exp_val)
+			     * __cosf (__imag__ x));
+	  __imag__ retval = (0.5 * (exp_val - rec_exp_val)
+			     * __sinf (__imag__ x));
 
 	  if (negate)
 	    __real__ retval = -__real__ retval;

@@ -37,8 +37,8 @@ __csinh (__complex__ double x)
 	  double exp_val = __exp (__real__ x);
 	  double rec_exp_val = 1.0 / exp_val;
 
-	  __real__ retval = (exp_val - rec_exp_val) * __cos (__imag__ x);
-	  __imag__ retval = (exp_val - rec_exp_val) * __sin (__imag__ x);
+	  __real__ retval = 0.5 * (exp_val - rec_exp_val) * __cos (__imag__ x);
+	  __imag__ retval = 0.5 * (exp_val - rec_exp_val) * __sin (__imag__ x);
 
 	  if (negate)
 	    __real__ retval = -__real__ retval;
