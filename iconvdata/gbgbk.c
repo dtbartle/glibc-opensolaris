@@ -67,7 +67,7 @@
 	   is not available we will not flag this as an error but instead     \
 	   map the two positions.  But this means that the mapping	      \
 									      \
-		UCS4 -> GB2312 -> GBK ->UCS4				      \
+		UCS4 -> GB2312 -> GBK -> UCS4				      \
 									      \
 	   might not produce identical text.  */			      \
 	if (NEED_LENGTH_TEST && inptr + 1 >= inend)			      \
@@ -81,8 +81,7 @@
 	ch = (ch << 8) | inptr[1];					      \
 									      \
 	/* Now determine whether the character is valid.  */		      \
-	if (ch >= 0xa1a1 && ch <= 0x777e				      \
-	    && inptr[1] >= 0xa1 && inptr[1] != 0xff)			      \
+	if (ch >= 0xa1a1 && ch <= 0x777e && inptr[1] >= 0xa1)		      \
 	  {								      \
 	    /* So far so good.  Now test the exceptions.  */		      \
 	    if ((ch >= 0xa2a1 && ch <= 0xa2aa)				      \
