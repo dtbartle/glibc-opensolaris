@@ -138,10 +138,9 @@ __pthread_cond_wait:
 	je	8b
 
 7:	cmpl	%ecx, %edx
-	ja	9f
-	jb	8b
+	jne	9f
 	cmp	%eax, %edi
-	jna	8b
+	je	8b
 
 9:	addl	$1, woken_seq(%ebx)
 	adcl	$0, woken_seq+4(%ebx)
