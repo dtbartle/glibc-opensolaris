@@ -1,4 +1,4 @@
-/* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
+/* Copyright (C) 1996, 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
@@ -86,7 +86,7 @@ _nl_find_locale (const char *locale_path, size_t locale_path_len,
     loc_name = (char *) *name;
 
   /* Make a writable copy of the locale name.  */
-  loc_name = __strdup (loc_name);
+  loc_name = strdupa (loc_name);
 
   /* LOCALE can consist of up to four recognized parts for the XPG syntax:
 
@@ -135,11 +135,6 @@ _nl_find_locale (const char *locale_path, size_t locale_path_len,
 	/* This means we are out of core.  */
 	return NULL;
     }
-  else
-    /* If the addressed locale is already available it should be
-       freed.  If we would not do this switching back and force
-       between two locales would slowly eat up all memory.  */
-    free ((void *) loc_name);
 
   /* The space for normalized_codeset is dynamically allocated.  Free it.  */
   if (mask & XPG_NORM_CODESET)
