@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -40,12 +40,6 @@ DEFUN(__tcgetattr, (fd, termios_p),
   errno = ENOSYS;
   return(-1);
 }
+stub_warning (tcgetattr)
 
-
-#ifdef	 HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
-stub_warning(__tcgetattr);
-
-#endif	/* GNU stabs.  */
+weak_alias (__tcgetattr, tcgetattr)
