@@ -1,4 +1,4 @@
-/* Copyright (C) 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,6 +16,7 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+#include <errno.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <grp.h>
@@ -36,6 +37,13 @@ setgroups (n, groups)
   __kernel_gid_t kernel_groups[n];
 
   for (i = 0; i < n; i++)
-    kernel_groups[i] = groups[i];
+    {
+      kernel_groups[i] = groups[i];
+      if (groups[i] != (gid_t) ((__kernel_gid_t) groups[i]))
+	{
+	  __set_errno (EINVAL);
+	  return -1;
+	}
+    }
   return __syscall_setgroups (n, kernel_groups);
 }
