@@ -95,7 +95,7 @@ while read from to subset targets; do
         { echo "FAILED";
 	  failed=1; continue; }
       echo $ac_n "OK$ac_c"
-	cmp testdata/suntzus $temp1 ||
+      cmp testdata/suntzus $temp1 ||
         { echo "/FAILED";
 	  failed=1; continue; }
     fi
