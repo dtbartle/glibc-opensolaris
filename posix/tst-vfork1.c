@@ -1,4 +1,4 @@
-/* Test for chmod functions.
+/* Test for vfork functions.
    Copyright (C) 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2004.
@@ -26,7 +26,7 @@
 #include <sys/wait.h>
 
 /* This test relies on non-POSIX functionality since the child
-   processes call write.  */
+   processes call write and getpid.  */
 static int
 do_test (void)
 {
