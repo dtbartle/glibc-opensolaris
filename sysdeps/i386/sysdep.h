@@ -44,8 +44,14 @@
 #endif
 
 
-/* Define an entry point visible from C.  */
+/* Define an entry point visible from C.
+
+   There is currently a bug in gdb which prevents us from specifying
+   incomplete stabs information.  Fake some entries here which specify
+   the current source file.  */
 #define	ENTRY(name)							      \
+  STABS_CURRENT_FILE1("")						      \
+  STABS_CURRENT_FILE(name)						      \
   ASM_GLOBAL_DIRECTIVE C_SYMBOL_NAME(name);				      \
   ASM_TYPE_DIRECTIVE (C_SYMBOL_NAME(name),@function)			      \
   .align ALIGNARG(4);							      \
@@ -58,10 +64,16 @@
   ASM_SIZE_DIRECTIVE(name)						      \
   STABS_FUN_END(name)
 
-/* Emit stabs definition lines.  We use F(0,1) since for gcc this means
-   `a function returning int'.  */
+/* Remove the following two lines once the gdb bug is fixed.  */
+#define STABS_CURRENT_FILE(name)					      \
+  STABS_CURRENT_FILE1 (#name)
+#define STABS_CURRENT_FILE1(name)					      \
+  1: .stabs name,100,0,0,1b;
+/* Emit stabs definition lines.  We use F(0,1) and define t(0,1) as `int',
+   the same way gcc does it.  */
 #define STABS_FUN(name) STABS_FUN2(name, name##:F(0,1))
 #define STABS_FUN2(name, namestr)					      \
+  .stabs "int:t(0,1)=r(0,1);-2147483648;2147483647;",128,0,0,0;		      \
   .stabs #namestr,36,0,0,name;
 #define STABS_FUN_END(name)						      \
   1: .stabs "",36,0,0,1b-name;
