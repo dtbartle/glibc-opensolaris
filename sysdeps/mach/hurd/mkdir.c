@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -37,3 +37,5 @@ DEFUN(__mkdir, (file_name, mode), CONST char *file_name AND mode_t mode)
     return __hurd_fail (err);
   return 0;
 }
+
+weak_alias (__mkdir, mkdir)
