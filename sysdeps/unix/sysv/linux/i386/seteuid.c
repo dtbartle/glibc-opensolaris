@@ -1,4 +1,4 @@
-/* Copyright (C) 1998, 2000, 2002, 2003 Free Software Foundation, Inc.
+/* Copyright (C) 1998, 2000, 2002, 2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@
 
 #include <sysdep.h>
 #include "kernel-features.h"
+#include <pthread-functions.h>
 
 
 #ifdef __NR_setresuid
@@ -31,10 +32,17 @@ extern int __setresuid (uid_t ruid, uid_t euid, uid_t suid);
 int
 seteuid (uid_t uid)
 {
-#if __ASSUME_32BITUIDS > 0
-  return INLINE_SYSCALL (setresuid32, 3, -1, uid, -1);
-#else
   int result;
+
+  if (uid == (uid_t) ~0)
+    {
+      __set_errno (EINVAL);
+      return -1;
+    }
+
+#if __ASSUME_32BITUIDS > 0
+  result = INLINE_SYSCALL (setresuid32, 3, -1, uid, -1);
+#else
   /* First try the syscall.  */
 # ifdef __NR_setresuid
   result = __setresuid (-1, uid, -1);
@@ -48,8 +56,20 @@ seteuid (uid_t uid)
        equal to the real user ID, making it impossible to switch back.  */
 # endif
     result = __setreuid (-1, uid);
+#endif
+
+#if defined HAVE_PTR__NPTL_SETXID && !defined SINGLE_THREAD
+  if (result == 0 && __libc_pthread_functions.ptr__nptl_setxid != NULL)
+    {
+      struct xid_command cmd;
+      cmd.syscall_no = __NR_setresuid32;
+      cmd.id[0] = -1;
+      cmd.id[1] = uid;
+      cmd.id[2] = -1;
+      __libc_pthread_functions.ptr__nptl_setxid (&cmd);
+    }
+#endif
 
   return result;
-#endif
 }
 libc_hidden_def (seteuid)
