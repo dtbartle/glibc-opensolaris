@@ -94,7 +94,7 @@ timer_id2ptr (timer_t timerid)
 static inline int
 timer_ptr2id (struct timer_node *timer)
 {
-  return __timer_array - timer;
+  return timer - __timer_array;
 }
 
 
