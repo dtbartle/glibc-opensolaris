@@ -91,33 +91,35 @@ extern struct mutex _hurd_siglock; /* Locks _hurd_sigstates.  */
 
 extern struct hurd_sigstate *_hurd_thread_sigstate (thread_t);
 
-/* Get the sigstate of the current thread, taking its lock.
+/* Get the sigstate of the current thread.
    This uses a per-thread variable to optimize the lookup.  */
-
-_EXTERN_INLINE struct hurd_sigstate *
-_hurd_self_sigstate_unlocked (void)
-{
-  struct hurd_sigstate **location =
-    (void *) __hurd_threadvar_location (_HURD_THREADVAR_SIGSTATE);
-  if (! *location)
-    {
-      *location = _hurd_thread_sigstate (__mach_thread_self ());
-      __mutex_unlock (&(*location)->lock);
-    }
-  return *location;
-}
-
 _EXTERN_INLINE struct hurd_sigstate *
 _hurd_self_sigstate (void)
 {
   struct hurd_sigstate **location =
     (void *) __hurd_threadvar_location (_HURD_THREADVAR_SIGSTATE);
-  if (*location)
-    __mutex_lock (&(*location)->lock);
-  else
+  if (*location == NULL)
     *location = _hurd_thread_sigstate (__mach_thread_self ());
   return *location;
 }
+
+/* Thread listening on our message port; also called the "signal thread".  */
+
+extern thread_t _hurd_msgport_thread;
+
+/* Our message port.  We hold the receive right and _hurd_msgport_thread
+   listens for messages on it.  We also hold a send right, for convenience.  */
+
+extern mach_port_t _hurd_msgport;
+
+
+/* Thread to receive process-global signals.  */
+
+extern thread_t _hurd_sigthread;
+
+
+/* Resource limit on core file size.  Enforced by hurdsig.c.  */
+extern int _hurd_core_limit;
 
 /* Critical sections.
 
@@ -188,24 +190,6 @@ _hurd_critical_section_unlock (void *our_lock)
   { void *__hurd_critical__ = _hurd_critical_section_lock ()
 #define HURD_CRITICAL_END \
       _hurd_critical_section_unlock (__hurd_critical__); } while (0)
-
-/* Thread listening on our message port; also called the "signal thread".  */
-
-extern thread_t _hurd_msgport_thread;
-
-/* Our message port.  We hold the receive right and _hurd_msgport_thread
-   listens for messages on it.  We also hold a send right, for convenience.  */
-
-extern mach_port_t _hurd_msgport;
-
-
-/* Thread to receive process-global signals.  */
-
-extern thread_t _hurd_sigthread;
-
-
-/* Resource limit on core file size.  Enforced by hurdsig.c.  */
-extern int _hurd_core_limit;
 
 /* Initialize the signal code, and start the signal thread.  */
 
@@ -287,7 +271,7 @@ extern void _hurd_siginfo_handler (int);
   ({									      \
     __label__ __do_call;	/* Give this label block scope.  */	      \
     error_t __err;							      \
-    struct hurd_sigstate *__ss = _hurd_self_sigstate_unlocked ();	      \
+    struct hurd_sigstate *__ss = _hurd_self_sigstate ();		      \
     __do_call:								      \
     /* Tell the signal thread that we are doing an interruptible RPC on	      \
        this port.  If we get a signal and should return EINTR, the signal     \
