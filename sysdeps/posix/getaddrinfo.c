@@ -857,7 +857,7 @@ gaih_inet (const char *name, const struct gaih_service *service,
 	    (*pai)->ai_addr = (void *) (*pai + 1);
 
 	    /* We only add the canonical name once.  */
-	    (*pai)->ai_canonname = canon;
+	    (*pai)->ai_canonname = (char *) canon;
 	    canon = NULL;
 
 #if SALEN
