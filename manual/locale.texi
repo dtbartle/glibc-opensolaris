@@ -656,12 +656,12 @@ monetary quantities will tell us what we should recommend.
 @node The Elegant and Fast Way, , The Lame Way to Locale Data, Locale Information
 @subsection Pinpoint Access to Locale Data
 
-When writing the X/Open Portability Guide the authors realized that
-implicit used added to by the @code{localeconv} function is not enough
-to provide reasonable access to the locale information.  The
-information which was meant to be available in the locale (as later
-specified in the POSIX.1 standard) requires more possibilities to access
-it.  Therefore the @code{nl_langinfo} function was introduced.
+When writing the X/Open Portability Guide the authors realized that the
+@code{localeconv} function is not enough to provide reasonable access to
+the locale information.  The information which was meant to be available
+in the locale (as later specified in the POSIX.1 standard) requires more
+possibilities to access it.  Therefore the @code{nl_langinfo} function
+was introduced.
 
 @comment langinfo.h
 @comment XOPEN
