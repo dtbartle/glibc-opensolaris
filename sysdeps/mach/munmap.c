@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ Cambridge, MA 02139, USA.  */
    bytes.  Returns 0 if successful, -1 for errors (and sets errno).  */
 
 int
-munmap (caddr_t addr, size_t len)
+__munmap (caddr_t addr, size_t len)
 {
   kern_return_t err;
   if (err = __vm_deallocate (__mach_task_self (),
@@ -36,4 +36,5 @@ munmap (caddr_t addr, size_t len)
     }
   return 0;
 }
-	
+
+weak_alias (__munmap, munmap)
