@@ -183,13 +183,3 @@ __lll_timedwait_tid:
 6:	movl	$ETIMEDOUT, %eax
 	jmp	3b
 	.size	__lll_timedwait_tid,.-__lll_timedwait_tid
-
-
-	.section .gnu.linkonce.t.__i686.get_pc_thunk.dx,"ax",@progbits
-	.globl __i686.get_pc_thunk.dx
-	.hidden __i686.get_pc_thunk.dx
-	.type __i686.get_pc_thunk.dx,@function
-__i686.get_pc_thunk.dx:
-	movl	(%esp), %edx
-	ret
-	.size	__i686.get_pc_thunk.dx,.-__i686.get_pc_thunk.dx
