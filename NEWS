@@ -11,8 +11,8 @@ Version 2.2.5
 * Stephen Moshier implemented powl and cbrtl for the 128-bit
   long double format.
 
-* Masahide Washizawa contributed iconv modules for IBM1160 and IBM1161
-  charsets.
+* Masahide Washizawa contributed iconv modules for IBM1132, IBM1133, IBM1160,
+  IBM1161, and IBM1162 charsets.
 
 * Andreas Jaeger contributed a port to x86_64/Linux.
 
@@ -21,9 +21,6 @@ Version 2.2.5
 
 * optimizations in the dynamic linker.  binaries created by recent binutils
   versions start up quicker due to reduced time spend on relocations.
-
-* Masahide Washizawa contributed iconv modules for IBM1132, IBM1133, and
-  IBM1162.
 
 Version 2.2.4
 
