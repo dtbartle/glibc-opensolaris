@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -28,12 +28,6 @@ DEFUN_VOID(__getgid)
   errno = ENOSYS;
   return -1;
 }
+stub_warning (getgid)
 
-
-#ifdef	 HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
-stub_warning(__getgid);
-
-#endif	/* GNU stabs.  */
+weak_alias (__getgid, getgid)
