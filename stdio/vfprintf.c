@@ -679,15 +679,17 @@ DEFUN(printf_unknown, (s, info, arg),
   outchar('%');
 
   if (info->alt)
-    outchar('#');
+    outchar ('#');
+  if (info->group)
+    outchar ('\'');
   if (info->showsign)
-    outchar('+');
+    outchar ('+');
   else if (info->space)
-    outchar(' ');
+    outchar (' ');
   if (info->left)
-    outchar('-');
+    outchar ('-');
   if (info->pad == '0')
-    outchar('0');
+    outchar ('0');
 
   w = workend;
   while (width > 0)
