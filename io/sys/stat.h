@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -37,9 +37,15 @@ __BEGIN_DECLS
 #define	S_IFCHR		__S_IFCHR
 #define	S_IFBLK		__S_IFBLK
 #define	S_IFREG		__S_IFREG
+#ifdef __S_IFLNK
 #define	S_IFLNK		__S_IFLNK
+#endif
+#ifdef __S_IFSOCK
 #define	S_IFSOCK	__S_IFSOCK
+#endif
+#ifdef __S_IFIFO
 #define	S_IFIFO		__S_IFIFO
+#endif
 #endif
 
 /* Test macros for file types.	*/
@@ -50,11 +56,17 @@ __BEGIN_DECLS
 #define	S_ISCHR(mode)	__S_ISTYPE((mode), __S_IFCHR)
 #define	S_ISBLK(mode)	__S_ISTYPE((mode), __S_IFBLK)
 #define	S_ISREG(mode)	__S_ISTYPE((mode), __S_IFREG)
+#ifdef __S_IFIFO
 #define	S_ISFIFO(mode)	__S_ISTYPE((mode), __S_IFIFO)
+#endif
 
 #ifdef	__USE_GNU
+#ifdef __S_IFLNK
 #define	S_ISLNK(mode)	__S_ISTYPE((mode), __S_IFLNK)
+#endif
+#ifdef __S_IFSOCK
 #define	S_ISSOCK(mode)	__S_ISTYPE((mode), __S_IFSOCK)
+#endif
 #endif
 
 
