@@ -789,59 +789,61 @@ _nl_find_msg (domain_file, msgid, index)
 
 	  __libc_lock_lock (lock);
 
+	  while (1)
+	    {
 # ifdef _LIBC
-	  {
-	    size_t written;
-	    int res;
+	      size_t non_reversible;
+	      int res;
 
-	    while ((res = __gconv (domain->conv,
-				   &inbuf, inbuf + resultlen,
-				   &outbuf, outbuf + freemem_size,
-				   &written)) == __GCONV_OK)
-	      {
-		if (res != __GCONV_FULL_OUTPUT)
-		  goto out;
+	      res = __gconv (domain->conv,
+			     &inbuf, inbuf + resultlen,
+			     &outbuf, outbuf + freemem_size,
+			     &non_reversible);
 
-		/* We must resize the buffer.  */
-		freemem_size = MAX (2 * freemem_size, 4064);
-		freemem = (char *) malloc (freemem_size);
-		if (freemem == NULL)
-		  goto out;
+	      if (res == __GCONV_OK || res == __GCONV_EMPTY_INPUT)
+		break;
 
-		inbuf = result;
-		outbuf = freemem + 4;
-	      }
-	  }
+	      if (res != __GCONV_FULL_OUTPUT)
+		{
+		  __libc_lock_unlock (lock);
+		  goto converted;
+		}
+
+	      inbuf = result;
 # else
 #  if HAVE_ICONV
-	  for (;;)
-	    {
 	      const char *inptr = (const char *) inbuf;
 	      size_t inleft = resultlen;
 	      char *outptr = (char *) outbuf;
 	      size_t outleft = freemem_size;
 
 	      if (iconv (domain->conv, &inptr, &inleft, &outptr, &outleft)
-		  != (size_t)(-1))
+		  != (size_t) (-1))
 		{
 		  outbuf = (unsigned char *) outptr;
 		  break;
 		}
 	      if (errno != E2BIG)
-		goto out;
+		{
+		  __libc_lock_unlock (lock);
+		  goto converted;
+		}
+#  endif
+# endif
 
 	      /* We must resize the buffer.  */
 	      freemem_size = 2 * freemem_size;
 	      if (freemem_size < 4064)
 		freemem_size = 4064;
 	      freemem = (char *) malloc (freemem_size);
-	      if (freemem == NULL)
-		goto out;
+	      if (__builtin_expect (freemem == NULL, 0))
+		{
+		  __libc_lock_unlock (lock);
+		  goto converted;
+		}
 
 	      outbuf = freemem + 4;
 	    }
-#  endif
-# endif
 
 	  /* We have now in our buffer a converted string.  Put this
 	     into the table of conversions.  */
@@ -850,10 +852,9 @@ _nl_find_msg (domain_file, msgid, index)
 	  /* Shrink freemem, but keep it aligned.  */
 	  freemem_size -= outbuf - freemem;
 	  freemem = outbuf;
-	  freemem += freemem_size & 3;
-	  freemem_size = freemem_size & ~3;
+	  freemem += freemem_size & (__alignof__ (nls_uint32) - 1);
+	  freemem_size = freemem_size & ~ (__alignof__ (nls_uint32) - 1);
 
-	out:
 	  __libc_lock_unlock (lock);
 	}
 
