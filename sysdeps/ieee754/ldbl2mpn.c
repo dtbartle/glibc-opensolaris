@@ -37,7 +37,7 @@ __mpn_extract_long_double (mp_ptr res_ptr, mp_size_t size,
   u.d = value;
 
   *is_neg = u.ieee.negative;
-  *expt = (int) u.ieee.exponent - _IEEE854_DOUBLE_BIAS;
+  *expt = (int) u.ieee.exponent - IEEE854_LONG_DOUBLE_BIAS;
 
 #if BITS_PER_MP_LIMB == 32
   res_ptr[0] = u.ieee.mantissa1; /* Low-order 32 bits of fraction.  */
