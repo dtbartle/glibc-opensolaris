@@ -136,16 +136,20 @@ struct in_addr
 #endif
 
 
+/* Get the definition of the macro to define the common sockaddr members.  */
+#include <sockaddrcom.h>
+
+
 /* Structure describing an Internet socket address.  */
 struct sockaddr_in
   {
-    short int sin_family;		/* Address family.  */
+    __SOCKADDR_COMMON (sin_);
     unsigned short int sin_port;	/* Port number.  */
     struct in_addr sin_addr;		/* Internet address.  */
 
     /* Pad to size of `struct sockaddr'.  */
     unsigned char sin_zero[sizeof(struct sockaddr) -
-			   sizeof(short int) -
+			   __SOCKADDR_COMMON_SIZE -
 			   sizeof(unsigned short int) -
 			   sizeof(struct in_addr)];
   };
