@@ -19,29 +19,6 @@
 # 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 common_objpfx=$1; shift
-
-generate_locale ()
-{
-    charmap=$1
-    input=$2
-    out=$3
-    I18NPATH=. GCONV_PATH=${common_objpfx}iconvdata \
-    ${common_objpfx}elf/ld.so --library-path $common_objpfx \
-    ${common_objpfx}locale/localedef --quiet -c -f $charmap -i $input \
-      ${common_objpfx}localedata/$out
-
-    if [ $? -ne 0 ]; then
-	echo "Charmap: \"${charmap}\" Inputfile: \"${input}\"" \
-	     "Outputdir: \"${out}\" failed"
-	exit 1
-    fi
-}
-
-generate_locale EUC-JP ja_JP ja_JP.EUC-JP
-# XXX This is a hack for now.  We need the en_US.ANSI_X3.4-1968 locale
-# XXX elsewhere
-generate_locale ANSI_X3.4-1968 en_US en_US.ANSI_X3.4-1968
-
 status=0
 
 # Run the test programs.
