@@ -2344,18 +2344,18 @@ regex_compile (pattern, size, syntax, bufp)
   is_binary = TALLOC(csize + 1, char);
   if (pattern == NULL || mbs_offset == NULL || is_binary == NULL)
     {
-      if (pattern) free(pattern);
-      if (mbs_offset) free(mbs_offset);
-      if (is_binary) free(is_binary);
+      free(pattern);
+      free(mbs_offset);
+      free(is_binary);
       return REG_ESPACE;
     }
   size = convert_mbs_to_wcs(pattern, cpattern, csize, mbs_offset, is_binary);
   pend = p + size;
   if (size < 0)
     {
-      if (pattern) free(pattern);
-      if (mbs_offset) free(mbs_offset);
-      if (is_binary) free(is_binary);
+      free(pattern);
+      free(mbs_offset);
+      free(is_binary);
       return REG_BADPAT;
     }
 #endif
@@ -2377,9 +2377,9 @@ regex_compile (pattern, size, syntax, bufp)
   if (compile_stack.stack == NULL)
     {
 #ifdef MBS_SUPPORT
-      if (pattern) free(pattern);
-      if (mbs_offset) free(mbs_offset);
-      if (is_binary) free(is_binary);
+      free(pattern);
+      free(mbs_offset);
+      free(is_binary);
 #endif
       return REG_ESPACE;
     }
