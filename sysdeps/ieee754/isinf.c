@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@ Cambridge, MA 02139, USA.  */
 
 /* Return 0 if VALUE is finite or NaN, +1 if it
    is +Infinity, -1 if it is -Infinity.  */
-__CONSTVALUE int
+int
 DEFUN(__isinf, (value), double value)
 {
   union ieee754_double u;
@@ -36,3 +36,5 @@ DEFUN(__isinf, (value), double value)
 
   return 0;
 }
+
+weak_alias (__isinf, isinf)
