@@ -91,7 +91,7 @@ This data type is used as the base type for wide character strings.
 I.e., arrays of objects of this type are the equivalent of @code{char[]}
 for multibyte character strings.  The type is defined in @file{stddef.h}.
 
-The @w{ISO C89} standard, where this type was introduced, does not say
+The @w{ISO C90} standard, where this type was introduced, does not say
 anything specific about the representation.  It only requires that this
 type is capable to store all elements of the basic character set.
 Therefore it would be legitimate to define @code{wchar_t} and
@@ -120,7 +120,7 @@ defined as @code{char} the type @code{wint_t} must be defined as
 
 @pindex wchar.h
 This type is defined in @file{wchar.h} and got introduced in the second
-amendment to @w{ISO C89}.
+amendment to @w{ISO C90}.
 @end deftp
 
 As there are for the @code{char} data type there also exist macros
@@ -133,7 +133,7 @@ type @code{wchar_t}.
 The macro @code{WCHAR_MIN} evaluates to the minimum value representable
 by an object of type @code{wint_t}.
 
-This macro got introduced in the second amendment to @w{ISO C89}.
+This macro got introduced in the second amendment to @w{ISO C90}.
 @end deftypevr
 
 @comment wchar.h
@@ -142,7 +142,7 @@ This macro got introduced in the second amendment to @w{ISO C89}.
 The macro @code{WCHAR_MIN} evaluates to the maximum value representable
 by an object of type @code{wint_t}.
 
-This macro got introduced in the second amendment to @w{ISO C89}.
+This macro got introduced in the second amendment to @w{ISO C90}.
 @end deftypevr
 
 Another special wide character value is the equivalent to @code{EOF}.
@@ -180,7 +180,7 @@ are used.
 @end smallexample
 
 @pindex wchar.h
-This macro was introduced in the second amendment to @w{ISO C89} and is
+This macro was introduced in the second amendment to @w{ISO C90} and is
 defined in @file{wchar.h}.
 @end deftypevr
 
@@ -316,7 +316,7 @@ families to handle character set conversion.  The one function family
 is specified in the @w{ISO C} standard and therefore is portable even
 beyond the Unix world.
 
-The most commonly known set of functions, coming from the @w{ISO C89}
+The most commonly known set of functions, coming from the @w{ISO C90}
 standard, is unfortunately the least useful one.  In fact, these
 functions should be avoided whenever possible, especially when
 developing libraries (as opposed to applications).
@@ -325,7 +325,7 @@ The second family of functions got introduced in the early Unix standards
 (XPG2) and is still part of the latest and greatest Unix standard:
 @w{Unix 98}.  It is also the most powerful and useful set of functions.
 But we will start with the functions defined in the second amendment to
-@w{ISO C89}.
+@w{ISO C90}.
 
 @node Restartable multibyte conversion
 @section Restartable Multibyte Conversion Functions
@@ -408,7 +408,7 @@ fact, in the GNU C library it is not.
 @code{MB_CUR_MAX} is defined in @file{stdlib.h}.
 @end deftypevr
 
-Two different macros are necessary since strictly @w{ISO C89} compilers
+Two different macros are necessary since strictly @w{ISO C90} compilers
 do not allow variable length array definitions but still it is desirable
 to avoid dynamic allocation.  This incomplete piece of code shows the
 problem:
@@ -457,7 +457,7 @@ function to another.
 
 @pindex wchar.h
 This type is defined in @file{wchar.h}.  It got introduced in the second
-amendment to @w{ISO C89}.
+amendment to @w{ISO C90}.
 @end deftp
 
 To use objects of this type the programmer has to define such objects
@@ -495,7 +495,7 @@ object is in the initial state the return value is nonzero.  Otherwise
 it is zero.
 
 @pindex wchar.h
-This function was introduced in the second amendment to @w{ISO C89} and
+This function was introduced in the second amendment to @w{ISO C90} and
 is declared in @file{wchar.h}.
 @end deftypefun
 
@@ -559,7 +559,7 @@ which the state information is taken and the function also does not use
 any static state.
 
 @pindex wchar.h
-This function was introduced in the second amendment of @w{ISO C89} and
+This function was introduced in the second amendment of @w{ISO C90} and
 is declared in @file{wchar.h}.
 @end deftypefun
 
@@ -608,7 +608,7 @@ value of this function is this character.  Otherwise the return value is
 @code{EOF}.
 
 @pindex wchar.h
-This function was introduced in the second amendment of @w{ISO C89} and
+This function was introduced in the second amendment of @w{ISO C90} and
 is declared in @file{wchar.h}.
 @end deftypefun
 
@@ -655,7 +655,7 @@ a valid multibyte character also no value is stored, the global variable
 @code{(size_t) -1}.  The conversion state is afterwards undefined.
 
 @pindex wchar.h
-This function was introduced in the second amendment to @w{ISO C89} and
+This function was introduced in the second amendment to @w{ISO C90} and
 is declared in @file{wchar.h}.
 @end deftypefun
 
@@ -733,7 +733,7 @@ object pointer to by @var{ps}.  If @var{ps} is a null pointer an state
 object local to @code{mbrlen} is used.
 
 @pindex wchar.h
-This function was introduced in the second amendment to @w{ISO C89} and
+This function was introduced in the second amendment to @w{ISO C90} and
 is declared in @file{wchar.h}.
 @end deftypefun
 
@@ -1232,13 +1232,13 @@ file_mbsrtowcs (int input, int output)
 @section Non-reentrant Conversion Function
 
 The functions described in the last chapter are defined in the second
-amendment to @w{ISO C89}.  But the original @w{ISO C89} standard also
+amendment to @w{ISO C90}.  But the original @w{ISO C90} standard also
 contained functions for character set conversion.  The reason that they
 are not described in the first place is that they are almost entirely
 useless.
 
 The problem is that all the functions for conversion defined in @w{ISO
-C89} use a local state.  This implies that multiple conversions at the
+C90} use a local state.  This implies that multiple conversions at the
 same time (not only when using threads) cannot be done, and that you
 cannot first convert single characters and then strings since you cannot
 tell the conversion functions which state to use.
@@ -1367,10 +1367,10 @@ The function @code{mblen} is declared in @file{stdlib.h}.
 @node Non-reentrant String Conversion
 @subsection Non-reentrant Conversion of Strings
 
-For convenience reasons the @w{ISO C89} standard defines also functions
+For convenience reasons the @w{ISO C90} standard defines also functions
 to convert entire strings instead of single characters.  These functions
 suffer from the same problems as their reentrant counterparts from the
-second amendment to @w{ISO C89}; see @ref{Converting Strings}.
+second amendment to @w{ISO C90}; see @ref{Converting Strings}.
 
 @comment stdlib.h
 @comment ISO
