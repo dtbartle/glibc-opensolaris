@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@ extern void __mig_init (int);
 
 mach_port_t __mach_task_self_;
 vm_size_t __vm_page_size;
+weak_alias (__vm_page_size, vm_page_size)
 
 void
 __mach_init (void)
@@ -37,3 +38,4 @@ __mach_init (void)
     _exit (err);
   __vm_page_size = stats.pagesize;
 }
+weak_alias (__mach_init, mach_init)
