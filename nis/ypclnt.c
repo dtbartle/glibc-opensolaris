@@ -220,7 +220,6 @@ __yp_bind (const char *domain, dom_binding **ypdb)
 
   /* If the program exists, close the socket */
   if (fcntl (ysd->dom_socket, F_SETFD, 1) == -1)
-    /* XXX Really print here? --drepper */
     perror ("fcntl: F_SETFD");
 
   if (is_new && ypdb != NULL)
@@ -560,10 +559,9 @@ yp_master (const char *indomain, const char *inmap, char **outname)
     return ypprot_err (resp.stat);
 
   *outname = strdup (resp.peer);
-  /* XXX Check for failure in strdup --drepper */
   xdr_free ((xdrproc_t) xdr_ypresp_master, (char *) &resp);
 
-  return YPERR_SUCCESS;
+  return *outname == NULL ? YPERR_YPERR : YPERR_SUCCESS;
 }
 
 int
