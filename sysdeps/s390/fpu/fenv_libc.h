@@ -22,16 +22,19 @@
 
 #include <fenv.h>
 
-/* Definitions from asm/s390-regs-common.h that are needed in th glibc. */
+/* Definitions from asm/s390-regs-common.h that are needed in glibc.  */
 
-#define FPC_DXC_MASK		0x0000FF00
+
 #define FPC_EXCEPTION_MASK	0xF8000000
 #define FPC_FLAGS_MASK		0x00F80000
+#define FPC_DXC_MASK		0x0000FF00
 #define FPC_RM_MASK		0x00000003
+#define FPC_VALID_MASK		((FPC_EXCEPTION_MASK|FPC_FLAGS_MASK| \
+				 FPC_DXC_MASK|FPC_RM_MASK))
 
-#define FPC_EXCEPTION_MASK_SHIFT  24
-#define FPC_FLAGS_SHIFT		  16
-#define FPC_DXC_SHIFT		  8
-#define FPC_NOT_FPU_EXCEPTION	  0x300
+#define FPC_EXCEPTION_MASK_SHIFT	24
+#define FPC_FLAGS_SHIFT			16
+#define FPC_DXC_SHIFT			8
+#define FPC_NOT_FPU_EXCEPTION		0x300
 
 #endif /* _FENV_LIBC_H */
