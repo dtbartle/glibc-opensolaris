@@ -21,7 +21,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/mman.h>
+#ifdef _POSIX_MAPPED_FILES
+# include <sys/mman.h>
+#endif
 
 #include "localeinfo.h"
 
@@ -210,6 +212,7 @@ _nl_remove_locale (int locale, struct locale_data *data)
       /* Free the name.  */
       free ((char *) data->name);
 
+#ifdef _POSIX_MAPPED_FILES
       /* Really delete the data.  First delete the real data.  */
       if (data->mmaped)
 	{
@@ -222,6 +225,7 @@ _nl_remove_locale (int locale, struct locale_data *data)
 	    }
 	}
       else
+#endif	/* _POSIX_MAPPED_FILES */
 	/* The memory was malloced.  */
 	free ((void *) data->filedata);
 
