@@ -466,7 +466,7 @@ check_complex (const char *test_name, FLOAT __complex__ computed,
   part_exp = __real__ expected;
   check_float (str, part_comp, part_exp, max_ulp, xfail, exception);
 
-  sprintf (str, "Complex part of: %s", test_name);
+  sprintf (str, "Imaginary part of: %s", test_name);
   part_comp = __imag__ computed;
   part_exp = __imag__ expected;
   /* Don't check again for exceptions, just pass through the
