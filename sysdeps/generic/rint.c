@@ -1,5 +1,5 @@
 /* snarfed from BSD common_source/floor.c:
- * Copyright (c) 1985 Regents of the University of California.
+ * Copyright (c) 1985, 1995 Regents of the University of California.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,3 +83,5 @@ double x;
 	t = x + s;				/* x+s rounded to integer */
 	return (t - s);
 }
+
+weak_alias (__rint, rint)
