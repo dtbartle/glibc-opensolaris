@@ -386,7 +386,7 @@ double tan(double x) {
     /* Reduction by algorithm iv */
     p=10;    n = (mpranred(x,&mpa,p)) & 0x00000001;
     __mp_dbl(&mpa,&a,p);        __dbl_mp(a,&mpt1,p);
-    sub(&mpa,&mpt1,&mpt2,p);  __mp_dbl(&mpt2,&da,p);
+    __sub(&mpa,&mpt1,&mpt2,p);  __mp_dbl(&mpt2,&da,p);
 
     MUL2(a,da,a,da,x2,xx2,t1,t2,t3,t4,t5,t6,t7,t8)
     c1 = x2*(a15.d+x2*(a17.d+x2*(a19.d+x2*(a21.d+x2*(a23.d+x2*(a25.d+
