@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -37,7 +37,7 @@ __pthread_getschedparam (threadid, policy, param)
     return ESRCH;
 
   /* We have to handle cancellation in the following code since we are
-     locking another threads desriptor.  */
+     locking another threads descriptor.  */
   pthread_cleanup_push ((void (*) (void *)) lll_unlock_wake_cb, &pd->lock);
 
   lll_lock (pd->lock);
