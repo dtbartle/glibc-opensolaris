@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ Cambridge, MA 02139, USA.  */
 #include <string.h>
 
 
-extern int _mb_shift;	/* Defined in mbtowc.c.  */
+extern long int _mb_shift;	/* Defined in mbtowc.c.  */
 
 /* Convert WCHAR into its multibyte character representation,
    putting this in S and returning its length.  */
@@ -51,7 +51,16 @@ DEFUN(wctomb, (s, wchar), register char *s AND wchar_t wchar)
       return 1;
     }
   else if (mb == NULL)
-    return -1;
+    {
+      if ((wchar_t) (char) wchar == wchar && isascii ((char) wchar))
+	{
+	  /* A normal ASCII character translates to itself.  */
+	  if (s != NULL)
+	    *s = (char) wchar;
+	  return 1;
+	}
+      return -1;
+    }
 
   mb += wchar + _mb_shift;
   if (mb->string == NULL || mb->len == 0)
