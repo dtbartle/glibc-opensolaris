@@ -66,7 +66,7 @@ __kill (pid_t pid, int sig)
 				   err; }),
 				/* If no msgport, we cannot send a signal.  */
 				msgport == MACH_PORT_NULL ? EPERM :
-				__sig_post (msgport, sig, refport));
+				__msg_sig_post (msgport, sig, refport));
       if (! err)
 	delivered = 1;
     }
