@@ -24,14 +24,14 @@
 #include <libc-internal.h>
 
 
-unsigned long long int
+hp_timing_t
 __get_clockfreq (void)
 {
   /* We read the information from the /proc filesystem.  It contains at
      least one line like
 	itc MHz    : 733.390988
      We search for this line and convert the number in an integer.  */
-  static unsigned long long int result;
+  static hp_timing_t result;
   int fd;
 
   /* If this function was called before, we know the result.  */
