@@ -274,7 +274,7 @@ __setstate_r (arg_state, buf)
   int degree;
   int separation;
 
-  if (buf == NULL)
+  if (arg_state == NULL || buf == NULL)
     goto fail;
 
   old_type = buf->rand_type;
