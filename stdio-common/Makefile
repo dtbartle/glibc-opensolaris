@@ -28,7 +28,7 @@ routines	:=							      \
 	_itoa _itowa itoa-digits itoa-udigits itowa-digits		      \
 	vfprintf vprintf printf_fp reg-printf printf-prs printf_fphex	      \
 	printf_size fprintf printf snprintf sprintf asprintf dprintf	      \
-	vfscanf								      \
+	vfwprintf vfscanf vfwscanf					      \
 	fscanf scanf sscanf						      \
 	perror psignal							      \
 	tmpfile tmpfile64 tmpnam tmpnam_r tempnam tempname		      \
@@ -39,10 +39,6 @@ routines	:=							      \
 install-others = $(inst_includedir)/bits/stdio_lim.h
 
 include ../Makeconfig
-
-ifeq ($(stdio),libio)
-routines += vfwprintf vfwscanf
-endif
 
 aux	:= errlist siglist
 distribute := _itoa.h _itowa.h _i18n_number.h \
