@@ -283,7 +283,7 @@ _dl_unmap (struct link_map *map)
 	{
 	  *(struct fdesc **) ftab[i] = head;
 	  head = (struct fdesc *) ftab[i];
-	  if (tail = NULL)
+	  if (tail == NULL)
 	    tail = head;
 	}
     }
