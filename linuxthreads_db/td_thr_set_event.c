@@ -28,14 +28,29 @@ td_thr_set_event (th, event)
      const td_thrhandle_t *th;
      td_thr_events_t *event;
 {
+  td_thr_events_t old_event;
+  int i;
+
   LOG (__FUNCTION__);
+
+  /* Write the new value into the thread data structure.  */
+  if (ps_pdread (th->th_ta_p->ph,
+		 ((char *) th->th_unique
+		  + offsetof (struct _pthread_descr_struct,
+			      p_eventbuf.eventmask)),
+		 &old_event, sizeof (td_thrhandle_t)) != PS_OK)
+    return TD_ERR;	/* XXX Other error value?  */
+
+  /* Or the new bits in.  */
+  for (i = 0; i < TD_EVENTSIZE; ++i)
+    old_event.event_bits[i] |= event->event_bits[i];
 
   /* Write the new value into the thread data structure.  */
   if (ps_pdwrite (th->th_ta_p->ph,
 		  ((char *) th->th_unique
 		   + offsetof (struct _pthread_descr_struct,
 			       p_eventbuf.eventmask)),
-		  event, sizeof (td_thrhandle_t)) != PS_OK)
+		  &old_event, sizeof (td_thrhandle_t)) != PS_OK)
     return TD_ERR;	/* XXX Other error value?  */
 
   return TD_OK;
