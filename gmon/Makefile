@@ -32,6 +32,8 @@ CFLAGS-mcount.c := -fno-omit-frame-pointer
 
 # We cannot compile mcount.c with -pg because that would
 # create resursive calls.  Just copy the normal static object.
-$(objpfx)mcount.po: $(objpfx)mcount.o
+# On systems where `profil' is not a system call, the same
+# problem exists for the internal functions in profil.c.
+$(objpfx)mcount.po $(objpfx)profil.po: %.po: %.o
 	rm -f $@
 	ln $< $@
