@@ -40,6 +40,11 @@ AC_ARG_WITH(weak-symbols, dnl
   --with-weak-symbols	  if weak symbols are available in as and ld,
 	    weak=$withval, weak=no)
 
+AC_ARG_ENABLE(libio, dnl
+[  --enable-libio          build in GNU libio instead of GNU stdio],
+ 	      stdio=libio, stdio=stdio)
+AC_SUBST(stdio)
+
 dnl Arguments to enable or disable building the shared, profiled, and
 dnl -fomit-frame-pointer libraries.
 AC_ARG_ENABLE(shared, dnl
