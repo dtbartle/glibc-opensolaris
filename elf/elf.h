@@ -921,7 +921,7 @@ typedef struct
 
 #define ELF64_M_SYM(info)	ELF32_M_SYM (info)
 #define ELF64_M_SIZE(info)	ELF32_M_SIZE (info)
-#define ELF64_M_INFO(sym, info)	ELF32_M_INFO (sym, info)
+#define ELF64_M_INFO(sym, size)	ELF32_M_INFO (sym, size)
 
 
 /* Motorola 68k specific definitions.  */
