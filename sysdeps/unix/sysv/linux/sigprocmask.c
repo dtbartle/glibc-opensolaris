@@ -47,16 +47,16 @@ __sigprocmask (how, set, oset)
      SIGSETXID are not blocked.  */
   if (set != NULL
       && (__builtin_expect (__sigismember (set, SIGCANCEL), 0)
-#ifdef SIGSETXID
+# ifdef SIGSETXID
 	  || __builtin_expect (__sigismember (set, SIGSETXID), 0)
-#endif
+# endif
 	  ))
     {
       local_newmask = *set;
       __sigdelset (&local_newmask, SIGCANCEL);
-#ifdef SIGSETXID
+# ifdef SIGSETXID
       __sigdelset (&local_newmask, SIGSETXID);
-#endif
+# endif
       set = &local_newmask;
     }
 #endif
