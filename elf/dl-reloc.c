@@ -22,6 +22,7 @@ Cambridge, MA 02139, USA.  */
 #include <sys/mman.h>
 #include <unistd.h>
 #include <errno.h>
+#include "dynamic-link.h"
 
 void
 _dl_relocate_object (struct link_map *l, struct link_map *scope[], int lazy)
