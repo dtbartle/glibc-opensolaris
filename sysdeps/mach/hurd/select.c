@@ -23,11 +23,12 @@ Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 #include <string.h>
 
-/* Used to record that a particular select rpc returned.  I hope none of the
-   values from which it's derived has the high bit set...  */
-#define SELECT_RETURNED \
-    (((SELECT_READ | SELECT_WRITE | SELECT_URG) << 1) \
-     & ~(SELECT_READ | SELECT_WRITE | SELECT_URG))
+/* All user select types.  */
+#define SELECT_ALL (SELECT_READ | SELECT_WRITE | SELECT_URG)
+
+/* Used to record that a particular select rpc returned. Must be distinct
+   from SELECT_ALL (which better not have the high bit set).  */
+#define SELECT_RETURNED ((SELECT_ALL << 1) & ~SELECT_ALL)
 
 /* Check the first NFDS descriptors each in READFDS (if not NULL) for read
    readiness, in WRITEFDS (if not NULL) for write readiness, and in EXCEPTFDS
@@ -142,8 +143,7 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
 		/* We got an answer.  This is not necessarily the answer to
                    the query we sent just now.  It may correspond to any
                    prior query which timed out before its answer arrived.  */
-		if (tag < 0 || tag > i ||
-		    (type & (SELECT_READ|SELECT_URG|SELECT_WRITE)) == 0)
+		if (tag < 0 || tag > i || (type & SELECT_ALL) == 0)
 		  /* This is not a proper answer to any query we have yet
                      made.  */
 		  err = EGRATUITOUS;
@@ -219,8 +219,7 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
 		       *(int *) &msg.success.tag_type != *(int *) &inttype ||
 		       *(int *) &msg.success.result_type != *(int *) &inttype)
 		__mach_msg_destroy (&msg);
-	      else if ((msg.success.result &
-			(SELECT_READ|SELECT_WRITE|SELECT_URG)) == 0 ||
+	      else if ((msg.success.result & SELECT_ALL) == 0 ||
 		       msg.success.tag < firstfd || msg.success.tag > lastfd)
 		err = EGRATUITOUS;
 	      else
@@ -276,26 +275,22 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
   if (err)
     return __hurd_fail (err);
 
-  /* Set the user bitarrays.  */
+  /* Set the user bitarrays.  We only ever have to clear bits, as all desired
+     ones are initially set.  */
   for (i = 0; i < nfds; ++i)
-    if (types[i] & SELECT_RETURNED)
-      {
-	if (readfds != NULL)
-	  if (types[i] & SELECT_READ)
-	    FD_SET (i, readfds);
-	  else
-	    FD_CLR (i, readfds);
-	if (writefds != NULL)
-	  if (types[i] & SELECT_WRITE)
-	    FD_SET (i, writefds);
-	  else
-	    FD_CLR (i, writefds);
-	if (exceptfds != NULL)
-	  if (types[i] & SELECT_URG)
-	    FD_SET (i, exceptfds);
-	  else
-	    FD_CLR (i, exceptfds);
-      }
+    {
+      int type = types[i];
+
+      if ((type & SELECT_RETURNED) == 0)
+	type = 0;
+
+      if (readfds != NULL && (type & SELECT_READ) == 0)
+	FD_CLR (i, readfds);
+      if (writefds != NULL && (type & SELECT_WRITE) == 0)
+	FD_CLR (i, writefds);
+      if (exceptfds != NULL && (type & SELECT_URG) == 0)
+	FD_CLR (i, exceptfds);
+    }
 
   return got;
 }
