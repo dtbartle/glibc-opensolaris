@@ -2453,16 +2453,16 @@ structure above the initialization function has to initialize parts of
 it.
 
 @table @code
-@item min_needed_from
-@itemx max_needed_from
-@itemx min_needed_to
-@itemx max_needed_to
+@item __min_needed_from
+@itemx __max_needed_from
+@itemx __min_needed_to
+@itemx __max_needed_to
 These elements must be initialized to the exact numbers of the minimum
 and maximum number of bytes used by one character in the source and
 destination character set respectively.  If the characters all have the
 same size the minimum and maximum values are the same.
 
-@item stateful
+@item __stateful
 This element must be initialized to an nonzero value if the source
 character set is stateful.  Otherwise it must be zero.
 @end table
@@ -2693,7 +2693,8 @@ The @code{next_step} pointer references the next step information and
 therefore will look similar to this:
 
 @smallexample
-  next_step->__fct (next_step, next_data, &outerr, outbuf, written, 0)
+  next_step->__fct (next_step, next_data, &outerr, outbuf,
+                    written, 0)
 @end smallexample
 
 But this is not yet all.  Once the function call returns the conversion
