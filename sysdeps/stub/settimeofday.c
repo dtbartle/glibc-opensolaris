@@ -18,42 +18,23 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <sys/wait.h>
-#include <sys/types.h>
+#include <sys/time.h>
 
-
-/* Wait for a child matching PID to die.
-   If PID is greater than 0, match any process whose process ID is PID.
-   If PID is (pid_t) -1, match any process.
-   If PID is (pid_t) 0, match any process with the
-   same process group as the current process.
-   If PID is less than -1, match any process whose
-   process group is the absolute value of PID.
-   If the WNOHANG bit is set in OPTIONS, and that child
-   is not already dead, return (pid_t) 0.  If successful,
-   return PID and store the dead child's status in STAT_LOC.
-   Return (pid_t) -1 for errors.  If the WUNTRACED bit is set in OPTIONS,
-   return status for stopped children; otherwise don't.  */
-pid_t
-DEFUN(__waitpid, (pid, stat_loc, options),
-      pid_t pid AND int *stat_loc AND int options)
+/* Set the current time of day and timezone information.
+   This call is restricted to the super-user.  */
+int
+DEFUN(__settimeofday, (tv, tz),
+      CONST struct timeval *tv AND CONST struct timezone *tz)
 {
-  if ((options & ~(WNOHANG|WUNTRACED)) != 0)
-    {
-      errno = EINVAL;
-      return (pid_t) -1;
-    }
-
   errno = ENOSYS;
-  return (pid_t) -1;
+  return -1;
 }
-
 
 
 #ifdef	 HAVE_GNU_LD
 
 #include <gnu-stabs.h>
 
-stub_warning(__waitpid);
+stub_warning(__settimeofday);
 
 #endif	/* GNU stabs.  */
