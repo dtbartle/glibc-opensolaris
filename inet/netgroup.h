@@ -1,4 +1,5 @@
-/* Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+/* Internal header for netgroup related functions.
+Copyright (C) 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,13 +17,14 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
-#include "libioP.h"
-#include "stdio.h"
+#ifndef _NETGROUP_H
+#define _NETGROUP_H	1
 
-void
-clearerr_unlocked (fp)
-     FILE *fp;
+struct __netgrent
 {
-  CHECK_FILE (fp, /*nothing*/);
-  _IO_clearerr (fp);
-}
+  const char *host;
+  const char *user;
+  const char *domain;
+};
+
+#endif /* netgroup.h */
