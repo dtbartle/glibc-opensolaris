@@ -469,7 +469,7 @@ _dl_map_object (struct link_map *loader, const char *name, int type)
 	}
 
       fd = -1;
-      for (l = loader; l; l = l->l_loader)
+      for (l = loader; fd == -1 && l; l = l->l_loader)
 	if (l && l->l_info[DT_RPATH])
 	  trypath ((const char *) (l->l_addr +
 				   l->l_info[DT_STRTAB]->d_un.d_ptr +
