@@ -168,10 +168,6 @@ int tirpcflag = 0;       /* generating code for tirpc, by default */
 int tirpcflag = 1;       /* generating code for tirpc, by default */
 #endif
 
-#ifdef __GNU_LIBRARY__
-int building_libc = 0;	/* running as part of libc built process */
-#endif
-
 int
 main(int argc, const char *argv[])
 {
@@ -339,13 +335,6 @@ open_input(const char *infile, const char *define)
 	(void) pipe(pd);
 	switch (fork()) {
 	case 0:
-#ifdef __GNU_LIBRARY__
-		/* While building libc we don't want to use the libc from
-		   the build directory which may be incompatible with the
-		   installed dynamic linker.  */
-		if (building_libc)
-		  unsetenv ("LD_LIBRARY_PATH");
-#endif
 		find_cpp();
 		putarg(0, CPP);
 		putarg(1, CPPFLAGS);
@@ -950,9 +939,6 @@ parseargs(int argc, const char *argv[], struct commandline *cmd)
 					    generating SysVr4 compatible
 					    */
 					tirpcflag = 1;
-					break;
-				case '$':
-					building_libc = 1;
 					break;
 #endif
 				case 'I':
