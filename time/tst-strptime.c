@@ -29,14 +29,16 @@ static const struct
   const char *format;
   int wday;
   int yday;
+  int mon;
+  int mday;
 } day_tests[] =
 {
-  { "2000-01-01", "%Y-%m-%d", 6, 0 },
-  { "03/03/00", "%D", 5, 62 },
-  { "9/9/99", "%x", 4, 251 },
-  { "19990502123412", "%Y%m%d%H%M%S", 0, 121 },
-  { "2001 20 Mon", "%Y %U %a", 1, 140 },
-  { "2001 21 Mon", "%Y %W %a", 1, 140 },
+  { "2000-01-01", "%Y-%m-%d", 6, 0, 0, 1 },
+  { "03/03/00", "%D", 5, 62, 2, 3 },
+  { "9/9/99", "%x", 4, 251, 8, 9 },
+  { "19990502123412", "%Y%m%d%H%M%S", 0, 121, 4, 2 },
+  { "2001 20 Mon", "%Y %U %a", 1, 140, 4, 21 },
+  { "2001 21 Mon", "%Y %W %a", 1, 140, 4, 21 },
 };
 
 
@@ -121,11 +123,12 @@ main (int argc, char *argv[])
 	}
 
       printf ("strptime (\"%s\", \"%s\", ...)\n"
-	      "\tshould be: wday = %d, yday = %3d\n"
-	      "\t       is: wday = %d, yday = %3d\n",
+	      "\tshould be: wday = %d, yday = %3d, mon = %2d, mday = %2d\n"
+	      "\t       is: wday = %d, yday = %3d, mon = %2d, mday = %2d\n",
 	      day_tests[i].input, day_tests[i].format,
 	      day_tests[i].wday, day_tests[i].yday,
-	      tm.tm_wday, tm.tm_yday);
+	      day_tests[i].mon, day_tests[i].mday,
+	      tm.tm_wday, tm.tm_yday, tm.tm_mon, tm.tm_mday);
 
       if (tm.tm_wday != day_tests[i].wday)
 	{
@@ -137,6 +140,18 @@ main (int argc, char *argv[])
 	{
 	  printf ("yearday for `%s' incorrect: %d instead of %d\n",
 		  day_tests[i].input, tm.tm_yday, day_tests[i].yday);
+	  result = 1;
+	}
+      if (tm.tm_mon != day_tests[i].mon)
+	{
+	  printf ("month for `%s' incorrect: %d instead of %d\n",
+		  day_tests[i].input, tm.tm_mon, day_tests[i].mon);
+	  result = 1;
+	}
+      if (tm.tm_mday != day_tests[i].mday)
+	{
+	  printf ("monthday for `%s' incorrect: %d instead of %d\n",
+		  day_tests[i].input, tm.tm_mday, day_tests[i].mday);
 	  result = 1;
 	}
     }
