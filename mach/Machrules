@@ -177,8 +177,8 @@ omit-deps += $(interface-routines)
 # Specify the static dependencies of the generated files.
 $(foreach if,$(user-interfaces),$($(if)-calls:%=$(objpfx)RPC_%.o))): \
     mach/boolean.h mach/kern_return.h mach/message.h mach/notify.h \
-    mach/mach_types.h mach/mig_errors.h mach/mig_support.h mach/msg_type.h
-$(foreach if,$(user-interfaces),$($(if)-calls:%=$(objpfx)%.o)): ../gnu-stabs.h
+    mach/mach_types.h mach/mig_errors.h mach/mig_support.h mach/msg_type.h \
+    $(..)libc-symbols.h $(objpfx)config.h
 $(server-interfaces:%=$(objpfx)%.o): \
     mach/boolean.h mach/kern_return.h mach/message.h mach/mig_errors.h \
     mach/mig_support.h mach/std_types.h
