@@ -57,24 +57,21 @@ __sysconf (int name)
 	    /* This is more than enough, the file contains a single
 	       integer.  */
 	    char buf[32];
-	    long int res = -1l;
+	    ssize_t n;
+	    n = TEMP_FAILURE_RETRY (__read_nocancel (fd, buf,
+						     sizeof (buf) - 1));
+	    __close_nocancel (fd);
 
-	    ssize_t n = __read_nocancel (fd, buf, sizeof (buf) - 1);
 	    if (n > 0)
 	      {
 		/* Terminate the string.  */
 		buf[n] = '\0';
 
 		char *endp;
-		res = strtol (buf, &endp, 10);
-		if (endp == buf || (*endp != '\0' && *endp != '\n'))
-		  res = -1l;
+		long int res = strtol (buf, &endp, 10);
+		if (endp != buf && (*endp == '\0' || *endp == '\n'))
+		  return res;
 	      }
-
-	    __close_nocancel (fd);
-
-	    if (res != -1)
-	      return res;
 	  }
       }
       break;
