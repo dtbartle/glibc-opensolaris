@@ -201,8 +201,6 @@
 		break;							      \
 	      }								      \
 									      \
-	    inptr = endp;						      \
-									      \
 	    if (ch < 0x80)						      \
 	      {								      \
 		/* It's a combining character.  */			      \
@@ -212,6 +210,7 @@
 		/* See whether we have room for two characters.  */	      \
 		if (outptr + 8 <= outend)				      \
 		  {							      \
+		    inptr = endp;					      \
 		    put32 (outptr, u1);					      \
 		    outptr += 4;					      \
 		    put32 (outptr, u2);					      \
@@ -224,6 +223,8 @@
 		    break;						      \
 		  }							      \
 	      }								      \
+									      \
+	    inptr = endp;						      \
 	  }								      \
       }									      \
     else								      \
