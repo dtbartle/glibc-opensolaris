@@ -77,6 +77,7 @@ typedef struct
     void *dli_saddr;		/* Exact value of nearest symbol.  */
   } Dl_info;
 extern int dladdr (const void *__address, Dl_info *__info) __THROW;
+#endif
 
 __END_DECLS
 
