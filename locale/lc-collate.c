@@ -22,8 +22,8 @@ Boston, MA 02111-1307, USA.  */
 
 _NL_CURRENT_DEFINE (LC_COLLATE);
 
-const u32_t *__collate_table;
-const u32_t *__collate_extra;
+const u_int32_t *__collate_table;
+const u_int32_t *__collate_extra;
 
 
 void
