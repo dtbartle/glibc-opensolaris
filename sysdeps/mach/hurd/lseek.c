@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -31,3 +31,5 @@ DEFUN(__lseek, (fd, offset, whence), int fd AND off_t offset AND int whence)
     return __hurd_dfail (fd, err);
   return offset;
 }
+
+weak_alias (__lseek, lseek)
