@@ -3050,11 +3050,7 @@ parse_bracket_exp (regexp, dfa, token, syntax, err)
 	    }
 
 	  token_len = peek_token_bracket (token, regexp, syntax);
-	  if (BE (token->type == END_OF_RE, 0))
-	    {
-	      *err = REG_EBRACK;
-	      goto parse_bracket_exp_free_return;
-	    }
+
 	  *err = build_range_exp (sbcset,
 #ifdef RE_ENABLE_I18N
 				  mbcset, &range_alloc,
