@@ -21,7 +21,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-
+#include <tst-stack-align.h>
 
 static void *
 tf (void *arg)
@@ -30,14 +30,7 @@ tf (void *arg)
 
   puts ("in thread");
 
-  double d = 2.0;
-  printf ("double:  %g %p %zu\n", d, &d, __alignof (double));
-  if ((((uintptr_t) &d) & (__alignof (double) - 1)) != 0)
-    ok = false;
-
-  long double ld = 3.0;
-  printf ("ldouble: %Lg %p %zu\n", ld, &ld, __alignof (long double));
-  if ((((uintptr_t) &ld) & (__alignof (long double) - 1)) != 0)
+  if (TEST_STACK_ALIGN ())
     ok = false;
 
   return ok ? NULL : (void *) -1l;
@@ -50,14 +43,7 @@ do_test (void)
 
   puts ("in main");
 
-  double d = 0.0;
-  printf ("double:  %g %p %zu\n", d, &d, __alignof (double));
-  if ((((uintptr_t) &d) & (__alignof (double) - 1)) != 0)
-    ok = false;
-
-  long double ld = 1.0;
-  printf ("ldouble: %Lg %p %zu\n", ld, &ld, __alignof (long double));
-  if ((((uintptr_t) &ld) & (__alignof (long double) - 1)) != 0)
+  if (TEST_STACK_ALIGN ())
     ok = false;
 
   pthread_t th;
