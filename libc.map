@@ -602,7 +602,7 @@ GLIBC_2.1 {
     tcgetsid; tdestroy; tmpfile64; truncate64;
 
     # u*
-    unlockpt; utimes; user2netname;
+    unlockpt; updwtmpx; user2netname; utimes; utmpxname;
 
     # v*
     versionsort; versionsort64;
