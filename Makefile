@@ -342,6 +342,9 @@ manual/dir-add.texi manual/dir-add.info: FORCE
 	$(MAKE) $(PARALLELMFLAGS) -C $(@D) $(@F)
 FAQ: gen-FAQ.pl FAQ.in
 	$(PERL) $^ > $@.new && rm -f $@ && mv $@.new $@ && chmod a-w $@
+ifeq ($(with-cvs),yes)
+	test ! -d CVS || cvs $(CVSOPTS) commit -m'Regenerated:  $(PERL) $^' $@
+endef
 FORCE:
 
 rpm/%: subdir_distinfo
