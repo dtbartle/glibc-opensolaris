@@ -2124,12 +2124,6 @@ AC_SUBST(nopic_initfini)
 
 AC_SUBST(DEFINES)
 
-case "$add_ons" in
-  *door*) linux_doors=yes ;;
-  *) linux_doors=no ;;
-esac
-AC_SUBST(linux_doors)
-
 dnl See sysdeps/mach/configure.in for this variable.
 AC_SUBST(mach_interface_list)
 
