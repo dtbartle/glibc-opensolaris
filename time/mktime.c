@@ -400,6 +400,26 @@ __mktime_internal (timeptr, producer)
   return result;
 }
 
+#if ! HAVE_LOCALTIME_R && ! defined (localtime_r)
+#ifdef _LIBC
+#define localtime_r __localtime_r
+#else
+/* Approximate localtime_r as best we can in its absence.  */
+#define localtime_r my_localtime_r /* Avoid clash with system localtime_r.  */
+static struct tm *
+localtime_r (t, tp)
+     const time_t *t;
+     struct tm *tp;
+{ 
+  struct tm *l = localtime (t);
+  if (! l)
+    return NULL;
+  *tp = *l;
+  return tp;
+}
+#endif /* ! _LIBC */
+#endif /* ! HAVE_LOCALTIME_R && ! defined (localtime_r) */
+
 time_t
 #ifdef DEBUG			/* make it work even if the system's
 				   libc has it's own mktime routine */
@@ -409,7 +429,7 @@ mktime (timeptr)
 #endif
      struct tm *timeptr;
 {
-  return __mktime_internal (timeptr, __localtime_r);
+  return __mktime_internal (timeptr, localtime_r);
 }
 
 #ifdef weak_alias
