@@ -307,7 +307,7 @@ extern char *l64a __P ((long int __n));
 extern long int a64l __P ((__const char *__s));
 
 
-#include <sys/types.h>	/* we need int32_t... */
+# include <sys/types.h>	/* we need int32_t... */
 
 /* These are the functions that actually do things.  The `random', `srandom',
    `initstate' and `setstate' functions are those from BSD Unices.
@@ -411,7 +411,7 @@ struct drand48_data
     int init;			/* Flag for initializing.  */
   };
 
-#ifdef __USE_MISC
+# ifdef __USE_MISC
 /* Return non-negative, double-precision floating-point value in [0.0,1.0).  */
 extern int drand48_r __P ((struct drand48_data *__buffer, double *__result));
 extern int __erand48_r __P ((unsigned short int __xsubi[3],
@@ -449,7 +449,7 @@ extern int __lcong48_r __P ((unsigned short int __param[7],
 			     struct drand48_data *__buffer));
 extern int lcong48_r __P ((unsigned short int __param[7],
 			   struct drand48_data *__buffer));
-#endif	/* Use misc.  */
+# endif	/* Use misc.  */
 
 /* Internal function to compute next state of the generator.  */
 extern int __drand48_iterate __P ((unsigned short int __xsubi[3],
@@ -647,7 +647,7 @@ extern char *qfcvt __P ((__long_double_t __value, int __ndigit, int *__decpt,
 extern char *qgcvt __P ((__long_double_t __value, int __ndigit, char *__buf));
 
 
-#ifdef __USE_MISC
+# ifdef __USE_MISC
 /* Reentrant version of the functions above which provide their own
    buffers.  */
 extern int ecvt_r __P ((double __value, int __ndigit, int *__decpt,
@@ -659,7 +659,7 @@ extern int qecvt_r __P ((__long_double_t __value, int __ndigit, int *__decpt,
 			 int *__sign, char *__buf, size_t __len));
 extern int qfcvt_r __P ((__long_double_t __value, int __ndigit, int *__decpt,
 			 int *__sign, char *__buf, size_t __len));
-#endif	/* misc */
+# endif	/* misc */
 #endif	/* use MISC || use X/Open Unix */
 
 
