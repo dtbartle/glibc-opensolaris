@@ -78,7 +78,7 @@
  * is new enough to contain a certain feature.
  */
 
-#define	__RES	19940415
+#define	__RES	19941130
 
 /*
  * Resolver configuration file.
@@ -196,6 +196,9 @@ extern struct __res_state _res;
 #define	p_fqname	__p_fqname
 #define	p_rr		__p_rr
 #define	p_option	__p_option
+#define	res_isourserver	__res_isourserver
+#define	res_nameinquery	__res_nameinquery
+#define	res_queriesmatch __res_queriesmatch
 __BEGIN_DECLS
 int	 __dn_skipname __P((const u_char *, const u_char *));
 void	 __fp_resstat __P((struct __res_state *, FILE *));
@@ -224,6 +227,11 @@ int	 res_querydomain __P((const char *, const char *, int, int,
 int	 res_mkquery __P((int, const char *, int, int, const u_char *, int,
 			  const u_char *, u_char *, int));
 int	 res_send __P((const u_char *, int, u_char *, int));
+int	 res_isourserver __P((const struct sockaddr_in *));
+int	 res_nameinquery __P((const char *, int, int,
+			      const u_char *, const u_char *));
+int	 res_queriesmatch __P((const u_char *, const u_char *,
+			       const u_char *, const u_char *));
 /* XXX - these last two don't belong in the resolver */
 u_int	 inet_nsap_addr __P((const char *, u_char *, int maxlen));
 char	*inet_nsap_ntoa __P((int, const u_char *, char *ascii));
