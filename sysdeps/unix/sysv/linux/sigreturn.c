@@ -16,40 +16,30 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+#include <errno.h>
 #include <signal.h>
+#include <sigcontext.h>
+#include <unistd.h>
 
-/* The difference here is that the sigaction structure used in the
-   kernel is not the same as we use in the libc.  Therefore we must
-   translate it here.  */
-#include <kernel_sigaction.h>
-
-extern int __syscall_sigaction (int, const struct kernel_sigaction *,
-				struct kernel_sigaction *);
-extern int __syscall_rt_signal (int, const struct sigaction *,
-				struct sigaction *, size_t);
+extern int __syscall_sigreturn (struct sigcontext *);
+extern int __syscall_rt_sigreturn (struct sigcontext *, size_t);
 
 /* The variable is shared between all wrappers around signal handling
    functions which have RT equivalents.  It is defined in sigsuspend.c.  */
 extern int __libc_have_rt_sigs;
 
 
-/* If ACT is not NULL, change the action for SIG to *ACT.
-   If OACT is not NULL, put the old action for SIG in *OACT.  */
+/* Get and/or change the set of blocked signals.  */
 int
-__sigaction (sig, act, oact)
-     int sig;
-     const struct sigaction *act;
-     struct sigaction *oact;
+__sigreturn (scp)
+     struct sigcontext *scp;
 {
-  struct old_kernel_sigaction k_sigact, k_osigact;
-  int error;
-
   /* First try the RT signals.  */
   if (__libc_have_rt_sigs)
     {
       /* XXX The size argument hopefully will have to be changed to the
 	 real size of the user-level sigset_t.  */
-      int result = __syscall_rt_sigaction (sig, act, oact,
+      int result = __syscall_rt_sigreturn (scp,
 					   _NSIG / (8 * sizeof (long int)));
 
       if (result >= 0 || errno != ENOSYS)
@@ -58,27 +48,6 @@ __sigaction (sig, act, oact)
       __libc_have_rt_sigs = 0;
     }
 
-  if (act)
-    {
-      k_sigact.k_sa_handler = act->sa_handler;
-      k_sigact.sa_mask = act->sa_mask.__val[0];
-      k_sigact.sa_flags = act->sa_flags;
-#ifdef HAVE_SA_RESTORER
-      k_sigact.sa_restorer = act->sa_restorer;
-#endif
-    }
-  error = __syscall_sigaction (sig, act ? &k_sigact : 0,
-			       oact ? &k_osigact : 0);
-  if (oact && error >= 0)
-    {
-      oact->sa_handler = k_osigact.k_sa_handler;
-      oact->sa_mask.__val[0] = k_osigact.sa_mask;
-      oact->sa_flags = k_osigact.sa_flags;
-#ifdef HAVE_SA_RESTORER
-      oact->sa_restorer = k_osigact.sa_restorer;
-#endif
-    }
-  return error;
+  return __syscall_sigreturn (scp);
 }
-
-weak_alias (__sigaction, sigaction)
+weak_alias (__sigprocmask, sigprocmask)
