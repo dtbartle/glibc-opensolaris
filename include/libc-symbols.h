@@ -178,8 +178,13 @@
 
 #  define link_warning(symbol, msg)			\
   __make_section_unallocated (".gnu.warning." #symbol)	\
+#  ifdef HAVE_SECTION_QUOTES
+  static const char __evoke_link_warning_##symbol[]	\
+    __attribute__ ((section (".gnu.warning." #symbol "\"\n\t#\""))) = msg;
+#  else
   static const char __evoke_link_warning_##symbol[]	\
     __attribute__ ((section (".gnu.warning." #symbol "\n\t#"))) = msg;
+#  endif
 # else
 #  define link_warning(symbol, msg)		\
   asm(".stabs \"" msg "\",30,0,0,0\n"	\
