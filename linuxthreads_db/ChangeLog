@@ -22,7 +22,6 @@
 
 	* Makefile: New file.
 	* proc_service.h: New file.
-	* shlib-versions: New file.
 	* td_init.c: New file.
 	* td_log.c: New file.
 	* td_ta_delete.c: New file.
