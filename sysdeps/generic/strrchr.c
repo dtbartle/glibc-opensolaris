@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -42,3 +42,8 @@ DEFUN(strrchr, (s, c), CONST char *s AND int c)
 
   return (char *) found;
 }
+
+#ifdef weak_alias
+#undef rindex
+weak_alias (strrchr, rindex)
+#endif
