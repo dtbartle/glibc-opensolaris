@@ -143,7 +143,13 @@ intel_check_word (int name, unsigned int value, bool *has_level_2,
       unsigned int byte = value & 0xff;
 
       if (byte == 0x40)
-	*no_level_2_or_3 = true;
+	{
+	  *no_level_2_or_3 = true;
+
+	  if (folded_name == _SC_LEVEL3_CACHE_SIZE)
+	    /* No need to look further.  */
+	    break;
+	}
       else
 	{
 	  struct intel_02_cache_info *found;
@@ -290,6 +296,7 @@ __sysconf (int name)
 		: "=a" (eax), "=r" (ebx), "=c" (ecx), "=d" (edx)
 		: "0" (0));
 
+  /* This spells out "GenuineIntel".  */
   if (ebx == 0x756e6547 && ecx == 0x6c65746e && edx == 0x49656e69)
     return handle_intel (name, eax);
   // XXX Fill in more vendors.
