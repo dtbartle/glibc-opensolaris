@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -39,14 +39,15 @@ DEFUN(fdopen, (fd, mode), int fd AND CONST char *mode)
   if (!__getmode (mode, &m))
     return NULL;
 
+  HURD_CRITICAL_BEGIN;
   d = _hurd_fd_get (fd);
   if (d == NULL)
-    {
-      errno = EBADF;
-      return NULL;
-    }
+    err = EBADF;
+  else
+    err = HURD_FD_PORT_USE (d, __io_get_openmodes (port, &openmodes));
+  HURD_CRITICAL_END;
 
-  if (err = HURD_FD_PORT_USE (d, __io_get_openmodes (port, &openmodes)))
+  if (err)
     return __hurd_dfail (fd, err), NULL;
 
   /* Check the access mode.  */
