@@ -26,16 +26,7 @@ Cambridge, MA 02139, USA.  */
 #include <mach/notify.h>
 #include <assert.h>
 #include <string.h>
-
-/* Symbol set of ioctl handler lists.  If there are user-registered
-   handlers, one of these lists will contain them.  The other lists are
-   handlers built into the library.  The definition of the set comes from
-   hurdioctl.c.  */
-extern struct 
-  {
-    size_t n;
-    struct ioctl_handler *v[0];
-  } *const _hurd_ioctl_handlers;
+#include <hurd/ioctl.h>
 
 
 #define typesize(type)	(1 << (type))
@@ -139,15 +130,10 @@ DEFUN(__ioctl, (fd, request),
 
   {
     /* Check for a registered handler for REQUEST.  */
-
-    size_t i;
-    const struct ioctl_handler *h;
-
-    for (i = 0; i < _hurd_ioctl_handlers->n; ++i)
-      for (h = _hurd_ioctl_handlers->v[i]; h != NULL; h = h->next)
-	if (request >= h->first_request && request <= h->last_request)
-	  /* This handler groks REQUEST.  Se lo puntamonos.  */
-	  return (*h->handler) (fd, request, arg);
+    ioctl_handler_t handler = _hurd_lookup_ioctl_handler (request);
+    if (handler)
+      /* This handler groks REQUEST.  Se lo puntamonos.  */
+      return (*handler) (fd, request, arg);
   }
 
   /* Compute the Mach message ID for the RPC from the group and command
