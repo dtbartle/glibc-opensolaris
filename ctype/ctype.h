@@ -116,7 +116,7 @@ extern int toascii __P ((int __c));
 #endif /* Use SVID or use misc.  */
 
 #ifdef	__USE_SVID
-/* These are the same as `toupper' and and `tolower'.  */
+/* These are the same as `toupper' and `tolower'.  */
 __exctype (_toupper);
 __exctype (_tolower);
 #endif
