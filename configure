@@ -2303,7 +2303,7 @@ else
 for ac_globl in .globl .global .EXPORT; do
   cat > conftest.s <<EOF
 .text
-${ac_globl} foo
+	${ac_globl} foo
 foo:
 EOF
   if ${CC-cc} $CFLAGS -c conftest.s 2>/dev/null; then
