@@ -1,18 +1,17 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
-   
+
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public License as
    published by the Free Software Foundation; either version 2 of the
    License, or (at your option) any later version.
-   
+
    The GNU C Library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-   
+
    You should have received a copy of the GNU Library General Public
    License along with the GNU C Library; see the file COPYING.LIB.  If not,
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -32,8 +31,9 @@ nis_clone_directory (const directory_obj *src, directory_obj *dest)
 
   if (dest == NULL)
     {
-      res = malloc (sizeof (directory_obj));
-      memset (res, '\0', sizeof (directory_obj));
+      res = calloc (1, sizeof (directory_obj));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
@@ -48,15 +48,15 @@ nis_clone_directory (const directory_obj *src, directory_obj *dest)
       int i;
 
       res->do_servers.do_servers_len = src->do_servers.do_servers_len;
-      if ((res->do_servers.do_servers_val = 
-	   malloc (src->do_servers.do_servers_len * sizeof (nis_server))) 
+      if ((res->do_servers.do_servers_val =
+	   malloc (src->do_servers.do_servers_len * sizeof (nis_server)))
 	  == NULL)
 	return NULL;
-      
+
       for (i = 0; i < src->do_servers.do_servers_len; ++i)
 	{
 	  if (src->do_servers.do_servers_val[i].name != NULL)
-	    res->do_servers.do_servers_val[i].name = 
+	    res->do_servers.do_servers_val[i].name =
 	      strdup (src->do_servers.do_servers_val[i].name);
 	  else
 	    res->do_servers.do_servers_val[i].name = NULL;
@@ -97,12 +97,14 @@ nis_clone_directory (const directory_obj *src, directory_obj *dest)
 	    }
 	  res->do_servers.do_servers_val[i].key_type =
 	    src->do_servers.do_servers_val[i].key_type;
-	  res->do_servers.do_servers_val[i].pkey.n_len = 
+	  res->do_servers.do_servers_val[i].pkey.n_len =
 	    src->do_servers.do_servers_val[i].pkey.n_len;
 	  if (res->do_servers.do_servers_val[i].pkey.n_len > 0)
 	    {
-	      res->do_servers.do_servers_val[i].pkey.n_bytes = 
+	      res->do_servers.do_servers_val[i].pkey.n_bytes =
 		malloc (src->do_servers.do_servers_val[i].pkey.n_len);
+	      if (res->do_servers.do_servers_val[i].pkey.n_bytes == NULL)
+		return NULL;
 	      memcpy (res->do_servers.do_servers_val[i].pkey.n_bytes,
 		      src->do_servers.do_servers_val[i].pkey.n_bytes,
 		      src->do_servers.do_servers_val[i].pkey.n_len);
@@ -116,11 +118,11 @@ nis_clone_directory (const directory_obj *src, directory_obj *dest)
       res->do_servers.do_servers_len = 0;
       res->do_servers.do_servers_val = NULL;
     }
-  res->do_ttl  = src->do_ttl;  
+  res->do_ttl  = src->do_ttl;
   res->do_armask.do_armask_len = src->do_armask.do_armask_len;
   if (res->do_armask.do_armask_len > 0)
     {
-      if ((res->do_armask.do_armask_val = 
+      if ((res->do_armask.do_armask_val =
 	   malloc (src->do_armask.do_armask_len * sizeof (oar_mask))) == NULL)
 	return NULL;
       memcpy (res->do_armask.do_armask_val, src->do_armask.do_armask_val,
@@ -130,7 +132,7 @@ nis_clone_directory (const directory_obj *src, directory_obj *dest)
     {
       res->do_armask.do_armask_val = NULL;
     }
-  
+
   return res;
 }
 
@@ -142,23 +144,28 @@ nis_clone_group (const group_obj *src, group_obj *dest)
 
   if (src == NULL)
     return NULL;
-  
+
   if (dest == NULL)
     {
-      res = malloc (sizeof (group_obj));
-      memset (res, '\0', sizeof (group_obj));
+      res = calloc (1, sizeof (group_obj));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
-  
+
   res->gr_flags = src->gr_flags;
 
   res->gr_members.gr_members_len = src->gr_members.gr_members_len;
   if (res->gr_members.gr_members_len > 0)
     {
       if (res->gr_members.gr_members_val == NULL)
-	res->gr_members.gr_members_val = 
-	  malloc (res->gr_members.gr_members_len * sizeof (nis_name));
+	{
+	  res->gr_members.gr_members_val =
+	    malloc (res->gr_members.gr_members_len * sizeof (nis_name));
+	  if (res->gr_members.gr_members_val == NULL)
+	    return NULL;
+	}
       for (i = 0; i < res->gr_members.gr_members_len; ++i)
 	if (src->gr_members.gr_members_val[i] != NULL)
 	  res->gr_members.gr_members_val[i] =
@@ -178,15 +185,16 @@ nis_clone_table (const table_obj *src, table_obj *dest)
 
   if (src == NULL)
     return NULL;
-  
+
   if (dest == NULL)
     {
-      res = malloc (sizeof (table_obj));
-      memset (res, '\0', sizeof (table_obj));
+      res = calloc (1, sizeof (table_obj));
+      if (res == NULL)
+	return res;
     }
   else
     res = dest;
-  
+
   if (src->ta_type != NULL)
     {
       if ((res->ta_type = strdup (src->ta_type)) == NULL)
@@ -199,18 +207,22 @@ nis_clone_table (const table_obj *src, table_obj *dest)
   res->ta_sep = src->ta_sep;
   res->ta_cols.ta_cols_len = src->ta_cols.ta_cols_len;
   if (res->ta_cols.ta_cols_val == NULL)
-    res->ta_cols.ta_cols_val = 
-      malloc (src->ta_cols.ta_cols_len * sizeof (table_col));
+    {
+      res->ta_cols.ta_cols_val =
+	malloc (src->ta_cols.ta_cols_len * sizeof (table_col));
+      if (res->ta_cols.ta_cols_val == NULL)
+	return NULL;
+    }
   for (i = 0; i < res->ta_cols.ta_cols_len; i++)
     {
       if (src->ta_cols.ta_cols_val[i].tc_name == NULL)
 	res->ta_cols.ta_cols_val[i].tc_name = NULL;
       else
-	res->ta_cols.ta_cols_val[i].tc_name = 
+	res->ta_cols.ta_cols_val[i].tc_name =
 	  strdup (src->ta_cols.ta_cols_val[i].tc_name);
-      res->ta_cols.ta_cols_val[i].tc_flags = 
+      res->ta_cols.ta_cols_val[i].tc_flags =
 	src->ta_cols.ta_cols_val[i].tc_flags;
-      res->ta_cols.ta_cols_val[i].tc_rights = 
+      res->ta_cols.ta_cols_val[i].tc_rights =
 	src->ta_cols.ta_cols_val[i].tc_rights;
     }
 
@@ -233,11 +245,12 @@ nis_clone_entry (const entry_obj *src, entry_obj *dest)
 
   if (src == NULL)
     return NULL;
-  
+
   if (dest == NULL)
     {
-      res = malloc (sizeof (entry_obj));
-      memset (res, '\0', sizeof (entry_obj));
+      res = calloc (1, sizeof (entry_obj));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
@@ -249,15 +262,19 @@ nis_clone_entry (const entry_obj *src, entry_obj *dest)
 
   res->en_cols.en_cols_len = src->en_cols.en_cols_len;
   if (res->en_cols.en_cols_val == NULL && src->en_cols.en_cols_len > 0)
-    res->en_cols.en_cols_val =
-      malloc (src->en_cols.en_cols_len * sizeof (entry_col));
+    {
+      res->en_cols.en_cols_val =
+	malloc (src->en_cols.en_cols_len * sizeof (entry_col));
+      if (res->en_cols.en_cols_val == NULL)
+	return NULL;
+    }
   for (i = 0; i < res->en_cols.en_cols_len; ++i)
     {
       res->en_cols.en_cols_val[i].ec_flags =
 	src->en_cols.en_cols_val[i].ec_flags;
       res->en_cols.en_cols_val[i].ec_value.ec_value_len =
 	src->en_cols.en_cols_val[i].ec_value.ec_value_len;
-      if (res->en_cols.en_cols_val[i].ec_value.ec_value_val == NULL && 
+      if (res->en_cols.en_cols_val[i].ec_value.ec_value_val == NULL &&
 	  src->en_cols.en_cols_val[i].ec_value.ec_value_len > 0)
 	res->en_cols.en_cols_val[i].ec_value.ec_value_val =
 	  malloc (src->en_cols.en_cols_val[i].ec_value.ec_value_len);
@@ -276,15 +293,16 @@ nis_clone_nis_attr (const nis_attr *src, nis_attr *dest)
 
   if (src == NULL)
     return NULL;
-  
+
   if (dest == NULL)
     {
-      res = malloc (sizeof (nis_attr));
-      memset (res, '\0', sizeof (nis_attr));
+      res = calloc (1, sizeof (nis_attr));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
-  
+
   if (src->zattr_ndx != NULL)
     {
       if ((res->zattr_ndx = strdup (src->zattr_ndx)) == NULL)
@@ -295,8 +313,12 @@ nis_clone_nis_attr (const nis_attr *src, nis_attr *dest)
 
   res->zattr_val.zattr_val_len = src->zattr_val.zattr_val_len;
   if (res->zattr_val.zattr_val_val == NULL)
-    res->zattr_val.zattr_val_val = 
-      malloc (src->zattr_val.zattr_val_len);
+    {
+      res->zattr_val.zattr_val_val =
+	malloc (src->zattr_val.zattr_val_len);
+      if (res->zattr_val.zattr_val_val == NULL)
+	return NULL;
+    }
   memcpy (res->zattr_val.zattr_val_val, src->zattr_val.zattr_val_val,
 	  src->zattr_val.zattr_val_len);
 
@@ -314,15 +336,16 @@ __nis_clone_attrs (const nis_attr *src, nis_attr *dest, u_int len)
 
   if (dest == NULL)
     {
-      res = malloc (len * sizeof (nis_attr));
-      memset (res, '\0', sizeof (len * sizeof (nis_attr)));
+      res = calloc (len, sizeof (nis_attr));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
 
   for (i = 0; i < len; i++)
     nis_clone_nis_attr(&src[i], &res[i]);
-  
+
   return res;
 }
 
@@ -333,24 +356,25 @@ nis_clone_link (const link_obj *src, link_obj *dest)
 
   if (src == NULL)
     return NULL;
-  
+
   if (dest == NULL)
     {
-      res = malloc (sizeof (link_obj));
-      memset (res, '\0', sizeof (link_obj));
+      res = calloc (1, sizeof (link_obj));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
-  
+
   res->li_rtype = src->li_rtype;
 
   res->li_attrs.li_attrs_len = src->li_attrs.li_attrs_len;
   res->li_attrs.li_attrs_val =
-    __nis_clone_attrs (src->li_attrs.li_attrs_val, 
+    __nis_clone_attrs (src->li_attrs.li_attrs_val,
 		       res->li_attrs.li_attrs_val,
 		       src->li_attrs.li_attrs_len);
-  
-  if((res->li_name = strdup (src->li_name)) == NULL)
+
+  if ((res->li_name = strdup (src->li_name)) == NULL)
     return NULL;
 
   return res;
@@ -363,11 +387,12 @@ nis_clone_objdata (const objdata *src, objdata *dest)
 
   if (src == NULL)
     return NULL;
-  
+
   if (dest == NULL)
     {
-      res = malloc (sizeof (objdata));
-      memset (res, '\0', sizeof (objdata));
+      res = calloc (1, sizeof (objdata));
+      if (res == NULL)
+	return res;
     }
   else
     res = dest;
@@ -410,9 +435,11 @@ nis_clone_objdata (const objdata *src, objdata *dest)
 	src->objdata_u.po_data.po_data_len;
       if (src->objdata_u.po_data.po_data_val)
         {
-	  res->objdata_u.po_data.po_data_val = 
+	  res->objdata_u.po_data.po_data_val =
 	    malloc (res->objdata_u.po_data.po_data_len);
-	  memcpy (res->objdata_u.po_data.po_data_val, 
+	  if (res->objdata_u.po_data.po_data_val == NULL)
+	    return NULL;
+	  memcpy (res->objdata_u.po_data.po_data_val,
 		  src->objdata_u.po_data.po_data_val,
 		  src->objdata_u.po_data.po_data_len);
 	  if (res->objdata_u.po_data.po_data_val == NULL)
@@ -427,7 +454,7 @@ nis_clone_objdata (const objdata *src, objdata *dest)
     default:
       return NULL;
     }
-  
+
   return res;
 }
 
@@ -438,17 +465,18 @@ nis_clone_object (const nis_object *src, nis_object *dest)
 
   if (src == NULL)
     return NULL;
-  
+
   if (dest == NULL)
     {
-      res = malloc (sizeof (nis_object));
-      memset (res, '\0', sizeof (nis_object));
+      res = calloc (1, sizeof (nis_object));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
-  
+
   res->zo_oid = src->zo_oid;
-  
+
   if ((res->zo_name = strdup (src->zo_name)) == NULL)
     return NULL;
   if ((res->zo_owner = strdup (src->zo_owner)) == NULL)
@@ -457,10 +485,10 @@ nis_clone_object (const nis_object *src, nis_object *dest)
     return NULL;
   if ((res->zo_domain = strdup (src->zo_domain)) == NULL)
     return NULL;
-  
+
   res->zo_access = src->zo_access;
   res->zo_ttl = src->zo_ttl;
-  
+
   if (nis_clone_objdata (&src->zo_data, &res->zo_data) == NULL)
     return NULL;
 
@@ -478,15 +506,16 @@ __nis_clone_objects (const nis_object *src, nis_object *dest, u_int len)
 
   if (dest == NULL)
     {
-      res = malloc (len * sizeof (nis_object));
-      memset (res, '\0', sizeof (len * sizeof (nis_object)));
+      res = calloc (len, sizeof (nis_object));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
 
-  for (i = 0; i < len; i++)
+  for (i = 0; i < len; ++i)
     nis_clone_object(&src[i], &res[i]);
-  
+
   return res;
 }
 
@@ -497,25 +526,26 @@ nis_clone_result (const nis_result *src, nis_result *dest)
 
   if (src == NULL)
     return NULL;
-  
+
   if (dest == NULL)
     {
-      res = malloc (sizeof (nis_result));
-      memset (res, '\0', sizeof (nis_result));
+      res = calloc (1, sizeof (nis_result));
+      if (res == NULL)
+	return NULL;
     }
   else
     res = dest;
-  
+
   res->status = src->status;
   res->objects.objects_len = src->objects.objects_len;
-  res->objects.objects_val = 
-    __nis_clone_objects (src->objects.objects_val, 
-			 res->objects.objects_val, 
+  res->objects.objects_val =
+    __nis_clone_objects (src->objects.objects_val,
+			 res->objects.objects_val,
 			 src->objects.objects_len);
   res->zticks = src->zticks;
   res->dticks = src->dticks;
   res->aticks = src->aticks;
-  res->cticks = src->cticks; 
+  res->cticks = src->cticks;
 
   return res;
 }

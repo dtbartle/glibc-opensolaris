@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -53,8 +52,8 @@ _nss_nisplus_parse_spent (nis_result *result, struct spwd *sp,
   if ((result->status != NIS_SUCCESS && result->status != NIS_S_SUCCESS) ||
       result->objects.objects_len != 1 ||
       result->objects.objects_val[0].zo_data.zo_type != ENTRY_OBJ ||
-      strcmp(result->objects.objects_val[0].zo_data.objdata_u.en_data.en_type,
-	     "passwd_tbl") != 0 ||
+      strcmp (result->objects.objects_val[0].zo_data.objdata_u.en_data.en_type,
+	      "passwd_tbl") != 0 ||
       result->objects.objects_val[0].zo_data.objdata_u.en_data.en_cols.en_cols_len < 8)
     return -1;
 
@@ -65,14 +64,14 @@ _nss_nisplus_parse_spent (nis_result *result, struct spwd *sp,
       __set_errno (ERANGE);
       return -1;
     }
-  
-  strncpy (first_unused, NISENTRYVAL (0, 0, result), 
+
+  strncpy (first_unused, NISENTRYVAL (0, 0, result),
 	   NISENTRYLEN (0, 0, result));
   first_unused[NISENTRYLEN(0, 0, result)] = '\0';
   sp->sp_namp = first_unused;
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
+
   if (NISENTRYLEN(0, 1, result) >= room_left)
     goto no_more_room;
 
@@ -82,16 +81,16 @@ _nss_nisplus_parse_spent (nis_result *result, struct spwd *sp,
   sp->sp_pwdp = first_unused;
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
-  sp->sp_lstchg = sp->sp_min = sp->sp_max = sp->sp_warn = sp->sp_inact = 
+
+  sp->sp_lstchg = sp->sp_min = sp->sp_max = sp->sp_warn = sp->sp_inact =
     sp->sp_expire = sp->sp_flag = -1;
 
-  line = NISENTRYVAL(0, 7, result);
+  line = NISENTRYVAL (0, 7, result);
   cp = strchr (line, ':');
   if (cp == NULL)
     return 0;
   *cp++ = '\0';
-  sp->sp_lstchg = atoi(line);
+  sp->sp_lstchg = atoi (line);
 
   line = cp;
   cp = strchr (line, ':');
@@ -184,11 +183,11 @@ internal_nisplus_getspent_r (struct spwd *sp, char *buffer, size_t buflen)
     {
       if (result == NULL)
 	{
-	  names = nis_getnames("passwd.org_dir");
+	  names = nis_getnames ("passwd.org_dir");
 	  if (names == NULL || names[0] == NULL)
 	    return NSS_STATUS_UNAVAIL;
-	  
-	  result = nis_first_entry(names[0]);
+
+	  result = nis_first_entry (names[0]);
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
 	}
@@ -196,13 +195,13 @@ internal_nisplus_getspent_r (struct spwd *sp, char *buffer, size_t buflen)
 	{
 	  nis_result *res;
 
-	  res = nis_next_entry(names[0], &result->cookie);
+	  res = nis_next_entry (names[0], &result->cookie);
 	  nis_freeresult (result);
 	  result = res;
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
 	}
-      
+
       parse_res = _nss_nisplus_parse_spent (result, sp, buffer, buflen);
     } while (!parse_res);
 
@@ -229,27 +228,27 @@ _nss_nisplus_getspnam_r (const char *name, struct spwd *sp,
 {
   int parse_res;
 
-  if (name == NULL || strlen(name) > 8)
+  if (name == NULL || strlen (name) > 8)
     return NSS_STATUS_NOTFOUND;
   else
-    {  
+    {
       nis_result *result;
       char buf[strlen (name) + 24];
 
-      sprintf(buf, "[name=%s],passwd.org_dir", name);
-      
-      result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-      
+      sprintf (buf, "[name=%s],passwd.org_dir", name);
+
+      result = nis_list (buf, EXPAND_NAME, NULL, NULL);
+
       if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	{
 	  enum nss_status status = niserr2nss (result->status);
-	  
+
 	  nis_freeresult (result);
 	  return status;
 	}
-      
+
       parse_res = _nss_nisplus_parse_spent (result, sp, buffer, buflen);
-      
+
       nis_freeresult (result);
 
       if (parse_res)

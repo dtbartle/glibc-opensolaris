@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -98,7 +97,7 @@ _nss_nisplus_parse_netent (nis_result *result, struct netent *network,
     }
   strcat (p, "\t");
   strncat (p, NISENTRYVAL (0, 2, result), NISENTRYLEN (0, 2, result));
-  room_left -= (NISENTRYLEN (0, 2, result) + 1); 
+  room_left -= (NISENTRYLEN (0, 2, result) + 1);
                                         /* + 1: We overwrite the last \0 */
 
   for (i = 1; i < result->objects.objects_len; i++)
@@ -113,7 +112,7 @@ _nss_nisplus_parse_netent (nis_result *result, struct netent *network,
       strncat (p, NISENTRYVAL (i, 1, result), NISENTRYLEN (i, 1, result));
       room_left -= (NISENTRYLEN (i, 1, result) + 1);
     }
-  
+
   return _nss_files_parse_netent (p, network, data, buflen);
 }
 
@@ -156,11 +155,11 @@ _nss_nisplus_endnetent (void)
 }
 
 static enum nss_status
-internal_nisplus_getnetent_r (struct netent *network, char *buffer, 
+internal_nisplus_getnetent_r (struct netent *network, char *buffer,
 			       size_t buflen, int *herrnop)
 {
   int parse_res;
-  
+
   /* Get the next entry until we found a correct one. */
   do
     {
@@ -169,12 +168,12 @@ internal_nisplus_getnetent_r (struct netent *network, char *buffer,
 	  names = nis_getnames("networks.org_dir");
 	  if (names == NULL || names[0] == NULL)
 	    return NSS_STATUS_UNAVAIL;
-	  
+
 	  result = nis_first_entry(names[0]);
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    {
 	      int retval;
-	      
+
 	      retval = niserr2nss (result->status);
 	      if (retval == NSS_STATUS_TRYAGAIN)
 		{
@@ -194,7 +193,7 @@ internal_nisplus_getnetent_r (struct netent *network, char *buffer,
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    {
 	      int retval;
-	      
+
 	      retval = niserr2nss (result->status);
 	      if (retval == NSS_STATUS_TRYAGAIN)
 		{
@@ -204,25 +203,25 @@ internal_nisplus_getnetent_r (struct netent *network, char *buffer,
 	      return retval;
 	    }
 	}
-      
+
       parse_res = _nss_nisplus_parse_netent (result, network, buffer, buflen);
       if (!parse_res && errno == ERANGE)
         {
           *herrnop = NETDB_INTERNAL;
           return NSS_STATUS_TRYAGAIN;
         }
-      
+
     } while (!parse_res);
 
   return NSS_STATUS_SUCCESS;
 }
 
 enum nss_status
-_nss_nisplus_getnetent_r (struct netent *result, char *buffer, 
+_nss_nisplus_getnetent_r (struct netent *result, char *buffer,
 			   size_t buflen, int *herrnop)
 {
   int status;
-  
+
   __libc_lock_lock (lock);
 
   status = internal_nisplus_getnetent_r (result, buffer, buflen, herrnop);
@@ -233,11 +232,11 @@ _nss_nisplus_getnetent_r (struct netent *result, char *buffer,
 }
 
 enum nss_status
-_nss_nisplus_getnetbyname_r (const char *name, struct netent *network, 
+_nss_nisplus_getnetbyname_r (const char *name, struct netent *network,
 			      char *buffer, size_t buflen, int *herrnop)
 {
   int parse_res, retval;
-  
+
   if (name == NULL)
     {
       __set_errno (EINVAL);
@@ -245,17 +244,17 @@ _nss_nisplus_getnetbyname_r (const char *name, struct netent *network,
       return NSS_STATUS_UNAVAIL;
     }
   else
-    {  
+    {
       nis_result *result;
       char buf[strlen (name) + 255];
-      
-   
+
+
       /* Search at first in the alias list, and use the correct name
 	 for the next search */
       sprintf(buf, "[name=%s],networks.org_dir", name);
       result = nis_list(buf, EXPAND_NAME, NULL, NULL);
 
-      /* If we do not find it, try it as original name. But if the 
+      /* If we do not find it, try it as original name. But if the
 	 database is correct, we should find it in the first case, too */
       if ((result->status != NIS_SUCCESS &&
 	   result->status != NIS_S_SUCCESS) ||
@@ -269,7 +268,7 @@ _nss_nisplus_getnetbyname_r (const char *name, struct netent *network,
 
       nis_freeresult (result);
       result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-      
+
       retval = niserr2nss (result->status);
       if (retval != NSS_STATUS_SUCCESS)
 	{
@@ -280,12 +279,12 @@ _nss_nisplus_getnetbyname_r (const char *name, struct netent *network,
 	    }
 	  nis_freeresult (result);
 	  return retval;
-	}      
-      
+	}
+
       parse_res = _nss_nisplus_parse_netent (result, network, buffer, buflen);
 
       nis_freeresult (result);
-      
+
       if (parse_res)
 	return NSS_STATUS_SUCCESS;
 
@@ -307,13 +306,13 @@ _nss_nisplus_getnetbyaddr_r (const unsigned long addr, const int type,
   nis_result *result;
   char buf[1024];
   struct in_addr in;
-  
+
   in = inet_makeaddr (addr, 0);
-  snprintf(buf, sizeof (buf) - 1, "[addr=%s],networks.org_dir", 
+  snprintf(buf, sizeof (buf) - 1, "[addr=%s],networks.org_dir",
 	   inet_ntoa (in));
-  
+
   result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-  
+
   retval = niserr2nss (result->status);
   if (retval != NSS_STATUS_SUCCESS)
     {
@@ -324,15 +323,15 @@ _nss_nisplus_getnetbyaddr_r (const unsigned long addr, const int type,
 	}
       nis_freeresult (result);
       return retval;
-    }      
-  
+    }
+
   parse_res = _nss_nisplus_parse_netent (result, network, buffer, buflen);
-  
+
   nis_freeresult (result);
 
   if (parse_res)
     return NSS_STATUS_SUCCESS;
-  
+
   *herrnop = NETDB_INTERNAL;
   if (!parse_res && errno == ERANGE)
     return NSS_STATUS_TRYAGAIN;

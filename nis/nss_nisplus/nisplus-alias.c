@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -58,11 +57,11 @@ _nss_nisplus_parse_aliasent (nis_result *result, struct aliasent *alias,
     {
       char *first_unused = buffer + NISENTRYLEN(0, 1, result) + 1;
       size_t room_left =
-	buflen - (buflen % __alignof__ (char *)) - 
+	buflen - (buflen % __alignof__ (char *)) -
 	NISENTRYLEN(0, 1, result) - 2;
       char *line;
       char *cp;
-      
+
       if (NISENTRYLEN(0, 1, result) >= buflen)
 	{
 	  /* The line is too long for our buffer.  */
@@ -98,26 +97,26 @@ _nss_nisplus_parse_aliasent (nis_result *result, struct aliasent *alias,
       first_unused += __alignof__ (char *) - 1;
       first_unused -= ((first_unused - (char *) 0) % __alignof__ (char *));
       alias->alias_members = (char **) first_unused;
-      
+
       line = buffer;
-      
+
       while (*line != '\0')
 	{
 	  /* Skip leading blanks.  */
 	  while (isspace (*line))
 	    line++;
-	  
+
 	  if (*line == '\0')
 	    break;
-	  
+
 	  if (room_left < sizeof (char *))
 	    goto no_more_room;
 	  room_left -= sizeof (char *);
 	  alias->alias_members[alias->alias_members_len] = line;
-	  
+
 	  while (*line != '\0' && *line != ',')
 	    line++;
-	  
+
 	  if (line != alias->alias_members[alias->alias_members_len])
 	    {
 	      *line = '\0';
@@ -125,7 +124,7 @@ _nss_nisplus_parse_aliasent (nis_result *result, struct aliasent *alias,
 	      alias->alias_members_len++;
 	    }
 	}
-  
+
       return alias->alias_members_len == 0 ? 0 : 1;
     }
 }
@@ -169,7 +168,7 @@ _nss_nisplus_endaliasent (void)
 }
 
 static enum nss_status
-internal_nisplus_getaliasent_r (struct aliasent *alias, 
+internal_nisplus_getaliasent_r (struct aliasent *alias,
 				char *buffer, size_t buflen)
 {
   int parse_res;
@@ -182,7 +181,7 @@ internal_nisplus_getaliasent_r (struct aliasent *alias,
 	  names = nis_getnames("mail_aliases.org_dir");
 	  if (names == NULL || names[0] == NULL)
 	    return NSS_STATUS_UNAVAIL;
-	  
+
 	  result = nis_first_entry(names[0]);
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
@@ -197,7 +196,7 @@ internal_nisplus_getaliasent_r (struct aliasent *alias,
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
 	}
-      
+
       parse_res = _nss_nisplus_parse_aliasent (result, alias, buffer, buflen);
     } while (!parse_res);
 
@@ -205,7 +204,7 @@ internal_nisplus_getaliasent_r (struct aliasent *alias,
 }
 
 enum nss_status
-_nss_nisplus_getaliasent_r (struct aliasent *result, char *buffer, 
+_nss_nisplus_getaliasent_r (struct aliasent *result, char *buffer,
 			    size_t buflen)
 {
   int status;
@@ -228,19 +227,19 @@ _nss_nisplus_getaliasbyname_r (const char *name, struct aliasent *alias,
   if (name == NULL || strlen(name) > 8)
     return NSS_STATUS_NOTFOUND;
   else
-    {  
+    {
       nis_result *result;
       char buf[strlen (name) + 30];
 
       sprintf(buf, "[name=%s],mail_aliases.org_dir", name);
-      
+
       result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-      
+
       if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	return niserr2nss (result->status);
-      
+
       parse_res = _nss_nisplus_parse_aliasent (result, alias, buffer, buflen);
-      
+
       if (parse_res)
 	return NSS_STATUS_SUCCESS;
 

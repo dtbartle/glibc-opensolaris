@@ -1,5 +1,4 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -24,8 +23,8 @@
 #include "nis_intern.h"
 
 static void
-splitname (const nis_name name, nis_name * ibr_name, int *srch_len,
-	   nis_attr ** srch_val)
+splitname (const nis_name name, nis_name *ibr_name, int *srch_len,
+	   nis_attr **srch_val)
 {
   char *cptr, *key, *val, *next;
   int size;
@@ -72,7 +71,7 @@ splitname (const nis_name name, nis_name * ibr_name, int *srch_len,
       if (next)
 	{
 	  next[0] = '\0';
-	  next++;
+	  ++next;
 	}
 
       val = strchr (key, '=');
@@ -80,13 +79,20 @@ splitname (const nis_name name, nis_name * ibr_name, int *srch_len,
 	{
 	  free (cptr);
 	  *srch_val = malloc (sizeof (char *));
+	  if (*srch_val == NULL)
+	    {
+	      free (cptr);
+	      free (*ibr_name);
+	      *ibr_name = NULL;
+	      return;
+	    }
 	  (*srch_val)[*srch_len].zattr_val.zattr_val_len = 0;
 	  (*srch_val)[*srch_len].zattr_val.zattr_val_val = NULL;
 	  return;
 	}
 
       val[0] = '\0';
-      val++;
+      ++val;
 
       if ((*srch_len) + 1 >= size)
 	{
@@ -121,7 +127,7 @@ splitname (const nis_name name, nis_name * ibr_name, int *srch_len,
 	  *ibr_name = NULL;
 	  return;
 	}
-      (*srch_len)++;
+      ++(*srch_len);
 
       key = next;
 
@@ -129,7 +135,6 @@ splitname (const nis_name name, nis_name * ibr_name, int *srch_len,
   while (next);
 
   free (cptr);
-  return;
 }
 
 static struct ib_request *
@@ -170,7 +175,7 @@ __create_ib_request (const nis_name name, struct ib_request *ibreq,
 nis_result *
 nis_list (const nis_name name, const u_long flags,
 	  int (*callback) (const nis_name name,
-			   const nis_object * object,
+			   const nis_object *object,
 			   const void *userdata),
 	  const void *userdata)
 {
@@ -180,8 +185,7 @@ nis_list (const nis_name name, const u_long flags,
   int count_links = 0;		/* We will only follow 16 links! */
   int is_link = 1;		/* We should go at least once in the while loop */
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   if (__create_ib_request (name, &ibreq, flags) == NULL)
     {
@@ -244,7 +248,7 @@ nis_list (const nis_name name, const u_long flags,
     {
       unsigned int i;
 
-      for (i = 0; i < res->objects.objects_len; i++)
+      for (i = 0; i < res->objects.objects_len; ++i)
 	if ((*callback) (name, &(res->objects.objects_val)[i], userdata) != 0)
 	  break;
     }
@@ -253,15 +257,14 @@ nis_list (const nis_name name, const u_long flags,
 }
 
 nis_result *
-nis_add_entry (const nis_name name, const nis_object * obj,
+nis_add_entry (const nis_name name, const nis_object *obj,
 	       const u_long flags)
 {
   nis_result *res;
   struct ib_request ibreq;
   nis_error status;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   if (__create_ib_request (name, &ibreq, flags) == NULL)
     {
@@ -286,15 +289,14 @@ nis_add_entry (const nis_name name, const nis_object * obj,
 }
 
 nis_result *
-nis_modify_entry (const nis_name name, const nis_object * obj,
+nis_modify_entry (const nis_name name, const nis_object *obj,
 		  const u_long flags)
 {
   nis_result *res;
   struct ib_request ibreq;
   nis_error status;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   if (__create_ib_request (name, &ibreq, flags) == NULL)
     {
@@ -318,15 +320,14 @@ nis_modify_entry (const nis_name name, const nis_object * obj,
 }
 
 nis_result *
-nis_remove_entry (const nis_name name, const nis_object * obj,
+nis_remove_entry (const nis_name name, const nis_object *obj,
 		  const u_long flags)
 {
   nis_result *res;
   struct ib_request ibreq;
   nis_error status;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   if (__create_ib_request (name, &ibreq, flags) == NULL)
     {
@@ -359,8 +360,7 @@ nis_first_entry (const nis_name name)
   struct ib_request ibreq;
   nis_error status;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   if (__create_ib_request (name, &ibreq, 0) == NULL)
     {
@@ -379,14 +379,13 @@ nis_first_entry (const nis_name name)
 }
 
 nis_result *
-nis_next_entry (const nis_name name, const netobj * cookie)
+nis_next_entry (const nis_name name, const netobj *cookie)
 {
   nis_result *res;
   struct ib_request ibreq;
   nis_error status;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   if (__create_ib_request (name, &ibreq, 0) == NULL)
     {
@@ -397,6 +396,12 @@ nis_next_entry (const nis_name name, const netobj * cookie)
   if (cookie != NULL)
     {
       ibreq.ibr_cookie.n_bytes = malloc (cookie->n_len);
+      if (ibreq.ibr_cookie.n_bytes == NULL)
+	{
+	  res->status = NIS_NOMEMORY;
+	  free (res);
+	  return NULL;
+	}
       memcpy (ibreq.ibr_cookie.n_bytes, cookie->n_bytes, cookie->n_len);
       ibreq.ibr_cookie.n_len = cookie->n_len;
     }

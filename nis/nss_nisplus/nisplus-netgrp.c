@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -60,9 +59,9 @@ _nss_nisplus_setnetgrent (char *group)
     return NSS_STATUS_UNAVAIL;
 
   status = NSS_STATUS_SUCCESS;
-  
+
   __libc_lock_lock (lock);
-  
+
   if (data != NULL)
     {
       free (data);
@@ -72,15 +71,15 @@ _nss_nisplus_setnetgrent (char *group)
     }
 
   sprintf(buf, "[name=%s],netgroup.org_dir", group);
-  
+
   result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-  
+
   if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
     status = niserr2nss (result->status);
 
   len = 0;
   for (i = 0; i < result->objects.objects_len; i++)
-    len += 1 + NISENTRYLEN (i, 1, result) + 1 + NISENTRYLEN(i,2,result) 
+    len += 1 + NISENTRYLEN (i, 1, result) + 1 + NISENTRYLEN(i,2,result)
       + 1 + NISENTRYLEN(i,3,result) + 1 + NISENTRYLEN(i,4,result) + 2;
 
   data = malloc (len+1);
@@ -124,11 +123,11 @@ _nss_nisplus_endnetgrent (void)
 }
 
 enum nss_status
-_nss_nisplus_getnetgrent_r (struct __netgrent *result, 
+_nss_nisplus_getnetgrent_r (struct __netgrent *result,
 			    char *buffer, size_t buflen)
 {
   enum nss_status status;
-  
+
   if (cursor == NULL)
     return NSS_STATUS_NOTFOUND;
 

@@ -1,5 +1,4 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -27,7 +26,7 @@
 nis_name
 nis_local_group (void)
 {
-  static char __nisgroup[NIS_MAXNAMELEN + 1] = "\0";
+  static char __nisgroup[NIS_MAXNAMELEN + 1];
 
   if (__nisgroup[0] == '\0')
     {
@@ -64,7 +63,7 @@ nis_local_group (void)
 nis_name
 nis_local_directory (void)
 {
-  static char __nisdomainname[NIS_MAXNAMELEN + 1] = "\0";
+  static char __nisdomainname[NIS_MAXNAMELEN + 1];
   int len;
 
   if (__nisdomainname[0] == '\0')
@@ -90,7 +89,7 @@ nis_local_directory (void)
 nis_name
 nis_local_principal (void)
 {
-  static char __principal[NIS_MAXNAMELEN + 1] = "\0";
+  static char __principal[NIS_MAXNAMELEN + 1];
 
   if (__principal[0] == '\0')
     {
@@ -103,13 +102,13 @@ nis_local_principal (void)
 	  snprintf (buf, NIS_MAXNAMELEN - 1,
 		    "[auth_name=%d,auth_type=LOCAL],cred.org_dir.%s",
 		    uid, nis_local_directory ());
-	  
+
 	  if (buf[strlen (buf) - 1] != '.')
 	    strcat (buf, ".");
-	  
-	  res = nis_list (buf, USE_DGRAM + NO_AUTHINFO + FOLLOW_LINKS + 
+
+	  res = nis_list (buf, USE_DGRAM + NO_AUTHINFO + FOLLOW_LINKS +
 			  FOLLOW_PATH, NULL, NULL);
-	  
+
 	  if (res == NULL)
 	    {
 	      strcpy (__principal, "nobody");
@@ -120,12 +119,11 @@ nis_local_principal (void)
 	    {
 	      if (res->objects.objects_len > 1)
 		{
-		  /*
-		   * More than one principal with same uid?
-		   * something wrong with cred table. Should be unique
-		   * Warn user and continue.
-		   */
-		  printf ("LOCAL entry for UID %d in directory %s not unique\n",
+		  /* More than one principal with same uid?  something
+		     wrong with cred table. Should be unique Warn user
+		     and continue.  */
+		  printf (_("\
+LOCAL entry for UID %d in directory %s not unique\n"),
 			  uid, nis_local_directory ());
 		}
 	      strcpy (__principal, ENTRY_VAL (res->objects.objects_val, 0));
@@ -155,15 +153,17 @@ nis_local_principal (void)
 nis_name
 nis_local_host (void)
 {
-  static char __nishostname[NIS_MAXNAMELEN + 1] = "\0";
+  static char __nishostname[NIS_MAXNAMELEN + 1];
   int len;
 
   if (__nishostname[0] == '\0')
     {
-      if (gethostname (__nishostname, NIS_MAXNAMELEN) < 0)
-	strcpy (__nishostname, "\0");
+      char *cp = __nishostname;
 
-      len = strlen (__nishostname);
+      if (gethostname (__nishostname, NIS_MAXNAMELEN) < 0)
+	cp = stpcpy (cp, "\0");
+
+      len = cp - __nishostname;
 
       /* Hostname already fully qualified? */
       if (__nishostname[len - 1] == '.')
@@ -176,8 +176,8 @@ nis_local_host (void)
 	  return __nishostname;
 	}
 
-      strcat (__nishostname, ".");
-      strcat (__nishostname, nis_local_directory ());
+      *cp++ = '.';
+      stpcpy (cp, nis_local_directory ());
     }
 
   return __nishostname;

@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -36,7 +35,7 @@ static nis_name *names = NULL;
 
 #define NISENTRYVAL(idx,col,res) \
 ((res)->objects.objects_val[(idx)].zo_data.objdata_u.en_data.en_cols.en_cols_val[(col)].ec_value.ec_value_val)
-  
+
 #define NISENTRYLEN(idx,col,res) \
   ((res)->objects.objects_val[(idx)].zo_data.objdata_u.en_data.en_cols.en_cols_val[(col)].ec_value.ec_value_len)
 
@@ -65,7 +64,7 @@ LINE_PARSER
        INT_FIELD (result->gr_gid, ISCOLON, 0, 10,)
    }
  )
-  
+
 static int
 _nss_nisplus_parse_grent (nis_result * result, struct group *gr,
 			  char *buffer, size_t buflen)
@@ -97,17 +96,17 @@ _nss_nisplus_parse_grent (nis_result * result, struct group *gr,
       return -1;
     }
 
-  strncpy (first_unused, NISENTRYVAL (0, 0, result), 
+  strncpy (first_unused, NISENTRYVAL (0, 0, result),
 	   NISENTRYLEN (0, 0, result));
   first_unused[NISENTRYLEN (0, 0, result)] = '\0';
   gr->gr_name = first_unused;
   room_left -= (strlen (first_unused) + 1);
   first_unused += strlen (first_unused) + 1;
-  
+
   if (NISENTRYLEN (0, 1, result) >= room_left)
     goto no_more_room;
-  
-  strncpy (first_unused, NISENTRYVAL (0, 1, result), 
+
+  strncpy (first_unused, NISENTRYVAL (0, 1, result),
 	   NISENTRYLEN (0, 1, result));
   first_unused[NISENTRYLEN (0, 1, result)] = '\0';
   gr->gr_passwd = first_unused;
@@ -117,7 +116,7 @@ _nss_nisplus_parse_grent (nis_result * result, struct group *gr,
   if (NISENTRYLEN (0, 2, result) >= room_left)
     goto no_more_room;
 
-  strncpy (first_unused, NISENTRYVAL (0, 2, result), 
+  strncpy (first_unused, NISENTRYVAL (0, 2, result),
 	   NISENTRYLEN (0, 2, result));
   first_unused[NISENTRYLEN (0, 2, result)] = '\0';
   gr->gr_gid = atoi (first_unused);
@@ -127,7 +126,7 @@ _nss_nisplus_parse_grent (nis_result * result, struct group *gr,
   if (NISENTRYLEN (0, 3, result) >= room_left)
     goto no_more_room;
 
-  strncpy (first_unused, NISENTRYVAL (0, 3, result), 
+  strncpy (first_unused, NISENTRYVAL (0, 3, result),
 	   NISENTRYLEN (0, 3, result));
   first_unused[NISENTRYLEN (0, 3, result)] = '\0';
   line = first_unused;
@@ -179,7 +178,7 @@ _nss_nisplus_parse_grent (nis_result * result, struct group *gr,
 
   if (result == NULL)
     return -1;
-  
+
   if ((result->status != NIS_SUCCESS && result->status != NIS_S_SUCCESS) ||
       result->objects.objects_len != 1 ||
       result->objects.objects_val[0].zo_data.zo_type != ENTRY_OBJ ||
@@ -198,7 +197,7 @@ _nss_nisplus_parse_grent (nis_result * result, struct group *gr,
   strncpy (p, NISENTRYVAL (0, 0, result), NISENTRYLEN (0, 0, result));
   room_left -= (NISENTRYLEN (0, 0, result) + 1);
   strcat (p, ":");
-  
+
   if (NISENTRYLEN (0, 1, result) + 1 > room_left)
     {
       __set_errno (ERANGE);
@@ -222,7 +221,7 @@ _nss_nisplus_parse_grent (nis_result * result, struct group *gr,
     }
   strncat (p, NISENTRYVAL (0, 3, result), NISENTRYLEN (0, 3, result));
   room_left -= (NISENTRYLEN (0, 3, result) + 1);
-  
+
   return _nss_files_parse_grent (p, gr, data, buflen);
 #endif
 }

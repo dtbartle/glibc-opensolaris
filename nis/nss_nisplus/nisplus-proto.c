@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -102,7 +101,7 @@ _nss_nisplus_parse_protoent (nis_result * result, struct protoent *proto,
       strncat (p, NISENTRYVAL (i, 1, result), NISENTRYLEN (i, 1, result));
       room_left -= (NISENTRYLEN (i, 1, result) + 1);
     }
-  
+
   return _nss_files_parse_protoent (p, proto, data, buflen);
 }
 
@@ -138,7 +137,7 @@ _nss_nisplus_endprotoent (void)
       nis_freenames (names);
       names = NULL;
     }
-  
+
   __libc_lock_unlock (lock);
 
   return NSS_STATUS_SUCCESS;
@@ -215,7 +214,7 @@ _nss_nisplus_getprotobyname_r (const char *name, struct protoent *proto,
       sprintf (buf, "[name=%s],protocols.org_dir", name);
       result = nis_list (buf, EXPAND_NAME, NULL, NULL);
 
-      /* If we do not find it, try it as original name. But if the 
+      /* If we do not find it, try it as original name. But if the
          database is correct, we should find it in the first case, too */
       if ((result->status != NIS_SUCCESS &&
 	   result->status != NIS_S_SUCCESS) ||
@@ -233,7 +232,7 @@ _nss_nisplus_getprotobyname_r (const char *name, struct protoent *proto,
       if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	{
 	  enum nss_status status = niserr2nss (result->status);
-	  
+
 	  nis_freeresult (result);
 	  return status;
 	}
@@ -267,7 +266,7 @@ _nss_nisplus_getprotobynumber_r (const int number, struct protoent *proto,
   if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
     {
       enum nss_status status = niserr2nss (result->status);
-      
+
       nis_freeresult (result);
       return status;
     }

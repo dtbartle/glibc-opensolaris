@@ -1,5 +1,4 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -125,15 +124,15 @@ count_dots (const nis_name str)
   int count = 0;
   int i;
 
-  for (i = 0; i < strlen (str); i++)
+  for (i = 0; i < strlen (str); ++i)
     if (str[i] == '.')
-      count++;
+      ++count;
 
   return count;
 }
 
-nis_name
-* nis_getnames (const nis_name name)
+nis_name *
+nis_getnames (const nis_name name)
 {
   nis_name *getnames = NULL;
   char local_domain[NIS_MAXNAMELEN + 1];
@@ -164,11 +163,9 @@ nis_name
   /* Get the search path, where we have to search "name" */
   path = getenv ("NIS_PATH");
   if (path == NULL)
-    path = strdup ("$");
+    path = strdupa ("$");
   else
-    path = strdup (path);
-  if (path == NULL)
-    return NULL;
+    path = strdupa (path);
 
   pos = 0;
 
@@ -189,17 +186,19 @@ nis_name
 		}
 	      tmp = malloc (strlen (cptr) + strlen (local_domain) +
 			    strlen (name) + 2);
-
-	      strcpy (tmp, name);
-	      strcat (tmp, ".");
-	      strcat (tmp, cptr);
+	      if (tmp == NULL)
+		return NULL;
 
 	      getnames[pos] = tmp;
-	      pos++;
+	      tmp = stpcpy (tmp, name);
+	      *tmp++ = '.'
+	      stpcpy (tmp, cptr);
+
+	      ++pos;
 
 	      while (*cptr != '.')
-		cptr++;
-	      cptr++;
+		++cptr;
+	      ++cptr;
 	    }
 	}
       else
@@ -210,49 +209,55 @@ nis_name
 	    {
 	      tmp = malloc (strlen (cp) + strlen (local_domain) +
 			    strlen (name) + 2);
-	      strcpy (tmp, name);
-	      strcat (tmp, ".");
-	      strcat (tmp, cp);
-	      tmp[strlen (tmp) - 1] = '\0';
-	      if (tmp[strlen (tmp) - 1] != '.')
-		strcat (tmp, ".");
-	      strcat (tmp, local_domain);
+	      if (tmp == NULL)
+		return NULL;
+
+	      tmp = stpcpy (tmp, name);
+	      *tmp++ = '.'
+	      tmp = stpcpy (tmp, cp);
+	      --tmp
+	      if (tmp[-1] != '.')
+		*tmp++ = '.';
+	      stpcpy (tmp, local_domain);
 	    }
 	  else
 	    {
 	      tmp = malloc (strlen (cp) + strlen (name) + 2);
-	      strcpy (tmp, name);
-	      strcat (tmp, ".");
-	      strcat (tmp, cp);
+	      if (tmp == NULL)
+		return NULL;
+
+	      tmp = stpcpy (tmp, name);
+	      *tmp++ = '.';
+	      stpcpy (tmp, cp);
 	    }
 
 	  if (pos > count)
 	    {
 	      count += 5;
 	      getnames = realloc (getnames, (count + 1) * sizeof (char *));
+	      if (getnames == NULL)
+		return NULL;
 	    }
 	  getnames[pos] = tmp;
-	  pos++;
+	  ++pos;
 	}
       cp = strtok (NULL, ":");
     }
 
   getnames[pos] = NULL;
 
-  free (path);
-
   return getnames;
 }
 
 void
-nis_freenames (nis_name * names)
+nis_freenames (nis_name *names)
 {
   int i = 0;
 
   while (names[i] != NULL)
     {
       free (names[i]);
-      i++;
+      ++i;
     }
 
   free (names);
@@ -296,7 +301,7 @@ nis_dir_cmp (const nis_name n1, const nis_name n2)
 }
 
 void
-nis_destroy_object (nis_object * obj)
+nis_destroy_object (nis_object *obj)
 {
   nis_free_object (obj);
 }

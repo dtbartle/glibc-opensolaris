@@ -1,5 +1,4 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -58,13 +57,13 @@ _nss_nisplus_getpublickey (const char *netname, char *pkey)
   snprintf (buf, NIS_MAXNAMELEN,
 	    "[auth_name=%s,auth_type=DES],cred.org_dir.%s",
 	    netname, domain);
-  
-  if (buf[strlen(buf)-1] != '.')
+
+  if (buf[strlen (buf)-1] != '.')
     strcat(buf, ".");
 
-  res = nis_list(buf, USE_DGRAM+NO_AUTHINFO+FOLLOW_LINKS+FOLLOW_PATH, 
+  res = nis_list(buf, USE_DGRAM+NO_AUTHINFO+FOLLOW_LINKS+FOLLOW_PATH,
 		 NULL, NULL);
-  
+
   retval = niserr2nss (res->status);
 
   if (retval != NSS_STATUS_SUCCESS)
@@ -82,19 +81,19 @@ _nss_nisplus_getpublickey (const char *netname, char *pkey)
        * something wrong with cred table. Should be unique
        * Warn user and continue.
        */
-      printf ("DES entry for netname %s not unique\n", netname);
+      printf (_("DES entry for netname %s not unique\n"), netname);
       nis_freeresult (res);
       return NSS_STATUS_SUCCESS;
     }
 
-  len = ENTRY_LEN(res->objects.objects_val, 3);
-  memcpy(pkey, ENTRY_VAL(res->objects.objects_val,3), len);
+  len = ENTRY_LEN (res->objects.objects_val, 3);
+  memcpy (pkey, ENTRY_VAL (res->objects.objects_val,3), len);
   pkey[len] = 0;
-  cptr = strchr(pkey, ':');
+  cptr = strchr (pkey, ':');
   if (cptr)
     cptr[0] = '\0';
   nis_freeresult (res);
-  
+
   return NSS_STATUS_SUCCESS;
 }
 
@@ -120,16 +119,16 @@ _nss_nisplus_getsecretkey (const char *netname, char *skey, char *passwd)
     return NSS_STATUS_UNAVAIL;
   domain++;
 
-  snprintf (buf, NIS_MAXNAMELEN, 
+  snprintf (buf, NIS_MAXNAMELEN,
 	    "[auth_name=%s,auth_type=DES],cred.org_dir.%s",
 	    netname, domain);
-  
+
   if (buf[strlen(buf)-1] != '.')
     strcat(buf, ".");
 
-  res = nis_list(buf, USE_DGRAM+NO_AUTHINFO+FOLLOW_LINKS+FOLLOW_PATH, 
-		 NULL, NULL);
-  
+  res = nis_list (buf, USE_DGRAM+NO_AUTHINFO+FOLLOW_LINKS+FOLLOW_PATH,
+		  NULL, NULL);
+
   retval = niserr2nss (res->status);
 
   if (retval != NSS_STATUS_SUCCESS)
@@ -147,15 +146,15 @@ _nss_nisplus_getsecretkey (const char *netname, char *skey, char *passwd)
        * something wrong with cred table. Should be unique
        * Warn user and continue.
        */
-      printf ("DES entry for netname %s not unique\n", netname);
+      printf (_("DES entry for netname %s not unique\n"), netname);
       nis_freeresult (res);
       return NSS_STATUS_SUCCESS;
     }
 
-  len = ENTRY_LEN(res->objects.objects_val, 4);
-  memcpy(buf, ENTRY_VAL(res->objects.objects_val,4), len);
+  len = ENTRY_LEN (res->objects.objects_val, 4);
+  memcpy (buf, ENTRY_VAL (res->objects.objects_val,4), len);
   skey[len] = 0;
-  cptr = strchr(skey, ':');
+  cptr = strchr (skey, ':');
   if (cptr)
     cptr[0] = '\0';
   nis_freeresult (res);
@@ -210,28 +209,28 @@ _nss_nisplus_netname2user (char netname[MAXNETNAMELEN + 1], uid_t *uidp,
   int len;
 
   /* 1.  Get home domain of user. */
-  domain = strchr(netname, '@');
-  if (! domain) 
+  domain = strchr (netname, '@');
+  if (! domain)
     return NSS_STATUS_UNAVAIL;
 
   domain++;  /* skip '@' */
-  
+
   /* 2.  Get user's nisplus principal name.  */
-  if ((strlen(netname)+strlen(domain)+45) > 
+  if ((strlen (netname) + strlen (domain)+45) >
       (size_t) NIS_MAXNAMELEN)
     return NSS_STATUS_UNAVAIL;
 
-  snprintf(sname, NIS_MAXNAMELEN, 
-	   "[auth_name=%s,auth_type=DES],cred.org_dir.%s",
-	   netname, domain);
-  if (sname[strlen(sname) - 1] != '.')
+  snprintf (sname, NIS_MAXNAMELEN,
+	    "[auth_name=%s,auth_type=DES],cred.org_dir.%s",
+	    netname, domain);
+  if (sname[strlen (sname) - 1] != '.')
     strcat(sname, ".");
 
   /* must use authenticated call here */
   /* XXX but we cant, for now. XXX */
-  res = nis_list(sname, USE_DGRAM+NO_AUTHINFO+FOLLOW_LINKS+FOLLOW_PATH,
-		 NULL, NULL);
-  switch(res->status) 
+  res = nis_list (sname, USE_DGRAM+NO_AUTHINFO+FOLLOW_LINKS+FOLLOW_PATH,
+		  NULL, NULL);
+  switch(res->status)
     {
     case NIS_SUCCESS:
     case NIS_S_SUCCESS:
@@ -255,7 +254,7 @@ _nss_nisplus_netname2user (char netname[MAXNETNAMELEN + 1], uid_t *uidp,
       return NSS_STATUS_UNAVAIL;
     }
 
-  if (res->objects.objects_len > 1) 
+  if (res->objects.objects_len > 1)
     {
       /*
        * A netname belonging to more than one principal?
@@ -263,16 +262,16 @@ _nss_nisplus_netname2user (char netname[MAXNETNAMELEN + 1], uid_t *uidp,
        * Warn user and continue.
        */
       syslog (LOG_ALERT,
-	      "netname2user: DES entry for %s in directory %s not unique",
+	      _("netname2user: DES entry for %s in directory %s not unique"),
 	      netname, domain);
     }
-  
+
   len = ENTRY_LEN(res->objects.objects_val, 0);
   strncpy(principal, ENTRY_VAL(res->objects.objects_val, 0), len);
   principal[len] = '\0';
   nis_freeresult(res);
-  
-  if (principal[0] == '\0') 
+
+  if (principal[0] == '\0')
     return NSS_STATUS_UNAVAIL;
 
   /*
@@ -281,9 +280,9 @@ _nss_nisplus_netname2user (char netname[MAXNETNAMELEN + 1], uid_t *uidp,
    */
   domain = nis_local_directory ();
   if ((strlen(principal)+strlen(domain)+45) >
-      (size_t) NIS_MAXNAMELEN) 
+      (size_t) NIS_MAXNAMELEN)
     {
-      syslog (LOG_ERR, "netname2user: principal name '%s' too long",
+      syslog (LOG_ERR, _("netname2user: principal name '%s' too long"),
 	      principal);
       return NSS_STATUS_UNAVAIL;
     }
@@ -319,7 +318,7 @@ _nss_nisplus_netname2user (char netname[MAXNETNAMELEN + 1], uid_t *uidp,
     nis_freeresult (res);
     return NSS_STATUS_UNAVAIL;
   }
-  
+
   if (res->objects.objects_len > 1)
     {
       /*
@@ -328,7 +327,7 @@ _nss_nisplus_netname2user (char netname[MAXNETNAMELEN + 1], uid_t *uidp,
        * Warn user and continue.
        */
       syslog(LOG_ALERT,
-	     "netname2user: LOCAL entry for %s in directory %s not unique",
+	     _("netname2user: LOCAL entry for %s in directory %s not unique"),
 	     netname, domain);
     }
   /* Fetch the uid */
@@ -336,7 +335,7 @@ _nss_nisplus_netname2user (char netname[MAXNETNAMELEN + 1], uid_t *uidp,
 
   if (*uidp == 0)
     {
-      syslog (LOG_ERR, "netname2user: should not have uid 0");
+      syslog (LOG_ERR, _("netname2user: should not have uid 0"));
       return NSS_STATUS_NOTFOUND;
     }
 

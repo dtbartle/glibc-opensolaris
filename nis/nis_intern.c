@@ -1,5 +1,4 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -23,10 +22,10 @@
 #include <rpcsvc/nislib.h>
 #include "nis_intern.h"
 
-/* Nearly the same as nis_getnames, but nis_getnames stopped 
+/* Nearly the same as nis_getnames, but nis_getnames stopped
    when 2 points left */
-nis_name
-* __nis_expandname (const nis_name name)
+nis_name *
+__nis_expandname (const nis_name name)
 {
   nis_name *getnames = NULL;
   char local_domain[NIS_MAXNAMELEN + 1];
@@ -38,7 +37,7 @@ nis_name
 
   count = 1;
   if ((getnames = malloc ((count + 1) * sizeof (char *))) == NULL)
-      return NULL;
+    return NULL;
 
   /* Do we have a fully qualified NIS+ name ? If yes, give it back */
   if (name[strlen (name) - 1] == '.')
@@ -56,11 +55,9 @@ nis_name
   /* Get the search path, where we have to search "name" */
   path = getenv ("NIS_PATH");
   if (path == NULL)
-    path = strdup ("$");
+    path = strdupa ("$");
   else
-    path = strdup (path);
-  if (path == NULL)
-    return NULL;
+    path = strdupa (path);
 
   pos = 0;
 
@@ -81,14 +78,16 @@ nis_name
 		}
 	      tmp = malloc (strlen (cptr) + strlen (local_domain) +
 			    strlen (name) + 2);
-
-	      strcpy (tmp, name);
-	      if (*cptr != '.')
-		strcat (tmp, ".");
-	      strcat (tmp, cptr);
+	      if (tmp == NULL)
+		return NULL;
 
 	      getnames[pos] = tmp;
-	      pos++;
+	      tmp = stpcpy (tmp, name);
+	      if (*cptr != '.')
+		*tmp++ = '.';
+	      stpcpy (tmp, cptr);
+
+	      ++pos;
 
 	      ++cptr;
 	      while ((*cptr != '\0') && (*cptr != '.'))
@@ -106,20 +105,27 @@ nis_name
 	    {
 	      tmp = malloc (strlen (cp) + strlen (local_domain) +
 			    strlen (name) + 2);
-	      strcpy (tmp, name);
-	      strcat (tmp, ".");
-	      strcat (tmp, cp);
-	      tmp[strlen (tmp) - 1] = '\0';
-	      if (tmp[strlen (tmp) - 1] != '.')
-		strcat (tmp, ".");
-	      strcat (tmp, local_domain);
+	      if (tmp == NULL)
+		return NULL;
+
+	      getnames[pos] = tmp;
+	      tmp = stpcpy (tmp, name);
+	      *tmp++ = '.';
+	      tmp = stpcpy (tmp, cp);
+	      --tmp;
+	      if (tmp[- 1] != '.')
+		*tmp++ = '.'
+	      stpcpy (tmp, local_domain);
 	    }
 	  else
 	    {
 	      tmp = malloc (strlen (cp) + strlen (name) + 2);
-	      strcpy (tmp, name);
-	      strcat (tmp, ".");
-	      strcat (tmp, cp);
+	      if (tmp == NULL)
+		return NULL;
+
+	      tmp = stpcpy (tmp, name);
+	      *tmp++ = '.';
+	      stpcpy (tmp, cp);
 	    }
 
 	  if (pos > count)
@@ -135,8 +141,6 @@ nis_name
 
   getnames[pos] = NULL;
 
-  free (path);
-
   return getnames;
 }
 
@@ -150,8 +154,9 @@ __nis_finddirectoy (nis_name dir_name)
   args.dir_name = dir_name;
   args.requester = nis_local_principal ();
 
-  res = malloc (sizeof (fd_result));
-  memset (res, '\0', sizeof (fd_result));
+  res = calloc (1, sizeof (fd_result));
+  if (res == NULL)
+    return NULL;
 
   if ((status = __do_niscall (NULL, 0, NIS_FINDDIRECTORY,
 			      (xdrproc_t) xdr_fd_args,

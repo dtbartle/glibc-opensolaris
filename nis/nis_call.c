@@ -1,18 +1,17 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
-   
+
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public License as
    published by the Free Software Foundation; either version 2 of the
    License, or (at your option) any later version.
-   
+
    The GNU C Library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-   
+
    You should have received a copy of the GNU Library General Public
    License along with the GNU C Library; see the file COPYING.LIB.  If not,
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -53,7 +52,7 @@ inetstr2int (const char *str)
   return inet_addr(buffer);
 }
 
-static CLIENT * 
+static CLIENT *
 __nis_dobind (const nis_server *server, u_long flags)
 {
   struct sockaddr_in clnt_saddr;
@@ -90,13 +89,13 @@ __nis_dobind (const nis_server *server, u_long flags)
 	if (strcmp (server->ep.ep_val[i].family,"inet") == 0)
 	  {
 	    if (server->ep.ep_val[i].uaddr[i] == '-')
-	      clnt_saddr.sin_addr.s_addr = 
+	      clnt_saddr.sin_addr.s_addr =
 		inetstr2int(server->ep.ep_val[i].uaddr);
 	    else
 	      if (strcmp (server->ep.ep_val[i].proto,"udp") == 0)
 		{
 		  if ((flags & USE_DGRAM) == USE_DGRAM)
-		    clnt_saddr.sin_addr.s_addr = 
+		    clnt_saddr.sin_addr.s_addr =
 		      inetstr2int(server->ep.ep_val[i].uaddr);
 		  else
 		    continue;
@@ -107,7 +106,7 @@ __nis_dobind (const nis_server *server, u_long flags)
 		    if ((flags & USE_DGRAM) == USE_DGRAM)
 		      continue;
 		    else
-		      clnt_saddr.sin_addr.s_addr = 
+		      clnt_saddr.sin_addr.s_addr =
 			inetstr2int(server->ep.ep_val[i].uaddr);
 		  }
 	  }
@@ -121,7 +120,7 @@ __nis_dobind (const nis_server *server, u_long flags)
       else
 	client = clnttcp_create (&clnt_saddr, NIS_PROG, NIS_VERSION,
 				 &clnt_sock, 0, 0);
-      
+
       if (client == NULL)
 	continue;
 #if 1
@@ -139,14 +138,15 @@ __nis_dobind (const nis_server *server, u_long flags)
 	      {
 		char netname[MAXNETNAMELEN+1];
 		char *p;
-		
+
 		strcpy(netname,"unix.");
 		strncat(netname,server->name,MAXNETNAMELEN-5);
 		netname[MAXNETNAMELEN-5] = '\0';
 		p = strchr(netname,'.');
 		*p = '@';
-		if(!(client->cl_auth = 
-		     authdes_pk_create(netname, &server->pkey, 300, NULL, NULL)))
+		client->cl_auth =
+		  authdes_pk_create(netname, &server->pkey, 300, NULL, NULL);
+		if (!client->cl_auth)
 		  client->cl_auth = authunix_create_default();
 	      }
 	    else
@@ -155,12 +155,12 @@ __nis_dobind (const nis_server *server, u_long flags)
 	  }
       return client;
     }
-  
+
   return NULL;
 }
 
 nis_error
-__do_niscall (const nis_server *serv, int serv_len, u_long prog, 
+__do_niscall (const nis_server *serv, int serv_len, u_long prog,
 	      xdrproc_t xargs, caddr_t req, xdrproc_t xres, caddr_t resp,
 	      u_long flags)
 {
@@ -168,7 +168,7 @@ __do_niscall (const nis_server *serv, int serv_len, u_long prog,
   directory_obj *dir = NULL;
   nis_server *server;
   int try, result, server_len;
-  
+
   if (serv == NULL || serv_len == 0)
     {
       dir = readColdStartFile ();
@@ -185,7 +185,7 @@ __do_niscall (const nis_server *serv, int serv_len, u_long prog,
 
   try = 0;
   result = NIS_NAMEUNREACHABLE;
-  
+
   while (try < MAXTRIES && result != RPC_SUCCESS)
     {
       unsigned int i;
@@ -195,9 +195,9 @@ __do_niscall (const nis_server *serv, int serv_len, u_long prog,
 	{
 	  if ((clnt = __nis_dobind (&server[i], flags)) == NULL)
 	    continue;
-	  
+
 	  result = clnt_call (clnt, prog, xargs, req, xres, resp, TIMEOUT);
-	 
+
 	  if (result != RPC_SUCCESS)
 	    {
 	      clnt_perror (clnt, "do_niscall: clnt_call");
@@ -208,7 +208,7 @@ __do_niscall (const nis_server *serv, int serv_len, u_long prog,
 	    clnt_destroy (clnt);
 	}
     }
-  
+
   if (dir != NULL)
     nis_free_directory (dir);
   return result;

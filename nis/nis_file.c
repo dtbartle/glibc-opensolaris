@@ -1,5 +1,4 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -18,13 +17,14 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <rpcsvc/nis.h>
 #include <rpcsvc/nislib.h>
 
 directory_obj *
-readColdStartFile ()
+readColdStartFile (void)
 {
   XDR xdrs;
   FILE *in;
@@ -33,14 +33,14 @@ readColdStartFile ()
   in = fopen ("/var/nis/NIS_COLD_START", "rb");
   if (in == NULL)
     {
-      printf ("Error: Could not open /var/nis/NIS_COLD_START!\n");
+      fputs (_("Error: Could not open /var/nis/NIS_COLD_START!\n"), stdout);
       return NULL;
     }
   memset (&obj, '\0', sizeof (obj));
   xdrstdio_create (&xdrs, in, XDR_DECODE);
   if (!xdr_directory_obj (&xdrs, &obj))
     {
-      printf ("Error while reading /var/nis/NIS_COLD_START!\n");
+      fputs (("Error while reading /var/nis/NIS_COLD_START!\n"), stdout);
       return NULL;
     }
 
@@ -48,7 +48,7 @@ readColdStartFile ()
 }
 
 bool_t
-writeColdStartFile (const directory_obj * obj)
+writeColdStartFile (const directory_obj *obj)
 {
   XDR xdrs;
   FILE *out;
@@ -60,7 +60,7 @@ writeColdStartFile (const directory_obj * obj)
   xdrstdio_create (&xdrs, out, XDR_ENCODE);
   if (!xdr_directory_obj (&xdrs, obj))
     {
-      printf ("Error wenn reading /var/nis/NIS_COLD_START!\n");
+      fputs (_("Error while reading /var/nis/NIS_COLD_START!\n"), stdout);
       return FALSE;
     }
 
@@ -87,7 +87,7 @@ nis_read_obj (const char *name)
 }
 
 bool_t
-nis_write_obj (const char *name, const nis_object * obj)
+nis_write_obj (const char *name, const nis_object *obj)
 {
   XDR xdrs;
   FILE *out;

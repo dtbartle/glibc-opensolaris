@@ -1,5 +1,4 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -22,7 +21,7 @@
 #include <rpcsvc/nislib.h>
 
 void
-nis_free_attr (nis_attr * obj)
+nis_free_attr (nis_attr *obj)
 {
   if (obj == NULL)
     return;
@@ -42,11 +41,11 @@ nis_free_attr (nis_attr * obj)
 }
 
 void
-nis_free_request (ib_request * ibreq)
+nis_free_request (ib_request *ibreq)
 {
   unsigned int i;
 
-  for (i = 0; i < ibreq->ibr_srch.ibr_srch_len; i++)
+  for (i = 0; i < ibreq->ibr_srch.ibr_srch_len; ++i)
     {
       nis_free_attr (&(ibreq->ibr_srch.ibr_srch_val)[i]);
       ibreq->ibr_srch.ibr_srch_val = NULL;
@@ -68,14 +67,14 @@ nis_free_request (ib_request * ibreq)
 }
 
 void
-nis_free_endpoints (endpoint * ep, int len)
+nis_free_endpoints (endpoint *ep, int len)
 {
   unsigned int i;
 
   if (ep == NULL)
     return;
 
-  for (i = 0; i < len; i++)
+  for (i = 0; i < len; ++i)
     {
       if (ep[i].uaddr)
 	{
@@ -96,7 +95,7 @@ nis_free_endpoints (endpoint * ep, int len)
 }
 
 void
-nis_free_servers (nis_server * obj, int len)
+nis_free_servers (nis_server *obj, int len)
 {
   unsigned int i;
 
@@ -127,7 +126,7 @@ nis_free_servers (nis_server * obj, int len)
 }
 
 void
-nis_free_directory (directory_obj * obj)
+nis_free_directory (directory_obj *obj)
 {
   if (obj == NULL)
     return;
@@ -153,13 +152,13 @@ nis_free_directory (directory_obj * obj)
 }
 
 void
-nis_free_group (group_obj * obj)
+nis_free_group (group_obj *obj)
 {
   unsigned int i;
 
   if (obj->gr_members.gr_members_len > 0)
     {
-      for (i = 0; i < obj->gr_members.gr_members_len; i++)
+      for (i = 0; i < obj->gr_members.gr_members_len; ++i)
 	if (obj->gr_members.gr_members_val[i])
 	  free (obj->gr_members.gr_members_val[i]);
       free (obj->gr_members.gr_members_val);
@@ -169,7 +168,7 @@ nis_free_group (group_obj * obj)
 }
 
 void
-nis_free_table (table_obj * obj)
+nis_free_table (table_obj *obj)
 {
   if (obj == NULL)
     return;
@@ -184,7 +183,7 @@ nis_free_table (table_obj * obj)
     {
       unsigned int i;
 
-      for (i = 0; i < obj->ta_cols.ta_cols_len; i++)
+      for (i = 0; i < obj->ta_cols.ta_cols_len; ++i)
 	if (obj->ta_cols.ta_cols_val[i].tc_name)
 	  free (obj->ta_cols.ta_cols_val[i].tc_name);
       free (obj->ta_cols.ta_cols_val);
@@ -200,7 +199,7 @@ nis_free_table (table_obj * obj)
 }
 
 void
-nis_free_entry (entry_obj * obj)
+nis_free_entry (entry_obj *obj)
 {
   if (obj == NULL)
     return;
@@ -215,7 +214,7 @@ nis_free_entry (entry_obj * obj)
     {
       unsigned int i;
 
-      for (i = 0; i < obj->en_cols.en_cols_len; i++)
+      for (i = 0; i < obj->en_cols.en_cols_len; ++i)
 	if (obj->en_cols.en_cols_val[i].ec_value.ec_value_val)
 	  free (obj->en_cols.en_cols_val[i].ec_value.ec_value_val);
       free (obj->en_cols.en_cols_val);
@@ -225,7 +224,7 @@ nis_free_entry (entry_obj * obj)
 }
 
 void
-nis_free_link (link_obj * obj)
+nis_free_link (link_obj *obj)
 {
   if (obj == NULL)
     return;
@@ -234,7 +233,7 @@ nis_free_link (link_obj * obj)
     {
       unsigned int i;
 
-      for (i = 0; i < obj->li_attrs.li_attrs_len; i++)
+      for (i = 0; i < obj->li_attrs.li_attrs_len; ++i)
 	{
 	  if (obj->li_attrs.li_attrs_val[i].zattr_ndx)
 	    free (obj->li_attrs.li_attrs_val[i].zattr_ndx);
@@ -254,7 +253,7 @@ nis_free_link (link_obj * obj)
 }
 
 void
-nis_free_object (nis_object * obj)
+nis_free_object (nis_object *obj)
 {
 
   if (obj == NULL)
@@ -315,7 +314,7 @@ nis_free_object (nis_object * obj)
 }
 
 void
-nis_freeresult (nis_result * res)
+nis_freeresult (nis_result *res)
 {
   unsigned int i;
 
@@ -328,7 +327,7 @@ nis_freeresult (nis_result * res)
   if (res->objects.objects_val != NULL)
     free (res->objects.objects_val);
 
-  if ((res->cookie.n_bytes != NULL) && (res->cookie.n_len > 0))
+  if (res->cookie.n_bytes != NULL && res->cookie.n_len > 0)
     free (res->cookie.n_bytes);
 
   free (res);

@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@uni-paderborn.de>, 1997.
 
@@ -36,8 +35,7 @@ nis_lookup (const nis_name name, const u_long flags)
   int count_links = 0;	 /* We will follow only 16 links in the deep */
   int i;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   if (flags & EXPAND_NAME)
     {
@@ -160,14 +158,13 @@ nis_lookup (const nis_name name, const u_long flags)
 }
 
 nis_result *
-nis_add (const nis_name name, const nis_object * obj)
+nis_add (const nis_name name, const nis_object *obj)
 {
   nis_result *res;
   nis_error status;
   struct ns_request req;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   req.ns_name = name;
 
@@ -185,14 +182,13 @@ nis_add (const nis_name name, const nis_object * obj)
 }
 
 nis_result *
-nis_remove (const nis_name name, const nis_object * obj)
+nis_remove (const nis_name name, const nis_object *obj)
 {
   nis_result *res;
   nis_error status;
   struct ns_request req;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   req.ns_name = name;
 
@@ -218,14 +214,13 @@ nis_remove (const nis_name name, const nis_object * obj)
 }
 
 nis_result *
-nis_modify (const nis_name name, const nis_object * obj)
+nis_modify (const nis_name name, const nis_object *obj)
 {
   nis_result *res;
   nis_error status;
   struct ns_request req;
 
-  res = malloc (sizeof (nis_result));
-  memset (res, '\0', sizeof (nis_result));
+  res = calloc (1, sizeof (nis_result));
 
   req.ns_name = name;
 

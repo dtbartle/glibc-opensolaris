@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -64,14 +63,14 @@ _nss_nisplus_parse_pwent (nis_result *result, struct passwd *pw,
       __set_errno (ERANGE);
       return -1;
     }
-  
-  strncpy (first_unused, NISENTRYVAL(0, 0, result), 
+
+  strncpy (first_unused, NISENTRYVAL(0, 0, result),
 	   NISENTRYLEN (0, 0, result));
   first_unused[NISENTRYLEN(0, 0, result)] = '\0';
   pw->pw_name = first_unused;
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
+
   if (NISENTRYLEN(0, 1, result) >= room_left)
     goto no_more_room;
 
@@ -81,7 +80,7 @@ _nss_nisplus_parse_pwent (nis_result *result, struct passwd *pw,
   pw->pw_passwd = first_unused;
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
+
   if (NISENTRYLEN(0, 2, result) >= room_left)
     goto no_more_room;
 
@@ -91,7 +90,7 @@ _nss_nisplus_parse_pwent (nis_result *result, struct passwd *pw,
   pw->pw_uid = atoi (first_unused);
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
+
   if (NISENTRYLEN(0, 3, result) >= room_left)
     goto no_more_room;
 
@@ -101,7 +100,7 @@ _nss_nisplus_parse_pwent (nis_result *result, struct passwd *pw,
   pw->pw_gid = atoi (first_unused);
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
+
   if (NISENTRYLEN(0, 4, result) >= room_left)
     goto no_more_room;
 
@@ -111,7 +110,7 @@ _nss_nisplus_parse_pwent (nis_result *result, struct passwd *pw,
   pw->pw_gecos = first_unused;
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
+
   if (NISENTRYLEN(0, 5, result) >= room_left)
     goto no_more_room;
 
@@ -121,7 +120,7 @@ _nss_nisplus_parse_pwent (nis_result *result, struct passwd *pw,
   pw->pw_dir = first_unused;
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
+
   if (NISENTRYLEN(0, 6, result) >= room_left)
     goto no_more_room;
 
@@ -131,7 +130,7 @@ _nss_nisplus_parse_pwent (nis_result *result, struct passwd *pw,
   pw->pw_shell = first_unused;
   room_left -= (strlen (first_unused) +1);
   first_unused += strlen (first_unused) +1;
-  
+
   return 1;
 }
 
@@ -183,10 +182,10 @@ internal_nisplus_getpwent_r (struct passwd *pw, char *buffer, size_t buflen)
     {
       if (result == NULL)
 	{
-	  names = nis_getnames("passwd.org_dir");
+	  names = nis_getnames ("passwd.org_dir");
 	  if (names == NULL || names[0] == NULL)
 	    return NSS_STATUS_UNAVAIL;
-	  
+
 	  result = nis_first_entry(names[0]);
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
@@ -201,7 +200,7 @@ internal_nisplus_getpwent_r (struct passwd *pw, char *buffer, size_t buflen)
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
 	}
-      
+
       parse_res = _nss_nisplus_parse_pwent (result, pw, buffer, buflen);
     } while (!parse_res);
 
@@ -228,27 +227,27 @@ _nss_nisplus_getpwnam_r (const char *name, struct passwd *pw,
 {
   int parse_res;
 
-  if (name == NULL || strlen(name) > 8)
+  if (name == NULL || strlen (name) > 8)
     return NSS_STATUS_NOTFOUND;
   else
-    {  
+    {
       nis_result *result;
       char buf[strlen (name) + 24];
 
       sprintf(buf, "[name=%s],passwd.org_dir", name);
-      
+
       result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-      
+
       if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	{
 	  enum nss_status status =  niserr2nss (result->status);
-	  
+
 	  nis_freeresult (result);
 	  return status;
 	}
-      
+
       parse_res = _nss_nisplus_parse_pwent (result, pw, buffer, buflen);
-      
+
       nis_freeresult (result);
 
       if (parse_res)
@@ -268,11 +267,11 @@ _nss_nisplus_getpwuid_r (const uid_t uid, struct passwd *pw,
   int parse_res;
   nis_result *result;
   char buf[100];
-  
+
   sprintf(buf, "[uid=%d],passwd.org_dir", uid);
-  
+
   result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-  
+
   if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
    {
      enum nss_status status = niserr2nss (result->status);
@@ -280,16 +279,15 @@ _nss_nisplus_getpwuid_r (const uid_t uid, struct passwd *pw,
      nis_freeresult (result);
      return status;
    }
-  
+
   parse_res = _nss_nisplus_parse_pwent (result, pw, buffer, buflen);
-  
+
   nis_freeresult (result);
   if (parse_res)
     return NSS_STATUS_SUCCESS;
-  
+
   if (!parse_res && errno == ERANGE)
     return NSS_STATUS_TRYAGAIN;
   else
     return NSS_STATUS_NOTFOUND;
 }
-

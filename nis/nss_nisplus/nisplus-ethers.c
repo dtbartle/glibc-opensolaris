@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -98,7 +97,7 @@ _nss_nisplus_parse_etherent (nis_result *result, struct etherent *ether,
     return -1;
 
   memset (p, '\0', room_left);
-  
+
   /* Generate the ether entry format and use the normal parser */
   if (NISENTRYLEN (0, 0, result) +1 > room_left)
     {
@@ -115,8 +114,8 @@ _nss_nisplus_parse_etherent (nis_result *result, struct etherent *ether,
     }
   strcat (p, "\t");
   strncat (p, NISENTRYVAL (0, 1, result), NISENTRYLEN (0, 1, result));
-  room_left -= (NISENTRYLEN (0, 1, result) + 1); 
-  
+  room_left -= (NISENTRYLEN (0, 1, result) + 1);
+
   return _nss_files_parse_etherent (p,ether, data, buflen);
 }
 
@@ -159,11 +158,11 @@ _nss_nisplus_endetherent (void)
 }
 
 static enum nss_status
-internal_nisplus_getetherent_r (struct etherent *ether, char *buffer, 
+internal_nisplus_getetherent_r (struct etherent *ether, char *buffer,
 				size_t buflen)
 {
   int parse_res;
-  
+
   /* Get the next entry until we found a correct one. */
   do
     {
@@ -172,7 +171,7 @@ internal_nisplus_getetherent_r (struct etherent *ether, char *buffer,
 	  names = nis_getnames("ethers.org_dir");
 	  if (names == NULL || names[0] == NULL)
 	    return NSS_STATUS_UNAVAIL;
-	  
+
 	  result = nis_first_entry(names[0]);
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
@@ -187,7 +186,7 @@ internal_nisplus_getetherent_r (struct etherent *ether, char *buffer,
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
 	}
-      
+
       parse_res = _nss_nisplus_parse_etherent (result, ether, buffer, buflen);
     } while (!parse_res);
 
@@ -195,11 +194,11 @@ internal_nisplus_getetherent_r (struct etherent *ether, char *buffer,
 }
 
 enum nss_status
-_nss_nisplus_getetherent_r (struct etherent *result, char *buffer, 
+_nss_nisplus_getetherent_r (struct etherent *result, char *buffer,
 			    size_t buflen)
 {
   int status;
-  
+
   __libc_lock_lock (lock);
 
   status = internal_nisplus_getetherent_r (result, buffer, buflen);
@@ -210,27 +209,27 @@ _nss_nisplus_getetherent_r (struct etherent *result, char *buffer,
 }
 
 enum nss_status
-_nss_nisplus_gethostton_r (const char *name, struct etherent *eth, 
+_nss_nisplus_gethostton_r (const char *name, struct etherent *eth,
 			   char *buffer, size_t buflen)
 {
   int parse_res;
-  
+
   if (name == NULL)
     return NSS_STATUS_NOTFOUND;
   else
-    {  
+    {
       nis_result *result;
       char buf[strlen (name) + 255];
-      
+
       sprintf(buf, "[name=%s],ethers.org_dir", name);
-      
+
       result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-      
+
       if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
         return niserr2nss (result->status);
-      
+
       parse_res = _nss_nisplus_parse_etherent (result, eth, buffer, buflen);
-      
+
       if (parse_res)
         return NSS_STATUS_SUCCESS;
 
@@ -249,29 +248,29 @@ _nss_nisplus_getntohost_r (const struct ether_addr *addr,
   int parse_res;
   nis_result *result;
   char buf[255];
-  
+
   if (addr == NULL)
     {
       __set_errno (EINVAL);
       return NSS_STATUS_UNAVAIL;
     }
-  
+
   memset (&buf, '\0', sizeof (buf));
   snprintf(buf, sizeof (buf), "[addr=%x:%x:%x:%x:%x:%x],ethers.org_dir",
 	   addr->ether_addr_octet[0], addr->ether_addr_octet[1],
 	   addr->ether_addr_octet[2], addr->ether_addr_octet[3],
 	   addr->ether_addr_octet[4], addr->ether_addr_octet[5]);
-  
+
   result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-  
+
   if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
     return niserr2nss (result->status);
-  
+
   parse_res = _nss_nisplus_parse_etherent (result, eth, buffer, buflen);
-  
+
   if (parse_res)
     return NSS_STATUS_SUCCESS;
-  
+
   if (!parse_res && errno == ERANGE)
     return NSS_STATUS_TRYAGAIN;
   else

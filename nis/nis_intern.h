@@ -1,5 +1,4 @@
 /* Copyright (c) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -18,16 +17,23 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#ifndef __NIS_INTERN_H__
-#define __NIS_INTERN_H__
+#ifndef __NIS_INTERN_H
 
-extern nis_error __do_niscall (const nis_server * server, int server_len,
+#define __NIS_INTERN_H
+#include <features.h>
+
+__BEGIN_DECLS
+
+extern nis_error __do_niscall (__const nis_server *server, int server_len,
 			       u_long prog, xdrproc_t xargs, caddr_t req,
 			       xdrproc_t xres, caddr_t resp, u_long flags);
 #if !defined(NO_DES_RPC)
 extern AUTH *authdes_pk_create (char *, netobj *, u_int,
 				struct sockaddr *, des_block *);
 #endif
-extern nis_name *__nis_expandname (const nis_name);
+
+extern nis_name *__nis_expandname (__const nis_name);
+
+__END_DECLS
 
 #endif

@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -46,16 +45,16 @@ LINE_PARSER
  INT_FIELD (result->s_port, ISSLASH, 10, 0, htons);
  STRING_FIELD (result->s_proto, isspace, 1);
  )
-  
-  
+
+
 #define NISENTRYVAL(idx,col,res) \
   ((res)->objects.objects_val[(idx)].zo_data.objdata_u.en_data.en_cols.en_cols_val[(col)].ec_value.ec_value_val)
-    
+
 #define NISENTRYLEN(idx,col,res) \
     ((res)->objects.objects_val[(idx)].zo_data.objdata_u.en_data.en_cols.en_cols_val[(col)].ec_value.ec_value_len)
-    
+
 static int
-_nss_nisplus_parse_servent (nis_result * result, struct servent *serv,
+_nss_nisplus_parse_servent (nis_result *result, struct servent *serv,
 			    char *buffer, size_t buflen)
 {
   char *p = buffer;
@@ -229,7 +228,7 @@ _nss_nisplus_getservbyname_r (const char *name, const char *protocol,
 	       protocol);
       result = nis_list (buf, EXPAND_NAME, NULL, NULL);
 
-      /* If we do not find it, try it as original name. But if the 
+      /* If we do not find it, try it as original name. But if the
          database is correct, we should find it in the first case, too */
       if ((result->status != NIS_SUCCESS &&
 	   result->status != NIS_S_SUCCESS) ||

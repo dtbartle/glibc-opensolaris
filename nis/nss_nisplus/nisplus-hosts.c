@@ -1,5 +1,4 @@
 /* Copyright (C) 1997 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -150,7 +149,7 @@ _nss_nisplus_parse_hostent (nis_result *result, struct hostent *host,
     }
   strcat (p, "\t");
   strncat (p, NISENTRYVAL (0, 0, result), NISENTRYLEN (0, 0, result));
-  room_left -= (NISENTRYLEN (0, 0, result) + 1); 
+  room_left -= (NISENTRYLEN (0, 0, result) + 1);
                                        /* + 1: We overwrite the last \0 */
 
   for (i = 1; i < result->objects.objects_len; i++)
@@ -164,7 +163,7 @@ _nss_nisplus_parse_hostent (nis_result *result, struct hostent *host,
       strcat (p, NISENTRYVAL (i, 1, result));
       room_left -= (NISENTRYLEN (i, 1, result) + 1);
     }
-  
+
   parse_res = parse_line (p, host, data, buflen);
 
   return parse_res;
@@ -209,11 +208,11 @@ _nss_nisplus_endhostent (void)
 }
 
 static enum nss_status
-internal_nisplus_gethostent_r (struct hostent *host, char *buffer, 
+internal_nisplus_gethostent_r (struct hostent *host, char *buffer,
 			       size_t buflen, int *herrnop)
 {
   int parse_res;
-  
+
   /* Get the next entry until we found a correct one. */
   do
     {
@@ -222,12 +221,12 @@ internal_nisplus_gethostent_r (struct hostent *host, char *buffer,
 	  names = nis_getnames("hosts.org_dir");
 	  if (names == NULL || names[0] == NULL)
 	    return NSS_STATUS_UNAVAIL;
-	  
+
 	  result = nis_first_entry(names[0]);
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
             {
               int retval;
-	      
+
               retval = niserr2nss (result->status);
               if (retval == NSS_STATUS_TRYAGAIN)
                 {
@@ -236,7 +235,7 @@ internal_nisplus_gethostent_r (struct hostent *host, char *buffer,
                 }
               return retval;
             }
-	  
+
 	}
       else
 	{
@@ -248,7 +247,7 @@ internal_nisplus_gethostent_r (struct hostent *host, char *buffer,
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
             {
               int retval;
-	      
+
               retval = niserr2nss (result->status);
               if (retval == NSS_STATUS_TRYAGAIN)
                 {
@@ -258,25 +257,25 @@ internal_nisplus_gethostent_r (struct hostent *host, char *buffer,
               return retval;
             }
 	}
-      
+
       parse_res = _nss_nisplus_parse_hostent (result, host, buffer, buflen);
       if (!parse_res && errno == ERANGE)
         {
           *herrnop = NETDB_INTERNAL;
           return NSS_STATUS_TRYAGAIN;
         }
-      
+
     } while (!parse_res);
-  
+
   return NSS_STATUS_SUCCESS;
 }
 
 enum nss_status
-_nss_nisplus_gethostent_r (struct hostent *result, char *buffer, 
+_nss_nisplus_gethostent_r (struct hostent *result, char *buffer,
 			   size_t buflen, int *herrnop)
 {
   int status;
-  
+
   __libc_lock_lock (lock);
 
   status = internal_nisplus_gethostent_r (result, buffer, buflen, herrnop);
@@ -287,11 +286,11 @@ _nss_nisplus_gethostent_r (struct hostent *result, char *buffer,
 }
 
 enum nss_status
-_nss_nisplus_gethostbyname2_r (const char *name, int af, struct hostent *host, 
+_nss_nisplus_gethostbyname2_r (const char *name, int af, struct hostent *host,
 			      char *buffer, size_t buflen, int *herrnop)
 {
   int parse_res, retval;
-  
+
   if (name == NULL)
     {
       __set_errno (EINVAL);
@@ -299,31 +298,31 @@ _nss_nisplus_gethostbyname2_r (const char *name, int af, struct hostent *host,
       return NSS_STATUS_NOTFOUND;
     }
   else
-    {  
+    {
       nis_result *result;
       char buf[strlen (name) + 255];
-      
+
       /* Search at first in the alias list, and use the correct name
 	 for the next search */
       sprintf(buf, "[name=%s],hosts.org_dir", name);
       result = nis_list(buf, EXPAND_NAME, NULL, NULL);
 
-      /* If we do not find it, try it as original name. But if the 
+      /* If we do not find it, try it as original name. But if the
 	 database is correct, we should find it in the first case, too */
       if ((result->status != NIS_SUCCESS &&
 	   result->status != NIS_S_SUCCESS) ||
 	  result->objects.objects_val[0].zo_data.zo_type != ENTRY_OBJ ||
 	  strcmp(result->objects.objects_val[0].zo_data.objdata_u.en_data.en_type,
 		 "hosts_tbl") != 0 ||
-	  result->objects.objects_val[0].zo_data.objdata_u.en_data.en_cols.en_cols_len 
+	  result->objects.objects_val[0].zo_data.objdata_u.en_data.en_cols.en_cols_len
 	  < 3)
 	sprintf(buf, "[cname=%s],hosts.org_dir", name);
       else
 	sprintf(buf, "[cname=%s],hosts.org_dir", NISENTRYVAL(0, 0, result));
-      
+
       nis_freeresult (result);
       result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-      
+
       retval = niserr2nss (result->status);
       if (retval != NSS_STATUS_SUCCESS)
         {
@@ -334,8 +333,8 @@ _nss_nisplus_gethostbyname2_r (const char *name, int af, struct hostent *host,
             }
 	  nis_freeresult (result);
           return retval;
-        }      
-      
+        }
+
       parse_res = _nss_nisplus_parse_hostent (result, host, buffer, buflen);
 
       nis_freeresult (result);
@@ -358,14 +357,14 @@ _nss_nisplus_gethostbyname_r (const char *name, struct hostent *host,
   if (_res.options & RES_USE_INET6)
     {
       enum nss_status status;
-      
-      status = _nss_nisplus_gethostbyname2_r (name, AF_INET6, host, buffer, 
+
+      status = _nss_nisplus_gethostbyname2_r (name, AF_INET6, host, buffer,
 					      buflen, h_errnop);
       if (status == NSS_STATUS_SUCCESS)
         return status;
     }
-  
-  return _nss_nisplus_gethostbyname2_r (name, AF_INET, host, buffer, 
+
+  return _nss_nisplus_gethostbyname2_r (name, AF_INET, host, buffer,
 					buflen, h_errnop);
 }
 
@@ -380,11 +379,11 @@ _nss_nisplus_gethostbyaddr_r (const char *addr, struct hostent *host,
       nis_result *result;
       char buf[24 + strlen (addr)];
       int retval, parse_res;
-      
+
       sprintf(buf, "[addr=%s],hosts.org_dir", addr);
-      
+
       result = nis_list(buf, EXPAND_NAME, NULL, NULL);
-      
+
       retval = niserr2nss (result->status);
       if (retval != NSS_STATUS_SUCCESS)
         {
@@ -395,15 +394,15 @@ _nss_nisplus_gethostbyaddr_r (const char *addr, struct hostent *host,
             }
 	  nis_freeresult (result);
           return retval;
-        }      
-      
+        }
+
       parse_res = _nss_nisplus_parse_hostent (result, host, buffer, buflen);
-      
+
       nis_freeresult (result);
 
       if (parse_res)
 	return NSS_STATUS_SUCCESS;
-      
+
       *herrnop = NETDB_INTERNAL;
       if (!parse_res && errno == ERANGE)
 	return NSS_STATUS_TRYAGAIN;
