@@ -3,6 +3,7 @@
 <escape_char> /
 % automatically generated from the charDB
 
+% alias CP874
 CHARMAP
 <NU>                   /x00     <U0000> NULL
 <NUL>                  /x00     <U0000> NULL
