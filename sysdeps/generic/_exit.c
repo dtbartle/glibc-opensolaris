@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 94, 95, 96, 97, 99 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@ _exit (status)
   status &= 0xff;
   abort ();
 }
+weak_alias (_exit, _Exit)
 
 stub_warning (_exit)
 #include <stub-tag.h>
