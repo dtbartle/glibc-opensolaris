@@ -54,9 +54,9 @@ errnoh == 2 && $1 == "@deftypevr"  && $2 == "Macro" && $3 == "int" \
   { ++errnoh; e = $4; next; }
 
 errnoh == 3 && $1 == "@comment" && $2 == "errno" {
-    if ($3 !~ ".*/.*")
-      next;
     errno = $3 + 0;
+    if (errno == 0)
+      next;
     if (errno > maxerrno) maxerrno = errno;
     if (e == "EWOULDBLOCK")
       {
