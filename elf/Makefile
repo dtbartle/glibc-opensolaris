@@ -78,4 +78,5 @@ $(slibdir)/ld-linux.so.1: $(objpfx)ld-linux.so.1; $(do-install-program)
 
 $(objpfx)ldd: ldd.sh.in
 	sed 's%@RTLD@%$(libdir)/$(rtld-installed-name)%g' < $< > $@.new
+	chmod 555 $@.new
 	mv -f $@.new $@
