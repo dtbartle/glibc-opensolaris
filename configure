@@ -2307,13 +2307,45 @@ fi
 
 echo "$ac_t""$libc_cv_gcc_no_exceptions" 1>&6
 
+if test "$base_machine" = alpha ; then
+echo $ac_n "checking for function ..ng prefix""... $ac_c" 1>&6
+echo "configure:2313: checking for function ..ng prefix" >&5
+if eval "test \"`echo '$''{'libc_cv_gcc_alpha_ng_prefix'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.c <<\EOF
+foo () { }
+EOF
+if { ac_try='${CC-cc} -S conftest.c -o - | fgrep '$foo..ng' > /dev/null'; { (eval echo configure:2320: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; };
+then
+  libc_cv_gcc_alpha_ng_prefix=yes
+else
+  libc_cv_gcc_alpha_ng_prefix=no
+fi
+rm -f conftest* 
+fi
+
+echo "$ac_t""$libc_cv_gcc_alpha_ng_prefix" 1>&6
+if test $libc_cv_gcc_alpha_ng_prefix = yes ; then
+  cat >> confdefs.h <<\EOF
+#define ASM_ALPHA_NG_SYMBOL_PREFIX "$"
+EOF
+
+else
+  cat >> confdefs.h <<\EOF
+#define ASM_ALPHA_NG_SYMBOL_PREFIX ""
+EOF
+
+fi
+fi
+
 echo $ac_n "checking for DWARF2 unwind info support""... $ac_c" 1>&6
-echo "configure:2312: checking for DWARF2 unwind info support" >&5
+echo "configure:2344: checking for DWARF2 unwind info support" >&5
 if eval "test \"`echo '$''{'libc_cv_gcc_dwarf2_unwind_info'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.c <<EOF
-#line 2317 "configure"
+#line 2349 "configure"
 static char __EH_FRAME_BEGIN__;
 _start ()
 {
@@ -2334,7 +2366,7 @@ __bzero () {}
 EOF
 if { ac_try='${CC-cc} $CFLAGS
 			    -nostdlib -nostartfiles
-			    -o conftest conftest.c -lgcc >&5'; { (eval echo configure:2338: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; }; then
+			    -o conftest conftest.c -lgcc >&5'; { (eval echo configure:2370: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; }; then
   libc_cv_gcc_dwarf2_unwind_info=yes
 else
   libc_cv_gcc_dwarf2_unwind_info=no
@@ -2392,7 +2424,7 @@ if test "$uname" = "sysdeps/generic"; then
   fi
 
   echo $ac_n "checking OS release for uname""... $ac_c" 1>&6
-echo "configure:2396: checking OS release for uname" >&5
+echo "configure:2428: checking OS release for uname" >&5
 if eval "test \"`echo '$''{'libc_cv_uname_release'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2414,7 +2446,7 @@ echo "$ac_t""$libc_cv_uname_release" 1>&6
   uname_release="$libc_cv_uname_release"
 
   echo $ac_n "checking OS version for uname""... $ac_c" 1>&6
-echo "configure:2418: checking OS version for uname" >&5
+echo "configure:2450: checking OS version for uname" >&5
 if eval "test \"`echo '$''{'libc_cv_uname_version'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2436,7 +2468,7 @@ else
 fi
 
 echo $ac_n "checking stdio selection""... $ac_c" 1>&6
-echo "configure:2440: checking stdio selection" >&5
+echo "configure:2472: checking stdio selection" >&5
 
 case $stdio in
 libio) cat >> confdefs.h <<\EOF
@@ -2448,7 +2480,7 @@ esac
 echo "$ac_t""$stdio" 1>&6
 
 echo $ac_n "checking ldap selection""... $ac_c" 1>&6
-echo "configure:2452: checking ldap selection" >&5
+echo "configure:2484: checking ldap selection" >&5
 
 case $add_ons in
 *ldap*)
@@ -2498,7 +2530,7 @@ if test $shared = default; then
 fi
 
 echo $ac_n "checking whether -fPIC is default""... $ac_c" 1>&6
-echo "configure:2502: checking whether -fPIC is default" >&5
+echo "configure:2534: checking whether -fPIC is default" >&5
 if eval "test \"`echo '$''{'pic_default'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
