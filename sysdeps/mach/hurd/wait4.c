@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -36,3 +36,5 @@ __wait4 (pid_t pid, __WAIT_STATUS_DEFN stat_loc,
 
   return err ? (pid_t) __hurd_fail (err) : dead;
 }
+
+weak_alias (__wait4, wait4)
