@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -30,21 +30,20 @@ distribute := confstr.h
 
 routines :=								      \
 	uname								      \
-	__times								      \
-	__wait __waitpid __wait3 __wait4				      \
+	times								      \
+	wait waitpid wait3 wait4					      \
 	alarm sleep pause						      \
-	__fork __vfork _exit	      					      \
-	__execve execve fexecve execv execle execl execvp execlp	      \
-	__getpid __getppid						      \
-	__getuid __geteuid __getgid __getegid __getgrps __setuid __setgid     \
-	__getpgrp __setpgrp __setsid setpgid				      \
+	fork vfork _exit	      					      \
+	execve fexecve execv execle execl execvp execlp			      \
+	getpid getppid							      \
+	getuid geteuid getgid getegid getgroups setuid setgid		      \
+	getpgid setpgid getpgrp setsid					      \
 	getlogin setlogin						      \
-	__pathconf __sysconf __fpathcon					      \
+	pathconf sysconf fpathconf					      \
 	glob fnmatch							      \
 	confstr								      \
 	getopt getopt1
-routines	:= $(sort $(foreach f,$(routines),$f $(f:__%=%)))
-aux		:= init-posix environ
+aux		:= init-posix
 tests		:= tstgetopt testfnm
 others		:= getconf
 install-bin	:= getconf
@@ -80,6 +79,6 @@ glob/ChangeLog: ../ChangeLog
 %.Z: %
 	compress -c $< > $@-tmp
 	mv $@-tmp $@
-%.z: %
-	gzip -9 -c $< > $@-tmp
+%.gz: %
+	gzip -9v -c $< > $@-tmp
 	mv $@-tmp $@
