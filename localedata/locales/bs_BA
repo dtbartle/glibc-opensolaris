@@ -234,6 +234,8 @@ country_num 070
 END LC_ADDRESS
 
 LC_TELEPHONE
+% FIXME
+tel_int_fmt "???"
 int_prefix "<U0033><U0038><U0037>"
 int_select "<U0030><U0030>"
 END LC_TELEPHONE
