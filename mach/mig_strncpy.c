@@ -3,18 +3,8 @@
 #include <mach.h>
 
 vm_size_t
-__mig_strncpy (char *dest, char *src, vm_size_t len)
+__mig_strncpy (char *dest, const char *src, vm_size_t len)
 {
-  size_t i;
-
-  if (len == 0)
-    return 0;
-
-  for (i = 1; i < len; ++i)
-    if ((*dest++ = *src++) == '\0')
-      return i;
-
-  *dest = '\0';
-  return i;
+  return __stpncpy (__dst, __src, __len) - __dst;
 }
 weak_alias (__mig_strncpy, mig_strncpy)
