@@ -52,11 +52,52 @@ td_ta_event_getmsg (const td_thragent_t *ta, td_event_msg_t *msg)
 
   /* Check whether an event occurred.  */
   if (event.eventnum == TD_EVENT_NONE)
-    /* Nothing.  */
-    return TD_NOMSG;
+    {
+      /* Oh well, this means the last event was already read.  So
+	 we have to look for any other event.  */
+      struct pthread_handle_struct handles[ta->pthread_threads_max];
+      int num;
+      int i;
+
+      /* Read the number of currently active threads.  */
+      if (ps_pdread (ta->ph, ta->pthread_handles_num, &num, sizeof (int))
+	  != PS_OK)
+	return TD_ERR;	/* XXX Other error value?  */
+
+      /* Now read the handles.  */
+      if (ps_pdread (ta->ph, ta->handles, handles,
+		     ta->pthread_threads_max * sizeof (handles[0])) != PS_OK)
+	return TD_ERR;	/* XXX Other error value?  */
+
+      for (i = 0; i < ta->pthread_threads_max && num > 0; ++i)
+	{
+	  if (handles[i].h_descr == NULL || handles[i].h_descr == addr)
+	    /* Not this entry.  */
+	    continue;
+
+	  /* Read the event data for this thread.  */
+	  if (ps_pdread (ta->ph,
+			 ((char *) handles[i].h_descr
+			  + offsetof (struct _pthread_descr_struct,
+				      p_eventbuf)),
+			 &event, sizeof (td_eventbuf_t)) != PS_OK)
+	    return TD_ERR;
+
+	  if (event.eventnum != TD_EVENT_NONE)
+	    {
+	      /* We found a thread with an unreported event.  */
+	      addr = handles[i].h_descr;
+	      break;
+	    }
+	}
+
+      /* If we haven't found any other event signal this to the user.  */
+      if (event.eventnum == TD_EVENT_NONE)
+	return TD_NOMSG;
+    }
 
   /* Generate the thread descriptor.  */
-  th.th_ta_p = ta;
+  th.th_ta_p = (td_thragent_t *) ta;
   th.th_unique = addr;
 
   /* Fill the user's data structure.  */
