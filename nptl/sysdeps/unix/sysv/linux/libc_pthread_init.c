@@ -24,9 +24,6 @@
 
 static struct fork_handler pthread_child_handler;
 
-/* Global variable signalled when locking is needed.  */
-int __libc_locking_needed;
-
 
 void
 __libc_pthread_init (ptr, reclaim)
@@ -41,7 +38,4 @@ __libc_pthread_init (ptr, reclaim)
 
   /* The fork handler needed by libpthread.  */
   list_add_tail (&pthread_child_handler.list, &__fork_child_list);
-
-  /* Signal the internal locking code that locking is needed now.  */
-  __libc_locking_needed = 1;
 }
