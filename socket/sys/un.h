@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -20,10 +20,13 @@ Cambridge, MA 02139, USA.  */
 
 #define	_SYS_UN_H	1
 
-/* Structure describing the address of an AF_UNIX socket.  */
+/* Get the definition of the macro to define the common sockaddr members.  */
+#include <sockaddrcom.h>
+
+/* Structure describing the address of an AF_LOCAL (aka AF_UNIX) socket.  */
 struct sockaddr_un
   {
-    short int sun_family;	/* Address family; set to AF_UNIX.  */
+    __SOCKADDR_COMMON (sun_);
     char sun_path[108];		/* Path name.  */
   };
 
