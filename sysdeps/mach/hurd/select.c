@@ -221,11 +221,8 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
 		{
 		  /* This is a winning io_select_reply message!
 		     Record the readiness it indicates and send a reply.  */
-		  if (types[msg.success.tag] == 0)
-		    /* This descriptor is ready and it was not before,
-		       so we increment our count of ready descriptors.  */
-		    ++got;
-		  types[msg.success.tag] |= msg.success.result;
+		  types[msg.success.tag] &= msg.success.result;
+		  ++got;
 		}
 	    }
 
