@@ -1,4 +1,4 @@
-/* Definition for thread-local data handling.  linuxthreads/i386 version.
+/* Definition for thread-local data handling.  nptl /i386 version.
    Copyright (C) 2002 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
