@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -39,12 +39,6 @@ DEFUN(__fstat, (fd, buf), int fd AND struct stat *buf)
   errno = ENOSYS;
   return -1;
 }
+stub_warning (fstat)
 
-
-#ifdef	 HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
-stub_warning(__fstat);
-
-#endif	/* GNU stabs.  */
+weak_alias (__fstat, fstat)
