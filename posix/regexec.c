@@ -85,7 +85,7 @@ static int proceed_next_node (const regex_t *preg, int nregs, regmatch_t *regs,
                               const re_match_context_t *mctx,
                               int *pidx, int node, re_node_set *eps_via_nodes,
                               struct re_fail_stack_t *fs);
-static reg_errcode_t push_fail_stack (struct re_fail_stack_t *fs, 
+static reg_errcode_t push_fail_stack (struct re_fail_stack_t *fs,
                                       int str_idx, int *dests, int nregs,
                                       regmatch_t *regs,
                                       re_node_set *eps_via_nodes);
@@ -575,9 +575,10 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
   re_string_t input;
   int left_lim, right_lim, incr;
   int fl_longest_match, match_first, match_last = -1;
+  int fast_translate, sb;
   re_match_context_t mctx;
-  char *fastmap = ((preg->fastmap != NULL && preg->fastmap_accurate)
-                   ? preg->fastmap : NULL);
+  char *fastmap = ((preg->fastmap != NULL && preg->fastmap_accurate
+		    && range && !preg->can_be_null) ? preg->fastmap : NULL);
 
   /* Check if the DFA haven't been compiled.  */
   if (BE (preg->used == 0 || dfa->init_state == NULL
@@ -630,74 +631,117 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
   incr = (range < 0) ? -1 : 1;
   left_lim = (range < 0) ? start + range : start;
   right_lim = (range < 0) ? start : start + range;
+  sb = MB_CUR_MAX == 1;
+  fast_translate = sb || !(preg->syntax & RE_ICASE || preg->translate);
 
   for (;;)
     {
       /* At first get the current byte from input string.  */
-      int ch;
-      if (MB_CUR_MAX > 1 && (preg->syntax & RE_ICASE || preg->translate))
-        {
-          /* In this case, we can't determin easily the current byte,
-             since it might be a component byte of a multibyte character.
-             Then we use the constructed buffer instead.  */
-          /* If MATCH_FIRST is out of the valid range, reconstruct the
-             buffers.  */
-          if (input.raw_mbs_idx + input.valid_len <= match_first)
-            {
-              err = re_string_reconstruct (&input, match_first, eflags,
-                                           preg->newline_anchor);
-              if (BE (err != REG_NOERROR, 0))
-                goto free_return;
-            }
-          /* If MATCH_FIRST is out of the buffer, leave it as '\0'.
-             Note that MATCH_FIRST must not be smaller than 0.  */
-          ch = ((match_first >= length) ? 0
-                : re_string_byte_at (&input, match_first - input.raw_mbs_idx));
-        }
-      else
-        {
-          /* We apply translate/conversion manually, since it is trivial
-             in this case.  */
-          /* If MATCH_FIRST is out of the buffer, leave it as '\0'.
-             Note that MATCH_FIRST must not be smaller than 0.  */
-          ch = (match_first < length) ? (unsigned char)string[match_first] : 0;
-          /* Apply translation if we need.  */
-          ch = preg->translate ? preg->translate[ch] : ch;
-          /* In case of case insensitive mode, convert to upper case.  */
-          ch = ((preg->syntax & RE_ICASE) && islower (ch)) ? toupper (ch) : ch;
-        }
+      if (fastmap)
+	{
+	  if (BE (fast_translate, 1))
+	    {
+	      unsigned RE_TRANSLATE_TYPE t
+		= (unsigned RE_TRANSLATE_TYPE) preg->translate;
+	      if (BE (range >= 0, 1))
+		{
+		  if (BE (t != NULL, 0))
+		    {
+		      while (BE (match_first < right_lim, 1)
+			     && !fastmap[t[(unsigned char) string[match_first]]])
+			++match_first;
+		    }
+		  else
+		    {
+		      while (BE (match_first < right_lim, 1)
+			     && !fastmap[(unsigned char) string[match_first]])
+			++match_first;
+		    }
+		  if (BE (match_first == right_lim, 0))
+		    {
+		      int ch = match_first >= length
+			       ? 0 : (unsigned char) string[match_first];
+		      if (!fastmap[t ? t[ch] : ch])
+			break;
+		    }
+		}
+	      else
+		{
+		  while (match_first >= left_lim)
+		    {
+		      int ch = match_first >= length
+			       ? 0 : (unsigned char) string[match_first];
+		      if (fastmap[t ? t[ch] : ch])
+			break;
+		      --match_first;
+		    }
+		  if (match_first < left_lim)
+		    break;
+		}
+	    }
+	  else
+	    {
+	      int ch;
 
-      /* Eliminate inappropriate one by fastmap.  */
-      if (preg->can_be_null || fastmap == NULL || fastmap[ch])
-        {
-          /* Reconstruct the buffers so that the matcher can assume that
-             the matching starts from the begining of the buffer.  */
-          err = re_string_reconstruct (&input, match_first, eflags,
-                                       preg->newline_anchor);
-          if (BE (err != REG_NOERROR, 0))
-            goto free_return;
+	      do
+		{
+		  /* In this case, we can't determine easily the current byte,
+		     since it might be a component byte of a multibyte
+		     character.  Then we use the constructed buffer
+		     instead.  */
+		  /* If MATCH_FIRST is out of the valid range, reconstruct the
+		     buffers.  */
+		  if (input.raw_mbs_idx + input.valid_len <= match_first
+		      || match_first < input.raw_mbs_idx)
+		    {
+		      err = re_string_reconstruct (&input, match_first, eflags,
+						   preg->newline_anchor);
+		      if (BE (err != REG_NOERROR, 0))
+			goto free_return;
+		    }
+		  /* If MATCH_FIRST is out of the buffer, leave it as '\0'.
+		     Note that MATCH_FIRST must not be smaller than 0.  */
+		  ch = ((match_first >= length) ? 0
+		       : re_string_byte_at (&input,
+					    match_first - input.raw_mbs_idx));
+		  if (fastmap[ch])
+		    break;
+		  match_first += incr;
+		}
+	      while (match_first >= left_lim && match_first <= right_lim);
+	      if (! fastmap[ch])
+		break;
+	    }
+	}
+
+      /* Reconstruct the buffers so that the matcher can assume that
+         the matching starts from the begining of the buffer.  */
+      err = re_string_reconstruct (&input, match_first, eflags,
+				   preg->newline_anchor);
+      if (BE (err != REG_NOERROR, 0))
+	goto free_return;
 #ifdef RE_ENABLE_I18N
-          /* Eliminate it when it is a component of a multibyte character
-             and isn't the head of a multibyte character.  */
-          if (MB_CUR_MAX == 1 || re_string_first_byte (&input, 0))
+     /* Eliminate it when it is a component of a multibyte character
+         and isn't the head of a multibyte character.  */
+      if (sb || re_string_first_byte (&input, 0))
 #endif
-            {
-              /* It seems to be appropriate one, then use the matcher.  */
-              /* We assume that the matching starts from 0.  */
-              mctx.state_log_top = mctx.nbkref_ents = mctx.max_mb_elem_len = 0;
-              match_last = check_matching (preg, &mctx, 0, fl_longest_match);
-              if (match_last != -1)
-                {
-                  if (BE (match_last == -2, 0))
-                    {
-                      err = REG_ESPACE;
-                      goto free_return;
-                    }
-                  else
-                    break; /* We found a matching.  */
-                }
-            }
-        }
+	{
+	  /* It seems to be appropriate one, then use the matcher.  */
+	  /* We assume that the matching starts from 0.  */
+	  mctx.state_log_top = mctx.nbkref_ents = mctx.max_mb_elem_len = 0;
+	  match_last = check_matching (preg, &mctx, 0, fl_longest_match);
+	  if (match_last != -1)
+	    {
+	      if (BE (match_last == -2, 0))
+		{
+		  err = REG_ESPACE;
+		  goto free_return;
+		}
+	      else
+		break; /* We found a matching.  */
+	    }
+	}
+
       /* Update counter.  */
       match_first += incr;
       if (match_first < left_lim || right_lim < match_first)
@@ -1141,7 +1185,7 @@ push_fail_stack (fs, str_idx, dests, nregs, regs, eps_via_nodes)
   err = re_node_set_init_copy (&fs->stack[num].eps_via_nodes, eps_via_nodes);
   return err;
 }
- 
+
 static int
 pop_fail_stack (fs, pidx, nregs, regs, eps_via_nodes)
      struct re_fail_stack_t *fs;
