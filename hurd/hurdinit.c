@@ -175,7 +175,6 @@ _hurd_setproc (process_t procserver)
   _hurd_port_set (&_hurd_ports[INIT_PORT_PROC], procserver);
 
   {
-    extern DEFINE_HOOK (_hurd_pgrp_changed_hook, (pid_t));
     pid_t oldpgrp = _hurd_pgrp;
 
     /* Call these functions again so they can fetch the
@@ -183,8 +182,11 @@ _hurd_setproc (process_t procserver)
     RUN_HOOK (_hurd_proc_subinit, ());
 
     if (_hurd_pgrp != oldpgrp)
-      /* Run things that want notification of a pgrp change.  */
-      RUN_HOOK (_hurd_pgrp_changed_hook, (_hurd_pgrp));
+      {
+	/* Run things that want notification of a pgrp change.  */
+	DECLARE_HOOK (_hurd_pgrp_changed_hook, (pid_t));
+	RUN_HOOK (_hurd_pgrp_changed_hook, (_hurd_pgrp));
+      }
   }
 
   return 0;
