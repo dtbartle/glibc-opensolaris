@@ -42,6 +42,7 @@
 volatile int rtmin_cnt;
 volatile pid_t rtmin_pid;
 volatile uid_t rtmin_uid;
+volatile int rtmin_code;
 volatile union sigval rtmin_sigval;
 
 static void
@@ -52,6 +53,7 @@ rtmin_handler (int sig, siginfo_t *info, void *ctx)
   ++rtmin_cnt;
   rtmin_pid = info->si_pid;
   rtmin_uid = info->si_uid;
+  rtmin_code = info->si_code;
   rtmin_sigval = info->si_value;
 }
 
@@ -120,11 +122,12 @@ thr (void *arg)
     }
   else if (rtmin_pid != getppid ()
 	   || rtmin_uid != getuid ()
+	   || rtmin_code != SI_MESGQ
 	   || rtmin_sigval.sival_int != 0xdeadbeef)
     {
-      printf ("unexpected siginfo_t fields: pid %u (%u), uid %u (%u), si_int %d (%d)\n",
+      printf ("unexpected siginfo_t fields: pid %u (%u), uid %u (%u), code %d (%d), si_int %d (%d)\n",
 	      rtmin_pid, getppid (), rtmin_uid, getuid (),
-	      rtmin_sigval.sival_int, 0xdeadbeef);
+	      rtmin_code, SI_MESGQ, rtmin_sigval.sival_int, 0xdeadbeef);
       result = 1;
     }
 
@@ -286,11 +289,12 @@ do_child (const char *name, pthread_barrier_t *b2, pthread_barrier_t *b3,
     }
   else if (rtmin_pid != getppid ()
 	   || rtmin_uid != getuid ()
+	   || rtmin_code != SI_MESGQ
 	   || rtmin_sigval.sival_ptr != &ev)
     {
-      printf ("unexpected siginfo_t fields: pid %u (%u), uid %u (%u), si_ptr %p (%p)\n",
+      printf ("unexpected siginfo_t fields: pid %u (%u), uid %u (%u), code %d (%d), si_ptr %p (%p)\n",
 	      rtmin_pid, getppid (), rtmin_uid, getuid (),
-	      rtmin_sigval.sival_ptr, &ev);
+	      rtmin_code, SI_MESGQ, rtmin_sigval.sival_ptr, &ev);
       result = 1;
     }
 
@@ -704,11 +708,12 @@ do_test (void)
     }
   else if (rtmin_pid != getpid ()
 	   || rtmin_uid != getuid ()
+	   || rtmin_code != SI_MESGQ
 	   || rtmin_sigval.sival_int != 26)
     {
-      printf ("unexpected siginfo_t fields: pid %u (%u), uid %u (%u), si_int %d (26)\n",
+      printf ("unexpected siginfo_t fields: pid %u (%u), uid %u (%u), code %d (%d), si_int %d (26)\n",
 	      rtmin_pid, getpid (), rtmin_uid, getuid (),
-	      rtmin_sigval.sival_int);
+	      rtmin_code, SI_MESGQ, rtmin_sigval.sival_int);
       result = 1;
     }
 
@@ -807,11 +812,12 @@ do_test (void)
     }
   else if (rtmin_pid != pid
 	   || rtmin_uid != getuid ()
+	   || rtmin_code != SI_MESGQ
 	   || rtmin_sigval.sival_int != 15)
     {
-      printf ("unexpected siginfo_t fields: pid %u (%u), uid %u (%u), si_int %d (15)\n",
+      printf ("unexpected siginfo_t fields: pid %u (%u), uid %u (%u), code %d (%d), si_int %d (15)\n",
 	      rtmin_pid, pid, rtmin_uid, getuid (),
-	      rtmin_sigval.sival_int);
+	      rtmin_code, SI_MESGQ, rtmin_sigval.sival_int);
       result = 1;
     }
 
