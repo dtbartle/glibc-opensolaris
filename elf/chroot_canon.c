@@ -43,7 +43,7 @@ chroot_canon (const char *chroot, const char *name)
   char *rpath, *dest, *extra_buf = NULL, *rpath_root;
   const char *start, *end, *rpath_limit;
   int num_links = 0;
-  size_t chroot_len = strlen(chroot);
+  size_t chroot_len = strlen (chroot);
 
   if (chroot_len < 1)
     {
@@ -54,8 +54,7 @@ chroot_canon (const char *chroot, const char *name)
   rpath = malloc (chroot_len + PATH_MAX);
   rpath_limit = rpath + chroot_len + PATH_MAX;
 
-  strcpy (rpath, chroot);
-  rpath_root = rpath + chroot_len - 1;
+  rpath_root = (char *) mempcpy (rpath, chroot, chroot_len) - 1;
   if (*rpath_root != '/')
     *++rpath_root = '/';
   dest = rpath_root + 1;
@@ -111,7 +110,11 @@ chroot_canon (const char *chroot, const char *name)
 	  *dest = '\0';
 
 	  if (lstat64 (rpath, &st) < 0)
-	    goto error;
+	    {
+	      if (*end == '\0')
+		goto done;
+	      goto error;
+	    }
 
 	  if (S_ISLNK (st.st_mode))
 	    {
@@ -126,7 +129,11 @@ chroot_canon (const char *chroot, const char *name)
 
 	      n = readlink (rpath, buf, PATH_MAX);
 	      if (n < 0)
-		goto error;
+		{
+		  if (*end == '\0')
+		    goto done;
+		  goto error;
+		}
 	      buf[n] = '\0';
 
 	      if (!extra_buf)
@@ -152,13 +159,14 @@ chroot_canon (const char *chroot, const char *name)
 	    }
 	}
     }
+ done:
   if (dest > rpath_root + 1 && dest[-1] == '/')
     --dest;
   *dest = '\0';
 
   return rpath;
 
-error:
+ error:
   free (rpath);
   return NULL;
 }
