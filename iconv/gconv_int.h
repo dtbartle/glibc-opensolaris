@@ -38,6 +38,28 @@ struct gconv_alias
 #define GCONV_DEFAULT_BUFSIZE	8160
 
 
+/* Structure describing one loaded shared object.  This normally are
+   objects to perform conversation but as a special case the db shared
+   object is also handled.  */
+struct gconv_loaded_object
+{
+  /* Name of the object.  */
+  const char *name;
+
+  /* Reference counter for the db functionality.  If no conversion is
+     needed we unload the db library.  */
+  int counter;
+
+  /* The handle for the shared object.  */
+  struct link_map *handle;
+
+  /* Pointer to the functions the module defines.  */
+  gconv_fct fct;
+  gconv_init_fct init_fct;
+  gconv_end_fct end_fct;
+};
+
+
 /* Description for an available conversion module.  */
 struct gconv_module
 {
@@ -102,20 +124,14 @@ extern int __gconv_close_transform (struct gconv_step *__steps,
 				    size_t __nsteps)
      internal_function;
 
-
-/* Find in the shared object associated with HANDLE for a function with
-   name NAME.  Return function pointer or NULL.  */
-extern void *__gconv_find_func (void *__handle, const char *__name)
-     internal_function;
-
 /* Load shared object named by NAME.  If already loaded increment reference
    count.  */
-extern void *__gconv_find_shlib (const char *__name)
+extern struct gconv_loaded_object *__gconv_find_shlib (const char *__name)
      internal_function;
 
 /* Release shared object.  If no further reference is available unload
    the object.  */
-extern int __gconv_release_shlib (void *__handle)
+extern int __gconv_release_shlib (struct gconv_loaded_object *__handle)
      internal_function;
 
 /* Fill STEP with information about builtin module with NAME.  */
@@ -138,10 +154,6 @@ __BUILTIN_TRANS (__gconv_transform_utf8_ucs4);
 __BUILTIN_TRANS (__gconv_transform_ucs2_ucs4);
 __BUILTIN_TRANS (__gconv_transform_ucs4_ucs2);
 # undef __BUITLIN_TRANS
-
-extern int __gconv_transform_init_rstate (struct gconv_step *__step,
-					  struct gconv_step_data *__data);
-extern void __gconv_transform_end_rstate (struct gconv_step_data *__data);
 
 #endif
 
