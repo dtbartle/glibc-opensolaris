@@ -140,6 +140,34 @@ syntax errors (@pxref{File Name Errors}), plus @code{ENOTDIR} if the
 file @var{filename} is not a directory.
 @end deftypefun
 
+@comment unistd.h
+@comment XPG
+@deftypefun int fchdir (int @var{filedes})
+This function is used to set the process's working directory to
+directory associated with the file descriptor @var{filedes}.
+
+The normal, successful return value from @code{fchdir} is @code{0}.  A
+value of @code{-1} is returned to indicate an error.  The following
+@code{errno} error conditions are defined for this function:
+
+@table @code
+@item EACCES
+Read permission is denied for the directory named by @code{dirname}.
+
+@item EBADF
+The @var{filedes} argument is not a valid file descriptor.
+
+@item ENOTDIR
+The file descriptor @var{filedes} is not associated with a directory.
+
+@item EINTR
+The function call was interrupt by a signal.
+
+@item EIO
+An I/O error occurred.
+@end table
+@end deftypefun
+
 
 @node Accessing Directories
 @section Accessing Directories
