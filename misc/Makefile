@@ -90,6 +90,7 @@ CFLAGS-mntent_r.c = -fexceptions
 CFLAGS-mntent.c = -fexceptions
 CFLAGS-fstab.c = -fexceptions
 CFLAGS-getsysstats.c = -fexceptions
+CFLAGS-getusershell.c = -fexceptions
 
 include ../Rules
 
