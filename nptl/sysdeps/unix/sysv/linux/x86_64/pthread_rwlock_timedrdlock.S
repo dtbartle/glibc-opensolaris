@@ -48,7 +48,7 @@ pthread_rwlock_timedrdlock:
 
 	movq	%rdi, %r8
 	movq	%rsi, %r9
-	movq	%r10, %r10
+	xorq	%r10, %r10
 
 	/* Get the lock.  */
 	movl	$1, %esi
@@ -97,13 +97,13 @@ pthread_rwlock_timedrdlock:
 	movq	8(%rsp), %rax
 	movq	$1000, %rdi
 	mul	%rdi		/* Milli seconds to nano seconds.  */
-	movq	(%r8), %rcx
-	movq	8(%r8), %rdi
+	movq	(%r9), %rcx
+	movq	8(%r9), %rdi
 	subq	(%rsp), %rcx
 	subq	%rax, %rdi
 	jns	15f
 	addq	$1000000000, %rdi
-	incq	%rcx
+	decq	%rcx
 15:	testq	%rcx, %rcx
 	js	16f		/* Time is already up.  */
 
@@ -111,7 +111,7 @@ pthread_rwlock_timedrdlock:
 	movq	%rcx, (%rsp)	/* Store relative timeout.  */
 	movq	%rdi, 8(%rsp)
 
-	xorq	%rsi, %rsi	/* movl $FUTEX_WAIT, %ecx */
+	xorq	%rsi, %rsi	/* movq $FUTEX_WAIT, %rsi */
 	leaq	READERS_WAKEUP(%r8), %rdi
 	movq	$SYS_futex, %rax
 	syscall
