@@ -6333,8 +6333,13 @@ byte_re_match_2_internal (bufp, string1, size1,string2, size2, pos,
 		  		      & ~(uintptr_t)(__alignof__(wctype_t) - 1);
 		wctype = *((wctype_t*)alignedp);
 		workp += CHAR_CLASS_SIZE;
+# ifdef _LIBC
+		if (__iswctype((wint_t)c, wctype))
+		  goto char_set_matched;
+# else
 		if (iswctype((wint_t)c, wctype))
 		  goto char_set_matched;
+# endif
 	      }
 
             /* match with collating_symbol?  */
