@@ -70,7 +70,7 @@ if test -n "$minimum_kernel"; then
 else
   case "$machine" in
     sh*)
-      minimum_kernel = 2.3.99
+      minimum_kernel=2.3.99
       ;;
     *)
       ;;
