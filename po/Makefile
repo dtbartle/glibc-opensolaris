@@ -79,5 +79,7 @@ ifneq (,$(pofiles))
 
 linguas: $(pofiles:$(podir)/%=%)
 	test ! -d CVS || cvs commit -m'Copied from $(podir)' $^
+linguas.mo: $(pofiles:$(podir)/%.po=%.mo)
+	test ! -d CVS || cvs commit -m'Compiled translations' $^
 
 endif
