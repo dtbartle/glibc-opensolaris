@@ -99,10 +99,12 @@
 #  ifdef PIC
 #   define CENABLE	pushl %ebx; \
 			call __i686.get_pc_thunk.bx; \
+			addl     $_GLOBAL_OFFSET_TABLE_, %ebx; \
 			call __librt_enable_asynccancel@PLT; \
 			popl %ebx;
 #   define CDISABLE	pushl %ebx; \
 			call __i686.get_pc_thunk.bx; \
+			addl     $_GLOBAL_OFFSET_TABLE_, %ebx; \
 			call __librt_disable_asynccancel@PLT; \
 			popl %ebx;
 #  else
