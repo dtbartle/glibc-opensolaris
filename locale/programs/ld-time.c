@@ -253,7 +253,7 @@ time_finish (struct localedef_t *locale)
 		       || (time->era_entries[idx].start_date[1] == 2
 			   && time->era_entries[idx].start_date[2] == 29
 			   && !__isleap (time->era_entries[idx].start_date[0])))
-		      && !be_quiet)
+		       && !be_quiet)
 			  error (0, 0, _("starting date is illegal in"
 					 " string %d in `era' field in"
 					 " category `%s'"),
@@ -326,7 +326,7 @@ time_finish (struct localedef_t *locale)
 		       || (time->era_entries[idx].stop_date[1] == 2
 			   && time->era_entries[idx].stop_date[2] == 29
 			   && !__isleap (time->era_entries[idx].stop_date[0])))
-		      && !be_quiet)
+		       && !be_quiet)
 			  error (0, 0, _("stopping date is illegal in"
 					 " string %d in `era' field in"
 					 " category `%s'"),

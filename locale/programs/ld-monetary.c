@@ -1,21 +1,21 @@
 /* Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.
+This file is part of the GNU C Library.
+Contributed by Ulrich Drepper, <drepper@gnu.ai.mit.edu>.
 
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public License as
-   published by the Free Software Foundation; either version 2 of the
-   License, or (at your option) any later version.
+The GNU C Library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version.
 
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+The GNU C Library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Library General Public License for more details.
 
-   You should have received a copy of the GNU Library General Public
-   License along with the GNU C Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
+You should have received a copy of the GNU Library General Public
+License along with the GNU C Library; see the file COPYING.LIB.  If
+not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -135,7 +135,7 @@ value of field `int_curr_symbol' in category `LC_MONETARY' has wrong length"));
       else if (bsearch (monetary->int_curr_symbol, valid_int_curr,
 			NR_VALID_INT_CURR, sizeof (const char *),
 			(comparison_fn_t) curr_strcmp) == NULL
-	       && !be_quiet)
+	        && !be_quiet)
 	error (0, 0, _("\
 value of field `int_curr_symbol' in category `LC_MONETARY' does \
 not correspond to a valid name in ISO 4217"));
@@ -160,7 +160,7 @@ value for field `%s' in category `%s' must not be the empty string"),
   if (monetary->cat == -2 && !be_quiet)					      \
     error (0, 0, _("field `%s' in category `%s' not defined"),		      \
 	   #cat, "LC_MONETARY");					      \
-  else if ((monetary->cat < min || monetary->cat > max) && !be_quiet)	      \
+  else if ((monetary->cat < min || monetary->cat > max)	&& !be_quiet)	      \
     error (0, 0, _("\
 value for field `%s' in category `%s' must be in range %d...%d"),	      \
 	   #cat, "LC_MONETARY", min, max)
