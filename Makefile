@@ -344,7 +344,7 @@ FAQ: gen-FAQ.pl FAQ.in
 	$(PERL) $^ > $@.new && rm -f $@ && mv $@.new $@ && chmod a-w $@
 ifeq ($(with-cvs),yes)
 	test ! -d CVS || cvs $(CVSOPTS) commit -m'Regenerated:  $(PERL) $^' $@
-endef
+endif
 FORCE:
 
 rpm/%: subdir_distinfo
