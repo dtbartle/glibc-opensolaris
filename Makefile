@@ -78,47 +78,28 @@ subdirs	:= $(filter mach,$(subdirs)) $(filter hurd,$(subdirs)) \
 					      data headers others)
 
 headers := features.h errno.h sys/errno.h errnos.h limits.h $(stddef.h)
+aux	 = sysdep $(libc-init) version
 
 echo-headers: subdir_echo-headers
-
-ifeq ($(gnu-ld),yes)
-# We're using the GNU linker, so we use the set-element init function.
-+init := set-init
-else
-# We're not using the GNU linker, so we use the munch init function.
-+init := munch-init
 
+# What to install.
+install-others = $(includedir)/stubs.h
+
+ifeq (yes,$(gnu-ld))
+libc-init = set-init
+else
+libc-init = munch-init
 $(objpfx)munch-init.c: munch.awk munch-tmpl.c $(+subdir_inits)
 	awk -f $< subdirs='$(+init_subdirs)' $(word 2,$^) > $@-t
 	mv -f $@-t $@
 generated := $(generated) munch-init.c
 endif
 
-aux	:= sysdep $(+init) version start
-
-
-# What to install.
-# SCO 3.2v4 uses crt1.o.  Some other system uses Mcrt1.o.
-# They are created below (containing no data or code).
-install-lib = crt0.o crt1.o Mcrt1.o	# libc.a is done by Makerules.
-install-others = $(includedir)/stubs.h
-
 
 include Makerules
 
 # Install from subdirectories too.
 install: subdir_install
-
-# `crt0' is the traditional name for the startup code,
-# so that's what we install start.o as.
-$(objpfx)crt0.o: $(objpfx)start.o
-	-rm -f $@
-	ln $< $@
-
-$(objpfx)Mcrt1.o $(objpfx)crt1.o:
-	cp /dev/null $(@:.o=.c)
-	$(COMPILE.c) $(@:.o=.c) $(OUTPUT_OPTION)
-	rm -f $(@:.o=.c)
 
 lib-noranlib $(libc.a)(__.SYMDEF): subdir_lib
 
