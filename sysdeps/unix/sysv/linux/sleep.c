@@ -1,5 +1,7 @@
-/* Copyright (C) 1996 Free Software Foundation, Inc.
+/* sleep - Implementation of the POSIX sleep function using nanosleep.
+Copyright (C) 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
+Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
 The GNU C Library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public License as
@@ -16,17 +18,19 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
-#include <signal.h>
-#include <stddef.h>
-#include <unistd.h>
+#include <time.h>
 
-extern int __syscall_sigsuspend (int, unsigned long, unsigned long);
-
-/* Change the set of blocked signals to SET,
-   wait until a signal arrives, and restore the set of blocked signals.  */
-int
-sigsuspend (set)
-     const sigset_t *set;
+unsigned int
+sleep (unsigned int seconds)
 {
-  return __syscall_sigsuspend (0, 0, *set);
+  struct timespec ts = { tv_sec: (long int) seconds, tv_nsec: 0 };
+  unsigned int result;
+
+  if (nanosleep (&ts, &ts) == 0)
+    result = 0;
+  else
+    /* Round remaining time.  */
+    result = (unsigned int) ts.tv_sec + (ts.tv_nsec >= 500000000L);
+
+  return result;
 }
