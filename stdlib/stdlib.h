@@ -172,7 +172,7 @@ extern __ptr_t valloc __P ((size_t __size));
 
 
 /* Abort execution and generate a core-dump.  */
-extern __NORETURN void abort __P ((void));
+extern void abort __P ((void)) __attribute__ ((__noreturn__));
 
 
 /* Register a function to be called when `exit' is called.  */
@@ -188,7 +188,7 @@ extern int on_exit __P ((void (*__func) (int __status, __ptr_t __arg),
 /* Call all functions registered with `atexit' and `on_exit',
    in the reverse of the order in which they were registered
    perform stdio cleanup, and terminate program execution with STATUS.  */
-extern __NORETURN void exit __P ((int __status));
+extern void exit __P ((int __status)) __attribute__ ((__noreturn__));
 
 
 /* Return the value of envariable NAME, or NULL if it doesn't exist.  */
