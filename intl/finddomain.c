@@ -95,7 +95,7 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
       /* We know something about this locale.  */
       int cnt;
 
-      if (retval->decided == 0)
+      if (retval->decided <= 0)
 	_nl_load_domain (retval, domainbinding);
 
       if (retval->data != NULL)
@@ -103,7 +103,7 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
 
       for (cnt = 0; retval->successor[cnt] != NULL; ++cnt)
 	{
-	  if (retval->successor[cnt]->decided == 0)
+	  if (retval->successor[cnt]->decided <= 0)
 	    _nl_load_domain (retval->successor[cnt], domainbinding);
 
 	  if (retval->successor[cnt]->data != NULL)
@@ -155,14 +155,14 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
     /* This means we are out of core.  */
     return NULL;
 
-  if (retval->decided == 0)
+  if (retval->decided <= 0)
     _nl_load_domain (retval, domainbinding);
   if (retval->data == NULL)
     {
       int cnt;
       for (cnt = 0; retval->successor[cnt] != NULL; ++cnt)
 	{
-	  if (retval->successor[cnt]->decided == 0)
+	  if (retval->successor[cnt]->decided <= 0)
 	    _nl_load_domain (retval->successor[cnt], domainbinding);
 	  if (retval->successor[cnt]->data != NULL)
 	    break;
