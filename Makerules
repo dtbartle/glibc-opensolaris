@@ -397,21 +397,18 @@ endif
 
 endif
 
-# Rules to update the __.SYMDEF member with ranlib.
-# To consolidate, each flavor library's __.SYMDEF member
-# depends on the imaginary intermediate file `symdef.SUFFIX',
-# where SUFFIX is that flavor's object suffix; then a pattern rule
-# "remakes" symdef.% depending on all the libc.a(foo.%) files in $(objects).
-$(common-objpfx)$(patsubst %,$(libtype.o),c)(__.SYMDEF): symdef.o
-$(common-objpfx)$(patsubst %,$(libtype.so),c)(__.SYMDEF): symdef.so
-$(common-objpfx)$(patsubst %,$(libtype.po),c)(__.SYMDEF): symdef.po
-$(common-objpfx)$(patsubst %,$(libtype.go),c)(__.SYMDEF): symdef.go
-symdef.%: $(foreach o,$(object-suffixes),\
-		    $(common-objpfx)$(patsubst %,$(libtype$o),c)(\
-	  $(patsubst $(objpfx)%.o,%.%,$(objects)))) \
-	  $(filter subdir_lib,$(firstword $(subdir) subdir_lib))
-# The last line above makes it also depend on subdir_lib for the parent.
-	$(RANLIB) $(common-objpfx)$(patsubst %,$(libtype.$*),c)
+# Rules to update the $(ar-symtab-name) member with ranlib,
+# one for each object flavor.
+define o-iterator-doit
+$(common-objpfx)$(patsubst %,$(libtype$o),c)($(ar-symtab-name)): \
+	  $(common-objpfx)$(patsubst %,$(libtype$o),c)(\
+	  $(patsubst $(objpfx)%.o,%$o,$(objects))) \
+	  $(filter subdir_lib,$(firstword $(subdir) subdir_lib)); \
+	$$(RANLIB) $$(common-objpfx)$$(patsubst %,$$(libtype$o),c)
+endef
+object-suffixes-left = $(object-suffixes)
+include $(o-iterator)
+
 
 # This makes all the object files.
 .PHONY: objects objs
