@@ -1,5 +1,5 @@
 /* Tables for conversion from and to IBM922.
-   Copyright (C) 2000 Free Software Foundation, Inc.
+   Copyright (C) 2000, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Masahide Washizawa <washi@jp.ibm.com>, 2000.
 
@@ -88,36 +88,35 @@ static const uint32_t to_ucs4[256] =
 
 static const struct gap from_idx[] =
 {
-  { start: 0x0000, end: 0x00ff, idx:     0 },
-  { start: 0x0160, end: 0x0161, idx:   -96 },
-  { start: 0x017d, end: 0x017e, idx:  -123 },
-  { start: 0x2017, end: 0x2017, idx: -7955 },
-  { start: 0x2022, end: 0x2022, idx: -7965 },
-  { start: 0x203c, end: 0x203e, idx: -7990 },
-  { start: 0x2190, end: 0x2195, idx: -8327 },
-  { start: 0x21a8, end: 0x21a8, idx: -8345 },
-  { start: 0x221f, end: 0x221f, idx: -8463 },
-  { start: 0x2264, end: 0x2265, idx: -8531 },
-  { start: 0x2500, end: 0x2502, idx: -9197 },
-  { start: 0x250c, end: 0x251c, idx: -9206 },
-  { start: 0x2524, end: 0x2524, idx: -9213 },
-  { start: 0x252c, end: 0x252c, idx: -9220 },
-  { start: 0x2534, end: 0x2534, idx: -9227 },
-  { start: 0x253c, end: 0x253c, idx: -9234 },
-  { start: 0x2550, end: 0x256c, idx: -9253 },
-  { start: 0x2580, end: 0x2588, idx: -9272 },
-  { start: 0x2591, end: 0x2593, idx: -9280 },
-  { start: 0x25a0, end: 0x25a0, idx: -9292 },
-  { start: 0x25ac, end: 0x25b2, idx: -9303 },
-  { start: 0x25ba, end: 0x25bc, idx: -9310 },
-  { start: 0x25c4, end: 0x25c4, idx: -9317 },
-  { start: 0x25cb, end: 0x25cb, idx: -9323 },
-  { start: 0x25d8, end: 0x25d9, idx: -9335 },
-  { start: 0x263a, end: 0x2642, idx: -9431 },
-  { start: 0x2660, end: 0x266c, idx: -9460 },
-  { start: 0xff01, end: 0xff5e, idx: -64904 },
-  { start: 0xffe8, end: 0xffee, idx: -65041 },
-  { start: 0xffff, end: 0xffff, idx:     0 }
+  { start: 0x0000, end: 0x00ff, idx:      0 },
+  { start: 0x0160, end: 0x0161, idx:    -96 },
+  { start: 0x017d, end: 0x017e, idx:   -123 },
+  { start: 0x2017, end: 0x2017, idx:  -7955 },
+  { start: 0x2022, end: 0x2022, idx:  -7965 },
+  { start: 0x203c, end: 0x203e, idx:  -7990 },
+  { start: 0x2190, end: 0x2195, idx:  -8327 },
+  { start: 0x21a8, end: 0x21a8, idx:  -8345 },
+  { start: 0x221f, end: 0x221f, idx:  -8463 },
+  { start: 0x2264, end: 0x2265, idx:  -8531 },
+  { start: 0x2500, end: 0x2502, idx:  -9197 },
+  { start: 0x250c, end: 0x251c, idx:  -9206 },
+  { start: 0x2524, end: 0x2524, idx:  -9213 },
+  { start: 0x252c, end: 0x252c, idx:  -9220 },
+  { start: 0x2534, end: 0x2534, idx:  -9227 },
+  { start: 0x253c, end: 0x253c, idx:  -9234 },
+  { start: 0x2550, end: 0x256c, idx:  -9253 },
+  { start: 0x2580, end: 0x2588, idx:  -9272 },
+  { start: 0x2591, end: 0x2593, idx:  -9280 },
+  { start: 0x25a0, end: 0x25a0, idx:  -9292 },
+  { start: 0x25ac, end: 0x25b2, idx:  -9303 },
+  { start: 0x25ba, end: 0x25bc, idx:  -9310 },
+  { start: 0x25c4, end: 0x25c4, idx:  -9317 },
+  { start: 0x25cb, end: 0x25cb, idx:  -9323 },
+  { start: 0x25d8, end: 0x25d9, idx:  -9335 },
+  { start: 0x263a, end: 0x2642, idx:  -9431 },
+  { start: 0x2660, end: 0x266c, idx:  -9460 },
+  { start: 0xffe8, end: 0xffee, idx: -65135 },
+  { start: 0xffff, end: 0xffff, idx:      0 }
 };
 
 static const char from_ucs4[] =
@@ -169,17 +168,5 @@ static const char from_ucs4[] =
   '\x09', '\x08', '\x0a', '\x01', '\x02', '\x0f', '\x00', '\x00',
   '\x00', '\x0c', '\x00', '\x0b', '\x06', '\x00', '\x00', '\x05',
   '\x00', '\x03', '\x04', '\x00', '\x00', '\x00', '\x0d', '\x00',
-  '\x0e', '\x21', '\x22', '\x23', '\x24', '\x25', '\x26', '\x27',
-  '\x28', '\x29', '\x2a', '\x2b', '\x2c', '\x2d', '\x2e', '\x2f',
-  '\x30', '\x31', '\x32', '\x33', '\x34', '\x35', '\x36', '\x37',
-  '\x38', '\x39', '\x3a', '\x3b', '\x3c', '\x3d', '\x3e', '\x3f',
-  '\x40', '\x41', '\x42', '\x43', '\x44', '\x45', '\x46', '\x47',
-  '\x48', '\x49', '\x4a', '\x4b', '\x4c', '\x4d', '\x4e', '\x4f',
-  '\x50', '\x51', '\x52', '\x53', '\x54', '\x55', '\x56', '\x57',
-  '\x58', '\x59', '\x5a', '\x5b', '\x5c', '\x5d', '\x5e', '\x5f',
-  '\x60', '\x61', '\x62', '\x63', '\x64', '\x65', '\x66', '\x67',
-  '\x68', '\x69', '\x6a', '\x6b', '\x6c', '\x6d', '\x6e', '\x6f',
-  '\x70', '\x71', '\x72', '\x73', '\x74', '\x75', '\x76', '\x77',
-  '\x78', '\x79', '\x7a', '\x7b', '\x7c', '\x7d', '\x7e', '\x83',
-  '\x1b', '\x18', '\x1a', '\x19', '\x96', '\x09',
+  '\x0e', '\x83', '\x1b', '\x18', '\x1a', '\x19', '\x96', '\x09'
 };
