@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -21,7 +21,6 @@ Cambridge, MA 02139, USA.  */
 #include <stddef.h>
 #include <termios.h>
 #include <unistd.h>
-
 #include "bsdtty.h"
 #include <sys/file.h>
 
@@ -30,6 +29,7 @@ int
 DEFUN(tcflush, (fd, queue_selector), int fd AND int queue_selector)
 {
   int arg;
+
   switch (queue_selector)
     {
     case TCIFLUSH:
@@ -39,12 +39,12 @@ DEFUN(tcflush, (fd, queue_selector), int fd AND int queue_selector)
       arg = FWRITE;
       break;
     case TCIOFLUSH:
-      arg = 0;
+      arg = FREAD | FWRITE;
       break;
     default:
       errno = EINVAL;
       return -1;
     }
 
-  return __ioctl(fd, TIOCFLUSH, (PTR) &arg);
+  return __ioctl (fd, TIOCFLUSH, (PTR) &arg);
 }
