@@ -83,7 +83,7 @@ __BEGIN_DECLS
 # undef	_Mdouble_
 # undef	__MATH_PRECNAME
 
-# if __STDC__ - 0 || __GNUC__ - 0 && !defined __NO_LONG_DOUBLE_MATH
+# if (__STDC__ - 0 || __GNUC__ - 0) && !defined __NO_LONG_DOUBLE_MATH
 /* Include the file of declarations again, this time using `long double'
    instead of `double' and appending l to each function name.  */
 
