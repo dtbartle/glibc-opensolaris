@@ -153,7 +153,7 @@ __get_nprocs ()
       if (fp != NULL)
 	{
 	  /* No threads use this stream.  */
-	  __fsetlocking (tf, FSETLOCKING_BYCALLER);
+	  __fsetlocking (fp, FSETLOCKING_BYCALLER);
 	  GET_NPROCS_PARSER (fp, buffer, result);
 	  fclose (fp);
 	}
@@ -190,7 +190,7 @@ __get_nprocs_conf ()
       if (fp != NULL)
 	{
 	  /* No threads use this stream.  */
-	  __fsetlocking (tf, FSETLOCKING_BYCALLER);
+	  __fsetlocking (fp, FSETLOCKING_BYCALLER);
 	  GET_NPROCS_CONF_PARSER (fp, buffer, result);
 	  fclose (fp);
 	}
@@ -230,7 +230,7 @@ phys_pages_info (const char *format)
       if (fp != NULL)
 	{
 	  /* No threads use this stream.  */
-	  __fsetlocking (tf, FSETLOCKING_BYCALLER);
+	  __fsetlocking (fp, FSETLOCKING_BYCALLER);
 
 	  result = 0;
 	  /* Read all lines and count the lines starting with the
