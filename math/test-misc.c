@@ -132,7 +132,7 @@ main (void)
     f = nextafterf (f, FLT_MIN);
     if (fpclassify (f) != FP_NORMAL)
       {
-	printf ("fpclassify (FLT_MIN-epsilon+epsilong) failed: %d\n",
+	printf ("fpclassify (FLT_MIN-epsilon+epsilon) failed: %d\n",
 		fpclassify (f));
 	result = 1;
       }
@@ -152,7 +152,7 @@ main (void)
     f = nextafterf (f, -FLT_MIN);
     if (fpclassify (f) != FP_NORMAL)
       {
-	printf ("fpclassify (-FLT_MIN-epsilon+epsilong) failed: %d\n",
+	printf ("fpclassify (-FLT_MIN-epsilon+epsilon) failed: %d\n",
 		fpclassify (f));
 	result = 1;
       }
