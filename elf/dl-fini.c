@@ -32,7 +32,7 @@ _dl_fini (void)
 	  {
 	    /* When debugging print a message first.  */
 	    if (_dl_debug_impcalls)
-	      _dl_debug_message ("\n\tcalling fini: ",
+	      _dl_debug_message (1, "\ncalling fini: ",
 				 l->l_name[0] ? l->l_name : _dl_argv[0],
 				 "\n\n", NULL);
 
