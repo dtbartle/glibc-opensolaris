@@ -355,43 +355,43 @@ versioned_symbol (libpthread, __pthread_cond_wait, pthread_cond_wait,
 #ifdef SHARED
 	.uleb128 0				# No augmentation data.
 #endif
-	.byte	0x40+.Lpush_edi-.LSTARTCODE	# DW_CFA_advance_loc4
+	.byte	0x40+.Lpush_edi-.LSTARTCODE	# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 8
 	.byte	0x87				# DW_CFA_offset %edi
 	.uleb128 2
-	.byte	0x40+.Lpush_esi-.Lpush_edi	# DW_CFA_advance_loc4
+	.byte	0x40+.Lpush_esi-.Lpush_edi	# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 12
 	.byte	0x86				# DW_CFA_offset %esi
 	.uleb128 3
-	.byte	0x40+.Lpush_ebx-.Lpush_esi	# DW_CFA_advance_loc4
+	.byte	0x40+.Lpush_ebx-.Lpush_esi	# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 16
 	.byte	0x83				# DW_CFA_offset %ebx
 	.uleb128 4
-	.byte	0x40+.Lpush4-.Lpush_ebx		# DW_CFA_advance_loc4
+	.byte	0x40+.Lpush4-.Lpush_ebx		# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 20
-	.byte	0x40+.Lsubl-.Lpush4		# DW_CFA_advance_loc4
+	.byte	0x40+.Lsubl-.Lpush4		# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 52
-	.byte	0x40+.Laddl-.Lsubl		# DW_CFA_advance_loc4
+	.byte	0x40+.Laddl-.Lsubl		# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 16
-	.byte	0x40+ .Lpop_ebx-.Laddl		# DW_CFA_advance_loc4
+	.byte	0x40+ .Lpop_ebx-.Laddl		# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 12
 	.byte	0xc3				# DW_CFA_restore %ebx
-	.byte	0x40+.Lpop_esi-.Lpop_ebx	# DW_CFA_advance_loc4
+	.byte	0x40+.Lpop_esi-.Lpop_ebx	# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 8
 	.byte	0xc6				# DW_CFA_restore %esi
-	.byte	0x40+.Lpop_edi-.Lpop_esi	# DW_CFA_advance_loc4
+	.byte	0x40+.Lpop_edi-.Lpop_esi	# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 4
 	.byte	0xc7				# DW_CFA_restore %edi
-	.byte	0x40+.LSbl1-.Lpop_edi		# DW_CFA_advance_loc4
+	.byte	0x40+.LSbl1-.Lpop_edi		# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 16
 	.byte	0x87				# DW_CFA_offset %edi
@@ -400,10 +400,10 @@ versioned_symbol (libpthread, __pthread_cond_wait, pthread_cond_wait,
 	.uleb128 3
 	.byte	0x83				# DW_CFA_offset %ebx
 	.uleb128 4
-	.byte	0x40+.LSbl2-.LSbl1		# DW_CFA_advance_loc4
+	.byte	0x40+.LSbl2-.LSbl1		# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 52
-	.byte	0x40+.LSbl3-.LSbl2		# DW_CFA_advance_loc4
+	.byte	0x40+.LSbl3-.LSbl2		# DW_CFA_advance_loc+N
 	.byte	14				# DW_CFA_def_cfa_offset
 	.uleb128 20
 	.align	4
