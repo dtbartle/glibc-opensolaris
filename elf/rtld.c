@@ -140,7 +140,7 @@ DL_SYSINFO_IMPLEMENTATION
 /* Before ld.so is relocated we must not access variables which need
    relocations.  This means variables which are exported.  Variables
    declared as static are fine.  If we can mark a variable hidden this
-   is fine, too.  The latter is impotant here.  We can avoid setting
+   is fine, too.  The latter is important here.  We can avoid setting
    up a temporary link map for ld.so if we can mark _rtld_global as
    hidden.  */
 #if defined PI_STATIC_AND_HIDDEN && defined HAVE_HIDDEN \
