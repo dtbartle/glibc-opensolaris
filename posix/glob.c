@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public License as
@@ -263,10 +263,10 @@ glob (pattern, flags, errfunc, pglob)
   if (filename[0] == '\0' && dirlen > 1)
     /* "pattern/".  Expand "pattern", appending slashes.  */
     {
-      int ret = glob (dirname, flags | GLOB_MARK, errfunc, pglob);
-      if (ret == 0)
+      int val = glob (dirname, flags | GLOB_MARK, errfunc, pglob);
+      if (val == 0)
 	pglob->gl_flags = (pglob->gl_flags & ~GLOB_MARK) | (flags & GLOB_MARK);
-      return ret;
+      return val;
     }
 
   if (!(flags & GLOB_APPEND))
