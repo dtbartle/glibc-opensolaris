@@ -27,4 +27,22 @@ Boston, MA 02111-1307, USA.  */
 /* Returns information on overall system statistics.  */
 extern int sysinfo __P ((struct sysinfo *__info));
 
+
+/* Return number of configured processors.  */
+extern int __get_nproc_conf __P ((void));
+extern int get_nproc_conf __P ((void));
+
+/* Return number of available processors.  */
+extern int __get_nproc __P ((void));
+extern int get_nproc __P ((void));
+
+
+/* Return number of physical pages of memory in the system.  */
+extern int __get_phys_pages __P ((void));
+extern int get_phys_pages __P ((void));
+
+/* Return number of available physical pages of memory in the system.  */
+extern int __get_avphys_pages __P ((void));
+extern int get_avphys_pages __P ((void));
+
 #endif	/* sys/sysinfo.h */
