@@ -234,6 +234,12 @@
 # define __ASSUME_NEW_PRCTL_SYSCALL		1
 #endif
 
+/* Starting with 2.4.21 the PowerPC32 clone syscall works as expected.  */
+#if __LINUX_KERNEL_VERSION >= (132096+21) && defined __powerpc__ \
+    && !defined __powerpc64__
+# define __ASSUME_FIXED_CLONE_SYSCALL		1
+#endif
+
 /* Starting with 2.4.21 PowerPC64 implements the new rt_sigreturn syscall.
    The new rt_sigreturn takes an ucontext pointer allowing rt_sigreturn
    to be used in the set/swapcontext implementation.  */
