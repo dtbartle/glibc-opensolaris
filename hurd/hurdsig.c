@@ -18,7 +18,6 @@ Cambridge, MA 02139, USA.  */
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <gnu-stabs.h>
 #include <hurd.h>
 #include <hurd/signal.h>
 #include <cthreads.h>		/* For `struct mutex'.  */
@@ -1016,7 +1015,7 @@ reauth_proc (mach_port_t new)
 
   (void) &reauth_proc;		/* Silence compiler warning.  */
 }
-text_set_element (__hurd_reauth_hook, reauth_proc);
+text_set_element (_hurd_reauth_hook, reauth_proc);
 
 /* Like `getenv', but safe for the signal thread to run.
    If the environment is trashed, this will just return NULL.  */
