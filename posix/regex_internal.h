@@ -142,24 +142,18 @@ typedef enum
 #ifdef RE_ENABLE_I18N
 typedef struct
 {
-  /* If this character set is the non-matching list.  */
-  unsigned int non_match : 1;
-
   /* Multibyte characters.  */
   wchar_t *mbchars;
-  int nmbchars;
 
   /* Collating symbols.  */
 # ifdef _LIBC
   int32_t *coll_syms;
 # endif
-  int ncoll_syms;
 
   /* Equivalence classes. */
 # ifdef _LIBC
   int32_t *equiv_classes;
 # endif
-  int nequiv_classes;
 
   /* Range expressions. */
 # ifdef _LIBC
@@ -169,17 +163,32 @@ typedef struct
   wchar_t *range_starts;
   wchar_t *range_ends;
 # endif /* not _LIBC */
-  int nranges;
 
   /* Character classes. */
   wctype_t *char_classes;
+
+  /* If this character set is the non-matching list.  */
+  unsigned int non_match : 1;
+
+  /* # of multibyte characters.  */
+  int nmbchars;
+
+  /* # of collating symbols.  */
+  int ncoll_syms;
+
+  /* # of equivalence classes. */
+  int nequiv_classes;
+
+  /* # of range expressions. */
+  int nranges;
+
+  /* # of character classes. */
   int nchar_classes;
 } re_charset_t;
 #endif /* RE_ENABLE_I18N */
 
 typedef struct
 {
-  re_token_type_t type;
   union
   {
     unsigned char c;		/* for CHARACTER */
@@ -195,6 +204,11 @@ typedef struct
       re_node_set *bkref_eclosure;
     } *ctx_info;
   } opr;
+#if __GNUC__ >= 2
+  re_token_type_t type : 8;
+#else
+  re_token_type_t type;
+#endif
   unsigned int constraint : 10;	/* context constraint */
   unsigned int duplicated : 1;
 #ifdef RE_ENABLE_I18N
@@ -215,9 +229,6 @@ struct re_string_t
   /* Indicate the raw buffer which is the original string passed as an
      argument of regexec(), re_search(), etc..  */
   const unsigned char *raw_mbs;
-  /* Index in RAW_MBS.  Each character mbs[i] corresponds to
-     raw_mbs[raw_mbs_idx + i].  */
-  int raw_mbs_idx;
   /* Store the multibyte string.  In case of "case insensitive mode" like
      REG_ICASE, upper cases of the string are stored, otherwise MBS points
      the same address that RAW_MBS points.  */
@@ -231,6 +242,9 @@ struct re_string_t
   wint_t *wcs;
   mbstate_t cur_state;
 #endif
+  /* Index in RAW_MBS.  Each character mbs[i] corresponds to
+     raw_mbs[raw_mbs_idx + i].  */
+  int raw_mbs_idx;
   /* The length of the valid characters in the buffers.  */
   int valid_len;
   /* The length of the buffers MBS, MBS_CASE, and WCS.  */
