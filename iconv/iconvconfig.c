@@ -1005,6 +1005,7 @@ write_output (void)
   size_t total;
   char tmpfname[prefix_len + sizeof (GCONV_MODULES_CACHE)
 		+ strlen (".XXXXXX")];
+  char finalname[prefix_len + sizeof (GCONV_MODULES_CACHE)];
 
   /* Function to insert the names.  */
   static void name_insert (const void *nodep, VISIT value, int level)
@@ -1037,6 +1038,8 @@ write_output (void)
   fd = mkstemp (tmpfname);
   if (fd == -1)
     return 1;
+
+  strcpy (mempcpy (finalname, prefix, prefix_len), GCONV_MODULES_CACHE);
 
   /* Create the string table.  */
   string_table = strtabfinalize (strtab, &string_table_size);
@@ -1190,7 +1193,7 @@ write_output (void)
       /* The file was created with mode 0600.  Make it world-readable.  */
       || fchmod (fd, 0644) != 0
       /* Rename the file, possibly replacing an old one.  */
-      || rename (tmpfname, GCONV_MODULES_CACHE) != 0)
+      || rename (tmpfname, finalname) != 0)
     {
       int save_errno = errno;
       close (fd);
