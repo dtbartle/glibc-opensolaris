@@ -225,7 +225,11 @@ error (status, errnum, message, va_alist)
 
   fflush (stdout);
 #ifdef _LIBC
-  flockfile (stderr);
+# ifdef USE_IN_LIBIO
+  _IO_flockfile (stderr);
+# else
+  __flockfile (stderr);
+# endif
 #endif
   if (error_print_progname)
     (*error_print_progname) ();
@@ -242,9 +246,6 @@ error (status, errnum, message, va_alist)
 #ifdef VA_START
   VA_START (args, message);
   error_tail (status, errnum, message, args);
-# ifdef _LIBC
-  funlockfile (stderr);
-# endif
 #else
   fprintf (stderr, message, a1, a2, a3, a4, a5, a6, a7, a8);
 
@@ -255,6 +256,14 @@ error (status, errnum, message, va_alist)
   fflush (stderr);
   if (status)
     exit (status);
+#endif
+
+#ifdef _LIBC
+# ifdef USE_IN_LIBIO
+  _IO_funlockfile (stderr);
+# else
+  __funlockfile (stderr);
+# endif
 #endif
 }
 
@@ -297,7 +306,11 @@ error_at_line (status, errnum, file_name, line_number, message, va_alist)
 
   fflush (stdout);
 #ifdef _LIBC
-  flockfile (stderr);
+# ifdef USE_IN_LIBIO
+  _IO_flockfile (stderr);
+# else
+  __flockfile (stderr);
+# endif
 #endif
   if (error_print_progname)
     (*error_print_progname) ();
@@ -324,9 +337,6 @@ error_at_line (status, errnum, file_name, line_number, message, va_alist)
 #ifdef VA_START
   VA_START (args, message);
   error_tail (status, errnum, message, args);
-# ifdef _LIBC
-  funlockfile (stderr);
-# endif
 #else
   fprintf (stderr, message, a1, a2, a3, a4, a5, a6, a7, a8);
 
@@ -337,6 +347,14 @@ error_at_line (status, errnum, file_name, line_number, message, va_alist)
   fflush (stderr);
   if (status)
     exit (status);
+#endif
+
+#ifdef _LIBC
+# ifdef USE_IN_LIBIO
+  _IO_funlockfile (stderr);
+# else
+  __funlockfile (stderr);
+# endif
 #endif
 }
 
