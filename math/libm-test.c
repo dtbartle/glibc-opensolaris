@@ -1223,6 +1223,101 @@ pow_test (void)
 
 
 static void
+fdim_test (void)
+{
+  check ("fdim (+0, +0) = +0", FUNC(fdim) (0, 0), 0);
+  check ("fdim (9, 0) = 9", FUNC(fdim) (9, 0), 9);
+  check ("fdim (0, 9) = 0", FUNC(fdim) (0, 9), 0);
+  check ("fdim (-9, 0) = 9", FUNC(fdim) (-9, 0), 0);
+  check ("fdim (0, -9) = 9", FUNC(fdim) (0, -9), 9);
+
+  check_isinfp ("fdim (+inf, 9) = +inf", FUNC(fdim) (plus_infty, 9));
+  check_isinfp ("fdim (+inf, -9) = +inf", FUNC(fdim) (plus_infty, -9));
+  check ("fdim (-inf, 9) = 0", FUNC(fdim) (minus_infty, 9), 0);
+  check ("fdim (-inf, -9) = 0", FUNC(fdim) (minus_infty, -9), 0);
+  check_isinfp ("fdim (+9, -inf) = +inf", FUNC(fdim) (9, minus_infty));
+  check_isinfp ("fdim (-9, -inf) = +inf", FUNC(fdim) (-9, minus_infty));
+  check ("fdim (9, inf) = 0", FUNC(fdim) (9, plus_infty), 0);
+  check ("fdim (-9, inf) = 0", FUNC(fdim) (-9, plus_infty), 0);
+
+  check_isnan ("fdim (0, NaN) = NaN", FUNC(fdim) (0, nan_value));
+  check_isnan ("fdim (9, NaN) = NaN", FUNC(fdim) (9, nan_value));
+  check_isnan ("fdim (-9, NaN) = NaN", FUNC(fdim) (-9, nan_value));
+  check_isnan ("fdim (NaN, 9) = NaN", FUNC(fdim) (nan_value, 9));
+  check_isnan ("fdim (NaN, -9) = NaN", FUNC(fdim) (nan_value, -9));
+  check_isnan ("fdim (+inf, NaN) = NaN", FUNC(fdim) (plus_infty, nan_value));
+  check_isnan ("fdim (-inf, NaN) = NaN", FUNC(fdim) (minus_infty, nan_value));
+  check_isnan ("fdim (NaN, +inf) = NaN", FUNC(fdim) (nan_value, plus_infty));
+  check_isnan ("fdim (NaN, -inf) = NaN", FUNC(fdim) (nan_value, minus_infty));
+  check_isnan ("fdim (NaN, NaN) = NaN", FUNC(fdim) (nan_value, nan_value));
+}
+
+
+static void
+fmin_test (void)
+{
+  check ("fmin (+0, +0) = +0", FUNC(fmin) (0, 0), 0);
+  check ("fmin (9, 0) = 0", FUNC(fmin) (9, 0), 0);
+  check ("fmin (0, 9) = 0", FUNC(fmin) (0, 9), 0);
+  check ("fmin (-9, 0) = -9", FUNC(fmin) (-9, 0), -9);
+  check ("fmin (0, -9) = -9", FUNC(fmin) (0, -9), -9);
+
+  check ("fmin (+inf, 9) = 9", FUNC(fmin) (plus_infty, 9), 9);
+  check ("fmin (9, +inf) = 9", FUNC(fmin) (9, plus_infty), 9);
+  check ("fmin (+inf, -9) = -9", FUNC(fmin) (plus_infty, -9), -9);
+  check ("fmin (-9, +inf) = -9", FUNC(fmin) (-9, plus_infty), -9);
+  check_isinfn ("fmin (-inf, 9) = -inf", FUNC(fmin) (minus_infty, 9));
+  check_isinfn ("fmin (-inf, -9) = -inf", FUNC(fmin) (minus_infty, -9));
+  check_isinfn ("fmin (+9, -inf) = -inf", FUNC(fmin) (9, minus_infty));
+  check_isinfn ("fmin (-9, -inf) = -inf", FUNC(fmin) (-9, minus_infty));
+
+  check ("fmin (0, NaN) = 0", FUNC(fmin) (0, nan_value), 0);
+  check ("fmin (9, NaN) = 9", FUNC(fmin) (9, nan_value), 9);
+  check ("fmin (-9, NaN) = 9", FUNC(fmin) (-9, nan_value), -9);
+  check ("fmin (NaN, 0) = 0", FUNC(fmin) (nan_value, 0), 0);
+  check ("fmin (NaN, 9) = NaN", FUNC(fmin) (nan_value, 9), 9);
+  check ("fmin (NaN, -9) = NaN", FUNC(fmin) (nan_value, -9), -9);
+  check_isinfp ("fmin (+inf, NaN) = +inf", FUNC(fmin) (plus_infty, nan_value));
+  check_isinfn ("fmin (-inf, NaN) = -inf", FUNC(fmin) (minus_infty, nan_value));
+  check_isinfp ("fmin (NaN, +inf) = +inf", FUNC(fmin) (nan_value, plus_infty));
+  check_isinfn ("fmin (NaN, -inf) = -inf", FUNC(fmin) (nan_value, minus_infty));
+  check_isnan ("fmin (NaN, NaN) = NaN", FUNC(fmin) (nan_value, nan_value));
+}
+
+
+static void
+fmax_test (void)
+{
+  check ("fmax (+0, +0) = +0", FUNC(fmax) (0, 0), 0);
+  check ("fmax (9, 0) = 9", FUNC(fmax) (9, 0), 9);
+  check ("fmax (0, 9) = 9", FUNC(fmax) (0, 9), 9);
+  check ("fmax (-9, 0) = 0", FUNC(fmax) (-9, 0), 0);
+  check ("fmax (0, -9) = 0", FUNC(fmax) (0, -9), 0);
+
+  check_isinfp ("fmax (+inf, 9) = +inf", FUNC(fmax) (plus_infty, 9));
+  check_isinfp ("fmax (9, +inf) = +inf", FUNC(fmax) (0, plus_infty));
+  check_isinfp ("fmax (-9, +inf) = +inf", FUNC(fmax) (-9, plus_infty));
+  check_isinfp ("fmax (+inf, -9) = +inf", FUNC(fmax) (plus_infty, -9));
+  check ("fmax (-inf, 9) = 9", FUNC(fmax) (minus_infty, 9), 9);
+  check ("fmax (-inf, -9) = -9", FUNC(fmax) (minus_infty, -9), -9);
+  check ("fmax (+9, -inf) = 9", FUNC(fmax) (9, minus_infty), 9);
+  check ("fmax (-9, -inf) = -9", FUNC(fmax) (-9, minus_infty), -9);
+
+  check ("fmax (0, NaN) = 0", FUNC(fmax) (0, nan_value), 0);
+  check ("fmax (9, NaN) = 9", FUNC(fmax) (9, nan_value), 9);
+  check ("fmax (-9, NaN) = 9", FUNC(fmax) (-9, nan_value), -9);
+  check ("fmax (NaN, 0) = 0", FUNC(fmax) (nan_value, 0), 0);
+  check ("fmax (NaN, 9) = NaN", FUNC(fmax) (nan_value, 9), 9);
+  check ("fmax (NaN, -9) = NaN", FUNC(fmax) (nan_value, -9), -9);
+  check_isinfp ("fmax (+inf, NaN) = +inf", FUNC(fmax) (plus_infty, nan_value));
+  check_isinfn ("fmax (-inf, NaN) = -inf", FUNC(fmax) (minus_infty, nan_value));
+  check_isinfp ("fmax (NaN, +inf) = +inf", FUNC(fmax) (nan_value, plus_infty));
+  check_isinfn ("fmax (NaN, -inf) = -inf", FUNC(fmax) (nan_value, minus_infty));
+  check_isnan ("fmax (NaN, NaN) = NaN", FUNC(fmax) (nan_value, nan_value));
+}
+
+
+static void
 inverse_func_pair_test (const char *test_name,
 			mathfunc f1, mathfunc inverse,
 			MATHTYPE x, MATHTYPE epsilon)
@@ -1520,6 +1615,9 @@ main (int argc, char *argv[])
   fpclassify_test ();
   hypot_test ();
   pow_test ();
+  fdim_test ();
+  fmin_test ();
+  fmax_test ();
 
   identities ();
   inverse_functions ();
