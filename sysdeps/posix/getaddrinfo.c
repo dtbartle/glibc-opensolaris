@@ -604,8 +604,12 @@ gaih_inet (const char *name, const struct gaih_service *service,
 	    {
 	      if (req->ai_family == AF_UNSPEC || req->ai_family == AF_INET6)
 		at->family = AF_INET6;
-	      else if (IN6_IS_ADDR_V4MAPPED (at->addr))
-		*(uint32_t *) at->addr = ((uint32_t *) at->addr)[3];
+	      else if (req->ai_family == AF_INET
+		       && IN6_IS_ADDR_V4MAPPED (at->addr))
+		{
+		  *(uint32_t *) at->addr = ((uint32_t *) at->addr)[3];
+		  at->family = AF_INET;
+		}
 	      else
 		return -EAI_ADDRFAMILY;
 
