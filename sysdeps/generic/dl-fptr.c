@@ -40,7 +40,7 @@
 
 #ifndef COMPARE_AND_SWAP
 # define COMPARE_AND_SWAP(ptr, old, new) \
-  atomic_compare_and_exchange_bool_acq (ptr, new, old)
+  (atomic_compare_and_exchange_bool_acq (ptr, new, old) == 0)
 #endif
 
 ElfW(Addr) _dl_boot_fptr_table [ELF_MACHINE_BOOT_FPTR_TABLE_LEN];
