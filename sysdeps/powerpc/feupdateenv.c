@@ -30,7 +30,7 @@ feupdateenv (const fenv_t *envp)
   old.fenv = fegetenv_register ();
 
   /* Copy the set exceptions from `old' to `new'.  */
-  new.l[1] = new.l[1] & 0xE00000FF | old.l[1] & 0x1FFFFF00;
+  new.l[1] = (new.l[1] & 0xE00000FF) | (old.l[1] & 0x1FFFFF00);
 
   /* Atomically enable and raise (if appropriate) exceptions set in `new'. */
   fesetenv_register (new.fenv);
