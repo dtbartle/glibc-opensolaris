@@ -2339,7 +2339,7 @@ regex_compile (pattern, size, syntax, bufp)
 #ifdef MBS_SUPPORT
   /* Initialize the wchar_t PATTERN and offset_buffer.  */
   p = pend = pattern = TALLOC(csize + 1, CHAR_TYPE);
-  p[csize] = L'\0';	/* sentinel */
+  pattern[csize] = L'\0';	/* sentinel */
   mbs_offset = TALLOC(csize + 1, int);
   is_binary = TALLOC(csize + 1, char);
   if (pattern == NULL || mbs_offset == NULL || is_binary == NULL)
