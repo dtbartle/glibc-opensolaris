@@ -449,7 +449,7 @@ static const struct ten_pows
   do									      \
     {									      \
       register size_t outlen = (len);					      \
-      if (len > 20) /* FIXME: good choice? */				      \
+      if (len > 20)							      \
 	{								      \
 	  if (PUT (fp, ptr, outlen) != outlen)				      \
 	    return -1;							      \
@@ -494,6 +494,11 @@ extern mp_size_t __mpn_extract_long_double (mp_ptr res_ptr, mp_size_t size,
 					    long double value);
 
 
+static unsigned int guess_grouping (unsigned int intdig_max,
+				    const char *grouping, wchar_t sepchar);
+static char *group_number (char *buf, char *bufend, unsigned int intdig_no,
+			   const char *grouping, wchar_t thousands_sep);
+
 
 int
 __printf_fp (fp, info, args)
@@ -509,8 +514,12 @@ __printf_fp (fp, info, args)
     }
   fpnum;
 
-  /* Locale dependend representation of decimal point.	*/
+  /* Locale-dependent representation of decimal point.	*/
   wchar_t decimal;
+
+  /* Locale-dependent thousands separator and grouping specification.  */
+  wchar_t thousands_sep;
+  const char *grouping;
 
   /* "NaN" or "Inf" for the special cases.  */
   CONST char *special = NULL;
@@ -594,6 +603,19 @@ __printf_fp (fp, info, args)
 	      strlen (_numeric_info->decimal_point)) <= 0)
     decimal = (wchar_t) *_numeric_info->decimal_point;
 
+
+  if (info->group)
+    {
+      /* Figure out the thousands seperator character.  */
+      if (mbtowc (&thousands_sep, _numeric_info->thousands_sep,
+		  strlen (_numeric_info->thousands_sep)) <= 0)
+	thousands_sep = (wchar_t) *_numeric_info->thousands_sep;
+      grouping = _numeric_info->grouping; /* Cache the grouping info array.  */
+      if (*grouping == '\0' || thousands_sep == L'\0')
+	grouping = NULL;
+    }
+  else
+    grouping = NULL;
 
   /* Fetch the argument value.	*/
   if (info->is_long_double && sizeof (long double) > sizeof (double))
@@ -893,10 +915,11 @@ __printf_fp (fp, info, args)
 					 BITS_PER_MP_LIMB - cnt_h);
 		  }
 
-	      /* The following check is necessary because the compare values
-		 for 10^-(2^i-1) are more accurate than the FP values.
-		 I.e. sometimes the multiplication is done even though it is
-		 wrong (e.g. for 1e-3).	 */
+	      /* We have to be careful when multiplying the last factor.
+		 If the result is greater than 1.0 be have to test it
+		 against 10.0.  If it is greater or equal to 10.0 the
+		 multiplication was not valid.  This is because we cannot
+		 determine the number of bits in the result in advance.  */
 	      if (incr < exponent + 3
 		  || (incr == exponent + 3 &&
 		      (tmp[tmpsize - 1] < topval[1]
@@ -979,7 +1002,8 @@ __printf_fp (fp, info, args)
 	 numbers are in the range of 0.0 <= fp < 8.0.  We simply
 	 shift it to the right place and divide it by 1.0 to get the
 	 leading digit.	 (Of course this division is not really made.)	*/
-      assert (0 <= exponent && exponent < 3);
+      assert (0 <= exponent && exponent < 3 &&
+	      exponent + to_shift < BITS_PER_MP_LIMB);
 
       /* Now shift the input value to its right place.	*/
       cy = __mpn_lshift (frac, fp_input, fracsize, (exponent + to_shift));
@@ -1014,7 +1038,7 @@ __printf_fp (fp, info, args)
 	if (expsign == 0)
 	  {
 	    intdig_max = exponent + 1;
-	    /* This can be really big!	*/  /* FIXME */
+	    /* This can be really big!	*/  /* XXX Maybe malloc if too big? */
 	    chars_needed = exponent + 1 + 1 + fracdig_max;
 	  }
 	else
@@ -1048,6 +1072,11 @@ __printf_fp (fp, info, args)
 	fracdig_min = info->alt ? fracdig_max : 0;
 	significant = 0;		/* We count significant digits.	 */
       }
+
+    if (grouping)
+      /* Guess the number of groups we will make, and thus how
+	 many spaces we need for separator characters.  */
+      chars_needed += guess_grouping (intdig_max, grouping, thousands_sep);
 
     /* Allocate buffer for output.  We need two more because while rounding
        it is possible that we need two more characters in front of all the
@@ -1161,10 +1190,7 @@ __printf_fp (fp, info, args)
 		    fracdig_max = intdig_max - intdig_no;
 		    ++exponent;
 		    /* Now we must print the exponent.	*/
-		    if (tolower (info->spec) == 'g')
-		      type = isupper (info->spec) ? 'E' : 'e';
-		    else
-		      type = 'e';
+		    type = isupper (info->spec) ? 'E' : 'e';
 		  }
 		else
 		  {
@@ -1185,7 +1211,8 @@ __printf_fp (fp, info, args)
 	      }
 	  }
       }
-do_expo:
+
+  do_expo:
     /* Now remove unnecessary '0' at the end of the string.  */
     while (fracdig_no > fracdig_min && *(cp - 1) == '0')
       {
@@ -1196,6 +1223,10 @@ do_expo:
        the radix character.  */
     if (fracdig_no == 0 && !info->alt && *(cp - 1) == decimal)
       --cp;
+
+    if (grouping)
+      /* Add in separator characters, overwriting the same buffer.  */
+      cp = group_number (startp, cp, intdig_no, grouping, thousands_sep);
 
     /* Write the exponent if it is needed.  */
     if (type != 'f')
@@ -1247,4 +1278,81 @@ do_expo:
       PADN (info->pad, width);
   }
   return done;
+}
+
+/* Return the number of extra grouping characters that will be inserted
+   into a number with INTDIG_MAX integer digits.  */
+
+static unsigned int
+guess_grouping (unsigned int intdig_max, const char *grouping, wchar_t sepchar)
+{
+  unsigned int groups;
+
+  /* We treat all negative values like CHAR_MAX.  */
+
+  if (*grouping == CHAR_MAX || *grouping <= 0)
+    /* No grouping should be done.  */
+    return 0;
+
+  groups = 0;
+  while (intdig_max > *grouping)
+    {
+      ++groups;
+      intdig_max -= *grouping++;
+
+      if (*grouping == CHAR_MAX || *grouping < 0)
+	/* No more grouping should be done.  */
+	break;
+      else if (*grouping == 0)
+	{
+	  /* Same grouping repeats.  */
+	  groups += intdig_max / grouping[-1];
+	  break;
+	}
+    }
+
+  return groups;
+}
+
+/* Group the INTDIG_NO integer digits of the number in [BUF,BUFEND).
+   There is guaranteed enough space past BUFEND to extend it.
+   Return the new end of buffer.  */
+
+static char *
+group_number (char *buf, char *bufend, unsigned int intdig_no,
+	      const char *grouping, wchar_t thousands_sep)
+{
+  unsigned int groups = guess_grouping (intdig_no, grouping, thousands_sep);
+  char *p;
+
+  if (groups == 0)
+    return bufend;
+
+  /* Move the fractional part down.  */
+  memcpy (buf + intdig_no + groups, buf + intdig_no,
+	  bufend - (buf + intdig_no));
+
+  p = buf + intdig_no + groups - 1;
+  do
+    {
+      unsigned int len = *grouping++;
+      do
+	*p-- = buf[--intdig_no];
+      while (--len > 0);
+      *p-- = thousands_sep;
+
+      if (*grouping == CHAR_MAX || *grouping < 0)
+	/* No more grouping should be done.  */
+	break;
+      else if (*grouping == 0)
+	/* Same grouping repeats.  */
+	--grouping;
+    } while (intdig_no > *grouping);
+
+  /* Copy the remaining ungrouped digits.  */
+  do
+    *p-- = buf[--intdig_no];
+  while (p > buf);
+
+  return bufend + groups;
 }
