@@ -45,6 +45,7 @@ extern const struct locale_data *_nl_current_##category;
 #undef	DEFINE_CATEGORY
 
 extern const char *const _nl_category_names[LC_ALL];
+extern const struct locale_data * *const _nl_current[LC_ALL];
 
 /* Extract the current CATEGORY locale's string for ITEM.  */
 #define _NL_CURRENT(category, item) \
