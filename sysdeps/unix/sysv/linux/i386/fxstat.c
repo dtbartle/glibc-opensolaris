@@ -97,14 +97,5 @@ __fxstat (int vers, int fd, struct stat *buf)
 weak_alias (__fxstat, _fxstat);
 #ifdef XSTAT_IS_XSTAT64
 #undef __fxstat64
-
-#include <shlib-compat.h>
-
-versioned_symbol (libc, __fxstat, __fxstat64, GLIBC_2_2);
-
-#if SHLIB_COMPAT(libc, GLIBC_2_1, GLIBC_2_2)
-strong_alias (__fxstat, __old__fxstat64)
-compat_symbol (libc, __old__fxstat64, __fxstat64, GLIBC_2_1);
-#endif
-
+strong_alias (__fxstat, __fxstat64);
 #endif
