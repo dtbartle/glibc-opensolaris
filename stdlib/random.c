@@ -186,6 +186,8 @@ DEFUN(__srandom, (x), unsigned int x)
 	(void) __random();
     }
 }
+
+weak_alias (__srandom, srandom)
 
 /* Initialize the state information in the given array of N bytes for
    future random number generation.  Based on the number of bytes we
@@ -255,6 +257,8 @@ DEFUN(__initstate, (seed, arg_state, n),
 
   return ostate;
 }
+
+weak_alias (__initstate, initstate)
 
 /* Restore the state from the given state array.
    Note: It is important that we also remember the locations of the pointers
@@ -305,6 +309,8 @@ DEFUN(__setstate, (arg_state), PTR arg_state)
 
   return ostate;
 }
+
+weak_alias (__setstate, setstate)
 
 /* If we are using the trivial TYPE_0 R.N.G., just do the old linear
    congruential bit.  Otherwise, we do our fancy trinomial stuff, which is the
@@ -346,3 +352,5 @@ DEFUN_VOID(__random)
       return i;
     }
 }
+
+weak_alias (__random, random)
