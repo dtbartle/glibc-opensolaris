@@ -31,7 +31,7 @@ libdl-inhibit-o	= $(filter-out .so,$(object-suffixes)) # Build only shared.
 rtld-routines	:= rtld $(addprefix dl-,load lookup object reloc	\
 				        runtime sysdep error init fini)
 distribute	= $(rtld-routines:=.c) dynamic-link.h do-rel.h \
-		  soinit.c sofini.c ldd.sh.in
+		  soinit.c sofini.c ldd.sh.in linux-compat.c
 
 include ../Makeconfig
 
