@@ -1,6 +1,5 @@
 /* Copyright (C) 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
-Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
 The GNU C Library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public License as
@@ -20,11 +19,13 @@ Boston, MA 02111-1307, USA.  */
 #include <netdb.h>
 
 
-#define LOOKUP_TYPE	struct protoent
-#define FUNCTION_NAME	getprotobynumber
-#define DATABASE_NAME	protocols
-#define ADD_PARAMS	int proto
-#define ADD_VARIABLES	proto
-#define BUFLEN		1024
+#define LOOKUP_TYPE	struct netent
+#define SETFUNC_NAME	setnetent
+#define	GETFUNC_NAME	getnetent
+#define	ENDFUNC_NAME	endnetent
+#define DATABASE_NAME	networks
+#define STAYOPEN	int stayopen
+#define STAYOPEN_VAR	stayopen
+#define NEED__RES	1
 
-#include "../nss/getXXbyYY.c"
+#include "../nss/getXXent_r.c"

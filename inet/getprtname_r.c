@@ -21,10 +21,9 @@ Boston, MA 02111-1307, USA.  */
 
 
 #define LOOKUP_TYPE	struct protoent
-#define FUNCTION_NAME	getprotobynumber
+#define FUNCTION_NAME	getprotobyname
 #define DATABASE_NAME	protocols
-#define ADD_PARAMS	int proto
-#define ADD_VARIABLES	proto
-#define BUFLEN		1024
+#define ADD_PARAMS	const char *name
+#define ADD_VARIABLES	name
 
-#include "../nss/getXXbyYY.c"
+#include "../nss/getXXbyYY_r.c"

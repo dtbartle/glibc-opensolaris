@@ -20,11 +20,10 @@ Boston, MA 02111-1307, USA.  */
 #include <netdb.h>
 
 
-#define LOOKUP_TYPE	struct protoent
-#define FUNCTION_NAME	getprotobynumber
-#define DATABASE_NAME	protocols
-#define ADD_PARAMS	int proto
-#define ADD_VARIABLES	proto
-#define BUFLEN		1024
+#define LOOKUP_TYPE	struct servent
+#define FUNCTION_NAME	getservbyport
+#define DATABASE_NAME	services
+#define ADD_PARAMS	int port, const char *proto
+#define ADD_VARIABLES	port, proto
 
-#include "../nss/getXXbyYY.c"
+#include "../nss/getXXbyYY_r.c"
