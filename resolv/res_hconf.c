@@ -393,7 +393,7 @@ parse_line (const char *fname, int line_num, const char *str)
 
 	    __asprintf (&buf,
 			_("%s: line %d: ignoring trailing garbage `%s'\n"),
-		      fname, line_num, str);
+			fname, line_num, str);
 
 #ifdef USE_IN_LIBIO
 	    if (_IO_fwide (stderr, 0) > 0)
