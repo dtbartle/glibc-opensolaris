@@ -23,7 +23,7 @@
 #include <hurd/fd.h>
 
 ssize_t
-__pread (int fd, void *buf, size_t nbytes, off_t offset)
+__libc_pread (int fd, void *buf, size_t nbytes, off_t offset)
 {
   error_t err;
   if (offset < 0)
@@ -32,4 +32,8 @@ __pread (int fd, void *buf, size_t nbytes, off_t offset)
     err = HURD_FD_USE (fd, _hurd_fd_read (descriptor, buf, &nbytes, offset));
   return err ? __hurd_dfail (fd, err) : nbytes;
 }
-weak_alias (__pread, pread)
+
+#ifndef __libc_pread
+strong_alias (__libc_pread, __pread)
+weak_alias (__libc_pread, pread)
+#endif
