@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -20,19 +20,9 @@ Cambridge, MA 02139, USA.  */
 #include <errno.h>
 #include <unistd.h>
 
-
 /* Get the process group ID of the calling process.  */
 int
 DEFUN_VOID(getpgrp)
 {
-  return getpid();
+  return __getpgid (0);
 }
-
-
-#ifdef	 HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
-stub_warning(getpgrp);
-
-#endif	/* GNU stabs.  */
