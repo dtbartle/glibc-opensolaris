@@ -114,6 +114,11 @@ pthread_getattr_np (thread_id, attr)
 		  iattr->stacksize = rl.rlim_cur;
 		  iattr->stackaddr = (void *) to;
 
+		  /* The limit might be too high.  This is a bogus
+		     situation but try to avoid making it worse.  */
+		  if ((size_t) iattr->stacksize > (size_t) iattr->stackaddr)
+		    iattr->stacksize = (size_t) iattr->stackaddr;
+
 		  /* We succeed and no need to look further.  */
 		  ret = 0;
 		  break;
