@@ -1985,7 +1985,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 		  runp = tw;
 		  while (runp < wp)
 		    {
-		      if (runp[0] == L'-' && runp[1] != '\0' && runp[1] != ']'
+		      if (runp[0] == L'-' && runp[1] != '\0' && runp + 1 != wp
 			  && runp != tw
 			  && (unsigned int) runp[-1] <= (unsigned int) runp[1])
 			{
@@ -1993,19 +1993,21 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 			     first and last character of the sequence.  */
 			  wchar_t wc;
 
-			  for (wc = runp[-1] + 1; wc < runp[1]; ++wc)
+			  for (wc = runp[-1] + 1; wc <= runp[1]; ++wc)
 			    if (wc == c)
 			      break;
 
-			  if (wc == runp[1] && !not_in)
+			  if (wc <= runp[1] && !not_in)
 			    break;
-			  if (wc == runp[1] && not_in)
+			  if (wc <= runp[1] && not_in)
 			    {
 			      /* The current character is not in the
                                  scanset.  */
 			      ungetwc (c, s);
 			      goto out;
 			    }
+
+			  runp += 2;
 			}
 		      else
 			{
@@ -2016,9 +2018,9 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 			      ungetwc (c, s);
 			      goto out;
 			    }
-			}
 
-		      ++runp;
+			  ++runp;
+			}
 		    }
 
 		  if (runp == wp && !not_in)
@@ -2201,7 +2203,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 		  runp = tw;
 		  while (runp < wp)
 		    {
-		      if (runp[0] == L'-' && runp[1] != '\0' && runp[1] != ']'
+		      if (runp[0] == L'-' && runp[1] != '\0' && runp + 1 != wp
 			  && runp != tw
 			  && (unsigned int) runp[-1] <= (unsigned int) runp[1])
 			{
@@ -2209,19 +2211,21 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 			     first and last character of the sequence.  */
 			  wchar_t wc;
 
-			  for (wc = runp[-1] + 1; wc < runp[1]; ++wc)
+			  for (wc = runp[-1] + 1; wc <= runp[1]; ++wc)
 			    if (wc == c)
 			      break;
 
-			  if (wc == runp[1] && !not_in)
+			  if (wc <= runp[1] && !not_in)
 			    break;
-			  if (wc == runp[1] && not_in)
+			  if (wc <= runp[1] && not_in)
 			    {
 			      /* The current character is not in the
                                  scanset.  */
 			      ungetwc (c, s);
 			      goto out2;
 			    }
+
+			  runp += 2;
 			}
 		      else
 			{
@@ -2232,9 +2236,9 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 			      ungetwc (c, s);
 			      goto out2;
 			    }
-			}
 
-		      ++runp;
+			  ++runp;
+			}
 		    }
 
 		  if (runp == wp && !not_in)
