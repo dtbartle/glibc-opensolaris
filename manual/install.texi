@@ -327,7 +327,7 @@ sun4-sunos4.@var{n} sun4
 @end smallexample
 
 @node Tips for Installation
-@appendixsubsec Useful hints for the installation
+@appendixsec Useful hints for the installation
 
 There are a some more or less obvious methods one should know when
 compiling GNU libc:
