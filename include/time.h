@@ -11,7 +11,7 @@ struct tm;
 extern const unsigned short int __mon_yday[2][13];
 
 /* Defined in localtime.c.  */
-extern struct tm _tmbuf;
+extern struct tm _tmbuf attribute_hidden;
 
 /* Defined in tzset.c.  */
 extern char *__tzstring (const char *string);
