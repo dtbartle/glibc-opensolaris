@@ -314,13 +314,7 @@ _dl_important_hwcaps (const char *platform, size_t platform_len, size_t *sz,
 
   /* Create temporary data structure to generate result table.  */
   temp = (struct r_strlenpair *) alloca (cnt * sizeof (*temp));
-#ifdef USE_TLS
-  temp[0].str = "tls";
-  temp[0].len = 3;
-  m = 1;
-#else
   m = 0;
-#endif
   for (n = 0; masked != 0; ++n)
     if ((masked & (1UL << n)) != 0)
       {
@@ -335,6 +329,11 @@ _dl_important_hwcaps (const char *platform, size_t platform_len, size_t *sz,
       temp[m].len = platform_len;
       ++m;
     }
+#ifdef USE_TLS
+  temp[m].str = "tls";
+  temp[m].len = 3;
+  ++m;
+#endif
   assert (m == cnt);
 
   /* Determine the total size of all strings together.  */
