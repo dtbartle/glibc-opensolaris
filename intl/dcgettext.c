@@ -1,23 +1,23 @@
-/* Implementation of the dcgettext(3) function.
-   Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
+/* dcgettext.c -- implementation of the dcgettext(3) function
+   Copyright (C) 1995, 1996, 1998 Free Software Foundation, Inc.
 
-   This file is part of the GNU C Library.  Its master source is NOT part of
-   the C library, however.  The master source lives in /gd/gnu/lib.
+This file is part of the GNU C Library.  Its master source is NOT part of
+the C library, however.  The master source lives in /gd/gnu/lib.
 
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public License as
-   published by the Free Software Foundation; either version 2 of the
-   License, or (at your option) any later version.
+The GNU C Library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version.
 
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+The GNU C Library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Library General Public License for more details.
 
-   You should have received a copy of the GNU Library General Public
-   License along with the GNU C Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
+You should have received a copy of the GNU Library General Public
+License along with the GNU C Library; see the file COPYING.LIB.  If
+not, write to the Free Software Foundation, Inc., 675 Mass Ave,
+Cambridge, MA 02139, USA.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -218,6 +218,24 @@ struct block_list
 # define DCGETTEXT dcgettext__
 #endif
 
+/* Checking whether the binaries runs SUID must be done and glibc provides
+   easier methods therefore we make a difference here.  */
+#ifdef _LIBC
+# define ENABLE_SECURE __libc_enable_secure
+# define DETERMINE_SECURE
+#else
+static int enable_secure;
+# define ENABLE_SECURE (enable_secure == 1)
+# define DETERMINE_SECURE \
+  if (enable_secure == 0)						      \
+    {									      \
+      if (getuid () != geteuid () || getgid () != getegid ())		      \
+	enable_secure = 1;						      \
+      else								      \
+	enable_secure = -1;						      \
+    }
+#endif
+
 /* Look up MSGID in the DOMAINNAME message catalog for the current CATEGORY
    locale.  */
 char *
@@ -242,9 +260,12 @@ DCGETTEXT (domainname, msgid, category)
   if (msgid == NULL)
     return NULL;
 
+  /* See whether this is a SUID binary or not.  */
+  DETERMINE_SECURE;
+
   /* If DOMAINNAME is NULL, we are interested in the default domain.  If
      CATEGORY is not LC_MESSAGES this might not make much sense but the
-     defintion left this undefined.  */
+     definition left this undefined.  */
   if (domainname == NULL)
     domainname = _nl_current_default_domain;
 
@@ -326,7 +347,7 @@ DCGETTEXT (domainname, msgid, category)
 
 
   /* Search for the given string.  This is a loop because we perhaps
-     got an ordered list of languages to consider for th translation.  */
+     got an ordered list of languages to consider for the translation.  */
   while (1)
     {
       /* Make CATEGORYVALUE point to the next element of the list.  */
@@ -347,6 +368,15 @@ DCGETTEXT (domainname, msgid, category)
 	  while (categoryvalue[0] != '\0' && categoryvalue[0] != ':')
 	    *cp++ = *categoryvalue++;
 	  *cp = '\0';
+
+	  /* When this is a SUID binary we must not allow accessing files
+	     outside the dedicated directories.  */
+	  if (ENABLE_SECURE
+	      && (memchr (single_locale, '/',
+			  _nl_find_language (single_locale) - single_locale)
+		  != NULL))
+	    /* Ingore this entry.  */
+	    continue;
 	}
 
       /* If the current locale value is C (or POSIX) we don't load a
