@@ -35,8 +35,8 @@ __fpclassifyf (float x)
     retval = FP_ZERO;
   else if (wx < 0x1000000)
     retval = FP_SUBNORMAL;
-  else if (wx == 0x7f000000)
-    retval = wx > 0x7f000000 ? FP_NAN : FP_INFINITE;
+  else if (wx >= 0x7f800000)
+    retval = wx > 0x7f800000 ? FP_NAN : FP_INFINITE;
 
   return retval;
 }
