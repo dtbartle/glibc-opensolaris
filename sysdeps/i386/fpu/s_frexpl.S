@@ -103,14 +103,13 @@ ENTRY (BP_SYM (__frexpl))
 	LEAVE
 	ret
 
-4:	movl	VAL2(%esp), %eax
-	movl	%eax, %edx
-	andl	$0x7fff, %eax
+4:	movl	VAL2(%esp), %ecx
+	movl	%ecx, %edx
+	andl	$0x7fff, %ecx
 
 	andl	$0x8000, %edx
-	subl	$16382-64, %eax
+	subl	$16382, %ecx
 	orl	$0x3ffe, %edx
-	addl	%eax, %ecx
 	movl	%edx, VAL2(%esp)
 	jmp	1b
 END (BP_SYM (__frexpl))
