@@ -159,12 +159,6 @@ unfmh();			/* XXX */
 		  _dl_hurd_data->phdrsz / sizeof (Elf32_Phdr),
 		  &_dl_hurd_data->user_entry);
 
-      /* Deallocate the reply port and task port rights acquired by
-	 __mach_init.  We are done with them now, and the user will
-	 reacquire them for himself when he wants them.  */
-      __mig_dealloc_reply_port (MACH_PORT_NULL);
-      __mach_port_deallocate (__mach_task_self (), __mach_task_self_);
-
       if (_dl_skip_args && _dl_argv[-_dl_skip_args] == (char *) p)
 	{
 	  /* We are ignoring the first few arguments, but we have no Hurd
@@ -197,6 +191,16 @@ fmh();				/* XXX */
 
   LOSE;
   abort ();
+}
+
+void
+_dl_sysdep_start_cleanup (void)
+{
+  /* Deallocate the reply port and task port rights acquired by
+     __mach_init.  We are done with them now, and the user will
+     reacquire them for himself when he wants them.  */
+  __mig_dealloc_reply_port (MACH_PORT_NULL);
+  __mach_port_deallocate (__mach_task_self (), __mach_task_self_);
 }
 
 int
