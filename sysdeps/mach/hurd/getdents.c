@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993, 1994 Free Software Foundation, Ince	
+/* Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Ince	
 
 This file is part of the GNU C Library.
 
@@ -57,3 +57,6 @@ DEFUN(__getdirentries, (fd, buf, nbytes, basep),
 
   return bytesread;
 }
+
+weak_alias (__getdirentries, getdirentries)
+
