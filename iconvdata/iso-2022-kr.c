@@ -72,27 +72,27 @@ enum
    the output state to the initial state.  This has to be done during the
    flushing.  */
 #define EMIT_SHIFT_TO_INIT \
-  if (data->statep->count != 0)						      \
+  if (data->statep->count != ASCII_set)					      \
     {									      \
-      if (step->data == &from_object)					      \
+      if (FROM_DIRECTION)						      \
 	/* It's easy, we don't have to emit anything, we just reset the	      \
 	   state for the input.  */					      \
-	data->statep->count = 0;					      \
+	data->statep->count = ASCII_set;				      \
       else								      \
 	{								      \
 	  char *outbuf = data->outbuf;					      \
 	  								      \
 	  /* We are not in the initial state.  To switch back we have	      \
-	     to emit `SO'.  */						      \
+	     to emit `SI'.  */						      \
 	  if (outbuf == data->outbufend)				      \
 	    /* We don't have enough room in the output buffer.  */	      \
 	    status = GCONV_FULL_OUTPUT;					      \
 	  else								      \
 	    {								      \
 	      /* Write out the shift sequence.  */			      \
-	      *outbuf++ = SO;						      \
+	      *outbuf++ = SI;						      \
 	      data->outbuf = outbuf;					      \
-	      data->statep->count = 0;					      \
+	      data->statep->count = ASCII_set;				      \
 	    }								      \
 	}								      \
     }
@@ -134,7 +134,7 @@ enum
 	    || (inptr[1] == '$'						      \
 		&& (inptr + 2 > inend					      \
 		    || (inptr[2] == ')' && inptr + 3 > inend))))	      \
-			    						      \
+									      \
 	  {								      \
 	    result = GCONV_EMPTY_INPUT;					      \
 	    break;							      \
@@ -162,8 +162,15 @@ enum
       }									      \
 									      \
     if (set == ASCII_set)						      \
-      /* Almost done, just advance the input pointer.  */		      \
-      ++inptr;								      \
+      {									      \
+	if (ch >= 0x80)							      \
+	  {								      \
+	    result = GCONV_ILLEGAL_INPUT;				      \
+	    break;							      \
+	  }								      \
+	/* Almost done, just advance the input pointer.  */		      \
+	++inptr;							      \
+      }									      \
     else								      \
       {									      \
 	assert (set == KSC5601_set);					      \
@@ -199,7 +206,7 @@ enum
 #define LOOPFCT			TO_LOOP
 #define BODY \
   {									      \
-    unsigned char ch;							      \
+    uint32_t ch;							      \
     size_t written = 0;							      \
 									      \
     ch = *((uint32_t *) inptr);						      \
@@ -234,9 +241,10 @@ enum
 	    result = GCONV_ILLEGAL_INPUT;				      \
 	    break;							      \
 	  }								      \
+	assert (written == 2);						      \
 									      \
 	/* We use KSC 5601.  */						      \
-	if (set != KSC5601_set)					      \
+	if (set != KSC5601_set)						      \
 	  {								      \
 	    *outptr++ = SO;						      \
 	    set = KSC5601_set;						      \
