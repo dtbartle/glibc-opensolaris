@@ -20,13 +20,21 @@
 #include <stdio.h>
 
 int
-main ()
+main (void)
 {
+  int err = 0;
   int i, j;
   while (scanf ("%d %d\n", &i, &j) == 2)
     {
       div_t d = div (i, j);
-      printf ("%d / %d = %d + %d/%d\n", i, j, d.quot, d.rem, j);
+      printf ("%d / %d = %d + %d/%d", i, j, d.quot, d.rem, j);
+      if (i == d.quot * j + d.rem)
+	fputs ("  OK\n", stdout);
+      else
+	{
+	  fputs ("  FAILED\n", stdout);
+	  err = 1;
+	}
     }
-  return 0;
+  return err;
 }
