@@ -22,6 +22,7 @@ Cambridge, MA 02139, USA.  */
 
 /* Deallocate any mapping for the region starting at ADDR and extending LEN
    bytes.  Returns 0 if successful, -1 for errors (and sets errno).  */
+
 int
 munmap (caddr_t addr, size_t len)
 {
