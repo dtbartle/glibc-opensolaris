@@ -1,10 +1,7 @@
-/* Floating-point printing for `printf'.
-   This is an implementation of a restricted form of the `Dragon4'
-   algorithm described in "How to Print Floating-Point Numbers Accurately",
-   by Guy L. Steele, Jr. and Jon L. White, presented at the ACM SIGPLAN '90
-   Conference on Programming Language Design and Implementation.
+/* Floating point output for `printf'.
+Copyright (C) 1995 Free Software Foundation, Inc.
+Written by Ulrich Drepper.
 
-Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -18,258 +15,684 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Library General Public License for more details.
 
 You should have received a copy of the GNU Library General Public
-License along with the GNU C Library; see the file COPYING.LIB.  If
+License along with the GNU C Library; see the file COPYING.LIB.	 If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
+#ifdef USE_IN_LIBIO
+#  include <libioP.h>
+#else
+#  include <stdio.h>
+#endif
+#include <alloca.h>
 #include <ansidecl.h>
 #include <ctype.h>
-#include <stdio.h>
 #include <float.h>
-#include <limits.h>
-#include <math.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
+#include <gmp-mparam.h>
+#include <gmp.h>
+#include <gmp-impl.h>
+#include <longlong.h>
 #include <localeinfo.h>
-
+#include <math.h>
 #include <printf.h>
+#include <stdarg.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 
-#define NDEBUG
+/* #define NDEBUG 1 */
 #include <assert.h>
 
-#define	outchar(x)							      \
+/* This defines make it possible to use the same code for GNU C library and
+   the GNU I/O library.	 */
+#ifdef USE_IN_LIBIO
+#  define PUT(f, s, n) _IO_sputn (f, s, n)
+#  define PAD(f, c, n) _IO_padn (f, c, n)
+/* We use this file GNU C library and GNU I/O library.	So make
+   names equal.	 */
+#  undef putc
+#  define putc(c, f) _IO_putc (c, f)
+#  define size_t     _IO_size_t
+#  define FILE	     _IO_FILE
+#else	/* ! USE_IN_LIBIO */
+#  define PUT(f, s, n) fwrite (s, 1, n, f)
+#  define PAD(f, c, n) __pad (f, c, n)
+#endif	/* USE_IN_LIBIO */
+
+/* Tables of constants.  */
+
+#if BITS_PER_MP_LIMB == 32
+
+/* Table with constants of 10^(2^i), i=0..12 for 32-bit limbs.	*/
+
+static const mp_limb _ten_p0[] =
+  { 0x00000000, 0x00000000, 0x0000000a };
+static const mp_limb _ten_p1[] =
+  { 0x00000000, 0x00000000, 0x00000064 };
+static const mp_limb _ten_p2[] =
+  { 0x00000000, 0x00000000, 0x00002710 };
+static const mp_limb _ten_p3[] =
+  { 0x00000000, 0x00000000, 0x05f5e100 };
+static const mp_limb _ten_p4[] =
+  { 0x00000000, 0x00000000, 0x6fc10000, 0x002386f2 };
+static const mp_limb _ten_p5[] =
+  { 0x00000000, 0x00000000, 0x00000000, 0x85acef81, 0x2d6d415b, 0x000004ee };
+static const mp_limb _ten_p6[] =
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xbf6a1f01, 0x6e38ed64,
+    0xdaa797ed, 0xe93ff9f4, 0x00184f03 };
+static const mp_limb _ten_p7[] =
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x2e953e01, 0x03df9909, 0x0f1538fd, 0x2374e42f, 0xd3cff5ec, 0xc404dc08,
+    0xbccdb0da, 0xa6337f19, 0xe91f2603, 0x0000024e };
+static const mp_limb _ten_p8[] =
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x982e7c01, 0xbed3875b,
+    0xd8d99f72, 0x12152f87, 0x6bde50c6, 0xcf4a6e70, 0xd595d80f, 0x26b2716e,
+    0xadc666b0, 0x1d153624, 0x3c42d35a, 0x63ff540e, 0xcc5573c0, 0x65f9ef17,
+    0x55bc28f2, 0x80dcc7f7, 0xf46eeddc, 0x5fdcefce, 0x000553f7 };
+static const mp_limb _ten_p9[] =
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0xfc6cf801, 0x77f27267, 0x8f9546dc, 0x5d96976f, 0xb83a8a97, 0xc31e1ad9,
+    0x46c40513, 0x94e65747, 0xc88976c1, 0x4475b579, 0x28f8733b, 0xaa1da1bf,
+    0x703ed321, 0x1e25cfea, 0xb21a2f22, 0xbc51fb2e, 0x96e14f5d, 0xbfa3edac,
+    0x329c57ae, 0xe7fc7153, 0xc3fc0695, 0x85a91924, 0xf95f635e, 0xb2908ee0,
+    0x93abade4, 0x1366732a, 0x9449775c, 0x69be5b0e, 0x7343afac, 0xb099bc81,
+    0x45a71d46, 0xa2699748, 0x8cb07303, 0x8a0b1f13, 0x8cab8a97, 0xc1d238d9,
+    0x633415d4, 0x0000001c };
+static const mp_limb _ten_p10[] =
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x2919f001, 0xf55b2b72,
+    0x6e7c215b, 0x1ec29f86, 0x991c4e87, 0x15c51a88, 0x140ac535, 0x4c7d1e1a,
+    0xcc2cd819, 0x0ed1440e, 0x896634ee, 0x7de16cfb, 0x1e43f61f, 0x9fce837d,
+    0x231d2b9c, 0x233e55c7, 0x65dc60d7, 0xf451218b, 0x1c5cd134, 0xc9635986,
+    0x922bbb9f, 0xa7e89431, 0x9f9f2a07, 0x62be695a, 0x8e1042c4, 0x045b7a74,
+    0x1abe1de3, 0x8ad822a5, 0xba34c411, 0xd814b505, 0xbf3fdeb3, 0x8fc51a16,
+    0xb1b896bc, 0xf56deeec, 0x31fb6bfd, 0xb6f4654b, 0x101a3616, 0x6b7595fb,
+    0xdc1a47fe, 0x80d98089, 0x80bda5a5, 0x9a202882, 0x31eb0f66, 0xfc8f1f90,
+    0x976a3310, 0xe26a7b7e, 0xdf68368a, 0x3ce3a0b8, 0x8e4262ce, 0x75a351a2,
+    0x6cb0b6c9, 0x44597583, 0x31b5653f, 0xc356e38a, 0x35faaba6, 0x0190fba0,
+    0x9fc4ed52, 0x88bc491b, 0x1640114a, 0x005b8041, 0xf4f3235e, 0x1e8d4649,
+    0x36a8de06, 0x73c55349, 0xa7e6bd2a, 0xc1a6970c, 0x47187094, 0xd2db49ef,
+    0x926c3f5b, 0xae6209d4, 0x2d433949, 0x34f4a3c6, 0xd4305d94, 0xd9d61a05,
+    0x00000325 };
+static const mp_limb _ten_p11[] =
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x1333e001, 0xe3096865, 0xb27d4d3f, 0x49e28dcf, 0xec2e4721, 0xee87e354,
+    0xb6067584, 0x368b8abb, 0xa5e5a191, 0x2ed56d55, 0xfd827773, 0xea50d142,
+    0x51b78db2, 0x98342c9e, 0xc850dabc, 0x866ed6f1, 0x19342c12, 0x92794987,
+    0xd2f869c2, 0x66912e4a, 0x71c7fd8f, 0x57a7842d, 0x235552eb, 0xfb7fedcc,
+    0xf3861ce0, 0x38209ce1, 0x9713b449, 0x34c10134, 0x8c6c54de, 0xa7a8289c,
+    0x2dbb6643, 0xe3cb64f3, 0x8074ff01, 0xe3892ee9, 0x10c17f94, 0xa8f16f92,
+    0xa8281ed6, 0x967abbb3, 0x5a151440, 0x9952fbed, 0x13b41e44, 0xafe609c3,
+    0xa2bca416, 0xf111821f, 0xfb1264b4, 0x91bac974, 0xd6c7d6ab, 0x8e48ff35,
+    0x4419bd43, 0xc4a65665, 0x685e5510, 0x33554c36, 0xab498697, 0x0dbd21fe,
+    0x3cfe491d, 0x982da466, 0xcbea4ca7, 0x9e110c7b, 0x79c56b8a, 0x5fc5a047,
+    0x84d80e2e, 0x1aa9f444, 0x730f203c, 0x6a57b1ab, 0xd752f7a6, 0x87a7dc62,
+    0x944545ff, 0x40660460, 0x77c1a42f, 0xc9ac375d, 0xe866d7ef, 0x744695f0,
+    0x81428c85, 0xa1fc6b96, 0xd7917c7b, 0x7bf03c19, 0x5b33eb41, 0x5715f791,
+    0x8f6cae5f, 0xdb0708fd, 0xb125ac8e, 0x785ce6b7, 0x56c6815b, 0x6f46eadb,
+    0x4eeebeee, 0x195355d8, 0xa244de3c, 0x9d7389c0, 0x53761abd, 0xcf99d019,
+    0xde9ec24b, 0x0d76ce39, 0x70beb181, 0x2e55ecee, 0xd5f86079, 0xf56d9d4b,
+    0xfb8886fb, 0x13ef5a83, 0x408f43c5, 0x3f3389a4, 0xfad37943, 0x58ccf45c,
+    0xf82df846, 0x415c7f3e, 0x2915e818, 0x8b3d5cf4, 0x6a445f27, 0xf8dbb57a,
+    0xca8f0070, 0x8ad803ec, 0xb2e87c34, 0x038f9245, 0xbedd8a6c, 0xc7c9dee0,
+    0x0eac7d56, 0x2ad3fa14, 0xe0de0840, 0xf775677c, 0xf1bd0ad5, 0x92be221e,
+    0x87fa1fb9, 0xce9d04a4, 0xd2c36fa9, 0x3f6f7024, 0xb028af62, 0x907855ee,
+    0xd83e49d6, 0x4efac5dc, 0xe7151aab, 0x77cd8c6b, 0x0a753b7d, 0x0af908b4,
+    0x8c983623, 0xe50f3027, 0x94222771, 0x1d08e2d6, 0xf7e928e6, 0xf2ee5ca6,
+    0x1b61b93c, 0x11eb962b, 0x9648b21c, 0xce2bcba1, 0x34f77154, 0x7bbebe30,
+    0xe526a319, 0x8ce329ac, 0xde4a74d2, 0xb5dc53d5, 0x0009e8b3 };
+static const mp_limb _ten_p12[] =
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x2a67c001, 0xd4724e8d,
+    0x8efe7ae7, 0xf89a1e90, 0xef084117, 0x54e05154, 0x13b1bb51, 0x506be829,
+    0xfb29b172, 0xe599574e, 0xf0da6146, 0x806c0ed3, 0xb86ae5be, 0x45155e93,
+    0xc0591cc2, 0x7e1e7c34, 0x7c4823da, 0x1d1f4cce, 0x9b8ba1e8, 0xd6bfdf75,
+    0xe341be10, 0xc2dfae78, 0x016b67b2, 0x0f237f1a, 0x3dbeabcd, 0xaf6a2574,
+    0xcab3e6d7, 0x142e0e80, 0x61959127, 0x2c234811, 0x87009701, 0xcb4bf982,
+    0xf8169c84, 0x88052f8c, 0x68dde6d4, 0xbc131761, 0xff0b0905, 0x54ab9c41,
+    0x7613b224, 0x1a1c304e, 0x3bfe167b, 0x441c2d47, 0x4f6cea9c, 0x78f06181,
+    0xeb659fb8, 0x30c7ae41, 0x947e0d0e, 0xa1ebcad7, 0xd97d9556, 0x2130504d,
+    0x1a8309cb, 0xf2acd507, 0x3f8ec72a, 0xfd82373a, 0x95a842bc, 0x280f4d32,
+    0xf3618ac0, 0x811a4f04, 0x6dc3a5b4, 0xd3967a1b, 0x15b8c898, 0xdcfe388f,
+    0x454eb2a0, 0x8738b909, 0x10c4e996, 0x2bd9cc11, 0x3297cd0c, 0x655fec30,
+    0xae0725b1, 0xf4090ee8, 0x037d19ee, 0x398c6fed, 0x3b9af26b, 0xc994a450,
+    0xb5341743, 0x75a697b2, 0xac50b9c1, 0x3ccb5b92, 0xffe06205, 0xa8329761,
+    0xdfea5242, 0xeb83cadb, 0xe79dadf7, 0x3c20ee69, 0x1e0a6817, 0x7021b97a,
+    0x743074fa, 0x176ca776, 0x77fb8af6, 0xeca19beb, 0x92baf1de, 0xaf63b712,
+    0xde35c88b, 0xa4eb8f8c, 0xe137d5e9, 0x40b464a0, 0x87d1cde8, 0x42923bbd,
+    0xcd8f62ff, 0x2e2690f3, 0x095edc16, 0x59c89f1b, 0x1fa8fd5d, 0x5138753d,
+    0x390a2b29, 0x80152f18, 0x2dd8d925, 0xf984d83e, 0x7a872e74, 0xc19e1faf,
+    0xed4d542d, 0xecf9b5d0, 0x9462ea75, 0xc53c0adf, 0x0caea134, 0x37a2d439,
+    0xc8fa2e8a, 0x2181327e, 0x6e7bb827, 0x2d240820, 0x50be10e0, 0x5893d4b8,
+    0xab312bb9, 0x1f2b2322, 0x440b3f25, 0xbf627ede, 0x72dac789, 0xb608b895,
+    0x78787e2a, 0x86deb3f0, 0x6fee7aab, 0xbb9373f4, 0x27ecf57b, 0xf7d8b57e,
+    0xfca26a9f, 0x3d04e8d2, 0xc9df13cb, 0x3172826a, 0xcd9e8d7c, 0xa8fcd8e0,
+    0xb2c39497, 0x307641d9, 0x1cc939c1, 0x2608c4cf, 0xb6d1c7bf, 0x3d326a7e,
+    0xeeaf19e6, 0x8e13e25f, 0xee63302b, 0x2dfe6d97, 0x25971d58, 0xe41d3cc4,
+    0x0a80627c, 0xab8db59a, 0x9eea37c8, 0xe90afb77, 0x90ca19cf, 0x9ee3352c,
+    0x3613c850, 0xfe78d682, 0x788f6e50, 0x5b060904, 0xb71bd1a4, 0x3fecb534,
+    0xb32c450c, 0x20c33857, 0xa6e9cfda, 0x0239f4ce, 0x48497187, 0xa19adb95,
+    0xb492ed8a, 0x95aca6a8, 0x4dcd6cd9, 0xcf1b2350, 0xfbe8b12a, 0x1a67778c,
+    0x38eb3acc, 0xc32da383, 0xfb126ab1, 0xa03f40a8, 0xed5bf546, 0xe9ce4724,
+    0x4c4a74fd, 0x73a130d8, 0xd9960e2d, 0xa2ebd6c1, 0x94ab6feb, 0x6f233b7c,
+    0x49126080, 0x8e7b9a73, 0x4b8c9091, 0xd298f999, 0x35e836b5, 0xa96ddeff,
+    0x96119b31, 0x6b0dd9bc, 0xc6cc3f8d, 0x282566fb, 0x72b882e7, 0xd6769f3b,
+    0xa674343d, 0x00fc509b, 0xdcbf7789, 0xd6266a3f, 0xae9641fd, 0x4e89541b,
+    0x11953407, 0x53400d03, 0x8e0dd75a, 0xe5b53345, 0x108f19ad, 0x108b89bc,
+    0x41a4c954, 0xe03b2b63, 0x437b3d7f, 0x97aced8e, 0xcbd66670, 0x2c5508c2,
+    0x650ebc69, 0x5c4f2ef0, 0x904ff6bf, 0x9985a2df, 0x9faddd9e, 0x5ed8d239,
+    0x25585832, 0xe3e51cb9, 0x0ff4f1d4, 0x56c02d9a, 0x8c4ef804, 0xc1a08a13,
+    0x13fd01c8, 0xe6d27671, 0xa7c234f4, 0x9d0176cc, 0xd0d73df2, 0x4d8bfa89,
+    0x544f10cd, 0x2b17e0b2, 0xb70a5c7d, 0xfd86fe49, 0xdf373f41, 0x214495bb,
+    0x84e857fd, 0x00d313d5, 0x0496fcbe, 0xa4ba4744, 0xe8cac982, 0xaec29e6e,
+    0x87ec7038, 0x7000a519, 0xaeee333b, 0xff66e42c, 0x8afd6b25, 0x03b4f63b,
+    0xbd7991dc, 0x5ab8d9c7, 0x2ed4684e, 0x48741a6c, 0xaf06940d, 0x2fdc6349,
+    0xb03d7ecd, 0xe974996f, 0xac7867f9, 0x52ec8721, 0xbcdd9d4a, 0x8edd2d00,
+    0x3557de06, 0x41c759f8, 0x3956d4b9, 0xa75409f2, 0x123cd8a1, 0xb6100fab,
+    0x3e7b21e2, 0x2e8d623b, 0x92959da2, 0xbca35f77, 0x200c03a5, 0x35fcb457,
+    0x1bb6c6e4, 0xf74eb928, 0x3d5d0b54, 0x87cc1d21, 0x4964046f, 0x18ae4240,
+    0xd868b275, 0x8bd2b496, 0x1c5563f4, 0xc234d8f5, 0xf868e970, 0xf9151fff,
+    0xae7be4a2, 0x271133ee, 0xbb0fd922, 0x25254932, 0xa60a9fc0, 0x104bcd64,
+    0x30290145, 0x00000062 };
+
+#elif BITS_PER_MP_LIMB == 64
+
+/* Table with constants of 10^(2^i), i=0..12 for 64-bit limbs.	*/
+
+static const mp_limb _ten_p0[] =
+  { 0x0000000000000000, 0x000000000000000a };
+static const mp_limb _ten_p1[] =
+  { 0x0000000000000000, 0x0000000000000064 };
+static const mp_limb _ten_p2[] =
+  { 0x0000000000000000, 0x0000000000002710 };
+static const mp_limb _ten_p3[] =
+  { 0x0000000000000000, 0x0000000005f5e100 };
+static const mp_limb _ten_p4[] =
+  { 0x0000000000000000, 0x002386f26fc10000 };
+static const mp_limb _ten_p5[] =
+  { 0x0000000000000000, 0x85acef8100000000, 0x000004ee2d6d415b };
+static const mp_limb _ten_p6[] =
+  { 0x0000000000000000, 0x0000000000000000, 0x6e38ed64bf6a1f01,
+    0xe93ff9f4daa797ed, 0x0000000000184f03 };
+static const mp_limb _ten_p7[] =
+  { 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x03df99092e953e01, 0x2374e42f0f1538fd, 0xc404dc08d3cff5ec,
+    0xa6337f19bccdb0da, 0x0000024ee91f2603 };
+static const mp_limb _ten_p8[] =
+  { 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0xbed3875b982e7c01,
+    0x12152f87d8d99f72, 0xcf4a6e706bde50c6, 0x26b2716ed595d80f,
+    0x1d153624adc666b0, 0x63ff540e3c42d35a, 0x65f9ef17cc5573c0,
+    0x80dcc7f755bc28f2, 0x5fdcefcef46eeddc, 0x00000000000553f7 };
+static const mp_limb _ten_p9[] =
+  { 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x77f27267fc6cf801, 0x5d96976f8f9546dc, 0xc31e1ad9b83a8a97,
+    0x94e6574746c40513, 0x4475b579c88976c1, 0xaa1da1bf28f8733b,
+    0x1e25cfea703ed321, 0xbc51fb2eb21a2f22, 0xbfa3edac96e14f5d,
+    0xe7fc7153329c57ae, 0x85a91924c3fc0695, 0xb2908ee0f95f635e,
+    0x1366732a93abade4, 0x69be5b0e9449775c, 0xb099bc817343afac,
+    0xa269974845a71d46, 0x8a0b1f138cb07303, 0xc1d238d98cab8a97,
+    0x0000001c633415d4 };
+static const mp_limb _ten_p10[] =
+  { 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0xf55b2b722919f001,
+    0x1ec29f866e7c215b, 0x15c51a88991c4e87, 0x4c7d1e1a140ac535,
+    0x0ed1440ecc2cd819, 0x7de16cfb896634ee, 0x9fce837d1e43f61f,
+    0x233e55c7231d2b9c, 0xf451218b65dc60d7, 0xc96359861c5cd134,
+    0xa7e89431922bbb9f, 0x62be695a9f9f2a07, 0x045b7a748e1042c4,
+    0x8ad822a51abe1de3, 0xd814b505ba34c411, 0x8fc51a16bf3fdeb3,
+    0xf56deeecb1b896bc, 0xb6f4654b31fb6bfd, 0x6b7595fb101a3616,
+    0x80d98089dc1a47fe, 0x9a20288280bda5a5, 0xfc8f1f9031eb0f66,
+    0xe26a7b7e976a3310, 0x3ce3a0b8df68368a, 0x75a351a28e4262ce,
+    0x445975836cb0b6c9, 0xc356e38a31b5653f, 0x0190fba035faaba6,
+    0x88bc491b9fc4ed52, 0x005b80411640114a, 0x1e8d4649f4f3235e,
+    0x73c5534936a8de06, 0xc1a6970ca7e6bd2a, 0xd2db49ef47187094,
+    0xae6209d4926c3f5b, 0x34f4a3c62d433949, 0xd9d61a05d4305d94,
+    0x0000000000000325 };
+static const mp_limb _ten_p11[] =
+  { 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0xe30968651333e001, 0x49e28dcfb27d4d3f, 0xee87e354ec2e4721,
+    0x368b8abbb6067584, 0x2ed56d55a5e5a191, 0xea50d142fd827773,
+    0x98342c9e51b78db2, 0x866ed6f1c850dabc, 0x9279498719342c12,
+    0x66912e4ad2f869c2, 0x57a7842d71c7fd8f, 0xfb7fedcc235552eb,
+    0x38209ce1f3861ce0, 0x34c101349713b449, 0xa7a8289c8c6c54de,
+    0xe3cb64f32dbb6643, 0xe3892ee98074ff01, 0xa8f16f9210c17f94,
+    0x967abbb3a8281ed6, 0x9952fbed5a151440, 0xafe609c313b41e44,
+    0xf111821fa2bca416, 0x91bac974fb1264b4, 0x8e48ff35d6c7d6ab,
+    0xc4a656654419bd43, 0x33554c36685e5510, 0x0dbd21feab498697,
+    0x982da4663cfe491d, 0x9e110c7bcbea4ca7, 0x5fc5a04779c56b8a,
+    0x1aa9f44484d80e2e, 0x6a57b1ab730f203c, 0x87a7dc62d752f7a6,
+    0x40660460944545ff, 0xc9ac375d77c1a42f, 0x744695f0e866d7ef,
+    0xa1fc6b9681428c85, 0x7bf03c19d7917c7b, 0x5715f7915b33eb41,
+    0xdb0708fd8f6cae5f, 0x785ce6b7b125ac8e, 0x6f46eadb56c6815b,
+    0x195355d84eeebeee, 0x9d7389c0a244de3c, 0xcf99d01953761abd,
+    0x0d76ce39de9ec24b, 0x2e55ecee70beb181, 0xf56d9d4bd5f86079,
+    0x13ef5a83fb8886fb, 0x3f3389a4408f43c5, 0x58ccf45cfad37943,
+    0x415c7f3ef82df846, 0x8b3d5cf42915e818, 0xf8dbb57a6a445f27,
+    0x8ad803ecca8f0070, 0x038f9245b2e87c34, 0xc7c9dee0bedd8a6c,
+    0x2ad3fa140eac7d56, 0xf775677ce0de0840, 0x92be221ef1bd0ad5,
+    0xce9d04a487fa1fb9, 0x3f6f7024d2c36fa9, 0x907855eeb028af62,
+    0x4efac5dcd83e49d6, 0x77cd8c6be7151aab, 0x0af908b40a753b7d,
+    0xe50f30278c983623, 0x1d08e2d694222771, 0xf2ee5ca6f7e928e6,
+    0x11eb962b1b61b93c, 0xce2bcba19648b21c, 0x7bbebe3034f77154,
+    0x8ce329ace526a319, 0xb5dc53d5de4a74d2, 0x000000000009e8b3 };
+static const mp_limb _ten_p12[] =
+  { 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0xd4724e8d2a67c001,
+    0xf89a1e908efe7ae7, 0x54e05154ef084117, 0x506be82913b1bb51,
+    0xe599574efb29b172, 0x806c0ed3f0da6146, 0x45155e93b86ae5be,
+    0x7e1e7c34c0591cc2, 0x1d1f4cce7c4823da, 0xd6bfdf759b8ba1e8,
+    0xc2dfae78e341be10, 0x0f237f1a016b67b2, 0xaf6a25743dbeabcd,
+    0x142e0e80cab3e6d7, 0x2c23481161959127, 0xcb4bf98287009701,
+    0x88052f8cf8169c84, 0xbc13176168dde6d4, 0x54ab9c41ff0b0905,
+    0x1a1c304e7613b224, 0x441c2d473bfe167b, 0x78f061814f6cea9c,
+    0x30c7ae41eb659fb8, 0xa1ebcad7947e0d0e, 0x2130504dd97d9556,
+    0xf2acd5071a8309cb, 0xfd82373a3f8ec72a, 0x280f4d3295a842bc,
+    0x811a4f04f3618ac0, 0xd3967a1b6dc3a5b4, 0xdcfe388f15b8c898,
+    0x8738b909454eb2a0, 0x2bd9cc1110c4e996, 0x655fec303297cd0c,
+    0xf4090ee8ae0725b1, 0x398c6fed037d19ee, 0xc994a4503b9af26b,
+    0x75a697b2b5341743, 0x3ccb5b92ac50b9c1, 0xa8329761ffe06205,
+    0xeb83cadbdfea5242, 0x3c20ee69e79dadf7, 0x7021b97a1e0a6817,
+    0x176ca776743074fa, 0xeca19beb77fb8af6, 0xaf63b71292baf1de,
+    0xa4eb8f8cde35c88b, 0x40b464a0e137d5e9, 0x42923bbd87d1cde8,
+    0x2e2690f3cd8f62ff, 0x59c89f1b095edc16, 0x5138753d1fa8fd5d,
+    0x80152f18390a2b29, 0xf984d83e2dd8d925, 0xc19e1faf7a872e74,
+    0xecf9b5d0ed4d542d, 0xc53c0adf9462ea75, 0x37a2d4390caea134,
+    0x2181327ec8fa2e8a, 0x2d2408206e7bb827, 0x5893d4b850be10e0,
+    0x1f2b2322ab312bb9, 0xbf627ede440b3f25, 0xb608b89572dac789,
+    0x86deb3f078787e2a, 0xbb9373f46fee7aab, 0xf7d8b57e27ecf57b,
+    0x3d04e8d2fca26a9f, 0x3172826ac9df13cb, 0xa8fcd8e0cd9e8d7c,
+    0x307641d9b2c39497, 0x2608c4cf1cc939c1, 0x3d326a7eb6d1c7bf,
+    0x8e13e25feeaf19e6, 0x2dfe6d97ee63302b, 0xe41d3cc425971d58,
+    0xab8db59a0a80627c, 0xe90afb779eea37c8, 0x9ee3352c90ca19cf,
+    0xfe78d6823613c850, 0x5b060904788f6e50, 0x3fecb534b71bd1a4,
+    0x20c33857b32c450c, 0x0239f4cea6e9cfda, 0xa19adb9548497187,
+    0x95aca6a8b492ed8a, 0xcf1b23504dcd6cd9, 0x1a67778cfbe8b12a,
+    0xc32da38338eb3acc, 0xa03f40a8fb126ab1, 0xe9ce4724ed5bf546,
+    0x73a130d84c4a74fd, 0xa2ebd6c1d9960e2d, 0x6f233b7c94ab6feb,
+    0x8e7b9a7349126080, 0xd298f9994b8c9091, 0xa96ddeff35e836b5,
+    0x6b0dd9bc96119b31, 0x282566fbc6cc3f8d, 0xd6769f3b72b882e7,
+    0x00fc509ba674343d, 0xd6266a3fdcbf7789, 0x4e89541bae9641fd,
+    0x53400d0311953407, 0xe5b533458e0dd75a, 0x108b89bc108f19ad,
+    0xe03b2b6341a4c954, 0x97aced8e437b3d7f, 0x2c5508c2cbd66670,
+    0x5c4f2ef0650ebc69, 0x9985a2df904ff6bf, 0x5ed8d2399faddd9e,
+    0xe3e51cb925585832, 0x56c02d9a0ff4f1d4, 0xc1a08a138c4ef804,
+    0xe6d2767113fd01c8, 0x9d0176cca7c234f4, 0x4d8bfa89d0d73df2,
+    0x2b17e0b2544f10cd, 0xfd86fe49b70a5c7d, 0x214495bbdf373f41,
+    0x00d313d584e857fd, 0xa4ba47440496fcbe, 0xaec29e6ee8cac982,
+    0x7000a51987ec7038, 0xff66e42caeee333b, 0x03b4f63b8afd6b25,
+    0x5ab8d9c7bd7991dc, 0x48741a6c2ed4684e, 0x2fdc6349af06940d,
+    0xe974996fb03d7ecd, 0x52ec8721ac7867f9, 0x8edd2d00bcdd9d4a,
+    0x41c759f83557de06, 0xa75409f23956d4b9, 0xb6100fab123cd8a1,
+    0x2e8d623b3e7b21e2, 0xbca35f7792959da2, 0x35fcb457200c03a5,
+    0xf74eb9281bb6c6e4, 0x87cc1d213d5d0b54, 0x18ae42404964046f,
+    0x8bd2b496d868b275, 0xc234d8f51c5563f4, 0xf9151ffff868e970,
+    0x271133eeae7be4a2, 0x25254932bb0fd922, 0x104bcd64a60a9fc0,
+    0x0000006230290145 };
+
+
+#else
+#  error "mp_limb size " BITS_PER_MP_LIMB "not accounted for"
+#endif
+
+
+#define LDBL_MAX_10_EXP_LOG 12	/* = floor(log_2(LDBL_MAX_10_EXP)) */ /* XXX */
+static const struct ten_pows
+  {
+    const mp_limb *array;	/* The array with the number representation. */
+    mp_size_t arraysize;	/* Size of the array.  */
+    int p_expo;			/* Exponent of the number 10^(2^i).  */
+    int m_expo;			/* Exponent of the number 10^-(2^i-1).  */
+  } tens_p[LDBL_MAX_10_EXP_LOG + 1] =
+  {
+    { _ten_p0, sizeof (_ten_p0) / sizeof (_ten_p0[0]),		4,	     },
+    { _ten_p1, sizeof (_ten_p1) / sizeof (_ten_p0[1]),		7,	   4 },
+    { _ten_p2, sizeof (_ten_p2) / sizeof (_ten_p0[2]),		14,	  10 },
+    { _ten_p3, sizeof (_ten_p3) / sizeof (_ten_p0[3]),		27,	  24 },
+    { _ten_p4, sizeof (_ten_p4) / sizeof (_ten_p0[4]),		54,	  50 },
+    { _ten_p5, sizeof (_ten_p5) / sizeof (_ten_p0[5]),		107,	 103 },
+    { _ten_p6, sizeof (_ten_p6) / sizeof (_ten_p0[6]),		213,	 210 },
+    { _ten_p7, sizeof (_ten_p7) / sizeof (_ten_p0[7]),		426,	 422 },
+    { _ten_p8, sizeof (_ten_p8) / sizeof (_ten_p0[8]),	  	851,	 848 },
+    { _ten_p9, sizeof (_ten_p9) / sizeof (_ten_p0[9]),	 	1701,	1698 },
+    { _ten_p10, sizeof (_ten_p10) / sizeof (_ten_p0[10]),	3402,	3399 },
+    { _ten_p11, sizeof (_ten_p11) / sizeof (_ten_p0[11]),	6804,	6800 },
+    { _ten_p12, sizeof (_ten_p12) / sizeof (_ten_p0[12]), 	13607, 13604 }
+  };
+
+/* Macros for doing the actual output.  */
+
+#define outchar(ch)							      \
   do									      \
     {									      \
-      register CONST int outc = (x);					      \
-      if (putc (outc, s) == EOF)					      \
+      register CONST int outc = (ch);					      \
+      if (putc (outc, fp) == EOF)					      \
 	return -1;							      \
-      else								      \
-	++done;								      \
+      ++done;								      \
     } while (0)
 
-#if FLT_RADIX != 2
- #error "FLT_RADIX != 2.  Write your own __printf_fp."
-#endif
+#define PRINT(ptr, len)							      \
+  do									      \
+    {									      \
+      register size_t outlen = (len);					      \
+      if (len > 20) /* FIXME: good choice? */				      \
+	{								      \
+	  if (PUT (fp, ptr, outlen) != outlen)				      \
+	    return -1;							      \
+	  ptr += outlen;						      \
+	  done += outlen;						      \
+	}								      \
+      else								      \
+	{								      \
+	  while (outlen-- > 0)						      \
+	    outchar (*ptr++);						      \
+	}								      \
+    } while (0)
 
-#undef alloca			/* gmp-impl.h defines it again.  */
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "longlong.h"
+#define PADN(ch, len)							      \
+  do									      \
+    {									      \
+      if (PAD (fp, ch, len) != len)				      \
+	return -1;							      \
+      done += len;							      \
+    }									      \
+  while (0)
 
-#ifndef NDEBUG
-static void mpn_dump (const char *str, mp_limb *p, mp_size_t size);
-#define MPN_DUMP(x,y,z) mpn_dump(x,y,z)
-#else
-#define MPN_DUMP(x,y,z)
-#endif
+#ifndef USE_IN_LIBIO
+static ssize_t __pad __P ((FILE *, char, int));
+
+/* Pads string with given number of a specified character.
+   This code is taken from iopadn.c of the GNU I/O library.  */
+#  define PADSIZE	16
+static char const blanks[PADSIZE] =
+{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
+static char const zeroes[PADSIZE] =
+{'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'};
+
+static ssize_t
+__pad (s, pad, count)
+     FILE * s;
+     char pad;
+     int count;
+{
+  char padbuf[PADSIZE];
+  const char *padstr;
+  register int i;
+  size_t written, w;
+
+  if (pad == ' ')
+    padstr = blanks;
+  else if (pad == '0')
+    padstr = zeroes;
+  else
+    {
+      for (i = PADSIZE; --i > 0; )
+	padbuf[i] = pad;
+      padstr = padbuf;
+    }
+  written = 0;
+  for (i = count; i >= PADSIZE; i -= PADSIZE)
+    {
+      w = PUT (s, padstr, PADSIZE);
+      written += w;
+      if (w != PADSIZE)
+	return written;
+    }
+  if (i > 0)
+    {
+      w = PUT (s, padstr, i);
+      written += w;
+    }
+  return written;
+}
+#  undef PADSIZE
+#endif	 /* ! USE_IN_LIBIO */
+
+/* We use the GNU MP library to handle large numbers.
+
+   An MP variable occupies a varying number of entries in its array.  We keep
+   track of this number for efficiency reasons.  Otherwise we would always
+   have to process the whole array.  */
+#define MPN_VAR(name) mp_limb *name; mp_size_t name##size
+
+#define MPN_ASSIGN(dst,src)						      \
+  memcpy (dst, src, (dst##size = src##size) * sizeof (mp_limb))
+#define MPN_GE(u,v) \
+  (u##size > v##size || (u##size == v##size && __mpn_cmp (u, v, u##size) >= 0))
+
+extern int __isinfl (long double), __isnanl (long double);
 
 extern mp_size_t __mpn_extract_double (mp_ptr res_ptr, mp_size_t size,
 				       int *expt, int *is_neg,
 				       double value);
+extern mp_size_t __mpn_extract_long_double (mp_ptr res_ptr, mp_size_t size,
+					    int *expt, int *is_neg,
+					    long double value);
 
-/* We believe that these variables need as many bits as the largest binary
-   exponent of a double.  But we are not confident, so we add a few words.  */
-#define MPNSIZE ((DBL_MAX_EXP + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB) + 3
 
-#define MPN_VAR(name) mp_limb name[MPNSIZE]; mp_size_t name##size
-#define MPN_ASSIGN(dst,src) \
-  memcpy (dst, src, (dst##size = src##size) * sizeof (mp_limb))
-#define MPN_POW2(dst, power) \
-  do {									      \
-    MPN_ZERO (dst, (power) / BITS_PER_MP_LIMB);				      \
-    dst[(power) / BITS_PER_MP_LIMB] =					      \
-      (mp_limb) 1 << (power) % BITS_PER_MP_LIMB;			      \
-    dst##size = (power) / BITS_PER_MP_LIMB + 1;				      \
-  } while (0)
-
-/* Compare *normalized* mpn vars.  */
-#define MPN_GT(u,v) \
-  (u##size > v##size || (u##size == v##size && __mpn_cmp (u, v, u##size) > 0))
-#define MPN_LT(u,v) \
-  (u##size < v##size || (u##size == v##size && __mpn_cmp (u, v, u##size) < 0))
-#define MPN_GE(u,v) \
-  (u##size > v##size || (u##size == v##size && __mpn_cmp (u, v, u##size) >= 0))
-#define MPN_LE(u,v) \
-  (u##size < v##size || (u##size == v##size && __mpn_cmp (u, v, u##size) <= 0))
-#define MPN_EQ(u,v) \
-  (u##size == v##size && __mpn_cmp (u, v, u##size) == 0)
-#define MPN_NE(u,v) \
-  (!MPN_EQ(u,v))
 
 int
-DEFUN(__printf_fp, (s, info, args),
-      FILE *s AND CONST struct printf_info *info AND va_list *args)
+__printf_fp (fp, info, args)
+     FILE *fp;
+     const struct printf_info *info;
+     va_list *args;
 {
-  mp_limb cy;
+  /* The floating-point value to output.  */
+  union
+    {
+      double dbl;
+      LONG_DOUBLE ldbl;
+    }
+  fpnum;
 
+  /* Locale dependend representation of decimal point.	*/
+  wchar_t decimal;
+
+  /* "NaN" or "Inf" for the special cases.  */
+  CONST char *special = NULL;
+
+  /* We need just a few limbs for the input before shifting to the right
+     position.	*/
+  mp_limb fp_input[(LDBL_MANT_DIG + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB];
+  /* We need to shift the contents of fp_input by this amount of bits.	*/
+  int to_shift;
+
+  /* The significant of the floting-point value in question  */
+  MPN_VAR(frac);
+  /* and the exponent.	*/
+  int exponent;
+  /* Sign of the exponent.  */
+  int expsign = 0;
+  /* Sign of float number.  */
+  int is_neg = 0;
+
+  /* Scaling factor.  */
+  MPN_VAR(scale);
+
+  /* Temporary bignum value.  */
+  MPN_VAR(tmp);
+
+  /* Digit which is result of last hack_digit() call.  */
+  int digit;
+
+  /* The type of output format that will be used: 'e'/'E' or 'f'.  */
+  int type;
+
+  /* Counter for number of written characters.	*/
   int done = 0;
 
-  /* Decimal point character.  */
-  CONST char *CONST decimal = _numeric_info->decimal_point;
+  /* General helper (carry limb).  */
+  mp_limb cy;
 
-  LONG_DOUBLE fpnum;		/* Input.  */
-  int is_neg;
-
-  MPN_VAR (f);			/* Fraction.  */
-
-  int e;			/* Base-2 exponent of the input.  */
-  CONST int p = DBL_MANT_DIG;	/* Internal precision.  */
-  MPN_VAR (scale); MPN_VAR (scale2); MPN_VAR (scale10); /* Scale factor.  */
-  MPN_VAR (loerr); MPN_VAR (hierr); /* Potential error in the fraction.  */
-  int k;			/* Digits to the left of the decimal point.  */
-  int cutoff;			/* Where to stop generating digits.  */
-  MPN_VAR (r); MPN_VAR (r2); MPN_VAR (r10); /* Remainder.  */
-  int roundup;
-  int low, high;
-  char digit;
-
-  MPN_VAR (tmp);		/* Scratch space.  */
-
-  int j;
-
-  char type = tolower (info->spec);
-  int prec = info->prec;
-  int width = info->width;
-
-  /* This algorithm has the nice property of not needing a buffer.
-     However, to get the padding right for %g format, we need to know
-     the length of the number before printing it.  */
-
-#ifndef	LDBL_DIG
-#define	LDBL_DIG	DBL_DIG
-#endif
-#ifndef	LDBL_MAX_10_EXP
-#define	LDBL_MAX_10_EXP	DBL_MAX_10_EXP
-#endif
-
-  char *buf = __alloca ((prec > LDBL_DIG ? prec : LDBL_DIG) +
-			LDBL_MAX_10_EXP + 3); /* Dot, e, exp. sign.  */
-  register char *bp = buf;
-#define	put(c)	*bp++ = (c)
-
-
-  /* Produce the next digit in DIGIT.
-     Return nonzero if it is the last.  */
-  inline int hack_digit (void)
+  char hack_digit (void)
     {
-      int cnt;
-      mp_limb high_qlimb;
+      mp_limb hi;
 
-      --k;
-      cy = __mpn_mul_1 (r10, r, rsize, 10);
-      r10size = rsize;
-      if (cy != 0)
-	r10[r10size++] = cy;
-
-      MPN_DUMP ("r", r, rsize);
-      MPN_DUMP ("r10", r10, r10size);
-      MPN_DUMP ("scale", scale, scalesize);
-
-      /* Compute tmp = R10 / scale  and  R10 = R10 % scale.  */
-      count_leading_zeros (cnt, scale[scalesize - 1]);
-      if (cnt != 0)
+      if (expsign != 0 && type == 'f' && exponent-- > 0)
+	hi = 0;
+      else if (scalesize == 0)
 	{
-	  mp_limb norm_scale[scalesize];
-	  mp_limb cy;
-	  assert (scalesize != 0);
-	  __mpn_lshift (norm_scale, scale, scalesize, cnt);
-	  assert (r10size != 0);
-	  cy = __mpn_lshift (r10, r10, r10size, cnt);
+	  hi = frac[fracsize - 1];
+	  cy = __mpn_mul_1 (frac, frac, fracsize - 1, 10);
+	  frac[fracsize - 1] = cy;
+	}
+      else
+	{
+	  if (fracsize < scalesize)
+	    hi = 0;
+	  else
+	    {
+	      hi = __mpn_divmod (tmp, frac, fracsize, scale, scalesize);
+	      tmp[fracsize - scalesize] = hi;
+	      hi = tmp[0];
+
+	      fracsize = __mpn_normal_size (frac, scalesize);
+	      if (fracsize == 0)
+		{
+		  /* We're not prepared for an mpn variable with zero
+		     limbs.  */
+		  fracsize = 1;
+		  return '0' + hi;
+		}
+	    }
+
+	  cy = __mpn_mul_1 (frac, frac, fracsize, 10);
 	  if (cy != 0)
-	    r10[r10size++] = cy;
-	  high_qlimb = __mpn_divmod (tmp, r10, r10size, norm_scale, scalesize);
-	  tmp[r10size - scalesize] = high_qlimb;
-	  r10size = scalesize;
-	  __mpn_rshift (r10, r10, r10size, cnt);
-	}
-      else
-	{
-	  high_qlimb = __mpn_divmod (tmp, r10, r10size, scale, scalesize);
-	  tmp[r10size - scalesize] = high_qlimb;
-	  r10size = scalesize;
+	    frac[fracsize++] = cy;
 	}
 
-      MPN_DUMP ("high_qlimb", &high_qlimb, 1);
-      MPN_DUMP ("r10", r10, r10size);
-
-      /* We should have a quotient < 10.  It might be stored */
-      high_qlimb = tmp[0];
-      digit = '0' + high_qlimb;
-
-      r10size = __mpn_normal_size (r10, r10size);
-      if (r10size == 0)
-	/* We are not prepared for an mpn variable with zero limbs.  */
-	r10size = 1;
-
-      MPN_ASSIGN (r, r10);
-      assert (rsize != 0);
-      cy = __mpn_lshift (r2, r, rsize, 1);
-      r2size = rsize;
-      if (cy != 0)
-	r2[r2size++] = cy;
-
-      cy = __mpn_mul_1 (loerr, loerr, loerrsize, 10);
-      if (cy)
-	loerr[loerrsize++] = cy;
-      cy = __mpn_mul_1 (hierr, hierr, hierrsize, 10);
-      if (cy)
-	hierr[hierrsize++] = cy;
-
-      low = MPN_LT (r2, loerr);
-
-      /* tmp = scale2 - hierr; */
-      if (scale2size < hierrsize)
-	high = 1;
-      else
-	{
-	  cy = __mpn_sub (tmp, scale2, scale2size, hierr, hierrsize);
-	  tmpsize = scale2size;
-	  high = cy || (roundup ? MPN_GE (r2, tmp) : MPN_GT (r2, tmp));
-	}
-
-      if (low || high || k == cutoff)
-	{
-	  /* This is confusing, since the text and the code in Steele's and
-	     White's paper are contradictory.  Problem numbers:
-	     printf("%20.15e\n", <1/2^106>) is printed as
-	     1.232595164407830e-32 (instead of 1.232595164407831e-32)
-	     if we obey the description in the text;
-	     1/2^330 is badly misprinted if we obey the code.  */
-	  if (high && !low)
-	    ++digit;
-#define OBEY_TEXT 1
-#if OBEY_TEXT
-	  else if (high && low && MPN_GT (r2, scale))
-#else
-	  else if (high == low && MPN_GT (r2, scale))
-#endif
-	    ++digit;
-	  return 1;
-	}
-
-      return 0;
+      return '0' + hi;
     }
 
-  const char *special = NULL;	/* "NaN" or "Inf" for the special cases.  */
 
-  /* Fetch the argument value.  */
-  if (info->is_long_double)
-    fpnum = va_arg (*args, LONG_DOUBLE);
+  /* Figure out the decimal point character.  */
+  if (mbtowc (&decimal, _numeric_info->decimal_point,
+	      strlen (_numeric_info->decimal_point)) <= 0)
+    decimal = (wchar_t) *_numeric_info->decimal_point;
+
+
+  /* Fetch the argument value.	*/
+  if (info->is_long_double && sizeof (long double) > sizeof (double))
+    {
+      fpnum.ldbl = va_arg (*args, LONG_DOUBLE);
+
+      /* Check for special values: not a number or infinity.  */
+      if (__isnanl (fpnum.ldbl))
+	{
+	  special = "NaN";
+	  is_neg = 0;
+	}
+      else if (__isinfl (fpnum.ldbl))
+	{
+	  special = "Inf";
+	  is_neg = fpnum.ldbl < 0;
+	}
+      else
+	{
+	  fracsize = __mpn_extract_long_double (fp_input,
+						(sizeof (fp_input) /
+						 sizeof (fp_input[0])), 
+						&exponent, &is_neg,
+						fpnum.ldbl);
+	  to_shift = 1 + fracsize * BITS_PER_MP_LIMB - LDBL_MANT_DIG;
+	}
+    }
   else
-    fpnum = (LONG_DOUBLE) va_arg (*args, double);
-
-  /* Check for special values: not a number or infinity.  */
-
-  if (__isnan ((double) fpnum))
     {
-      special = "NaN";
-      is_neg = 0;
-    }
-  else if (__isinf ((double) fpnum))
-    {
-      special = "Inf";
-      is_neg = fpnum < 0;
+      fpnum.dbl = va_arg (*args, double);
+
+      /* Check for special values: not a number or infinity.  */
+      if (__isnan (fpnum.dbl))
+	{
+	  special = "NaN";
+	  is_neg = 0;
+	}
+      else if (__isinf (fpnum.dbl))
+	{
+	  special = "Inf";
+	  is_neg = fpnum.dbl < 0;
+	}
+      else
+	{
+	  fracsize = __mpn_extract_double (fp_input,
+					   (sizeof (fp_input)
+					    / sizeof (fp_input[0])),
+					   &exponent, &is_neg, fpnum.dbl);
+	  to_shift = 1 + fracsize * BITS_PER_MP_LIMB - DBL_MANT_DIG;
+	}
     }
 
   if (special)
@@ -280,9 +703,8 @@ DEFUN(__printf_fp, (s, info, args),
 	--width;
       width -= 3;
 
-      if (!info->left)
-	while (width-- > 0)
-	  outchar (' ');
+      if (!info->left && width > 0)
+	PADN (' ', width);
 
       if (is_neg)
 	outchar ('-');
@@ -291,447 +713,587 @@ DEFUN(__printf_fp, (s, info, args),
       else if (info->space)
 	outchar (' ');
 
-      {
-	register size_t len = 3;
-	while (len-- > 0)
-	  outchar (*special++);
-      }
+      PRINT (special, 3);
 
-      if (info->left)
-	while (width-- > 0)
-	  outchar (' ');
+      if (info->left && width > 0)
+	PADN (' ', width);
 
       return done;
     }
 
-  /* Split the number into a fraction and base-2 exponent.  The fractional
-     part is scaled by the highest possible number of significant bits of
-     fraction.  We represent the fractional part as a (very) large integer. */
 
-  fsize = __mpn_extract_double (f, sizeof (f) / sizeof (f[0]),
-				&e, &is_neg, fpnum);
+  /* We need three multiprecisions variable.  Now that we have the exponent
+     of the number we can allocate the needed memory.  It would be more
+     efficient to use variables of the fixed maximum size but because this
+     would be really big it could lead to memory problems.  */
+  {
+    mp_size_t bignum_size = ((ABS (exponent) + BITS_PER_MP_LIMB - 1)
+			     / BITS_PER_MP_LIMB + 3) * sizeof (mp_limb);
+    frac = (mp_limb *) alloca (bignum_size);
+    tmp = (mp_limb *) alloca (bignum_size);
+    scale = (mp_limb *) alloca (bignum_size);
+  }
 
-  if (prec == -1)
-    prec = 6;
-  else if (prec == 0 && type == 'g')
-    prec = 1;
-
-  if (type == 'g')
+  /* We now have to distinguish between numbers with positive and negative
+     exponents becuase the method used for the one is not applicable/efficient
+     for the other.  */
+  scalesize = 0;
+  if (exponent > 2)
     {
-      if (fpnum != 0)
+      /* |FP| >= 1.0.  */
+      int scaleexpo = 0;
+      int explog = LDBL_MAX_10_EXP_LOG;
+      int exp10 = 0;
+      const struct ten_pows *tens = &tens_p[explog + 1];
+      int cnt_h, cnt_l, i;
+
+      if ((exponent + to_shift) % BITS_PER_MP_LIMB == 0)
 	{
-	  if (is_neg)
-	    fpnum = - fpnum;
-
-	  if (fpnum < 1e-4)
-	    type = 'e';
-	  else
-	    {			/* XXX do this more efficiently */
-	      /* Is (int) floor (log10 (FPNUM)) >= PREC?  */
-	      LONG_DOUBLE power = 10;
-	      j = prec;
-	      if (j > p)
-		j = p;
-	      while (--j > 0)
-		{
-		  power *= 10;
-		  if (fpnum < power)
-		    /* log10 (POWER) == floor (log10 (FPNUM)) + 1
-		       log10 (FPNUM) == Number of iterations minus one.  */
-		    break;
-		}
-	      if (j <= 0)
-		/* We got all the way through the loop and F (i.e., 10**J)
-		   never reached FPNUM, so we want to use %e format.  */
-		type = 'e';
-	    }
-	}
-
-      /* For 'g'/'G' format, the precision specifies "significant digits",
-	 not digits to come after the decimal point.  */
-      --prec;
-    }
-
-  if (fsize == 1 && f[0] == 0)
-    /* Special case for zero.
-       The general algorithm does not work for zero.  */
-    {
-      put ('0');
-      if (tolower (info->spec) != 'g' || info->alt)
-	{
-	  if (prec > 0 || info->alt)
-	    put (*decimal);
-	  while (prec-- > 0)
-	    put ('0');
-	}
-      if (type == 'e')
-	{
-	  put (info->spec);
-	  put ('+');
-	  put ('0');
-	  put ('0');
-	}
-    }
-  else
-    {
-      cutoff = -prec;
-
-      roundup = 0;
-
-      if (e > p)
-	{
-	  /* The exponent is bigger than the number of fractional digits.  */
-	  MPN_ZERO (r, (e - p) / BITS_PER_MP_LIMB);
-	  if ((e - p) % BITS_PER_MP_LIMB == 0)
-	    {
-	      MPN_COPY (r + (e - p) / BITS_PER_MP_LIMB, f, fsize);
-	      rsize = fsize + (e - p) / BITS_PER_MP_LIMB;
-	      assert (rsize != 0);
-	    }
-	  else
-	    {
-	      assert (fsize != 0);
-	      cy = __mpn_lshift (r + (e - p) / BITS_PER_MP_LIMB, f, fsize,
-				 (e - p) % BITS_PER_MP_LIMB);
-	      rsize = fsize + (e - p) / BITS_PER_MP_LIMB;
-	      if (cy)
-		r[rsize++] = cy;
-	    }
-
-	  MPN_POW2 (scale, 0);
-	  assert (scalesize != 0);
-
-	  /* The number is (E - P) factors of two larger than
-	     the fraction can represent; this is the potential error.  */
-	  MPN_POW2 (loerr, e - p);
-	  assert (loerrsize != 0);
+	  MPN_COPY_DECR (frac + (exponent + to_shift) / BITS_PER_MP_LIMB,
+			 fp_input, fracsize);
+	  fracsize += (exponent + to_shift) / BITS_PER_MP_LIMB;
 	}
       else
 	{
-	  /* The number of fractional digits is greater than the exponent.
-	     Scale by the difference factors of two.  */
-	  MPN_ASSIGN (r, f);
-	  MPN_POW2 (scale, p - e);
-	  MPN_POW2 (loerr, 0);
-	}
-      MPN_ASSIGN (hierr, loerr);
-
-      /* Fixup.  */
-
-      MPN_POW2 (tmp, p - 1);
-
-      if (MPN_EQ (f, tmp))
-	{
-	  /* Account for unequal gaps.  */
-	  assert (hierrsize != 0);
-	  cy = __mpn_lshift (hierr, hierr, hierrsize, 1);
+	  cy = __mpn_lshift (frac + (exponent + to_shift) / BITS_PER_MP_LIMB,
+			     fp_input, fracsize,
+			     (exponent + to_shift) % BITS_PER_MP_LIMB);
+	  fracsize += (exponent + to_shift) / BITS_PER_MP_LIMB;
 	  if (cy)
-	    hierr[hierrsize++] = cy;
-
-	  assert (rsize != 0);
-	  cy = __mpn_lshift (r, r, rsize, 1);
-	  if (cy)
-	    r[rsize++] = cy;
-
-	  assert (scalesize != 0);
-	  cy = __mpn_lshift (scale, scale, scalesize, 1);
-	  if (cy)
-	    scale[scalesize++] = cy;
+	    frac[fracsize++] = cy;
 	}
+      MPN_ZERO (frac, (exponent + to_shift) / BITS_PER_MP_LIMB);
 
-      /* scale10 = ceil (scale / 10.0).  */
-      if (__mpn_divmod_1 (scale10, scale, scalesize, 10) != 0)
-	{
-	  /* We got a remainder.  __mpn_divmod_1 has floor'ed the quotient
-	     but we want it to be ceil'ed.  Adjust.  */
-	  cy = __mpn_add_1 (scale10, scale10, scalesize, 1);
-	  if (cy)
-	    abort ();
-	}
-      scale10size = scalesize;
-      scale10size -= scale10[scale10size - 1] == 0;
-
-      k = 0;
-      while (MPN_LT (r, scale10))
-	{
-	  mp_limb cy;
-
-	  --k;
-
-	  cy = __mpn_mul_1 (r, r, rsize, 10);
-	  if (cy != 0)
-	    r[rsize++] = cy;
-
-	  cy = __mpn_mul_1 (loerr, loerr, loerrsize, 10);
-	  if (cy != 0)
-	    loerr[loerrsize++] = cy;
-
-	  cy = __mpn_mul_1 (hierr, hierr, hierrsize, 10);
-	  if (cy != 0)
-	    hierr[hierrsize++] = cy;
-	}
-
+      assert (tens > &tens_p[0]);
       do
 	{
-	  mp_limb cy;
-	  assert (rsize != 0);
-	  cy = __mpn_lshift (r2, r, rsize, 1);
-	  r2size = rsize;
-	  if (cy != 0)
-	    r2[r2size++] = cy;
+	  --tens;
 
-	  /* tmp = r2 + hierr; */
-	  if (r2size > hierrsize)
+	  /* The number of the product of two binary numbers with n and m
+	     bytes respectively has m+n or m+n-1 bits.	*/
+	  if (exponent >= scaleexpo + tens->p_expo - 1)
 	    {
-	      cy = __mpn_add (tmp, r2, r2size, hierr, hierrsize);
-	      tmpsize = r2size;
+	      if (scalesize == 0)
+		MPN_ASSIGN (tmp, tens->array);
+	      else
+		{
+		  cy = __mpn_mul (tmp, scale, scalesize,
+				  tens->array + 2, tens->arraysize - 2);
+		  tmpsize = scalesize + tens->arraysize - 2;
+		  if (cy == 0)
+		    --tmpsize;
+		}
+
+	      if (MPN_GE (frac, tmp))
+		{
+		  int cnt;
+		  MPN_ASSIGN (scale, tmp);
+		  count_leading_zeros (cnt, scale[scalesize - 1]);
+		  scaleexpo = (scalesize - 2) * BITS_PER_MP_LIMB - cnt - 1;
+		  exp10 |= 1 << explog;
+		}
+	    }
+	  --explog;
+	}
+      while (tens > &tens_p[0]);
+      exponent = exp10;
+
+      /* Optimize number representations.  We want to represent the numbers
+	 with the lowest number of bytes possible without losing any
+	 bytes. Also the highest bit in the scaling factor has to be set
+	 (this is a requirement of the MPN division routines).  */
+      if (scalesize > 0)
+	{
+	  /* Determine minimum number of zero bits at the end of
+	     both numbers.  */
+	  for (i = 0; scale[i] == 0 && frac[i] == 0; i++)
+	    ;
+
+	  /* Determine number of bits the scaling factor is misplaced.	*/
+	  count_leading_zeros (cnt_h, scale[scalesize - 1]);
+
+	  if (cnt_h == 0)
+	    {
+	      /* The highest bit of the scaling factor is already set.	So
+		 we only have to remove the trailing empty limbs.  */
+	      if (i > 0)
+		{
+		  MPN_COPY_INCR (scale, scale + i, scalesize - i);
+		  scalesize -= i;
+		  MPN_COPY_INCR (frac, frac + i, fracsize - i);
+		  fracsize -= i;
+		}
 	    }
 	  else
 	    {
-	      cy = __mpn_add (tmp, hierr, hierrsize, r2, r2size);
-	      tmpsize = hierrsize;
-	    }
-	  if (cy != 0)
-	    tmp[tmpsize++] = cy;
+	      if (scale[i] != 0)
+		{
+		  count_trailing_zeros (cnt_l, scale[i]);
+		  if (frac[i] != 0)
+		    {
+		      int cnt_l2;
+		      count_trailing_zeros (cnt_l2, frac[i]);
+		      if (cnt_l2 < cnt_l)
+			cnt_l = cnt_l2;
+		    }
+		}
+	      else
+		count_trailing_zeros (cnt_l, frac[i]);
 
-	  /* while (r2 + hierr >= 2 * scale) */
-	  assert (scalesize != 0);
-	  cy = __mpn_lshift (scale2, scale, scalesize, 1);
-	  scale2size = scalesize;
-	  if (cy)
-	    scale2[scale2size++] = cy;
-	  while (MPN_GE (tmp, scale2))
+	      /* Now shift the numbers to their optimal position.  */
+	      if (i == 0 && BITS_PER_MP_LIMB - cnt_h > cnt_l)
+		{
+		  /* We cannot save any memory.	 So just roll both numbers
+		     so that the scaling factor has its highest bit set.  */
+
+		  (void) __mpn_lshift (scale, scale, scalesize, cnt_h);
+		  cy = __mpn_lshift (frac, frac, fracsize, cnt_h);
+		  if (cy != 0)
+		    frac[fracsize++] = cy;
+		}
+	      else if (BITS_PER_MP_LIMB - cnt_h <= cnt_l)
+		{
+		  /* We can save memory by removing the trailing zero limbs
+		     and by packing the non-zero limbs which gain another
+		     free one. */
+
+		  (void) __mpn_rshift (scale, scale + i, scalesize - i,
+				       BITS_PER_MP_LIMB - cnt_h);
+		  scalesize -= i + 1;
+		  (void) __mpn_rshift (frac, frac + i, fracsize - i,
+				       BITS_PER_MP_LIMB - cnt_h);
+		  fracsize -= frac[fracsize - i - 1] == 0 ? i + 1 : i;
+		}
+	      else
+		{
+		  /* We can only save the memory of the limbs which are zero.
+		     The non-zero parts occupy the same number of limbs.  */
+
+		  (void) __mpn_rshift (scale, scale + (i - 1),
+				       scalesize - (i - 1),
+				       BITS_PER_MP_LIMB - cnt_h);
+		  scalesize -= i;
+		  (void) __mpn_rshift (frac, frac + (i - 1),
+				       fracsize - (i - 1),
+				       BITS_PER_MP_LIMB - cnt_h);
+		  fracsize -= frac[fracsize - (i - 1) - 1] == 0 ? i : i - 1;
+		}
+	    }
+	}
+    }
+  else if (exponent < 0)
+    {
+      /* |FP| < 1.0.  */
+      int exp10 = 0;
+      int explog = LDBL_MAX_10_EXP_LOG;
+      const struct ten_pows *tens = &tens_p[explog + 1];
+      mp_size_t used_limbs = fracsize - 1;
+
+      /* Now shift the input value to its right place.	*/
+      cy = __mpn_lshift (frac, fp_input, fracsize, to_shift);
+      frac[fracsize++] = cy; 
+      assert (cy == 1 || (frac[fracsize - 2] == 0 && frac[0] == 0));
+
+      expsign = 1;
+      exponent = -exponent;
+
+      assert (tens != &tens_p[0]);
+      do
+	{
+	  --tens;
+
+	  if (exponent >= tens->m_expo)
 	    {
-	      cy = __mpn_mul_1 (scale, scale, scalesize, 10);
-	      if (cy)
-		scale[scalesize++] = cy;
-	      ++k;
-	      assert (scalesize != 0);
-	      cy = __mpn_lshift (scale2, scale, scalesize, 1);
-	      scale2size = scalesize;
-	      if (cy)
-		scale2[scale2size++] = cy;
-	    }
+	      int i, incr, cnt_h, cnt_l;
+	      mp_limb topval[2];
 
-	  /* Perform any necessary adjustment of loerr and hierr to
-	     take into account the formatting requirements.  */
+	      /* The __mpn_mul function expects the first argument to be
+		 bigger than the second.  */
+	      if (fracsize < tens->arraysize - 2)
+		cy = __mpn_mul (tmp, &tens->array[2], tens->arraysize - 2,
+				frac, fracsize);
+	      else
+		cy = __mpn_mul (tmp, frac, fracsize,
+				&tens->array[2], tens->arraysize - 2);
+	      tmpsize = fracsize + tens->arraysize - 2;
+	      if (cy == 0)
+		--tmpsize;
 
-	  if (type == 'e')
-	    cutoff += k - 1;	/* CutOffMode == "relative".  */
-	  /* Otherwise CutOffMode == "absolute".  */
+	      count_leading_zeros (cnt_h, tmp[tmpsize - 1]); 
+	      incr = (tmpsize - fracsize) * BITS_PER_MP_LIMB
+		     + BITS_PER_MP_LIMB - 1 - cnt_h;
 
-	  {			/* CutOffAdjust.  */
-	    int a = cutoff - k;
-	    MPN_VAR (y);
-	    MPN_ASSIGN (y, scale);
+	      assert (incr <= tens->p_expo);
 
-	    /* There is probably a better way to do this.  */
-
-	    while (a > 0)
-	      {
-		cy = __mpn_mul_1 (y, y, ysize, 10);
-		if (cy)
-		  y[ysize++] = cy;
-		--a;
-	      }
-	    while (a < 0)
-	      {
-		if (__mpn_divmod_1 (y, y, ysize, 10) != 0)
+	      /* If we increased the exponent by exactly 3 we have to test
+		 for overflow.	This is done by comparing with 10 shifted
+		 to the right position.	 */
+	      if (incr == exponent + 3)
+		if (cnt_h <= BITS_PER_MP_LIMB - 4)
 		  {
-		    /* We got a remainder.  __mpn_divmod_1 has floor'ed the
-		       quotient but we want it to be ceil'ed.  Adjust.  */
-		    cy = __mpn_add_1 (y, y, ysize, 1);
-		    if (cy)
-		      abort ();
-		  }
-		ysize -= y[ysize - 1] == 0;
-		++a;
-	      }
-
-	    if (MPN_GT (y, loerr))
-	      MPN_ASSIGN (loerr, y);
-	    if (MPN_GE (y, hierr))
-	      {
-		MPN_ASSIGN (hierr, y);
-		roundup = 1;
-		/* Recalculate: tmp = r2 + hierr */
-		if (r2size > hierrsize)
-		  {
-		    cy = __mpn_add (tmp, r2, r2size, hierr, hierrsize);
-		    tmpsize = r2size;
+		    topval[0] = 0;
+		    topval[1] = 10 << (BITS_PER_MP_LIMB - 4 - cnt_h);
 		  }
 		else
 		  {
-		    cy = __mpn_add (tmp, hierr, hierrsize, r2, r2size);
-		    tmpsize = hierrsize;
+		    topval[0] = 10 << (BITS_PER_MP_LIMB - 4);
+		    topval[1] = 0;
+		    (void) __mpn_lshift (topval, topval, 2,
+					 BITS_PER_MP_LIMB - cnt_h);
 		  }
-		if (cy != 0)
-		  tmp[tmpsize++] = cy;
-	      }
-	  }			/* End CutOffAdjust.  */
 
-	} while (MPN_GE (tmp, scale2));
-
-      /* End Fixup.  */
-
-      /* First digit.  */
-
-      hack_digit ();
-
-      if (type == 'e')
-	{
-	  /* Exponential notation.  */
-
-	  int expt = k;		/* Base-10 exponent.  */
-	  int expt_neg;
-
-	  expt_neg = k < 0;
-	  if (expt_neg)
-	    expt = - expt;
-
-	  /* Find the magnitude of the exponent.  */
-	  j = 10;
-	  while (j <= expt)
-	    j *= 10;
-
-	  /* Write the first digit.  */
-	  put (digit);
-
-	  if (low || high || k == cutoff)
-	    {
-	      if ((tolower (info->spec) != 'g' && prec > 0) || info->alt)
-		put (*decimal);
-	    }
-	  else
-	    {
-	      int stop;
-
-	      put (*decimal);
-
-	      /* Remaining digits.  */
-	      do
+	      /* The following check is necessary because the compare values
+		 for 10^-(2^i-1) are more accurate than the FP values.
+		 I.e. sometimes the multiplication is done even though it is
+		 wrong (e.g. for 1e-3).	 */
+	      if (incr < exponent + 3
+		  || (incr == exponent + 3 &&
+		      (tmp[tmpsize - 1] < topval[1]
+		       || (tmp[tmpsize - 1] == topval[1]
+			   && tmp[tmpsize - 2] < topval[0]))))
 		{
-		  stop = hack_digit ();
-		  put (digit);
-		} while (! stop);
+		  /* The factor is right.  Adapt binary and decimal
+		     exponents.	 */ 
+		  exponent -= incr;
+		  exp10 |= 1 << explog;
+
+		  /* If this factor yields a number greater or equal to
+		     1.0, we must not shift the non-fractional digits down. */
+		  if (exponent < 0)
+		    cnt_h += -exponent;
+
+		  /* Now we optimize the number representation.	 */
+		  for (i = 0; tmp[i] == 0; ++i);
+		  if (cnt_h == BITS_PER_MP_LIMB - 1)
+		    {
+		      MPN_COPY (frac, tmp + i, tmpsize - i);
+		      fracsize = tmpsize - i;
+		    }
+		  else
+		    {
+		      count_trailing_zeros (cnt_l, tmp[i]);
+
+		      /* Now shift the numbers to their optimal position.  */
+		      if (i == 0 && BITS_PER_MP_LIMB - 1 - cnt_h > cnt_l)
+			{
+			  /* We cannot save any memory.	 Just roll the
+			     number so that the leading digit is in a
+			     seperate limb.  */
+
+			  cy = __mpn_lshift (frac, tmp, tmpsize, cnt_h + 1);
+			  fracsize = tmpsize + 1;
+			  frac[fracsize - 1] = cy;
+			}
+		      else if (BITS_PER_MP_LIMB - 1 - cnt_h <= cnt_l)
+			{
+			  (void) __mpn_rshift (frac, tmp + i, tmpsize - i,
+					       BITS_PER_MP_LIMB - 1 - cnt_h);
+			  fracsize = tmpsize - i;
+			}
+		      else
+			{
+			  /* We can only save the memory of the limbs which
+			     are zero.	The non-zero parts occupy the same
+			     number of limbs.  */
+
+			  (void) __mpn_rshift (frac, tmp + (i - 1),
+					       tmpsize - (i - 1),
+					       BITS_PER_MP_LIMB - 1 - cnt_h);
+			  fracsize = tmpsize - (i - 1);
+			}
+		    }
+		  used_limbs = fracsize - 1;
+		}
 	    }
+	  --explog;
+	}
+      while (tens != &tens_p[1] && exponent > 0);
+      /* All factors but 10^-1 are tested now.	*/
+      if (exponent > 0)
+	{
+	  cy = __mpn_mul_1 (tmp, frac, fracsize, 10);
+	  tmpsize = fracsize;
+	  assert (cy == 0 || tmp[tmpsize - 1] < 20);
 
-	  if (tolower (info->spec) != 'g' || info->alt)
-	    /* Pad with zeros.  */
-	    while (--k >= cutoff)
-	      put ('0');
+	  (void) __mpn_rshift (frac, tmp, tmpsize, MIN (4, exponent));
+	  fracsize = tmpsize;
+	  exp10 |= 1;
+	  assert (frac[fracsize - 1] < 10);
+	}
+      exponent = exp10;
+    }
+  else
+    {
+      /* This is a special case.  We don't need a factor because the
+	 numbers are in the range of 0.0 <= fp < 8.0.  We simply
+	 shift it to the right place and divide it by 1.0 to get the
+	 leading digit.	 (Of course this division is not really made.)	*/
+      assert (0 <= exponent && exponent < 3);
 
-	  /* Write the exponent.  */
-	  put (isupper (info->spec) ? 'E' : 'e');
-	  put (expt_neg ? '-' : '+');
-	  if (expt < 10)
-	    /* Exponent always has at least two digits.  */
-	    put ('0');
+      /* Now shift the input value to its right place.	*/
+      cy = __mpn_lshift (frac, fp_input, fracsize, (exponent + to_shift));
+      frac[fracsize++] = cy; 
+      exponent = 0;
+    }
+
+  {
+    int width = info->width;
+    char *buffer, *startp, *cp;
+    int chars_needed;
+    int expscale;
+    int intdig_max, intdig_no = 0;
+    int fracdig_min, fracdig_max, fracdig_no = 0;
+    int dig_max;
+    int significant;
+
+    if (tolower (info->spec) == 'e')
+      {
+	type = info->spec;
+	intdig_max = 1;
+	fracdig_min = fracdig_max = info->prec < 0 ? 6 : info->prec;
+	chars_needed = 1 + 1 + fracdig_max + 1 + 1 + 4;
+	/*	       d   .	 ddd	     e	 +-  ddd  */
+	dig_max = INT_MAX;		/* Unlimited.  */
+	significant = 1;		/* Does not matter here.  */
+      }
+    else if (info->spec == 'f')
+      {
+	type = 'f';
+	fracdig_min = fracdig_max = info->prec < 0 ? 6 : info->prec;
+	if (expsign == 0)
+	  {
+	    intdig_max = exponent + 1;
+	    /* This can be really big!	*/  /* FIXME */
+	    chars_needed = exponent + 1 + 1 + fracdig_max;
+	  }
+	else
+	  {
+	    intdig_max = 1;
+	    chars_needed = 1 + 1 + fracdig_max;
+	  }
+	dig_max = INT_MAX;		/* Unlimited.  */
+	significant = 1;		/* Does not matter here.  */
+      }
+    else
+      {
+	dig_max = info->prec < 0 ? 6 : (info->prec == 0 ? 1 : info->prec);
+	if ((expsign == 0 && exponent >= dig_max)
+	    || (expsign != 0 && exponent > 4))
+	  {
+	    type = isupper (info->spec) ? 'E' : 'e';
+	    fracdig_max = dig_max - 1;
+	    intdig_max = 1;
+	    chars_needed = 1 + 1 + fracdig_max + 1 + 1 + 4;
+	  }
+	else
+	  {
+	    type = 'f';
+	    intdig_max = expsign == 0 ? exponent + 1 : 0;
+	    fracdig_max = dig_max - intdig_max;
+	    /* We need space for the significant digits and perhaps for
+	       leading zeros when < 1.0.  Pessimistic guess: dig_max.  */
+	    chars_needed = dig_max + dig_max + 1;
+	  }
+	fracdig_min = info->alt ? fracdig_max : 0;
+	significant = 0;		/* We count significant digits.	 */
+      }
+
+    /* Allocate buffer for output.  We need two more because while rounding
+       it is possible that we need two more characters in front of all the
+       other output.  */
+    buffer = alloca (2 + chars_needed);
+    cp = startp = buffer + 2;	/* Let room for rounding.  */ 
+
+    /* Do the real work: put digits in allocated buffer.  */
+    if (expsign == 0 || type != 'f')
+      {
+	assert (expsign == 0 || intdig_max == 1);
+	while (intdig_no < intdig_max)
+	  {
+	    ++intdig_no;
+	    *cp++ = hack_digit ();
+	  }
+	significant = 1;
+	if (info->alt
+	    || fracdig_min > 0
+	    || (fracdig_max > 0 && (fracsize > 1 || frac[0] != 0)))
+	  *cp++ = decimal;
+      }
+    else
+      {
+	/* |fp| < 1.0 and the selected type is 'f', so put "0."
+	   in the buffer.  */
+	*cp++ = '0';
+	--exponent;
+	*cp++ = decimal;
+      }
+
+    /* Generate the needed number of fractional digits.	 */
+    while (fracdig_no < fracdig_min
+	   || (fracdig_no < fracdig_max && (fracsize > 1 || frac[0] != 0)))
+      {
+	++fracdig_no;
+	*cp = hack_digit ();
+	if (*cp != '0')
+	  significant = 1;
+	else if (significant == 0)
+	  {
+	    ++fracdig_max;
+	    if (fracdig_min > 0)
+	      ++fracdig_min;
+	  }
+	++cp;
+      }
+
+    /* Do rounding.  */
+    digit = hack_digit ();
+    if (digit > '4')
+      {
+	char *tp = cp;
+
+	if (digit == '5')
+	  /* This is the critical case.	 */
+	  if (fracsize == 1 && frac[0] == 0)
+	    /* Rest of the number is zero -> round to even.
+	       (IEEE 754-1985 4.1 says this is the default rounding.)  */
+	    if ((*(cp - 1) & 1) == 0)
+	      goto do_expo;
+
+	if (fracdig_no > 0)
+	  {
+	    /* Process fractional digits.  Terminate if not rounded or
+	       radix character is reached.  */
+	    while (*--tp != decimal && *tp == '9')
+	      *tp = '0';
+	    if (*tp != decimal)
+	      /* Round up.  */
+	      (*tp)++;
+	  }
+
+	if (fracdig_no == 0 || *tp == decimal)
+	  {
+	    /* Round the integer digits.  */
+	    if (*(tp - 1) == decimal)
+	      --tp;
+
+	    while (--tp >= startp && *tp == '9')
+	      *tp = '0';
+
+	    if (tp >= startp)
+	      /* Round up.  */
+	      (*tp)++;
+	    else
+	      /* It is more citical.  All digits were 9's.  */
+	      {
+		if (type != 'f')
+		  {
+		    *startp = '1';
+		    exponent += expsign == 0 ? 1 : -1;
+		  }
+		else if (intdig_no == dig_max)
+		  {
+		    /* This is the case where for type %g the number fits
+		       really in the range for %f output but after rounding
+		       the number of digits is too big.	 */
+		    *--startp = decimal;
+		    *--startp = '1';
+
+		    if (info->alt || fracdig_no > 0)
+		      {
+			/* Overwrite the old radix character.  */
+			startp[intdig_no + 2] = '0';
+			++fracdig_no;
+		      }
+
+		    fracdig_no += intdig_no;
+		    intdig_no = 1;
+		    fracdig_max = intdig_max - intdig_no;
+		    ++exponent;
+		    /* Now we must print the exponent.	*/
+		    if (tolower (info->spec) == 'g')
+		      type = isupper (info->spec) ? 'E' : 'e';
+		    else
+		      type = 'e';
+		  }
+		else
+		  {
+		    /* We can simply add another another digit before the
+		       radix.  */
+		    *--startp = '1';
+		    ++intdig_no;
+		  }
+
+		/* While rounding the number of digits can change.
+		   If the number now exceeds the limits remove some
+		   fractional digits.  */
+		if (intdig_no + fracdig_no > dig_max)
+		  {
+		    cp -= intdig_no + fracdig_no - dig_max;
+		    fracdig_no -= intdig_no + fracdig_no - dig_max;
+		  }
+	      }
+	  }
+      }
+do_expo:
+    /* Now remove unnecessary '0' at the end of the string.  */
+    while (fracdig_no > fracdig_min && *(cp - 1) == '0')
+      {
+	--cp;
+	--fracdig_no;
+      }
+    /* If we eliminate all fractional digits we perhaps also can remove
+       the radix character.  */
+    if (fracdig_no == 0 && !info->alt && *(cp - 1) == decimal)
+      --cp;
+
+    /* Write the exponent if it is needed.  */
+    if (type != 'f')
+      {
+	*cp++ = type;
+	*cp++ = expsign ? '-' : '+';
+
+	/* Find the magnitude of the exponent.	*/
+	expscale = 10;
+	while (expscale <= exponent)
+	  expscale *= 10;
+
+	if (exponent < 10)
+	  /* Exponent always has at least two digits.  */
+	  *cp++ = '0';
+	else
 	  do
 	    {
-	      j /= 10;
-	      put ('0' + (expt / j));
-	      expt %= j;
+	      expscale /= 10;
+	      *cp++ = '0' + (exponent / expscale);
+	      exponent %= expscale;
 	    }
-	  while (j > 1);
-	}
-      else
-	{
-	  /* Decimal fraction notation.  */
+	  while (expscale > 10);
+	*cp++ = '0' + exponent;
+      }
 
-	  if (k < 0)
-	    {
-	      put ('0');
-	      if (prec > 0 || info->alt)
-		put (*decimal);
+    /* Compute number of characters which must be filled with the padding
+       character.  */ 
+    if (is_neg || info->showsign || info->space)
+      --width;
+    width -= cp - startp;
 
-	      /* Write leading fractional zeros.  */
-	      j = 0;
-	      while (--j > k)
-		put ('0');
-	    }
+    if (!info->left && info->pad != '0' && width > 0)
+      PADN (info->pad, width);
 
-	  put (digit);
-	  if (!low && !high && k != cutoff)
-	    {
-	      int stop;
-	      do
-		{
-		  stop = hack_digit ();
-		  if (k == -1)
-		    put (*decimal);
-		  put (digit);
-		} while (! stop);
-	    }
-
-	  while (k > 0)
-	    {
-	      put ('0');
-	      --k;
-	    }
-	  if ((type != 'g' && prec > 0) || info->alt)
-	    {
-	      if (k == 0)
-		put (*decimal);
-	      while (k-- > -prec)
-		put ('0');
-	    }
-	}
-    }
-
-#undef	put
-
-  /* The number is all converted in BUF.
-     Now write it with sign and appropriate padding.  */
-
-  if (is_neg || info->showsign || info->space)
-    --width;
-
-  width -= bp - buf;
-
-  if (!info->left && info->pad == ' ')
-    /* Pad with spaces on the left.  */
-    while (width-- > 0)
+    if (is_neg)
+      outchar ('-');
+    else if (info->showsign)
+      outchar ('+');
+    else if (info->space)
       outchar (' ');
 
-  /* Write the sign.  */
-  if (is_neg)
-    outchar ('-');
-  else if (info->showsign)
-    outchar ('+');
-  else if (info->space)
-    outchar (' ');
+    if (!info->left && info->pad == '0' && width > 0)
+      PADN ('0', width);
 
-  if (!info->left && info->pad == '0')
-    /* Pad with zeros on the left.  */
-    while (width-- > 0)
-      outchar ('0');
+    PRINT (startp, cp - startp);
 
-  if (fwrite (buf, bp - buf, 1, s) != 1)
-    return -1;
-  done += bp - buf;
-
-  if (info->left)
-    /* Pad with spaces on the right.  */
-    while (width-- > 0)
-      outchar (' ');
-
+    if (info->left && width > 0)
+      PADN (info->pad, width);
+  }
   return done;
 }
-
-#ifndef NDEBUG
-static void
-mpn_dump (str, p, size)
-     const char *str;
-     mp_limb *p;
-     mp_size_t size;
-{
-  fprintf (stderr, "%s = ", str);
-  while (size != 0)
-    {
-      size--;
-      fprintf (stderr, "%08lX", p[size]);
-    }
-  fprintf (stderr, "\n");
-}
-#endif
