@@ -143,9 +143,9 @@ _nl_load_domain (domain_file)
     return;
 
   /* We must know about the size of the file.  */
-  if (fstat (fd, &st) != 0
-      || (size = (size_t) st.st_size) != st.st_size
-      || size < sizeof (struct mo_file_header))
+  if (__builtin_expect (fstat (fd, &st) != 0, 0)
+      || __builtin_expect ((size = (size_t) st.st_size) != st.st_size, 0)
+      || __builtin_expect (size < sizeof (struct mo_file_header), 0))
     {
       /* Something went wrong.  */
       close (fd);
@@ -158,7 +158,7 @@ _nl_load_domain (domain_file)
   data = (struct mo_file_header *) mmap (NULL, size, PROT_READ,
 					 MAP_PRIVATE, fd, 0);
 
-  if (data != (struct mo_file_header *) -1)
+  if (__builtin_expect (data != (struct mo_file_header *) -1, 1))
     {
       /* mmap() call was successful.  */
       close (fd);
@@ -201,7 +201,8 @@ _nl_load_domain (domain_file)
 
   /* Using the magic number we can test whether it really is a message
      catalog file.  */
-  if (data->magic != _MAGIC && data->magic != _MAGIC_SWAPPED)
+  if (__builtin_expect (data->magic != _MAGIC && data->magic != _MAGIC_SWAPPED,
+			0))
     {
       /* The magic number is wrong: not a message catalog file.  */
 #ifdef HAVE_MMAP
