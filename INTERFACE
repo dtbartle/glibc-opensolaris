@@ -95,7 +95,7 @@ cabsl				cabsl
 			      >	cacosh				NEW: ISO C 9x
 			      >	cacoshf				NEW: ISO C 9x
 			      >	cacoshl				NEW: ISO C 9x
-			      >	cacosl				NEW: SIO C 9x
+			      >	cacosl				NEW: ISO C 9x
 calloc				calloc
 callrpc				callrpc
 canonicalize_file_name		canonicalize_file_name
