@@ -137,7 +137,7 @@ fstatvfs (int fd, struct statvfs *buf)
 		{
 		  /* Bingo, we found the entry for the device FD is on.
 		     Now interpret the option string.  */
-		  char *cp = mntbuf.mnt_opt);
+		  char *cp = mntbuf.mnt_opts;
 		  char *opt;
 
 		  while ((opt = strsep (&cp, ",")) != NULL)
@@ -155,6 +155,8 @@ fstatvfs (int fd, struct statvfs *buf)
 		      buf->f_flag |= ST_MANDLOCK;
 		    else if (strcmp (opt, "noatime") == 0)
 		      buf->f_flag |= ST_NOATIME;
+		    else if (strcmp (opt, "nodiratime") == 0)
+		      buf->f_flag |= ST_NODIRATIME;
 
 		  /* We can stop looking for more entries.  */
 		  break;
