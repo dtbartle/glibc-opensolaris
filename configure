@@ -2441,7 +2441,12 @@ if test $shared = default; then
   fi
 fi
 
-pic_default=yes
+echo $ac_n "checking whether -fPIC is default""... $ac_c" 1>&6
+echo "configure:2446: checking whether -fPIC is default" >&5
+if eval "test \"`echo '$''{'pic_default'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  pic_default=yes
 cat > conftest.c <<EOF
 #if defined(__PIC__) || defined(__pic__) || defined(PIC) || defined(pic)
 # error PIC is default.
@@ -2451,6 +2456,9 @@ if eval "${CC-cc} -S conftest.c 2>&5 1>&5"; then
   pic_default=no
 fi
 rm -f conftest.*
+fi
+
+echo "$ac_t""$pic_default" 1>&6
 
 
 
