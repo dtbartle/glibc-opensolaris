@@ -1,4 +1,4 @@
-/* Tests of X and POSIX locale contents.
+/* Tests of C and POSIX locale contents.
    Copyright (C) 2000 Free Software Foundation, Inc.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2000.
 
