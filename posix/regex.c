@@ -28,6 +28,7 @@ Cambridge, MA 02139, USA.  */
   #pragma alloca
 #endif
 
+#undef	_GNU_SOURCE
 #define _GNU_SOURCE
 
 #ifdef HAVE_CONFIG_H
