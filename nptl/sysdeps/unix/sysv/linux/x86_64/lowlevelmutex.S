@@ -88,7 +88,7 @@ __lll_mutex_timedlock_wait:
 	movq	%rdi, %r12
 	movq	%rdx, %r13
 
-1:	leaq	1(%rsi), %r14
+1:	leaq	1(%rax), %r14
 
 	/* Get current time.  */
 	movq	%rsp, %rdi
@@ -122,11 +122,12 @@ __lll_mutex_timedlock_wait:
 	movq	%r12, %rdi
 	movq	$SYS_futex, %rax
 	syscall
+	movq	%rax, %rcx
 
-	movl	$1, %rsi
+	movl	$1, %eax
 	LOCK
-	xaddl	%rsi, (%rdi)
-	testl	%rsi, %rsi
+	xaddl	%eax, (%rdi)
+	testl	%eax, %eax
 	jne	7f
 
 	movl	$2, (%rdi)
@@ -139,7 +140,7 @@ __lll_mutex_timedlock_wait:
 	retq
 
 	/* Check whether the time expired.  */
-7:	cmpq	$-ETIMEDOUT, %rax
+7:	cmpq	$-ETIMEDOUT, %rcx
 	je	5f
 	jmp	1b
 
