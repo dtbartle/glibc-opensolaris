@@ -45,7 +45,7 @@
 /*(x+dx) between 0 and PI/4                                            */
 /***********************************************************************/
 
-void dubsin(double x, double dx, double v[]) {
+void __dubsin(double x, double dx, double v[]) {
   double r,s,p,hx,tx,hy,ty,q,c,cc,d,dd,d2,dd2,e,ee,
     sn,ssn,cs,ccs,ds,dss,dc,dcc;
 #if 0
@@ -96,7 +96,7 @@ void dubsin(double x, double dx, double v[]) {
 /*(x+dx) between 0 and PI/4                                           */
 /**********************************************************************/
 
-void dubcos(double x, double dx, double v[]) {
+void __dubcos(double x, double dx, double v[]) {
   double r,s,p,hx,tx,hy,ty,q,c,cc,d,dd,d2,dd2,e,ee,
     sn,ssn,cs,ccs,ds,dss,dc,dcc;
 #if 0
@@ -159,7 +159,7 @@ void dubcos(double x, double dx, double v[]) {
 /* Routine receive Double-Length number (x+dx) and computes cos(x+dx) */
 /* as Double-Length number and store it in array v                    */
 /**********************************************************************/
-void docos(double x, double dx, double v[]) {
+void __docos(double x, double dx, double v[]) {
   double y,yy,p,w[2];
   if (x>0) {y=x; yy=dx;}
      else {y=-x; yy=-dx;}
