@@ -1273,7 +1273,7 @@ else
 fi
 fi
 
-ARLOCKED="`(cd $srcdir; pwd)`/arlocked.sh"
+AUTOLOCK="`(cd $srcdir; pwd)`/autolock.sh"
 
 
 echo $ac_n "checking for signed size_t type""... $ac_c" 1>&6
@@ -1839,7 +1839,7 @@ s%@BUILD_CC@%$BUILD_CC%g
 s%@CPP@%$CPP%g
 s%@AR@%$AR%g
 s%@RANLIB@%$RANLIB%g
-s%@ARLOCKED@%$ARLOCKED%g
+s%@AUTOLOCK@%$AUTOLOCK%g
 s%@libc_cv_have_initfini@%$libc_cv_have_initfini%g
 s%@libc_cv_ld_no_whole_archive@%$libc_cv_ld_no_whole_archive%g
 s%@uname_sysname@%$uname_sysname%g
