@@ -209,7 +209,7 @@ long int
 weak_function
 __strtol_internal (const char *nptr, char **endptr, int base, int group)
 {
-  long int result = 0;
+  unsigned long int result = 0;
   long int sign = 1;
 
   while (*nptr == ' ' || *nptr == '\t')
@@ -246,10 +246,14 @@ __strtol_internal (const char *nptr, char **endptr, int base, int group)
 
   while (*nptr >= '0' && *nptr <= '9')
     {
-      long int digval = *nptr - '0';
+      unsigned long int digval = *nptr - '0';
       if (result > LONG_MAX / 10
-	  || (result == (sign ? LONG_MAX : LONG_MAX + 1) / 10
-	      && digval > (sign ? LONG_MAX : LONG_MAX + 1) % 10))
+	  || (result == (sign
+			 ? (unsigned long int) LONG_MAX
+			 : (unsigned long int) LONG_MAX + 1) / 10
+	      && digval > (sign
+			   ? (unsigned long int) LONG_MAX
+			   : (unsigned long int) LONG_MAX + 1) % 10))
 	{
 	  errno = ERANGE;
 	  return LONG_MAX * sign;
@@ -258,7 +262,7 @@ __strtol_internal (const char *nptr, char **endptr, int base, int group)
       result += digval;
     }
 
-  return result * sign;
+  return (long int) result * sign;
 }
 
 long int
@@ -272,7 +276,7 @@ unsigned long int
 weak_function
 __strtoul_internal (const char *nptr, char **endptr, int base, int group)
 {
-  long int result = 0;
+  unsigned long int result = 0;
   long int sign = 1;
 
   while (*nptr == ' ' || *nptr == '\t')
@@ -309,7 +313,7 @@ __strtoul_internal (const char *nptr, char **endptr, int base, int group)
 
   while (*nptr >= '0' && *nptr <= '9')
     {
-      long int digval = *nptr - '0';
+      unsigned long int digval = *nptr - '0';
       if (result > LONG_MAX / 10
 	  || (result == ULONG_MAX / 10 && digval > ULONG_MAX % 10))
 	{
