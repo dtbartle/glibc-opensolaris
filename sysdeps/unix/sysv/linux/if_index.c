@@ -281,7 +281,7 @@ if_indextoname (unsigned int ifindex, char *ifname)
 
 void
 internal_function
-__protocol_avaliable (int *have_inet, int *have_inet6)
+__protocol_available (int *have_inet, int *have_inet6)
 {
   int fd = opensock ();
   unsigned int nifs;
