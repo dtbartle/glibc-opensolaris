@@ -125,6 +125,7 @@ DEFUN(__getdelim, (lineptr, n, terminator, stream),
 	      *p++ = c;
 	      if (c == terminator)
 		goto win;
+	      --copy;
 	      i = stream->__get_limit - stream->__bufp;	
 	    }
 
