@@ -335,15 +335,15 @@ add_dir (const char *line)
 
 
 static int
-chroot_stat (const char *real_path, const char *path, struct stat *st)
+chroot_stat (const char *real_path, const char *path, struct stat64 *st)
 {
   int ret;
   char *canon_path;
 
   if (!opt_chroot)
-    return stat (real_path, st);
+    return stat64 (real_path, st);
 
-  ret = lstat (real_path, st);
+  ret = lstat64 (real_path, st);
   if (ret || !S_ISLNK (st->st_mode))
     return ret;
 
@@ -351,7 +351,7 @@ chroot_stat (const char *real_path, const char *path, struct stat *st)
   if (canon_path == NULL)
     return -1;
 
-  ret = stat (canon_path, st);
+  ret = stat64 (canon_path, st);
   free (canon_path);
   return ret;
 }
@@ -363,7 +363,7 @@ create_links (const char *real_path, const char *path, const char *libname,
 {
   char *full_libname, *full_soname;
   char *real_full_libname, *real_full_soname;
-  struct stat stat_lib, stat_so, lstat_so;
+  struct stat64 stat_lib, stat_so, lstat_so;
   int do_link = 1;
   int do_remove = 1;
   /* XXX: The logics in this function should be simplified.  */
@@ -398,7 +398,7 @@ create_links (const char *real_path, const char *path, const char *libname,
 	  && stat_lib.st_ino == stat_so.st_ino)
 	/* Link is already correct.  */
 	do_link = 0;
-      else if (lstat (full_soname, &lstat_so) == 0
+      else if (lstat64 (full_soname, &lstat_so) == 0
 	       && !S_ISLNK (lstat_so.st_mode))
 	{
 	  error (0, 0, _("%s is not a symbolic link\n"), full_soname);
@@ -406,7 +406,7 @@ create_links (const char *real_path, const char *path, const char *libname,
 	  do_remove = 0;
 	}
     }
-  else if (lstat (real_full_soname, &lstat_so) != 0
+  else if (lstat64 (real_full_soname, &lstat_so) != 0
 	   || !S_ISLNK (lstat_so.st_mode))
     /* Unless it is a stale symlink, there is no need to remove.  */
     do_remove = 0;
@@ -450,7 +450,7 @@ manual_link (char *library)
   char *real_library;
   char *libname;
   char *soname;
-  struct stat stat_buf;
+  struct stat64 stat_buf;
   int flag;
 
   /* Prepare arguments for create_links call.  Split library name in
@@ -500,9 +500,9 @@ manual_link (char *library)
       real_path = path;
       real_library = library;
     }
-    
+
   /* Do some sanity checks first.  */
-  if (lstat (real_library, &stat_buf))
+  if (lstat64 (real_library, &stat_buf))
     {
       error (0, errno, _("Can't lstat %s"), library);
       free (path);
@@ -574,7 +574,7 @@ search_dir (const struct dir_entry *entry)
   char *soname;
   struct dlib_entry *dlibs;
   struct dlib_entry *dlib_ptr;
-  struct stat stat_buf;
+  struct stat64 stat_buf;
   int is_link;
   unsigned long int hwcap = path_hwcap (entry->path);
 
@@ -656,7 +656,7 @@ search_dir (const struct dir_entry *entry)
 	stat_buf.st_mode = DTTOIF (direntry->d_type);
       else
 #endif
-	if (lstat (real_file_name, &stat_buf))
+	if (lstat64 (real_file_name, &stat_buf))
 	  {
 	    error (0, errno, _("Can't lstat %s"), file_name);
 	    continue;
@@ -832,26 +832,33 @@ parse_conf (const char *filename)
 {
   FILE *file = NULL;
   char *line = NULL;
-  char *canon;
+  const char *canon;
   size_t len = 0;
 
   if (opt_chroot)
     {
       canon = chroot_canon (opt_chroot, filename);
       if (canon)
-	{
-	  file = fopen (canon, "r");
-	  free (canon);
-	}
+	file = fopen (canon, "r");
+      else
+	canon = filename;
     }
   else
-    file = fopen (filename, "r");
+    {
+      canon = filename;
+      file = fopen (filename, "r");
+    }
 
   if (file == NULL)
     {
-      error (0, errno, _("Can't open configuration file %s"), filename);
+      error (0, errno, _("Can't open configuration file %s"), canon);
+      if (canon != filename)
+	free ((char *) canon);
       return;
     }
+
+  if (canon != filename)
+    free ((char *) canon);
 
   do
     {
