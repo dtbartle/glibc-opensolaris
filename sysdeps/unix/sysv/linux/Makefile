@@ -2,6 +2,7 @@ ifeq ($(subdir), math)
 sysdep_routines += setfpucw
 extra-objs += ieee-fpucw.o
 install-lib += libieee.a
+non-lib.a += libieee.a
 
 $(objpfx)libieee.a: $(objpfx)ieee-fpucw.o
 	rm -f $@
@@ -20,10 +21,6 @@ endif
 ifeq ($(subdir), time)
 sysdep_routines += adjtimex
 headers += sys/timex.h
-endif
-
-ifeq ($(subdir), sysvipc)
-sysdep_routines += ipc
 endif
 
 ifeq ($(subdir), socket)
