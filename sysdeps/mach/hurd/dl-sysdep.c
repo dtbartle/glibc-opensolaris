@@ -567,13 +567,14 @@ malloc (size_t n)
   ptr += n;
   return block;
 }
-
 weak_symbol (malloc)
 
-/* These should never be called.  */
+/* This should never be called.  */
 void *realloc (void *ptr, size_t n) { ptr += n; abort (); }
-void free (void *ptr) { ptr = ptr; abort (); }
 weak_symbol (realloc)
+
+/* This will rarely be called.  */
+void free (void *ptr) { ptr = ptr; }
 weak_symbol (free)
 
 /* Avoid signal frobnication in setjmp/longjmp.  */
