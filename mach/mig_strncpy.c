@@ -3,7 +3,7 @@
 #include <ansidecl.h>
 #include <string.h>
 
-int
+size_t
 __mig_strncpy (char *dest, char *src, size_t len)
 {
   size_t i;
@@ -18,3 +18,4 @@ __mig_strncpy (char *dest, char *src, size_t len)
   *dest = '\0';
   return i;
 }
+weak_alias (__mig_strncpy, mig_strncpy)
