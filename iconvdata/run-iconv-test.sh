@@ -44,10 +44,12 @@ while read from to targets; do
   for t in $targets; do
     $ICONV -f $from -t $t testdata/$from > $temp1 ||
       { echo "*** conversion from $from to $t failed"; exit 1; }
+    test -s testdata/$from..$t && cmp $temp1 testdata/$from..$t >& /dev/null ||
+      { echo "*** $from -> $t conversion failed"; exit 1; }
     $ICONV -f $t -t $to -o $temp2 $temp1 ||
       { echo "*** conversion from $t to $to failed"; exit 1; }
     test -s $temp1 && cmp testdata/$from $temp2 >& /dev/null ||
-      { echo "*** $from -> $t -> $to conversion failed"; exit 1; }
+      { echo "*** $from -> t -> $to conversion failed"; exit 1; }
 
     # All tests ok.
     echo "$from -> $t -> $to ok"
