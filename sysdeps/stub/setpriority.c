@@ -18,20 +18,14 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <sys/resource.h>
 
-/* Set the foreground process group ID of FD set PGRP_ID.  */
+/* Set the priority of all processes specified by WHICH and WHO
+   to PRIO.  Returns 0 on success, -1 on errors.  */
 int
-DEFUN(tcsetpgrp, (fd, pgrp_id),
-      int fd AND pid_t pgrp_id)
+DEFUN(setpriority, (which, who, prio),
+      enum __priority_which which AND int who AND int prio)
 {
-  if (fd < 0)
-    {
-      errno = EBADF;
-      return -1;
-    }
-
   errno = ENOSYS;
   return -1;
 }
@@ -41,6 +35,6 @@ DEFUN(tcsetpgrp, (fd, pgrp_id),
 
 #include <gnu-stabs.h>
 
-stub_warning(tcsetpgrp);
+stub_warning(setpriority);
 
 #endif	/* GNU stabs.  */

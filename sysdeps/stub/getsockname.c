@@ -18,20 +18,13 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <sys/socket.h>
 
-/* Set the foreground process group ID of FD set PGRP_ID.  */
+/* Put the local address of FD into *ADDR and its length in *LEN.  */
 int
-DEFUN(tcsetpgrp, (fd, pgrp_id),
-      int fd AND pid_t pgrp_id)
+DEFUN(getsockname, (fd, addr, len),
+      int fd AND struct sockaddr *addr AND size_t *len)
 {
-  if (fd < 0)
-    {
-      errno = EBADF;
-      return -1;
-    }
-
   errno = ENOSYS;
   return -1;
 }
@@ -41,6 +34,6 @@ DEFUN(tcsetpgrp, (fd, pgrp_id),
 
 #include <gnu-stabs.h>
 
-stub_warning(tcsetpgrp);
+stub_warning(getsockname);
 
 #endif	/* GNU stabs.  */

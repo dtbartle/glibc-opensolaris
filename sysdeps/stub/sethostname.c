@@ -19,19 +19,13 @@ Cambridge, MA 02139, USA.  */
 #include <ansidecl.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/types.h>
 
-/* Set the foreground process group ID of FD set PGRP_ID.  */
+/* Set the name of the current host to NAME, which is LEN bytes long.
+   This call is restricted to the super-user.  */
 int
-DEFUN(tcsetpgrp, (fd, pgrp_id),
-      int fd AND pid_t pgrp_id)
+DEFUN(sethostname, (name, len),
+      CONST char *name AND size_t len)
 {
-  if (fd < 0)
-    {
-      errno = EBADF;
-      return -1;
-    }
-
   errno = ENOSYS;
   return -1;
 }
@@ -41,6 +35,6 @@ DEFUN(tcsetpgrp, (fd, pgrp_id),
 
 #include <gnu-stabs.h>
 
-stub_warning(tcsetpgrp);
+stub_warning(sethostname);
 
 #endif	/* GNU stabs.  */

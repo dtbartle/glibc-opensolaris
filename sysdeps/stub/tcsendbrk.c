@@ -18,13 +18,11 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <termios.h>
 
-/* Set the foreground process group ID of FD set PGRP_ID.  */
+/* Send zero bits on FD.  */
 int
-DEFUN(tcsetpgrp, (fd, pgrp_id),
-      int fd AND pid_t pgrp_id)
+DEFUN(tcsendbreak, (fd, duration), int fd AND int duration)
 {
   if (fd < 0)
     {
@@ -41,6 +39,6 @@ DEFUN(tcsetpgrp, (fd, pgrp_id),
 
 #include <gnu-stabs.h>
 
-stub_warning(tcsetpgrp);
+stub_warning(tcsendbreak);
 
 #endif	/* GNU stabs.  */
