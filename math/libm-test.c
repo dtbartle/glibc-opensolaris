@@ -1443,7 +1443,7 @@ gamma_test (void)
 
   signgam = 0;
   check ("gamma (1) == 0", FUNC(gamma) (1), 0);
-  check_int ("gamma (0) sets signgam to 1", signgam, 1);
+  check_int ("gamma (1) sets signgam to 1", signgam, 1);
 
   signgam = 0;
   check ("gamma (3) == M_LN2", FUNC(gamma) (3), M_LN2l);
@@ -1485,6 +1485,11 @@ gamma_test (void)
   check_eps ("gamma (0.7) == 1.29805...", FUNC(gamma) (0.7),
 	     1.29805533264755778568L, CHOOSE(0, 3e-16, 2e-7));
   check ("gamma (1.2) == 0.91816...", FUNC(gamma) (1.2), 0.91816874239976061064L);
+
+  check_isnan_exc ("gamma (0.0) == NaN plus invalid exception",
+		   FUNC(gamma) (0.0), INVALID_EXCEPTION);
+  check_isnan_exc ("gamma (-1.0) == NaN plus invalid exception",
+		   FUNC(gamma) (-1.0), INVALID_EXCEPTION);
 
   _LIB_VERSION = save_lib_version;
 }
