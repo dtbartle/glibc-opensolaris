@@ -80,15 +80,15 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
    */
 
   /* We need to protect modifying the _NL_LOADED_DOMAINS data.  */
-  __libc_lock_define_initialized (static, lock);
-  __libc_lock_lock (lock);
+  __libc_rwlock_define_initialized (static, lock);
+  __libc_rwlock_rdlock (lock);
 
   /* If we have already tested for this locale entry there has to
      be one data set in the list of loaded domains.  */
   retval = _nl_make_l10nflist (&_nl_loaded_domains, dirname,
 			       strlen (dirname) + 1, 0, locale, NULL, NULL,
 			       NULL, NULL, domainname, 0);
-  __libc_lock_unlock (lock);
+  __libc_rwlock_unlock (lock);
 
   if (retval != NULL)
     {
@@ -141,7 +141,7 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
 			   &codeset, &normalized_codeset);
 
   /* We need to protect modifying the _NL_LOADED_DOMAINS data.  */
-  __libc_lock_lock (lock);
+  __libc_rwlock_wrlock (lock);
 
   /* Create all possible locale entries which might be interested in
      generalization.  */
@@ -149,7 +149,7 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
 			       strlen (dirname) + 1, mask, language, territory,
 			       codeset, normalized_codeset, modifier,
 			       domainname, 1);
-  __libc_lock_unlock (lock);
+  __libc_rwlock_unlock (lock);
 
   if (retval == NULL)
     /* This means we are out of core.  */
