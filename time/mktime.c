@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
    Contributed by Noel Cragg (noel@cs.oberlin.edu), with fixes by
    Michael E. Calwas (calwas@ttd.teradyne.com) and
    Wade Hampton (tasi029@tmn.com).
@@ -410,6 +410,10 @@ mktime (timeptr)
 {
   return _mktime_internal (timeptr, localtime);
 }
+
+#ifdef weak_alias
+weak_alias (mktime, timelocal)
+#endif
 
 #ifdef DEBUG
 void
