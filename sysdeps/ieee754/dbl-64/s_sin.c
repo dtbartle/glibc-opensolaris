@@ -85,9 +85,15 @@ static double csloww2(double x, double dx, double orig, int n);
 /* it computes the correctly rounded (to nearest) value of sin(x)  */
 /*******************************************************************/
 double sin(double x){
-	double xx,res,t,cor,y,w[2],s,c,sn,ssn,cs,ccs,xn,a,da,db,eps,xn1,xn2;
+	double xx,res,t,cor,y,s,c,sn,ssn,cs,ccs,xn,a,da,db,eps,xn1,xn2;
+#if 0
+	double w[2];
+#endif
 	mynumber u,v;
-	int4 k,m,n,nn;
+	int4 k,m,n;
+#if 0
+	int4 nn;
+#endif
 
 	u.x = x;
 	m = u.i[HIGH_HALF];
@@ -821,8 +827,11 @@ static double sloww2(double x, double dx, double orig, int n) {
 
 static double bsloww(double x,double dx, double orig,int n) {
   static const double th2_36 = 206158430208.0;   /*    1.5*2**37   */
-  double y,x1,x2,xx,r,t,res,cor,w[2],a,da,xn;
+  double y,x1,x2,xx,r,t,res,cor,w[2];
+#if 0
+  double a,da,xn;
   union {int4 i[2]; double x;} v;
+#endif
   x1=(x+th2_36)-th2_36;
   y = aa.x*x1*x1*x1;
   r=x+y;
