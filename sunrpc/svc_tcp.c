@@ -254,7 +254,7 @@ again:
    * make a new transporter (re-uses xprt)
    */
   xprt = makefd_xprt (sock, r->sendsize, r->recvsize);
-  xprt->xp_raddr = addr;
+  memcpy (&xprt->xp_raddr, &addr, sizeof (addr));
   xprt->xp_addrlen = len;
   return FALSE;		/* there is never an rpc msg to be processed */
 }
