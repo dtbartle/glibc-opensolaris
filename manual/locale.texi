@@ -683,6 +683,10 @@ The type @code{nl_type} is defined in @file{nl_types.h}.  The argument
 The X/Open standard defines the following values:
 
 @vtable @code
+@item CODESET
+@code{nl_langinfo} returns a string with the name of the coded character
+set used in the selected locale.
+
 @item ABDAY_1
 @itemx ABDAY_2
 @itemx ABDAY_3
@@ -834,6 +838,26 @@ The same as the value returned by @code{localeconv} in the
 @item N_SIGN_POSN
 The same as the value returned by @code{localeconv} in the
 @code{n_sign_posn} element of the @code{struct lconv}.
+
+@item INT_P_CS_PRECEDES
+The same as the value returned by @code{localeconv} in the
+@code{int_p_cs_precedes} element of the @code{struct lconv}.
+@item INT_P_SEP_BY_SPACE
+The same as the value returned by @code{localeconv} in the
+@code{int_p_sep_by_space} element of the @code{struct lconv}.
+@item INT_N_CS_PRECEDES
+The same as the value returned by @code{localeconv} in the
+@code{int_n_cs_precedes} element of the @code{struct lconv}.
+@item INT_N_SEP_BY_SPACE
+The same as the value returned by @code{localeconv} in the
+@code{int_n_sep_by_space} element of the @code{struct lconv}.
+@item INT_P_SIGN_POSN
+The same as the value returned by @code{localeconv} in the
+@code{int_p_sign_posn} element of the @code{struct lconv}.
+@item INT_N_SIGN_POSN
+The same as the value returned by @code{localeconv} in the
+@code{int_n_sign_posn} element of the @code{struct lconv}.
+
 @item DECIMAL_POINT
 @itemx RADIXCHAR
 The same as the value returned by @code{localeconv} in the
