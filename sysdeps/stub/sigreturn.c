@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -26,3 +26,6 @@ DEFUN(__sigreturn, (context), struct sigcontext *context)
   errno = ENOSYS;
   return -1;
 }
+stub_warning (sigreturn)
+
+weak_alias (__sigreturn, sigreturn)
