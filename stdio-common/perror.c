@@ -64,7 +64,7 @@ perror (const char *s)
      using the same underlying file descriptor.  */
   if (__builtin_expect (_IO_fwide (stderr, 0) != 0, 1)
       || fileno_unlocked (stderr) == -1
-      || (fd = dup (fileno_unlocked (stderr))) == -1
+      || (fd = __dup (fileno_unlocked (stderr))) == -1
       || (fp = fdopen (fd, "w+")) == NULL)
     {
       if (__builtin_expect (fd != -1, 0))
