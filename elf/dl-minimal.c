@@ -131,7 +131,7 @@ longjmp (jmp_buf env, int val)
    in the whole error list.  */
 
 char * weak_function
-_strerror_internal (int errnum, char *buf, size_t buflen)
+__strerror_r (int errnum, char *buf, size_t buflen)
 {
   char *msg;
 
@@ -205,8 +205,7 @@ __assert_perror_fail (int errnum,
 #endif
 
 /* This function is only used in eval.c.  */
-long int
-weak_function
+long int weak_function
 __strtol_internal (const char *nptr, char **endptr, int base, int group)
 {
   unsigned long int result = 0;
@@ -265,15 +264,13 @@ __strtol_internal (const char *nptr, char **endptr, int base, int group)
   return (long int) result * sign;
 }
 
-long int
-weak_function
+long int weak_function
 strtol (const char *nptr, char **endptr, int base)
 {
   return __strtol_internal (nptr, endptr, base, 0);
 }
 
-unsigned long int
-weak_function
+unsigned long int weak_function
 __strtoul_internal (const char *nptr, char **endptr, int base, int group)
 {
   unsigned long int result = 0;
@@ -327,8 +324,7 @@ __strtoul_internal (const char *nptr, char **endptr, int base, int group)
   return result * sign;
 }
 
-unsigned long int
-weak_function
+unsigned long int weak_function
 strtoul (const char *nptr, char **endptr, int base)
 {
   return (unsigned long int) __strtoul_internal (nptr, endptr, base, 0);
