@@ -108,6 +108,8 @@ double __ieee754_remainder(double x, double y)
       return z;
     }
     else { /* if x is too big */
+      if (kx == 0x7ff00000 && u.i[LOW_HALF] == 0 && y == 1.0)
+	return x / x;
       if (kx>=0x7ff00000||(ky==0&&t.i[LOW_HALF]==0)||ky>0x7ff00000||
 	  (ky==0x7ff00000&&t.i[LOW_HALF]!=0))
 	return (u.i[HIGH_HALF]&0x80000000)?nNAN.x:NAN.x;
