@@ -1839,6 +1839,9 @@ collate_output (struct localedef_t *locale, struct charmap_t *charmap,
   assert (cnt == _NL_ITEM_INDEX (_NL_NUM_LC_COLLATE));
 
   write_locale_data (output_path, "LC_COLLATE", 2 + cnt, iov);
+
+  obstack_free (&weightpool, NULL);
+  obstack_free (&extrapool, NULL);
 }
 
 
