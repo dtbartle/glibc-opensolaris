@@ -21,9 +21,11 @@ Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 #include <unistd.h>
 #include "exit.h"
-#include "set-hooks.h"
 
+#ifdef HAVE_GNU_LD
+#include "set-hooks.h"
 DEFINE_HOOK (__libc_atexit, (void))
+#endif
 
 
 /* Call all functions registered with `atexit' and `on_exit',
