@@ -383,7 +383,7 @@ _S_msg_set_environment (mach_port_t msgport, mach_port_t auth,
 /* Get and frob the exec flags.  */
 
 kern_return_t
-_S_msg_get_exec_flags (mach_port_t process, mach_port_t refport,
+_S_msg_get_exec_flags (mach_port_t process, mach_port_t auth,
 		       int *flags)
 {
   AUTHCHECK;
@@ -393,7 +393,7 @@ _S_msg_get_exec_flags (mach_port_t process, mach_port_t refport,
 }
 
 kern_return_t
-_S_msg_set_all_exec_flags (mach_port_t process, mach_port_t refport,
+_S_msg_set_all_exec_flags (mach_port_t process, mach_port_t auth,
 			   int flags)
 {
   AUTHCHECK;
@@ -403,7 +403,7 @@ _S_msg_set_all_exec_flags (mach_port_t process, mach_port_t refport,
 }
 
 kern_return_t
-_S_msg_set_some_exec_flags (mach_port_t process, mach_port_t refport,
+_S_msg_set_some_exec_flags (mach_port_t process, mach_port_t auth,
 			    int flags)
 {
   AUTHCHECK;
@@ -413,7 +413,7 @@ _S_msg_set_some_exec_flags (mach_port_t process, mach_port_t refport,
 }
 
 kern_return_t
-_S_msg_clear_some_exec_flags (mach_port_t process, mach_port_t refport,
+_S_msg_clear_some_exec_flags (mach_port_t process, mach_port_t auth,
 			      int flags)
 {
   AUTHCHECK;
