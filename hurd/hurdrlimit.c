@@ -1,5 +1,5 @@
 /* Resource limits.
-Copyright (C) 1994 Free Software Foundation, Inc.
+Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -20,7 +20,6 @@ Cambridge, MA 02139, USA.  */
 #include <hurd.h>
 #include <cthreads.h>
 #include <hurd/resource.h>
-#include <gnu-stabs.h>
 
 /* This must be given an initializer, or the a.out linking rules will
    not include the entire file when this symbol is referenced. */
