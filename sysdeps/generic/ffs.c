@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Torbjorn Granlund (tege@sics.se).
 
@@ -18,6 +18,7 @@
    Boston, MA 02111-1307, USA.  */
 
 #include <limits.h>
+#define ffsl __something_else
 #include <string.h>
 
 #undef	ffs
@@ -46,3 +47,8 @@ __ffs (i)
   return table[x >> a] + a;
 }
 weak_alias (__ffs, ffs)
+
+#if ULONG_MAX == UINT_MAX
+#undef ffsl
+weak_alias (__ffs, ffsl)
+#endif
