@@ -760,7 +760,7 @@ fi
 # These programs are version sensitive.
 AC_CHECK_TOOL_PREFIX
 AC_CHECK_PROG_VER(CC, ${ac_tool_prefix}gcc ${ac_tool_prefix}cc, -v,
-  [version \([egcygnustpi-]*[0-9.]*\)], [3.[2-9]* | 4.[0-9]* ],
+  [version \([egcygnustpi-]*[0-9.]*\)], [3.4* | 4.[0-9]* ],
   critic_missing="$critic_missing gcc")
 AC_CHECK_PROG_VER(MAKE, gnumake gmake make, --version,
   [GNU Make[^0-9]*\([0-9][0-9.]*\)],
@@ -2115,22 +2115,6 @@ if eval "${CC-cc} -S conftest.c 2>&AS_MESSAGE_LOG_FD 1>&AS_MESSAGE_LOG_FD"; then
 fi
 rm -f conftest.*])
 AC_SUBST(pic_default)
-
-# This test comes after sysdeps configure fragments, so that they can
-# define the variable libc_mtune_example to tell us a valid -mtune=value
-# argument that we can test with.
-AC_SUBST(cc_mtune)cc_mtune=-mcpu
-if test "x$libc_mtune_example" != x; then
-  AC_CACHE_CHECK(if compiler supports -mtune option, libc_cv_cc_mtune, [dnl
-    libc_cv_cc_mtune=no
-    save_CFLAGS="$CFLAGS"
-    CFLAGS="$CFLAGS -mtune=$libc_mtune_example"
-    AC_TRY_COMPILE(,,[libc_cv_cc_mtune=yes])
-  ])
-  if test "x$libc_cv_cc_mtune" = xyes; then
-    cc_mtune=-mtune
-  fi
-fi
 
 AC_SUBST(profile)
 AC_SUBST(omitfp)
