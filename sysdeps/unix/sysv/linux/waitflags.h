@@ -1,5 +1,5 @@
-/* errnos.h - error constants.  Linux specific version.
-Copyright (C) 1996 Free Software Foundation, Inc.
+/* Definitions of flag bits for `waitpid' et al.
+Copyright (C) 1992, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -14,20 +14,17 @@ Library General Public License for more details.
 
 You should have received a copy of the GNU Library General Public
 License along with the GNU C Library; see the file COPYING.LIB.  If
-not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-Boston, MA 02111-1307, USA.  */
+not, write to the Free Software Foundation, Inc., 675 Mass Ave,
+Cambridge, MA 02139, USA.  */
 
-#include <linux/errno.h>
+#ifndef	_WAITFLAGS_H
 
-#ifndef __ASSEMBLER__
-#if defined __USE_REENTRANT && (!defined _LIBC || defined _LIBC_REENTRANT)
-/* Declare alias of `errno' variable so it is accessible even if macro
-   with name `errno' is defined.  */
-extern int __errno;
+#define	_WAITFLAGS_H	1
 
-/* When using threads, errno is a per-thread value.  */
-extern int *__errno_location __P ((void)) __attribute__ ((__const__));
-#define errno	(*__errno_location ())
+/* Bits in the third argument to `waitpid'.  */
+#define	WNOHANG		1	/* Don't block waiting.  */
+#define	WUNTRACED	2	/* Report status of stopped children.  */
 
-#endif
-#endif
+#define __WCLONE	0x80000000 /* Wait for cloned process.  */
+
+#endif	/* waitflags.h */
