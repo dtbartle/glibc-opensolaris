@@ -52,7 +52,7 @@ routines := brk sbrk sstk ioctl \
 	    efgcvt
 aux := progname init-misc
 distribute := bsd-compat.c
-extra-objs := bsd-compat.o
+extra-objs := bsd-compat.o libbsd-compat.a libg.a
 install-lib := libbsd-compat.a libg.a
 non-lib.a := libbsd-compat.a
 
