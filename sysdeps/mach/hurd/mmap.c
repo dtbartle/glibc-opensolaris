@@ -92,7 +92,7 @@ __mmap (caddr_t addr, size_t len, int prot, int flags, int fd, off_t offset)
   mapaddr = (vm_address_t) addr;
   err = __vm_map (__mach_task_self (),
 		  &mapaddr, (vm_size_t) len, (vm_address_t) 0,
-		  flags & MAP_FIXED,
+		  ! (flags & MAP_FIXED),
 		  memobj, (vm_offset_t) offset,
 		  flags & (MAP_COPY|MAP_PRIVATE),
 		  vmprot, VM_PROT_ALL,
