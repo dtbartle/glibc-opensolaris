@@ -44,7 +44,8 @@ weak_alias (__environ, environ)
 #define	__environ	environ
 #endif
 
-char **__environ;
+/* This must be initialized; we cannot have a weak alias into bss.  */
+char **__environ = NULL;
 
 extern void EXFUN(__libc_init, (int argc, char **argv, char **envp));
 extern int EXFUN(main, (int argc, char **argv, char **envp));
