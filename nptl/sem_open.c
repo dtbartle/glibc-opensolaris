@@ -261,7 +261,8 @@ sem_open (const char *name, int oflag, ...)
     result = SEM_FAILED;
 
   /* We don't need the file descriptor anymore.  */
-  (void) __libc_close (fd);
+  if (fd != -1)
+    (void) __libc_close (fd);
 
   return result;
 }
