@@ -217,7 +217,7 @@ do_normalization (tmptr)
 #define BAD_STRUCT_TM ((time_t) -1)
 
 time_t
-_mktime_internal (timeptr, producer)
+__mktime_internal (timeptr, producer)
      struct tm *timeptr;
      struct tm *(*producer) __P ((const time_t *));
 {
@@ -408,7 +408,7 @@ mktime (timeptr)
 #endif
      struct tm *timeptr;
 {
-  return _mktime_internal (timeptr, localtime);
+  return __mktime_internal (timeptr, localtime);
 }
 
 #ifdef weak_alias

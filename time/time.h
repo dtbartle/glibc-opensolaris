@@ -111,8 +111,8 @@ extern time_t mktime __P ((struct tm *__tp));
 /* Subroutine of `mktime'.  Return the `time_t' representation of TP and
    normalize TP, given that a `struct tm *' maps to a `time_t' as performed
    by FUNC.  */
-extern time_t _mktime_internal __P ((struct tm *__tp,
-				     struct tm *(*__func) (const time_t *)));
+extern time_t __mktime_internal __P ((struct tm *__tp,
+				      struct tm *(*__func) (const time_t *)));
 
 
 /* Format TP into S according to FORMAT.
