@@ -23,10 +23,9 @@
 
 /* Retrieve the CPU affinity mask for a particular process.  */
 int
-sched_setaffinity (pid, len, mask)
+sched_setaffinity (pid, mask)
      pid_t pid;
-     unsigned int len;
-     unsigned long int *mask;
+     const cpu_set_t *cpuset;
 {
   __set_errno (ENOSYS);
   return -1;
