@@ -48,7 +48,6 @@ tests		:= tstgetopt testfnm
 others		:= getconf
 install-bin	:= getconf
 install-lib	:= libposix.a
-extra-objs	:= libposix.a
 gpl2lgpl := getopt.c getopt1.c getopt.h	# Frob these guys' copying notices.
 
 include ../Rules
