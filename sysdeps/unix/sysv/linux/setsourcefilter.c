@@ -26,6 +26,10 @@
 #include <sys/socket.h>
 
 
+/* Defined in getsourcefilter.c.  */
+extern int __get_sol (int af, socklen_t len);
+
+
 int
 setsourcefilter (int s, uint32_t interface, struct sockaddr *group,
 		 socklen_t grouplen, uint32_t fmode, uint32_t numsrc,
@@ -51,6 +55,14 @@ setsourcefilter (int s, uint32_t interface, struct sockaddr *group,
   gf->gf_fmode = fmode;
   gf->gf_numsrc = numsrc;
   memcpy (gf->gf_slist, slist, numsrc * sizeof (struct sockaddr_storage));
+
+  /* We need to provide the appropriate socket level value.  */
+  int sol = __get_sol (group->sa_family, grouplen);
+  if (sol == -1)
+    {
+      __set_errno (EINVAL);
+      return -1;
+    }
 
   int result = __setsockopt (s, SOL_IP, MCAST_MSFILTER, gf, needed);
 
