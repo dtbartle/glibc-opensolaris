@@ -26,7 +26,7 @@ tmpnam_r (char *s)
   if (s == NULL)
     return NULL;
 
-  if (__path_search (s, L_tmpnam, NULL, NULL))
+  if (__path_search (s, L_tmpnam, NULL, NULL, 0))
     return NULL;
   if (__gen_tempname (s, 0, 0))
     return NULL;
