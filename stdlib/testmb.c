@@ -1,9 +1,8 @@
-#include <ansidecl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 int
-DEFUN_VOID(main)
+main ()
 {
   wchar_t w[10];
   char c[10];
@@ -25,7 +24,7 @@ DEFUN_VOID(main)
       lose = 1;
     }
 
-  if (mblen ("foobar", 7) != -1)
+  if (mblen ("foobar", 7) != 1)
     {
       puts ("mblen 1 FAILED!");
       lose = 1;
@@ -36,6 +35,34 @@ DEFUN_VOID(main)
       puts ("mblen 2 FAILED!");
       lose = 1;
     }
+
+  {
+    int r;
+    char c = 'x';
+    wchar_t wc;
+    char *mbc;
+
+    mbc = (char *) malloc (MB_CUR_MAX);
+    mbc[0] = c;
+    mbc[1] = '\0';
+
+    if ((r = mbtowc (&wc, &c, MB_CUR_MAX)) <= 0)
+      {
+	printf ("conversion to wide failed, result: %d\n", r);
+	lose = 1;
+      }
+    else
+      {
+	printf ("wide value: 0x%04x\n", (unsigned long) wc);
+	mbc[0] = '\0';
+	if ((r = wctomb (mbc, wc)) <= 0)
+	  {
+	    printf ("conversion to multibyte failed, result: %d\n", r);
+	    lose = 1;
+	  }
+      }
+
+  }
 
   puts (lose ? "Test FAILED!" : "Test succeeded.");
   return lose;
