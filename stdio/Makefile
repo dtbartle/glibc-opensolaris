@@ -53,7 +53,7 @@ mpn-routines := add_1 add_n addmul_1 cmp divmod divmod_1 udiv_qrnnd \
 		lshift rshift mod_1 mul mul_1 mul_n sub_n submul_1 
 mpn-headers = longlong.h gmp.h gmp-impl.h gmp-mparam.h asm-syntax.h
 
-routines := $(strip $(routines) $(mpn-routines)) dbl2mpn
+routines := $(strip $(routines) $(mpn-routines)) dbl2mpn ldbl2mpn
 aux	:= errlist siglist defs glue mp_clz_tab
 distribute = $(mpn-headers) mpn-copy.mk _itoa.h
 
