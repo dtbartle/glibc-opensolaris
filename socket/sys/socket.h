@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -103,10 +103,13 @@ enum __socket_type
 #define	AF_MAX		PF_MAX
 
 
+/* Get the definition of the macro to define the common sockaddr members.  */
+#include <sockaddrcom.h>
+
 /* Structure describing a generic socket address.  */
 struct sockaddr
   {
-    unsigned short int sa_family; /* Address family.  */
+    __SOCKADDR_COMMON (sa_);	/* Common data: address family and length.  */
     char sa_data[14];		/* Address data.  */
   };
 
