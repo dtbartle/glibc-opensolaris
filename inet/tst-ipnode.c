@@ -1,5 +1,6 @@
 #include <netdb.h>
 #include <stdio.h>
+#include <netinet/in.h>
 
 /* The unspecified IPv6 address.  */
 struct in6_addr anyv6 = IN6ADDR_ANY_INIT;
