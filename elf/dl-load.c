@@ -155,10 +155,13 @@ _dl_dst_count (const char *name, int is_path)
     {
       size_t len = 1;
 
-      /* $ORIGIN is not expanded for SUID/GUID programs.  */
+      /* $ORIGIN is not expanded for SUID/GUID programs.
+
+	 Note that it is no bug that the strings in the first two `strncmp'
+	 calls are longer than the sequence which is actually tested.  */
       if ((((!__libc_enable_secure
-	     && strncmp (&name[1], "ORIGIN", 6) == 0 && (len = 7) != 0)
-	    || (strncmp (&name[1], "PLATFORM", 8) == 0 && (len = 9) != 0))
+	     && strncmp (&name[1], "ORIGIN}", 6) == 0 && (len = 7) != 0)
+	    || (strncmp (&name[1], "PLATFORM}", 8) == 0 && (len = 9) != 0))
 	   && (name[len] == '\0' || name[len] == '/'
 	       || (is_path && name[len] == ':')))
 	  || (name[1] == '{'
@@ -195,8 +198,10 @@ _dl_dst_substitute (struct link_map *l, const char *name, char *result,
 	  const char *repl;
 	  size_t len;
 
-	  if ((((strncmp (&name[1], "ORIGIN", 6) == 0 && (len = 7) != 0)
-		|| (strncmp (&name[1], "PLATFORM", 8) == 0 && (len = 9) != 0))
+      /* Note that it is no bug that the strings in the first two `strncmp'
+	 calls are longer than the sequence which is actually tested.  */
+	  if ((((strncmp (&name[1], "ORIGIN}", 6) == 0 && (len = 7) != 0)
+		|| (strncmp (&name[1], "PLATFORM}", 8) == 0 && (len = 9) != 0))
 	       && (name[len] == '\0' || name[len] == '/'
 		   || (is_path && name[len] == ':')))
 	      || (name[1] == '{'
