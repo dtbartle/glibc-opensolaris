@@ -476,7 +476,7 @@ install-lib.so := $(filter %.so,$(install-lib:%_pic.a=%.so))
 install-lib := $(filter-out %.so,$(install-lib))
 ifeq (yes,$(build-shared))
 install: $(libdir)/libc.so$(libc.so-version)
-install-no-libc.a: $(foreach so,$(install-lib.so),\
+install-lib-nosubdir: $(foreach so,$(install-lib.so),\
   $(libdir)/$(patsubst $(libprefix)lib%,lib$(libprefix)%,\
 		       $(libprefix)$(so))$($(so)-version))
 
