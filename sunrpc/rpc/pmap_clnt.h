@@ -28,6 +28,11 @@
  * Mountain View, California  94043
  */
 
+#ifndef _RPC_PMAP_CLNT_H
+
+#define _RPC_PMAP_CLNT_H	1
+#include <features.h>
+
 /*
  * pmap_clnt.h
  * Supplies C routines to get to portmap services.

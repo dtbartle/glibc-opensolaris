@@ -42,6 +42,12 @@
 #include <features.h>
 
 
+#ifndef _RPC_RPC_MSG_H
+
+#define _RPC_RPC_MSG_H	1
+#include <features.h>
+
+
 #define RPC_MSG_VERSION		((u_long) 2)
 #define RPC_SERVICE_PORT	((u_short) 2048)
 
@@ -193,6 +199,9 @@ extern bool_t	xdr_replymsg __P ((XDR *__xdrs, struct rpc_msg *__rmsg));
  * 	struct rpc_err *error;
  */
 extern void	_seterr_reply __P ((struct rpc_msg *__msg,
+				    struct rpc_err *__error));
+
+#endif /* rpc/rpc_msg.h */
 				    struct rpc_err *__error));
 
 __END_DECLS
