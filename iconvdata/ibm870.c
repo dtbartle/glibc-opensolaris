@@ -24,5 +24,6 @@
 #include <ibm870.h>
 
 #define CHARSET_NAME	"IBM870//"
+#define HAS_HOLES	0	/* All 256 character are defined.  */
 
 #include <8bit-generic.c>
