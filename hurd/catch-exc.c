@@ -51,12 +51,23 @@ _S_catch_exception_raise (mach_port_t port,
   if (ss == NULL)
     ss = _hurd_thread_sigstate (thread); /* Allocate a fresh one.  */
 
-  if (__spin_lock_locked (&ss->lock.held))
-    /* Oops.  The thread faulted with its sigstate lock held.
-       Bad scene.  What to do?  */
-    ;				/* XXX */
-  else
-    __mutex_lock (&ss->lock);
+  if (__spin_lock_locked (&ss->lock))
+    {
+      /* Loser.  The thread faulted with its sigstate lock held.  Its
+	 sigstate data is now suspect.  So we reset the parts of it which
+	 could cause trouble for the signal thread.  Anything else
+	 clobbered therein will just hose this user thread, but it's
+	 faulting already.
+
+	 This is almost certainly a library bug: unless random memory
+	 clobberation caused the sigstate lock to gratuitously appear held,
+	 no code should do anything that can fault while holding the
+	 sigstate lock.  */
+
+      ss->critical_section = 0;
+      ss->context = NULL;
+      __spin_unlock (&ss->lock);
+    }
 
   /* Post the signal.  */
   _hurd_internal_post_signal (ss, signo, sigcode, error,
