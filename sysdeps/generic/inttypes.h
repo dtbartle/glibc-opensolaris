@@ -259,6 +259,27 @@
 
 __BEGIN_DECLS
 
+#if __WORDSIZE == 64
+
+/* We have to define the `uintmax_t' type using `ldiv_t'.  */
+typedef struct
+  {
+    long int quot;		/* Quotient.  */
+    long int rem;		/* Remainder.  */
+  } imaxdiv_t;
+
+#else
+
+/* We have to define the `uintmax_t' type using `lldiv_t'.  */
+typedef struct
+  {
+    long long int quot;		/* Quotient.  */
+    long long int rem;		/* Remainder.  */
+  } imaxdiv_t;
+
+#endif
+
+
 /* Compute absolute value of N.  */
 extern intmax_t imaxabs (intmax_t __n) __THROW __attribute__ ((__const__));
 
