@@ -1,4 +1,4 @@
-/* Perform a `longjmp' on a `struct sigcontext'.  i386 version.
+/* Perform a `longjmp' on a `struct sigcontext'.  Alpha version.
 Copyright (C) 1994 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
