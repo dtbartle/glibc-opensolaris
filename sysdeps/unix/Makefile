@@ -294,6 +294,10 @@ $(objpfx)sysd-syscalls: $(..)sysdeps/unix/make-syscalls.sh \
 
 # This syscall objects depend on s-proto.d, which is generated to
 # specify dependencies generated syscalls with have on headers.
+ifdef subdir
+# These deps use file names relative to a subdir, so don't
+# include them in the parent directory.
 -include $(objpfx)s-proto.d
+endif
 
 endif
