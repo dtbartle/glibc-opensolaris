@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -67,7 +67,7 @@ DEFUN(__stpncpy, (dest, src, n), char *dest AND CONST char *src AND size_t n)
  last_chars:
   n &= 3;
   if (n == 0)
-    return s;
+    return dest;
 
   do
     {
