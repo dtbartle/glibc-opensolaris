@@ -21,7 +21,7 @@ Cambridge, MA 02139, USA.  */
 #include <limits.h>
 #include <stddef.h>
 #include <stdlib.h>
-
+#include <errno.h>
 
 /* Nonzero if we are defining `strtoul' or `strtouq', operating on unsigned
    integers.  */
@@ -43,7 +43,9 @@ Cambridge, MA 02139, USA.  */
 #undef	LONG_MAX
 #define LONG_MAX	LONG_LONG_MAX
 #undef	ULONG_MAX
-#define ULONG_MAX	ULONG_LONG_MAX
+#define ULONG_MAX	maxquad
+/* XXX Work around gcc bug with using this constant.  */
+static unsigned long long int maxquad = ULONG_LONG_MAX;
 #else
 #define	LONG	long
 #endif
