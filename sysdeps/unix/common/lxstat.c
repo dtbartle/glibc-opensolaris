@@ -1,4 +1,5 @@
-/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
+/* lxstat using old-style Unix lstat system call.
+Copyright (C) 1991, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,9 +17,21 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <sysdep.h>
+#include <errno.h>
+#include <stddef.h>
+#include <sys/stat.h>
 
-SYSCALL__ (lstat, 2)
-	ret
+extern int __syscall_lstat (const char *, struct stat *);
 
-weak_alias (__lstat, lstat)
+int
+__lxstat (int vers, const char *file, struct stat *buf)
+{
+  if (vers != _STAT_VER)
+    {
+      errno = EINVAL;
+      return -1;
+    }
+
+  return __syscall_lstat (file, buf);
+}
+weak_alias (__lxstat, _lxstat)
