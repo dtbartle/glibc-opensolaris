@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -20,10 +20,7 @@ Cambridge, MA 02139, USA.  */
 #include <stdio.h>
 #include <errno.h>
 
-#ifndef HAVE_GNU_LD
-#define _sys_errlist sys_errlist
-#define _sys_nerr sys_nerr
-#endif
+extern char *_strerror_internal __P ((int, char buf[1024]));
 
 /* Print a line on stderr consisting of the text in S, a colon, a space,
    a message describing the meaning of the contents of `errno' and a newline.
@@ -31,6 +28,7 @@ Cambridge, MA 02139, USA.  */
 void
 DEFUN(perror, (s), register CONST char *s)
 {
+  char buf[1024];
   int errnum = errno;
   CONST char *colon;
 
@@ -39,8 +37,6 @@ DEFUN(perror, (s), register CONST char *s)
   else
     colon = ": ";
 
-  if (errnum >= 0 && errnum < _sys_nerr)
-    (void) fprintf(stderr, "%s%s%s\n", s, colon, _sys_errlist[errnum]);
-  else
-    (void) fprintf(stderr, "%s%sUnknown error %d\n", s, colon, errnum);
+  (void) fprintf (stderr, "%s%s%s\n",
+		  s, colon, _strerror_internal (errnum, buf));
 }
