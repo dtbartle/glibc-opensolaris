@@ -49,7 +49,3 @@
       asm volatile ("movl %1, %%ebx; int $0x80"				      \
 		    :: "a" (__NR_exit), "r" (val));			      \
   }
-#define gettid()							      \
-  ({ int tid;								      \
-     __asm __volatile ("int $0x80" : "=a" (tid) : "0" (__NR_gettid));	      \
-     tid; })
