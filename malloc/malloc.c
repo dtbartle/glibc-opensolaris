@@ -1604,11 +1604,11 @@ ptmalloc_init_all __MALLOC_P((void))
   __free_hook = save_free_hook;
 #endif
   for(ar_ptr = &main_arena;;) {
-    mutex_init(&ar_ptr->mutex);
+    (void)mutex_init(&ar_ptr->mutex);
     ar_ptr = ar_ptr->next;
     if(ar_ptr == &main_arena) break;
   }
-  mutex_init(&list_lock);
+  (void)mutex_init(&list_lock);
 }
 
 #endif
