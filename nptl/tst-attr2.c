@@ -127,6 +127,51 @@ default detach state wrong: %d, expected %d (PTHREAD_CREATE_JOINABLE)\n",
       exit (1);
     }
 
+
+  if (pthread_attr_getinheritsched (&a, &s) != 0)
+    {
+      puts ("1st attr_getinheritsched failed");
+      exit (1);
+    }
+  /* XXX What is the correct default value.  */
+  if (s != PTHREAD_INHERIT_SCHED && s != PTHREAD_EXPLICIT_SCHED)
+    {
+      puts ("incorrect default value for inheritsched");
+      exit (1);
+    }
+
+  if (pthread_attr_setinheritsched (&a, PTHREAD_EXPLICIT_SCHED) != 0)
+    {
+      puts ("1st attr_setinheritsched failed");
+      exit (1);
+    }
+  if (pthread_attr_getinheritsched (&a, &s) != 0)
+    {
+      puts ("2nd attr_getinheritsched failed");
+      exit (1);
+    }
+  if (s != PTHREAD_EXPLICIT_SCHED)
+    {
+      printf ("inheritsched set to PTHREAD_EXPLICIT_SCHED, but got %d\n", s);
+      exit (1);
+    }
+
+  if (pthread_attr_setinheritsched (&a, PTHREAD_INHERIT_SCHED) != 0)
+    {
+      puts ("2nd attr_setinheritsched failed");
+      exit (1);
+    }
+  if (pthread_attr_getinheritsched (&a, &s) != 0)
+    {
+      puts ("3rd attr_getinheritsched failed");
+      exit (1);
+    }
+  if (s != PTHREAD_INHERIT_SCHED)
+    {
+      printf ("inheritsched set to PTHREAD_INHERIT_SCHED, but got %d\n", s);
+      exit (1);
+    }
+
   return 0;
 }
 
