@@ -21,7 +21,7 @@
 #
 subdir	:= locale
 
-headers		= locale.h langinfo.h xlocale.h
+headers		= locale.h langinfo.h
 distribute	= localeinfo.h categories.def iso-4217.def weight.h \
 		  strlen-hash.h \
 		  $(addprefix programs/, \
@@ -32,8 +32,7 @@ distribute	= localeinfo.h categories.def iso-4217.def weight.h \
 			      locfile-kw.gperf locfile-kw.h linereader.h \
 			      locales.h locfile.h stringtrans.h charset.h)
 routines	= setlocale findlocale loadlocale localeconv nl_langinfo \
-		  mb_cur_max codeset_name \
-		  newlocale duplocale freelocale
+		  mb_cur_max codeset_name
 categories	= ctype messages monetary numeric time collate
 aux		= $(categories:%=lc-%) $(categories:%=C-%) SYS_libc C_name
 others		= localedef locale
@@ -74,6 +73,7 @@ localepath = "$(localedir):$(i18ndir)"
 
 CPPFLAGS := -DLOCALE_PATH='$(localepath)' \
 	    -DLOCALEDIR='"$(localedir)"' \
+	    -DLOCALE_ALIAS_PATH='"$(localedir):$(i18ndir)"' \
 	    -DCHARMAP_PATH='"$(i18ndir)/charmaps"' \
 	    -DLOCSRCDIR='"$(i18ndir)/locales"' -DHAVE_CONFIG_H \
 	    -Iprograms $(CPPFLAGS)
