@@ -66,7 +66,7 @@ enum
   { .__data = { .__kind = PTHREAD_MUTEX_RECURSIVE_NP } }
 # define PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP \
   { .__data = { .__kind = PTHREAD_MUTEX_ERRORCHECK_NP } }
-# define PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP \
+# define PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP \
   { .__data = { .__kind = PTHREAD_MUTEX_ADAPTIVE_NP } }
 #endif
 
