@@ -111,7 +111,8 @@ extern int __modify_ldt (int, struct modify_ldt_ldt_s *, size_t);
 	     USETLS_LOAD_EBX						      \
 	     : "=&a" (__result)						      \
 	     : USETLS_EBX_ARG (&ldt_entry), "i" (__NR_set_thread_area),	      \
-	       "m" (ldt_entry));					      \
+	       "m" (ldt_entry)						      \
+	     : "memory");						      \
       if (__result == 0)						      \
 	asm ("movw %w0, %%gs" :: "q" (__gs));				      \
       else								      \
@@ -130,7 +131,8 @@ extern int __modify_ldt (int, struct modify_ldt_ldt_s *, size_t);
 	     USETLS_LOAD_EBX						      \
 	     : "=&a" (__result)						      \
 	     : USETLS_EBX_ARG (&ldt_entry), "i" (__NR_set_thread_area),	      \
-	       "m" (ldt_entry));					      \
+	       "m" (ldt_entry)						      \
+	     : "memory");						      \
       if (__result == 0)						      \
 	{								      \
 	  __gs = (ldt_entry.entry_number << 3) + 3;			      \
