@@ -297,25 +297,22 @@ The result of the encryption replaces the input in @var{blocks}.
 
 The @var{mode} parameter is the bitwise OR of two of the following:
 
-@table @code
+@vtable @code
 @comment rpc/des_crypt.h
 @comment SUNRPC
 @item DES_ENCRYPT
-@findex DES_ENCRYPT
 This constant, used in the @var{mode} parameter, specifies that
 @var{blocks} is to be encrypted.
 
 @comment rpc/des_crypt.h
 @comment SUNRPC
 @item DES_DECRYPT
-@findex DES_DECRYPT
 This constant, used in the @var{mode} parameter, specifies that
 @var{blocks} is to be decrypted.
 
 @comment rpc/des_crypt.h
 @comment SUNRPC
 @item DES_HW
-@findex DES_HW
 This constant, used in the @var{mode} parameter, asks to use a hardware
 device.  If no hardware device is available, encryption happens anyway,
 but in software.
@@ -323,30 +320,26 @@ but in software.
 @comment rpc/des_crypt.h
 @comment SUNRPC
 @item DES_SW
-@findex DES_SW
 This constant, used in the @var{mode} parameter, specifies that no
 hardware device is to be used.
-@end table
+@end vtable
 
 The result of the function will be one of these values:
 
-@table @code
+@vtable @code
 @comment rpc/des_crypt.h
 @comment SUNRPC
 @item DESERR_NONE
-@findex DESERR_NONE
 The encryption succeeded.
 
 @comment rpc/des_crypt.h
 @comment SUNRPC
 @item DESERR_NOHWDEVICE
-@findex DESERR_NOHWDEVICE
 The encryption succeeded, but there was no hardware device available.
 
 @comment rpc/des_crypt.h
 @comment SUNRPC
 @item DESERR_HWERROR
-@findex DESERR_HWERROR
 The encryption failed because of a hardware problem.  In the GNU
 library, this error code is also returned if the @code{crypt} add-on was
 not used to build the library.
@@ -354,10 +347,9 @@ not used to build the library.
 @comment rpc/des_crypt.h
 @comment SUNRPC
 @item DESERR_BADPARAM
-@findex DESERR_BADPARAM
 The encryption failed because of a bad parameter, for instance @var{len}
 is not a multiple of 8 or @var{len} is larger than @code{DES_MAXDATA}.
-@end table
+@end vtable
 @end deftypefun
 
 @comment rpc/des_crypt.h
