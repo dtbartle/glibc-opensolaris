@@ -397,7 +397,7 @@ $(addprefix $(sbindir)/,$(install-sbin)): $(sbindir)/%: $(objpfx)%
 	$(INSTALL_PROGRAM) $< $@
 endif
 ifdef install-lib
-install-lib.a := $(filter-out $(non-lib.a),$(filter lib%.a,$(install-lib)))
+install-lib.a := $(filter lib%.a,$(install-lib))
 install-lib-non.a := $(filter-out lib%.a,$(install-lib)) $(non-lib.a)
 ifdef install-lib-non.a
 $(addprefix $(libdir)/$(libprefix),$(install-lib-non.a)): \
@@ -408,7 +408,7 @@ ifdef install-lib.a
 $(install-lib.a:lib%.a=$(libdir)/lib$(libprefix)%.a): \
   $(libdir)/lib$(libprefix)%.a: $(objpfx)lib%.a
 	$(do-install)
-	$(RANLIB) $@
+	$(patsubst %,$(RANLIB) $@,$(filter-out $(non-lib.a),$@))
 endif
 endif
 ifdef install-data
