@@ -22,6 +22,10 @@ Cambridge, MA 02139, USA.  */
 #include <errno.h>
 #include <sysdep.h>
 
+#ifdef FATAL_PREPARE_INCLUDE
+#include FATAL_PREPARE_INCLUDE
+#endif
+
 /* Abort with an error message.  */
 void
 DEFUN(__libc_fatal, (message), CONST char *message)
