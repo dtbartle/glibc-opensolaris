@@ -1447,7 +1447,7 @@ if eval "test \"`echo '$''{'libc_cv_prog_as_gnu'+set}'`\" = set"; then
 else
   # Most GNU programs take a -v and spit out some text including
 # the word 'GNU'.  Some try to read stdin, so give them /dev/null.
-if ($AS -v </dev/null 2>&1 | grep GNU) >&/dev/null; then
+if $AS -v </dev/null 2>&1 | grep -q GNU; then
   libc_cv_prog_as_gnu=yes
 else
   libc_cv_prog_as_gnu=no
@@ -1464,7 +1464,7 @@ if eval "test \"`echo '$''{'libc_cv_prog_ld_gnu'+set}'`\" = set"; then
 else
   # Most GNU programs take a -v and spit out some text including
 # the word 'GNU'.  Some try to read stdin, so give them /dev/null.
-if ($LD -v </dev/null 2>&1 | grep GNU) >&/dev/null; then
+if $LD -v </dev/null 2>&1 | grep -q GNU; then
   libc_cv_prog_ld_gnu=yes
 else
   libc_cv_prog_ld_gnu=no
