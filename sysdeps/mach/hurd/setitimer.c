@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -312,8 +312,6 @@ preempt_sigalrm (thread_t thread, int signo, long int sigcode, int sigerror)
   return SIG_DFL;
 }
 
-#include <gnu-stabs.h>
-
 static void
 fork_itimer (void)
 {
@@ -329,3 +327,5 @@ fork_itimer (void)
   setitimer_locked (&it, NULL, NULL);
 }
 text_set_element (_hurd_fork_child_hook, fork_itimer);
+
+weak_alias (__setitimer, setitimer)
