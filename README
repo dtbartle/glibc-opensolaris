@@ -60,9 +60,9 @@ outside the USA can get the crypt distribution via anonymous FTP from
 ftp.funet.fi [128.214.248.6] in the directory pub/gnu/funet, or
 another archive site outside the USA.  Archive maintainers are
 encouraged to copy this distribution to their archives outside the
-USA.  Please get it from ftp.ifi.uio.no; transferring this
-distribution from ftp.gnu.org (or any other site in the USA) to a site
-outside the USA is in violation of US export laws.
+USA.  Please get it from ftp.funet.fi; transferring this distribution
+from ftp.gnu.org (or any other site in the USA) to a site outside the
+USA is in violation of US export laws.
 
 Beside the separate crypt tar file there are some more add-ons which can be
 used together with GNU libc.  They are designed in a way to ease the
