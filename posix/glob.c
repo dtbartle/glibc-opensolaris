@@ -288,7 +288,7 @@ next_brace_sub (const char *begin)
 	  while (*cp != '\0' && (*cp != '}' || depth > 0))
 	    {
 	      if (*cp == '}')
-		++depth;
+		--depth;
 	      ++cp;
 	    }
 	  if (*cp == '\0')
