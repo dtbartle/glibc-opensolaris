@@ -497,7 +497,7 @@ AC_MSG_CHECKING(LD_LIBRARY_PATH variable)
 changequote(,)dnl
 case ${LD_LIBRARY_PATH} in
   [:\;]* | *[:\;] | *[:\;][:\;]* |  *[:\;]. | .[:\;]*| . | *[:\;].[:\;]* )
-    ld_library_path_setting="contains current path"
+    ld_library_path_setting="contains current directory"
     ;;
   *)
     ld_library_path_setting="ok"
