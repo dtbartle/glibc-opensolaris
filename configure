@@ -2807,7 +2807,8 @@ else
 fi
 echo "$ac_t""$old_glibc_headers" 1>&6
 if test ${old_glibc_headers} = yes; then
-  echo "configure: warning: During \"make install\" old headers from glibc 2.0.x will be removed." 1>&2
+  echo "configure: warning: *** During \"make install\" old headers from glibc 2.0.x will" 1>&2
+  echo "configure: warning: *** be removed." 1>&2
 fi
 
 
@@ -2850,7 +2851,7 @@ if test $shared = default; then
 fi
 
 echo $ac_n "checking whether -fPIC is default""... $ac_c" 1>&6
-echo "configure:2854: checking whether -fPIC is default" >&5
+echo "configure:2855: checking whether -fPIC is default" >&5
 if eval "test \"`echo '$''{'pic_default'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
