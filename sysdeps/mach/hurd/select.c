@@ -210,7 +210,7 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
 	    __mach_port_deallocate (__mach_task_self (),
 				    msg.head.msgh_remote_port);
 
-	  if (got)
+	  if (got || err == EINTR)
 	    {
 	      /* Poll for another message.  */
 	      to = 0;
@@ -225,6 +225,11 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
          effect a poll, so ERR is MACH_RCV_TIMED_OUT when the poll finds no
          message waiting.  */
       err = 0;
+
+      if (got && err == EINTR)
+	/* Some calls were interrupted, but at least one descriptor
+	   is known to be ready now, so we will return success.  */
+	err = 0;
     }
 
   if (port != MACH_PORT_NULL)
