@@ -32,9 +32,9 @@ ENTRY(__copysign)
 	cmpwi   r3,0
 	addi    r1,r1,16
 	blt     0f
-	fabs    f1,f1
+	fabs    fp1,fp1
 	blr
-0:	fnabs   f1,f1
+0:	fnabs   fp1,f1
 	blr
 	END (__copysign)
 
