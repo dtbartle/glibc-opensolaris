@@ -42,7 +42,7 @@
 #define O_ASYNC		020000
 
 #ifdef __USE_GNU
-# define O_DIRECT	040000	/* Direct disk access.  */
+# define O_DIRECTORY	040000	/* Must be a directory.  */
 #endif
 
 /* For now Linux has synchronisity options for data and read operations.
@@ -51,10 +51,6 @@
 #if defined __USE_POSIX199309 || defined __USE_UNIX98
 # define O_DSYNC	O_SYNC	/* Synchronize data.  */
 # define O_RSYNC	O_SYNC	/* Synchronize read operations.  */
-#endif
-
-#ifdef __USE_LARGEFILE64
-# define O_LARGEFILE	0100000
 #endif
 
 /* Values for the second argument to `fcntl'.  */
