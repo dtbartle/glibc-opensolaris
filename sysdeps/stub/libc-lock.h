@@ -24,7 +24,10 @@ Cambridge, MA 02139, USA.  */
 /* Define a lock variable NAME with storage class CLASS.  The lock must be
    initialized with __libc_lock_init before it can be used (or define it
    with __libc_lock_define_initialized, below).  Use `extern' for CLASS to
-   declare a lock defined in another module.  */
+   declare a lock defined in another module.  In public structure
+   definitions, the lock element must come last, because its storage size
+   will not be known outside of libc.  (Or you can use a pointer to the
+   lock structure; i.e. NAME begins with a `*'.)  */
 #define __libc_lock_define(CLASS,NAME)
 
 /* Define an initialized lock variable NAME with storage class CLASS.  */
@@ -33,6 +36,11 @@ Cambridge, MA 02139, USA.  */
 /* Initialize the named lock variable, leaving it in a consistent, unlocked
    state.  */
 #define __libc_lock_init(NAME)
+
+/* Finalize the named lock variable, which must be locked.  It cannot be
+   used again until __libc_lock_init is called again on it.  This must be
+   called on a lock variable before the containing storage is reused.  */
+#define __libc_lock_fini(NAME)
 
 /* Lock the named lock variable.  */
 #define __libc_lock_lock(NAME)
