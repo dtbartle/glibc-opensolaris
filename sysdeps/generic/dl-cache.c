@@ -185,7 +185,7 @@ _dl_load_cache_lookup (const char *name)
 			 sizeof CACHEMAGIC_VERSION_NEW - 1) != 0)
 	    cache_new = (void *) -1;
 	}
-      else if (file != NULL && cachesize > sizeof *cache_new
+      else if (file != MAP_FAILED && cachesize > sizeof *cache_new
 	       && memcmp (file, CACHEMAGIC_VERSION_NEW,
 			  sizeof CACHEMAGIC_VERSION_NEW - 1) == 0)
 	{
@@ -194,7 +194,7 @@ _dl_load_cache_lookup (const char *name)
 	}
       else
 	{
-	  if (file != NULL)
+	  if (file != MAP_FAILED)
 	    __munmap (file, cachesize);
 	  cache = (void *) -1;
 	}
