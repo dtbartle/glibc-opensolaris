@@ -607,7 +607,7 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 		      /* Insert the entry in the search tree.  */
 		      foundp = (struct known_translation_t **)
 			tsearch (newp, &root, transcmp);
-		      if (&newp != foundp)
+		      if (__builtin_expect (&newp != foundp, 0))
 			/* The insert failed.  */
 			free (newp);
 		    }
@@ -753,7 +753,7 @@ _nl_find_msg (domain_file, msgid, index)
 	/* Mark that we didn't succeed allocating a table.  */
 	domain->conv_tab = (char **) -1;
 
-      if (domain->conv_tab == (char **) -1)
+      if (__builtin_expect (domain->conv_tab == (char **) -1, 0))
 	/* Nothing we can do, no more memory.  */
 	goto converted;
 
