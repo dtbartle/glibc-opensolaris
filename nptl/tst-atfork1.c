@@ -69,6 +69,7 @@ static int
 do_test (void)
 {
   pid_t pid;
+  int status = 0;
 
   if (pthread_atfork (prepare1, parent1, child1) != 0)
     {
@@ -97,7 +98,6 @@ do_test (void)
 	  exit (1);
 	}
 
-      int status;
       if (TEMP_FAILURE_RETRY (waitpid (pid, &status, 0)) != pid)
 	{
 	  puts ("waitpid failed");
@@ -110,11 +110,11 @@ do_test (void)
       if (val != 80)
 	{
 	  printf ("expected val=%d, got %d\n", 80, val);
-	  exit (1);
+	  exit (2);
 	}
     }
 
-  return 0;
+  return status;
 }
 
 #define TEST_FUNCTION do_test ()
