@@ -29,6 +29,7 @@
 
 # ifndef SHARED
 weak_extern (__pthread_do_exit)
+weak_extern (__pthread_thread_self)
 # endif
 
 int __libc_multiple_threads attribute_hidden;
@@ -40,7 +41,14 @@ int
 attribute_hidden
 __libc_enable_asynccancel (void)
 {
+#ifdef FLOATING_STACKS
   pthread_descr self = thread_self();
+#else
+  pthread_descr self = __libc_maybe_call2 (pthread_thread_self, (), NULL);
+
+  if (self == NULL)
+    return PTHREAD_CANCEL_DEFERRED;
+#endif
   int oldtype = THREAD_GETMEM(self, p_canceltype);
   THREAD_SETMEM(self, p_canceltype, PTHREAD_CANCEL_ASYNCHRONOUS);
   if (__builtin_expect (THREAD_GETMEM(self, p_canceled), 0) &&
@@ -54,8 +62,14 @@ void
 internal_function attribute_hidden
 __libc_disable_asynccancel (int oldtype)
 {
+#ifdef FLOATING_STACKS
   pthread_descr self = thread_self();
-  THREAD_SETMEM(self, p_canceltype, oldtype);
+#else
+  pthread_descr self = __libc_maybe_call2 (pthread_thread_self, (), NULL);
+
+  if (self != NULL)
+#endif
+    THREAD_SETMEM(self, p_canceltype, oldtype);
 }
 
 #endif
