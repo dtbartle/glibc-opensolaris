@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <netinet/in.h>
+#include <sys/param.h>
 #include <sys/socket.h>
 
 
@@ -48,6 +49,7 @@ getsourcefilter (int s, uint32_t interface, struct sockaddr *group,
 
   gf->gf_interface = interface;
   memcpy (&gf->gf_group, group, grouplen);
+  gf->gf_numsrc = *numsrc;
 
   int result = __getsockopt (s, SOL_IP, MCAST_MSFILTER, gf, &needed);
 
@@ -56,9 +58,9 @@ getsourcefilter (int s, uint32_t interface, struct sockaddr *group,
   if (result == 0)
     {
       *fmode = gf->gf_fmode;
-      *numsrc = gf->gf_numsrc;
       memcpy (slist, gf->gf_slist,
-	      gf->gf_numsrc * sizeof (struct sockaddr_storage));
+	      MIN (*numsrc, gf->gf_numsrc) * sizeof (struct sockaddr_storage));
+      *numsrc = gf->gf_numsrc;
     }
 
   if (use_malloc)
