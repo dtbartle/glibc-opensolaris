@@ -20,21 +20,24 @@
 #include <endian.h>
 #include <string.h>
 #include <wctype.h>
-#include "../locale/localeinfo.h"
+#include <locale/localeinfo.h>
 
 wctype_t
 wctype (const char *property)
 {
   const char *names;
   wctype_t result;
+  size_t proplen = strlen (property);
 
   names = _NL_CURRENT (LC_CTYPE, _NL_CTYPE_CLASS_NAMES);
   for (result = 1; result != 0; result <<= 1)
     {
-      if (strcmp (property, names) == 0)
+      size_t nameslen = strlen (names);
+
+      if (proplen == nameslen && memcmp (property, names, proplen) == 0)
 	break;
 
-      names = strchr (names, '\0') + 1;
+      names += nameslen + 1;
       if (names[0] == '\0')
 	return 0;
     }
@@ -42,9 +45,9 @@ wctype (const char *property)
 #if __BYTE_ORDER == __BIG_ENDIAN
   return result;
 #else
-# define SWAPU32(w) \
-  (((w) << 24) | (((w) & 0xff00) << 8) | (((w) >> 8) & 0xff00) | ((w) >> 24))
+#define XSWAPU32(w) \
+  ((((w) & 0xff00ff00) >> 8) | (((w) & 0xff00ff) << 8))
 
-  return SWAPU32 (result);
+  return XSWAPU32 (result);
 #endif
 }
