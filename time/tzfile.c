@@ -90,7 +90,6 @@ __tzfile_read (const char *file)
   struct tzhead tzhead;
   size_t chars;
   register size_t i;
-  struct ttinfo *info;
 
   __use_tzfile = 0;
 
@@ -421,7 +420,6 @@ __tzfile_compute (time_t timer, int use_localtime,
 
   if (use_localtime)
     {
-      struct ttinfo *info = find_transition (timer);
       __daylight = rule_stdoff != rule_dstoff;
       __timezone = -rule_stdoff;
       __tzname[1] = NULL;
