@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,7 +16,6 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
 #include <errno.h>
 #include <stddef.h>
 #include <sys/stat.h>
@@ -24,9 +23,9 @@ Cambridge, MA 02139, USA.  */
 /* Get file information about FILE in BUF.
    If FILE is a symbolic link, do not follow it.  */
 int
-DEFUN(__lstat, (file, buf), CONST char *file AND struct stat *buf)
+__lxstat (int vers, const char *file, struct stat *buf)
 {
-  if (file == NULL || buf == NULL)
+  if (vers != _STAT_VER || file == NULL || buf == NULL)
     {
       errno = EINVAL;
       return -1;
@@ -35,6 +34,6 @@ DEFUN(__lstat, (file, buf), CONST char *file AND struct stat *buf)
   errno = ENOSYS;
   return -1;
 }
-stub_warning (lstat)
+stub_warning (__lxstat)
 
-weak_alias (__lstat, lstat)
+weak_alias (__lxstat, _lxstat)

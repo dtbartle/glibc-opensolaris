@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,23 +16,23 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
 #include <errno.h>
-#include <stddef.h>
 #include <sys/stat.h>
-#include <hurd.h>
-#include <hurd/fd.h>
+#include <stddef.h>
 
-/* Get information about the file descriptor FD in BUF.  */
+/* Get file information about FILE in BUF.  */
 int
-DEFUN(__fstat, (fd, buf), int fd AND struct stat *buf)
+__xstat (int vers, const char *file, struct stat *buf)
 {
-  error_t err;
+  if (vers != _STAT_VER || file == NULL || buf == NULL)
+    {
+      errno = EINVAL;
+      return -1;
+    }
 
-  if (err = HURD_DPORT_USE (fd, __io_stat (port, buf)))
-    return __hurd_dfail (fd, err);
-
-  return 0;
+  errno = ENOSYS;
+  return -1;
 }
+stub_warning (stat)
 
-weak_alias (__fstat, fstat)
+weak_alias (__xstat, _xstat)

@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1993, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,25 +16,25 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
 #include <errno.h>
+#include <sys/types.h>
 #include <sys/stat.h>
-#include <stddef.h>
-#include <fcntl.h>
-#include <hurd.h>
 
+/* Create a device file named PATH, with permission and special bits MODE
+   and device number DEV (which can be constructed from major and minor
+   device numbers with the `makedev' macro above).  */
 int
-DEFUN(__lstat, (file, buf), CONST char *file AND struct stat *buf)
+__xmknod (int vers, const char *path, mode_t mode, dev_t *dev)
 {
-  error_t err;
-  file_t port = __file_name_lookup (file, O_NOLINK, 0);
-  if (port == MACH_PORT_NULL)
-    return -1;
-  err = __io_stat (port, buf);
-  __mach_port_deallocate (__mach_task_self (), port);
-  if (err)
-    return __hurd_fail (err);
-  return 0;
-}
+  if (vers != _MKNOD_VER)
+    {
+      errno = EINVAL;
+      return -1;
+    }
 
-weak_alias (__lstat, lstat)
+  errno = ENOSYS;
+  return -1;
+}
+stub_warning (__xmknod)
+
+weak_alias (__xmknod, _xmknod)

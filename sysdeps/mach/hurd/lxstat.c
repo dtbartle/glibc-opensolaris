@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,24 +16,29 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <stddef.h>
+#include <fcntl.h>
+#include <hurd.h>
 
-/* Get file information about FILE in BUF.  */
 int
-DEFUN(__stat, (file, buf), CONST char *file AND struct stat *buf)
+__lxstat (int vers, const char *file, struct stat *buf)
 {
-  if (file == NULL || buf == NULL)
-    {
-      errno = EINVAL;
-      return -1;
-    }
+  error_t err;
+  file_t port;
 
-  errno = ENOSYS;
-  return -1;
+  if (vers != _STAT_VER)
+    return __hurd_fail (EINVAL);
+
+  port = __file_name_lookup (file, O_NOLINK, 0);
+  if (port == MACH_PORT_NULL)
+    return -1;
+  err = __io_stat (port, buf);
+  __mach_port_deallocate (__mach_task_self (), port);
+  if (err)
+    return __hurd_fail (err);
+  return 0;
 }
-stub_warning (stat)
 
-weak_alias (__stat, stat)
+weak_alias (__lxstat, _lxstat)
