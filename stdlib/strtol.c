@@ -27,8 +27,11 @@ Cambridge, MA 02139, USA.  */
 #endif
 
 #include <ctype.h>
-#include <errno.h>
 #include <limits.h>
+#include <errno.h>
+#ifndef errno
+extern int errno;
+#endif
 
 #ifdef STDC_HEADERS
 # include <stddef.h>
