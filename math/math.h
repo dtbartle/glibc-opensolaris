@@ -289,15 +289,13 @@ extern int matherr (struct exception *__exc);
 # define PLOSS		6
 
 /* SVID mode specifies returning this large value instead of infinity.  */
-# define HUGE		FLT_MAX
-# include <float.h>		/* Defines FLT_MAX.  */
+# define HUGE		3.40282347e+38F
 
 #else	/* !SVID */
 
 # ifdef __USE_XOPEN
 /* X/Open wants another strange constant.  */
-#  define MAXFLOAT	FLT_MAX
-#  include <float.h>
+#  define MAXFLOAT	3.40282347e+38F
 # endif
 
 #endif	/* SVID */
