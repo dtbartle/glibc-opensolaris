@@ -3017,9 +3017,9 @@ parse_bracket_exp (regexp, dfa, token, syntax, err)
 	{
 	  re_string_skip_bytes (regexp, token_len); /* Skip '-'.  */
 	  token_len2 = peek_token_bracket (&token2, regexp, syntax);
-	  if (BE (token->type == END_OF_RE, 0))
+	  if (BE (token2.type == END_OF_RE, 0))
 	    {
-	      *err = REG_BADPAT;
+	      *err = REG_EBRACK;
 	      goto parse_bracket_exp_free_return;
 	    }
 	  if (token2.type == OP_CLOSE_BRACKET)
