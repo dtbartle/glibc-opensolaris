@@ -5,9 +5,9 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or 
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 /************************************************************************/
 /*  MODULE_NAME: mpa.c                                                  */
@@ -123,8 +123,8 @@ void cpymn(const mp_no *x, int m, mp_no *y, int n) {
 
 /* Convert a multiple precision number *x into a double precision */
 /* number *y, normalized case  (|x| >= 2**(-1022))) */
-static void norm(const mp_no *x, double *y, int p) 
-{  
+static void norm(const mp_no *x, double *y, int p)
+{
   #define R  radixi.d
   int i,k;
   double a,c,u,v,z[5];
@@ -135,7 +135,7 @@ static void norm(const mp_no *x, double *y, int p)
     else if (p==4) c =(X[1] + R* X[2]) + R*R*(X[3] + R*X[4]);
   }
   else {
-    for (a=ONE, z[1]=X[1]; z[1] < TWO23; ) 
+    for (a=ONE, z[1]=X[1]; z[1] < TWO23; )
         {a *= TWO;   z[1] *= TWO; }
 
     for (i=2; i<5; i++) {
@@ -175,8 +175,8 @@ static void norm(const mp_no *x, double *y, int p)
 
 /* Convert a multiple precision number *x into a double precision */
 /* number *y, denormalized case  (|x| < 2**(-1022))) */
-static void denorm(const mp_no *x, double *y, int p) 
-{ 
+static void denorm(const mp_no *x, double *y, int p)
+{
   int i,k;
   double a,c,u,v,z[5];
 
@@ -222,7 +222,7 @@ static void denorm(const mp_no *x, double *y, int p)
 /* Convert a multiple precision number *x into a double precision number *y. */
 /* The result is correctly rounded to the nearest/even. *x is left unchanged */
 
-void mp_dbl(const mp_no *x, double *y, int p) {
+void __mp_dbl(const mp_no *x, double *y, int p) {
 
   int i,k;
   double a,c,u,v,z[5];
@@ -468,7 +468,7 @@ void inv(const mp_no *x, mp_no *y, int p) {
                          0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
                          0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,};
 
-  cpy(x,&z,p);  z.e=0;  mp_dbl(&z,&t,p);
+  cpy(x,&z,p);  z.e=0;  __mp_dbl(&z,&t,p);
   t=ONE/t;   dbl_mp(t,y,p);    EY -= EX;
 
   for (i=0; i<np1[p]; i++) {
@@ -494,4 +494,3 @@ void dvd(const mp_no *x, const mp_no *y, mp_no *z, int p) {
   else                {inv(y,&w,p);   mul(x,&w,z,p);}
   return;
 }
-
