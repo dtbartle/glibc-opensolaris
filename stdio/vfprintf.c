@@ -28,6 +28,7 @@ Cambridge, MA 02139, USA.  */
 #include <string.h>
 #include <printf.h>
 #include <assert.h>
+#include <stddef.h>
 #include "_itoa.h"
 
 /* This function from the GNU C library is also used in libio.
@@ -56,7 +57,7 @@ Cambridge, MA 02139, USA.  */
 	  return -1;							      \
 	}								      \
     } while (0)
-#define UNBUFFERED_P(s)	((s)->IO_file_flags & _IO_UNBUFFERED)
+#define UNBUFFERED_P(s)	((s)->_IO_file_flags & _IO_UNBUFFERED)
 #else /* ! USE_IN_LIBIO */
 /* This code is for use in the GNU C library.  */
 #include <stdio.h>
@@ -755,7 +756,7 @@ DEFUN(buffered_vfprintf, (s, format, args),
   hp->_IO_write_ptr = buf;
   hp->_IO_write_end = buf + sizeof buf;
   hp->_IO_file_flags = _IO_MAGIC|_IO_NO_READS;
-  hp->_jumps = &_IO_helper_jumps;
+  hp->_jumps = (struct _IO_jumps_t *) &_IO_helper_jumps;
   
   /* Now print to helper instead.  */
   result = _IO_vfprintf (hp, format, args);
