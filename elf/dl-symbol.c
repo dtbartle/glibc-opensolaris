@@ -1,5 +1,5 @@
 /* Look up a symbol's run-time value in the scope of a loaded object.
-   Copyright (C) 1995,96,98,99,2000 Free Software Foundation, Inc.
+   Copyright (C) 1995, 96, 98, 99, 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@ ElfW(Addr)
 internal_function
 _dl_symbol_value (struct link_map *map, const char *name)
 {
-  ElfW(Addr) loadbase;
   const ElfW(Sym) *ref = NULL;
-  loadbase = _dl_lookup_symbol (name, map, &ref, map->l_local_scope, 0);
-  return loadbase + ref->st_value;
+  lookup_t result;
+  result = _dl_lookup_symbol (name, map, &ref, map->l_local_scope, 0);
+  return (result ? LOOKUP_VALUE_ADDRESS (result) : 0) + ref->st_value;
 }
