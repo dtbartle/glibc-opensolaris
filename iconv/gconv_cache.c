@@ -121,7 +121,7 @@ __gconv_load_cache (void)
 	}
 #ifdef _POSIX_MAPPED_FILES
       else
-	munmap (cache, cache_size);
+	__munmap (cache, cache_size);
 #endif
       cache = NULL;
 
@@ -444,7 +444,7 @@ free_mem (void)
     free (cache);
 #ifdef _POSIX_MAPPED_FILES
   else
-    munmap (cache, cache_size);
+    __munmap (cache, cache_size);
 #endif
 }
 
