@@ -25,10 +25,10 @@
 #include <sys/syscall.h>
 
 
-int
 #ifdef NO_CANCELLATION
 static inline __attribute ((always_inline))
 #endif
+int
 __fcntl_nocancel (int fd, int cmd, ...)
 {
   va_list ap;
