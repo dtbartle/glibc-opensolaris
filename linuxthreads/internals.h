@@ -348,6 +348,7 @@ extern int __pthread_cond_broadcast (pthread_cond_t *cond);
 extern int __pthread_condattr_init (pthread_condattr_t *attr);
 extern int __pthread_condattr_destroy (pthread_condattr_t *attr);
 extern pthread_t __pthread_self (void);
+extern pthread_descr __pthread_thread_self (void);
 extern int __pthread_equal (pthread_t thread1, pthread_t thread2);
 extern void __pthread_exit (void *retval);
 extern int __pthread_getschedparam (pthread_t thread, int *policy,
@@ -502,6 +503,7 @@ struct pthread_functions
   int (*ptr_pthread_setcancelstate) (int, int *);
   int (*ptr_pthread_setcanceltype) (int, int *);
   void (*ptr_pthread_do_exit) (void *retval, char *currentframe);
+  pthread_descr (*ptr_pthread_thread_self) (void);
 };
 
 /* Variable in libc.so.  */
