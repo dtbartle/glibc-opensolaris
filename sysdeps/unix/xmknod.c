@@ -1,4 +1,5 @@
-/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
+/* xmknod call using old-style Unix mknod system call.
+Copyright (C) 1991, 1993, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,9 +17,25 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <sysdep.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
-SYSCALL__ (mknod, 3)
-	ret
+extern int __syscall_mknod (const char *, mode_t, dev_t);
 
-weak_alias (__mknod, mknod)
+/* Create a device file named PATH, with permission and special bits MODE
+   and device number DEV (which can be constructed from major and minor
+   device numbers with the `makedev' macro above).  */
+int
+__xmknod (int vers, const char *path, mode_t mode, dev_t *dev)
+{
+  if (vers != _MKNOD_VER)
+    {
+      errno = EINVAL;
+      return -1;
+    }
+
+  return __syscall_mknod (path, mode, *dev);
+}
+
+weak_alias (__xmknod, _xmknod)
