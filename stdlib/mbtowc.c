@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -42,6 +42,14 @@ DEFUN(mbtowc, (pwc, s, n), wchar_t *pwc AND CONST char *s AND size_t n)
   if (*s == '\0')
     /* ANSI 4.10.7.2, line 19.  */
     return 0;
+
+  if (isascii (*s))
+    {
+      /* A normal ASCII character translates to itself.  */
+      if (pwc != NULL)
+	*pwc = (wchar_t) *s;
+      return 1;
+    }
 
   if (_ctype_info->mbchar == NULL ||
       _ctype_info->mbchar->mb_chars == NULL)
