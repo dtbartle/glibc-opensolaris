@@ -20,10 +20,13 @@
 #include <endian.h>
 #include <stdlib.h>
 #include <bits/wordsize.h>
+#include <shlib-compat.h>
 
 #if __WORDSIZE != 32
-#error This is for 32-bit targets only
+# error This is for 32-bit targets only
 #endif
+
+#if SHLIB_COMPAT(libc, GLIBC_2_0, GLIBC_2_2_6)
 
 typedef unsigned int UQItype	__attribute__ ((mode (QI)));
 typedef          int SItype	__attribute__ ((mode (SI)));
@@ -52,7 +55,7 @@ typedef union { struct DWstruct s; DWtype ll; } DWunion;
 
 
 DWtype
-__lshrdi3 (DWtype u, Wtype b)
+___lshrdi3 (DWtype u, Wtype b)
 {
   DWunion w;
   Wtype bm;
@@ -79,10 +82,11 @@ __lshrdi3 (DWtype u, Wtype b)
 
   return w.ll;
 }
+symbol_version (___lshrdi3, __lshrdi3, GLIBC_2.0);
 
 
 DWtype
-__ashldi3 (DWtype u, Wtype b)
+___ashldi3 (DWtype u, Wtype b)
 {
   DWunion w;
   Wtype bm;
@@ -109,10 +113,11 @@ __ashldi3 (DWtype u, Wtype b)
 
   return w.ll;
 }
+symbol_version (___ashldi3, __ashldi3, GLIBC_2.0);
 
 
 DWtype
-__ashrdi3 (DWtype u, Wtype b)
+___ashrdi3 (DWtype u, Wtype b)
 {
   DWunion w;
   Wtype bm;
@@ -140,3 +145,6 @@ __ashrdi3 (DWtype u, Wtype b)
 
   return w.ll;
 }
+symbol_version (___ashrdi3, __ashrdi3, GLIBC_2.0);
+
+#endif
