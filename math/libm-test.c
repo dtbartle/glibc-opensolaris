@@ -1348,6 +1348,40 @@ nextafter_test (void)
 
 
 static void
+copysign_test (void)
+{
+  check ("copysign (0, 4) = 0", FUNC(copysign) (0, 4), 0);
+  check ("copysign (0, -4) = -0", FUNC(copysign) (0, -4), minus_zero);
+  check ("copysign (-0, 4) = 0", FUNC(copysign) (minus_zero, 4), 0);
+  check ("copysign (-0, -4) = -0", FUNC(copysign) (minus_zero, -4),
+	 minus_zero);
+
+  check_isinfp ("copysign (+inf, 0) = +inf", FUNC(copysign) (plus_infty, 0));
+  check_isinfn ("copysign (+inf, -0) = -inf", FUNC(copysign) (plus_infty,
+							      minus_zero));
+  check_isinfp ("copysign (-inf, 0) = +inf", FUNC(copysign) (minus_infty, 0));
+  check_isinfn ("copysign (-inf, -0) = -inf", FUNC(copysign) (minus_infty,
+							      minus_zero));
+
+  check ("copysign (0, +inf) = 0", FUNC(copysign) (0, plus_infty), 0);
+  check ("copysign (0, -inf) = -0", FUNC(copysign) (0, minus_zero),
+	 minus_zero);
+  check ("copysign (-0, +inf) = 0", FUNC(copysign) (minus_zero, plus_infty),
+	 0);
+  check ("copysign (-0, -inf) = -0", FUNC(copysign) (minus_zero, minus_zero),
+	 minus_zero);
+
+  /* XXX More correctly we would have to check the sign of the NaN.  */
+  check_isnan ("copysign (+NaN, 0) = +inf", FUNC(copysign) (nan_value, 0));
+  check_isnan ("copysign (+NaN, -0) = -inf", FUNC(copysign) (nan_value,
+							     minus_zero));
+  check_isnan ("copysign (-NaN, 0) = +inf", FUNC(copysign) (-nan_value, 0));
+  check_isnan ("copysign (-NaN, -0) = -inf", FUNC(copysign) (-nan_value,
+							     minus_zero));
+}
+
+
+static void
 inverse_func_pair_test (const char *test_name,
 			mathfunc f1, mathfunc inverse,
 			MATHTYPE x, MATHTYPE epsilon)
@@ -1658,6 +1692,7 @@ main (int argc, char *argv[])
   fmin_test ();
   fmax_test ();
   nextafter_test ();
+  copysign_test ();
 
   identities ();
   inverse_functions ();
