@@ -32,6 +32,7 @@ directly.)
 @menu
 * Opening and Closing Files::           How to open and close file
                                          descriptors.
+* Truncating Files::                    Change the size of a file.
 * I/O Primitives::                      Reading and writing data.
 * File Position Primitive::             Setting a descriptor's file
                                          position.
@@ -222,6 +223,73 @@ To close a stream, call @code{fclose} (@pxref{Closing Streams}) instead
 of trying to close its underlying file descriptor with @code{close}.
 This flushes any buffered output and updates the stream object to
 indicate that it is closed.
+
+
+@node Truncating Files
+@section Change the size of a file
+
+In some situations it is useful to explicitly determine the size of a
+file.  Since the 4.2BSD days there is a function to truncate a file to
+at most a given number of bytes and POSIX defines one additional
+function.  The prototypes for these functions are in @file{unistd.h}.
+
+@comment unistd.h
+@comment X/Open
+@deftypefun int truncate (const char *@var{name}, size_t @var{length})
+The @code{truncation} function truncates the file named by @var{name} to
+at most @var{length} bytes.  I.e., if the file was larger before the
+extra bytes are stripped of.  If the file was small or equal to
+@var{length} in size before nothing is done.  The file must be writable
+by the user to perform this operation.
+
+The return value is zero is everything wnet ok.  Otherwise the return
+value is @math{-1} and the global variable @var{errno} is set to:
+@table @code
+@item EACCES
+The file is not accessible to the user.
+@item EINVAL
+The @var{length} value is illegal.
+@item EISDIR
+The object named by @var{name} is a directory.
+@item ENOENT
+The file named by @var{name} does not exist.
+@item ENOTDIR
+One part of the @var{name} is not a directory.
+@end table
+
+This function was introduced in 4.2BSD but also was available in later
+@w{System V} systems.  It is not added to POSIX since the authors felt
+it is only of marginally additional utility.  See below.
+@end deftypefun
+
+@comment unistd.h
+@comment POSIX
+@deftypefun int ftruncate (int @var{fd}, size_t @var{length})
+The @code{ftruncate} function is similar to the @code{truncate}
+function.  The main difference is that it takes a descriptor for an
+opened file instead of a file name to identify the object.  The file
+must be opened for writing to successfully carry out the operation.
+
+The POSIX standard leaves it implementation defined what happens if the
+specified new @var{length} of the file is bigger than the original size.
+The @code{ftruncate} function might simply leave the file alone and do
+nothing or it can increase the size to the desired size.  In this later
+case the extended area should be zero-filled.  So using @code{ftruncate}
+is no reliable way to increase the file size but if it is possible it is
+probably the fastest way.  The function also operates on POSIX shared
+memory segments if these are implemented by the system.
+
+On success the function returns zero.  Otherwise it returns @math{-1}
+and set @var{errno} to one of these values:
+@table @code
+@item EBADF
+@var{fd} is no valid file descriptor or is not opened for writing.
+@item EINVAL
+The object referred to by @var{fd} does not permit this operation.
+@item EROFS
+The file is on a read-only file system.
+@end table
+@end deftypefun
 
 @node I/O Primitives
 @section Input and Output Primitives
