@@ -13,7 +13,8 @@ main (void)
 
   /* Test the unspecifed IPv6 address.  */
   errval = 0x3453456;
-  if (getipnodebyaddr (&anyv6, sizeof (anyv6), AF_INET6, &errval) != NULL
+  if (getipnodebyaddr ((char *) &anyv6, sizeof (anyv6), AF_INET6, &errval)
+      != NULL
       || errval != HOST_NOT_FOUND)
     {
       puts ("getipnodenyaddr(in6addr_any,...) != NULL");
