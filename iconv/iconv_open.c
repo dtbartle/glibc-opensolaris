@@ -74,7 +74,8 @@ iconv_open (const char *tocode, const char *fromcode)
   strip (memcpy (fromcode_conv, fromcode, fromcode_len + 1));
 
   res = __gconv_open (tocode_conv[2] == '\0' ? tocode : tocode_conv,
-		      fromcode_conv[2] == '\0' ? fromcode, fromcode_conv, &cd);
+		      fromcode_conv[2] == '\0' ? fromcode : fromcode_conv,
+		      &cd);
 
   if (res != GCONV_OK)
     {
