@@ -1484,12 +1484,12 @@ fixed the problem on an AlphaStation 200 4/166.
 ??	The conversion table for character set XX does not match with
 what I expect.
 
-{UD} I wouldn't doubt for a minute that some of the conversion tables
-contain error.  We tried the best we can and relied on automatic generation
-of the data to prevent human-introduced errors but this still is no
-guarantee.  If you think you find a problem please send a bug report
-describing it and giving an authoritive reference.  The latter is important
-since otherwise the current behaviour is as good as the proposed one.
+{UD} I don't doubt for a minute that some of the conversion tables contain
+errors.  We tried the best we can and relied on automatic generation of the
+data to prevent human-introduced errors but this still is no guarantee.  If
+you think you found a problem please send a bug report describing it and
+give an authoritive reference.  The latter is important since otherwise
+the current behaviour is as good as the proposed one.
 
 Before doing this look through the list of known problem first:
 
