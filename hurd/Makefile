@@ -26,7 +26,7 @@ include ../Makeconfig
 
 headers = hurd.h $(interface-headers) \
 	  $(addprefix hurd/,fd.h id.h port.h signal.h userlink.h \
-		            resource.h threadvar.h)
+		            resource.h threadvar.h lookup.h)
 
 distribute := hurdstartup.h hurdfault.h intr-rpc.defs STATUS
 
