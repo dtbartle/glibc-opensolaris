@@ -28,12 +28,14 @@ endif
 .PHONY: all
 all: lib others
 
-configure: configure.in
-	autoconf $(ACFLAGS)
+define autoconf-it
+autoconf $(ACFLAGS) $< > $@.new
+mv -f $@.new $@
+test -d CVS && cvs commit -m'Regenerated: autoconf $(ACFLAGS) $<' $@
+endef
 
-%/configure: %/configure.in
-	autoconf $(ACFLAGS) $< > $@.new
-	mv -f $@.new $@
+configure: configure.in; $(autoconf-it)
+%/configure: %/configure.in; $(autoconf-it)
 
 include Makeconfig
 
