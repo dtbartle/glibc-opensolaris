@@ -384,6 +384,10 @@ _IO_file_sync (fp)
      _IO_FILE *fp;
 {
   _IO_size_t delta;
+  int retval = 0;
+
+  _IO_cleanup_region_start ((void (*) __P ((void *))) _IO_funlockfile, fp);
+  _IO_flockfile (fp);
   /*    char* ptr = cur_ptr(); */
   if (fp->_IO_write_ptr > fp->_IO_write_base)
     if (_IO_do_flush(fp)) return EOF;
@@ -402,12 +406,14 @@ _IO_file_sync (fp)
 	; /* Ignore error from unseekable devices. */
 #endif
       else
-	return EOF;
+	retval = EOF;
     }
-  fp->_offset = _IO_pos_BAD;
+  if (retval != EOF)
+    fp->_offset = _IO_pos_BAD;
   /* FIXME: Cleanup - can this be shared? */
   /*    setg(base(), ptr, ptr); */
-  return 0;
+  _IO_cleanup_region_end (1);
+  return retval;
 }
 
 _IO_pos_t
