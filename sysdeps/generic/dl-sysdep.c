@@ -201,7 +201,7 @@ _dl_show_auxv (void)
 			    "\n", NULL);
 	break;
       case AT_BASE:
-	_dl_sysdep_message ("AT_BASE:    0x",
+	_dl_sysdep_message ("AT_BASE:     0x",
 			    _itoa_word (av->a_un.a_val, buf + sizeof buf - 1,
 					16, 0),
 			    "\n", NULL);
