@@ -41,4 +41,4 @@
 
 /* While there is no such syscall.  */
 #define __exit_thread_inline(val) \
-  INLINE_SYSCALL (exit, 0)
+  INLINE_SYSCALL (exit, 1, (val))
