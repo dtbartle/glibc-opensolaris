@@ -18,8 +18,10 @@ Boston, MA 02111-1307, USA.  */
 
 #include <wchar.h>
 
+#define WIDE_VERSION 1
 #define STRING_TYPE wchar_t
-#define USTRING_TYPE uwchar_t
+#define USTRING_TYPE wint_t
+#define L_(Ch) L##Ch
 #define STRXFRM wcsxfrm
 #define STRLEN wcslen
 #define STPNCPY __wcpncpy
