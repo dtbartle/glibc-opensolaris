@@ -42,6 +42,7 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)getnetent.c	8.1 (Berkeley) 6/4/93";
 static char rcsid[] = "$Id$";
 #endif /* LIBC_SCCS and not lint */
 
@@ -68,12 +69,14 @@ static struct netent net;
 static char *net_aliases[MAXALIASES];
 int _net_stayopen;
 
-void _setnetent __P((int)), _endnetent __P((void));
+void _setnetent __P((int));
+void _endnetent __P((void));
 
 void
 setnetent(stayopen)
-int stayopen;
+	int stayopen;
 {
+
 	sethostent(stayopen);
 	_setnetent(stayopen);
 }
@@ -81,14 +84,16 @@ int stayopen;
 void
 endnetent()
 {
+
 	endhostent();
 	_endnetent();
 }
 
 void
 _setnetent(f)
-int f;
+	int f;
 {
+
 	if (netf == NULL)
 		netf = fopen(_PATH_NETWORKS, "r" );
 	else
@@ -99,6 +104,7 @@ int f;
 void
 _endnetent()
 {
+
 	if (netf) {
 		fclose(netf);
 		netf = NULL;
