@@ -1,7 +1,7 @@
 /* Copy memory block and return pointer to following byte.
    For Intel 80x86, x>=6.
    This file is part of the GNU C Library.
-   Copyright (C) 1998 Free Software Foundation, Inc.
+   Copyright (C) 1998, 1999 Free Software Foundation, Inc.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
 #include <sysdep.h>
 #include "asm-syntax.h"
 
-/* strtok:
+/* mempcpy:
 	INPUT PARAMETER:
 	dest		(sp + 4)
 	src		(sp + 8)
@@ -30,11 +30,11 @@
 */
 
 ENTRY(__mempcpy)
+	movl	12(%esp), %ecx
 	movl	%edi, %eax
 	movl	4(%esp), %edi
 	movl	%esi, %edx
 	movl	8(%esp), %esi
-	movl	12(%esp), %ecx
 	cld
 	shrl	$1, %ecx
 	jnc	1f
@@ -47,5 +47,5 @@ ENTRY(__mempcpy)
 	xchgl	%edi, %eax
 	movl	%edx, %esi
 	ret
-END(mempcpy)
+END(__mempcpy)
 weak_alias (__mempcpy, mempcpy)
