@@ -91,7 +91,9 @@ _hurdsig_longjmp_from_handler (void *data, jmp_buf env, int val)
 
       /* There are no more unwind forms to be run!
 	 Now we can just have the sigreturn do the longjmp for us.  */
-      _hurd_longjmp_thread_state (&scp->sc_machine_thread_state, env, val);
+      _hurd_longjmp_thread_state
+	((struct machine_thread_state *) &scp->sc_machine_thread_state,
+	 env, val);
 
       /* Restore to the same current signal mask.  If sigsetjmp saved the
 	 mask, longjmp has already restored it as desired; if not, we
