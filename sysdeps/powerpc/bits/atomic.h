@@ -260,6 +260,8 @@ typedef uintmax_t uatomic_max_t;
     __result;								      \
   })
 
+#define atomic_increment(mem) ({ atomic_increment_val (mem); (void) 0; })
+
 #define atomic_decrement_val(mem) \
   ({									      \
     __typeof (*(mem)) __result;						      \
@@ -271,6 +273,8 @@ typedef uintmax_t uatomic_max_t;
        abort ();							      \
     __result;								      \
   })
+
+#define atomic_decrement(mem) ({ atomic_decrement_val (mem); (void) 0; })
 
 
 /* Decrement *MEM if it is > 0, and return the old value.  */
