@@ -1,5 +1,5 @@
 /* gmp-mparam.h -- Compiler/machine parameter header file.
-   Copyright (C) 2000 Free Software Foundation, Inc.
+   Copyright (C) 2000, 2001 Free Software Foundation, Inc.
    Contributed by Martin Schwidefsky (schwidefsky@de.ibm.com).
 
    This file is part of the GNU MP Library.
@@ -19,11 +19,13 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA. */
 
-#define BITS_PER_MP_LIMB 32
-#define BYTES_PER_MP_LIMB 4
-#define BITS_PER_LONGINT 32
-#define BITS_PER_INT 32
-#define BITS_PER_SHORTINT 16
-#define BITS_PER_CHAR 8
+#include <bits/wordsize.h>
+
+#define BITS_PER_MP_LIMB	__WORDSIZE
+#define BYTES_PER_MP_LIMB	(__WORDSIZE / 8)
+#define BITS_PER_LONGINT	__WORDSIZE
+#define BITS_PER_INT		32
+#define BITS_PER_SHORTINT	16
+#define BITS_PER_CHAR		8
 
 #define IEEE_DOUBLE_BIG_ENDIAN 0
