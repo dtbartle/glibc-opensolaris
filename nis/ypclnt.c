@@ -379,6 +379,12 @@ yp_get_default_domain (char **outdomain)
     {
       if (getdomainname (__ypdomainname, NIS_MAXNAMELEN))
 	result = YPERR_NODOM;
+      else if (strcmp (__ypdomainname, "(none)") == 0)
+	{
+	  /* If domainname is not set, some Systems will return "(none)" */
+	  __ypdomainname[0] = '\0';
+	  result = YPERR_NODOM;
+	}
       else
 	*outdomain = __ypdomainname;
     }
@@ -397,8 +403,6 @@ __yp_check (char **domain)
 
   if (__ypdomainname[0] == '\0')
     if (yp_get_default_domain (&unused))
-      return 0;
-    else if (strcmp (__ypdomainname, "(none)") == 0)
       return 0;
 
   if (domain)
