@@ -400,7 +400,7 @@
      __TGMATH_BINARY_FIRST_REAL_ONLY (Val1, Val2, scalbln)
 
 /* Return the binary exponent of X, which must be nonzero.  */
-#define ilogb(Val) __TGMATH_UNARY_REAL_ONLY (Val, ilogb)
+#define ilogb(Val) __TGMATH_UNARY_REAL_RET_ONLY (Val, int, ilogb)
 
 
 /* Return positive difference between X and Y.  */
