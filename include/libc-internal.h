@@ -2,6 +2,8 @@
    don't fit anywhere else.  */
 
 #ifndef _LIBC_INTERNAL
+# define _LIBC_INTERNAL 1
+
 /* Initialize the `__libc_enable_secure' flag.  */
 extern void __libc_init_secure (void);
 
