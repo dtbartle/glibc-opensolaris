@@ -404,7 +404,11 @@ int pthread_getattr_np (pthread_t thread, pthread_attr_t *attr)
 # endif
 #endif
 
-  if (descr == __pthread_initial_thread)
+#ifdef USE_TLS
+  if (attr->__stackaddr == NULL)
+#else
+  if (descr == &__pthread_initial_thread)
+#endif
     {
       /* Defined in ld.so.  */
       extern void *__libc_stack_end;
