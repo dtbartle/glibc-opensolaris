@@ -86,6 +86,8 @@ CFLAGS-error.c = -fexceptions
 CFLAGS-getpass.c = -fexceptions
 CFLAGS-mkstemp.c = -fexceptions
 CFLAGS-mkstemp64.c = -fexceptions
+CFLAGS-mntent_r.c = -fexceptions
+CFLAGS-mntent.c = -fexceptions
 
 include ../Rules
 
