@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -17,6 +17,8 @@ not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
 #include <sysdeps/unix/sysdep.h>
+
+#ifdef	ASSEMBLER
 
 #define	ENTRY(name)							      \
   .globl C_SYMBOL_NAME(name);						      \
@@ -49,3 +51,5 @@ Cambridge, MA 02139, USA.  */
 #define	r1		%edx	/* Secondary return-value register.  */
 #define scratch 	%ecx	/* Call-clobbered register for random use.  */
 #define MOVE(x,y)	movl x, y
+
+#endif	/* ASSEMBLER */
