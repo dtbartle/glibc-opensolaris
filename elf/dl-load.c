@@ -98,15 +98,17 @@ ELF_PREFERRED_ADDRESS_DATA;
 /* Type for the buffer we put the ELF header and hopefully the program
    header.  This buffer does not really have to be too large.  In most
    cases the program header follows the ELF header directly.  If this
-   is not the case all bets are off and we can make the header arbitrarily
-   large and still won't get it read.  This means the only question is
-   how large are the ELF and program header combined.  The ELF header
-   in 64-bit files is 56 bytes long.  Each program header entry is again
-   56 bytes long.  I.e., even with a file which has 17 program header
-   entries we only have to read 1kB.  And 17 program header entries is
-   plenty, normal files have < 10.  If this heuristic should really fail
-   for some file the code in `_dl_map_object_from_fd' knows how to
-   recover.  */
+   is not the case all bets are off and we can make the header
+   arbitrarily large and still won't get it read.  This means the only
+   question is how large are the ELF and program header combined.  The
+   ELF header 32-bit files is 52 bytes long and in 64-bit files is 64
+   bytes long.  Each program header entry is again 32 and 56 bytes
+   long respectively.  I.e., even with a file which has 7 program
+   header entries we only have to read 512B.  Add to this a bit of
+   margin for program notes and reading 512B and 640B for 32-bit and
+   64-bit files respecitvely is enough.  If this heuristic should
+   really fail for some file the code in `_dl_map_object_from_fd'
+   knows how to recover.  */
 struct filebuf
 {
   ssize_t len;
@@ -115,7 +117,7 @@ struct filebuf
 #else
 # define FILEBUF_SIZE 640
 #endif
-  char buf[512] __attribute__ ((aligned (__alignof (ElfW(Ehdr)))));
+  char buf[FILEBUF_SIZE] __attribute__ ((aligned (__alignof (ElfW(Ehdr)))));
 };
 
 /* This is the decomposed LD_LIBRARY_PATH search path.  */
