@@ -107,6 +107,8 @@ libpthread-routines = init events \
 		      herrno res pt-allocrtsig \
 		      pthread_kill_other_threads
 
+libpthread-shared-only-routines = pt-allocrtsig
+
 libpthread-nonshared = pthread_atfork
 
 
@@ -241,4 +243,15 @@ $(objpfx)crti.o: $(objpfx)crti.S $(objpfx)defs.h
 	$(compile.S) -g0 $(ASFLAGS-.os) -o $@
 
 generated += crti.S defs.h pt-initfini.s
+endif
+
+ifeq (no,$(cross-compiling))
+ifeq (yes,$(build-shared))
+tests: $(objpfx)tst-cancel-wrappers.out
+$(objpfx)tst-cancel-wrappers.out: tst-cancel-wrappers.sh
+	$(SHELL) $< $(common-objpfx)libc_pic.a \
+		    $(common-objpfx)libc.a \
+		    $(objpfx)libpthread_pic.a \
+		    $(objpfx)libpthread.a > $@
+endif
 endif
