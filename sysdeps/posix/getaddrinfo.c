@@ -343,7 +343,7 @@ gaih_inet_serv (const char *servicename, const struct gaih_typeproto *tp,
 	  pat = &((*pat)->next);					      \
 	}								      \
 									      \
-      if (localcanon !=	NULL)						      \
+      if (localcanon !=	NULL && canon == NULL)				      \
 	canon = strdupa (localcanon);					      \
 									      \
       if (_family == AF_INET6 && i > 0)					      \
