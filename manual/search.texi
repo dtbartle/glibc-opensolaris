@@ -479,7 +479,7 @@ and a pointer to the parent of the deleted node is returned by the
 function.  If there is no matching entry in the tree nothing can be
 deleted and the function returns @code{NULL}.  If the root of the tree
 is deleted @code{tdelete} returns some unspecified value not equal to
-@code{NULL} is returned.
+@code{NULL}.
 @end deftypefun
 
 @comment search.h
