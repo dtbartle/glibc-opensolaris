@@ -727,7 +727,8 @@ __stpcpy_small (char *__dest,
 		    __builtin_constant_p (src) && __builtin_constant_p (n)    \
 		    ? (strlen (src) < ((size_t) (n))			      \
 		       ? strcat (__dest, src)				      \
-		       : (memcpy (strchr (__dest, '\0'), src, n), __dest))    \
+		       : (*((char *) __mempcpy (strchr (__dest, '\0'),	      \
+						src, n)) = '\0', __dest))     \
 		    : strncat (dest, src, n); }))
 # else
 #  define strncat(dest, src, n) \
