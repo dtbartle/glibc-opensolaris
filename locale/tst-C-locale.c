@@ -397,6 +397,8 @@ run_test (const char *locname)
 	  MAPTEST (lower);
 	  MAPTEST (upper);
 	}
+
+      __freelocale (loc);
     }
 
   return result;
