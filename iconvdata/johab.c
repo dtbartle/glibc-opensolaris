@@ -141,84 +141,6 @@ johab_sym_hanja_to_ucs (uint_fast32_t idx, uint_fast32_t c1, uint_fast32_t c2)
     return (uint32_t) __ksc5601_hanja_to_ucs[(c1 - 0xe0) * 188 + c2
 					     - (c2 > 0x90 ? 0x43 : 0x31)];
 }
-
-static uint16_t
-johab_hanja_from_ucs (uint32_t ch)
-{
-  uint16_t idx;
-  if (ucs4_to_ksc5601_hanja (ch, &idx))
-    {
-      int idx1, idx2;
-      /* Hanja begins at the 42th row. 42=0x2a : 0x2a + 0x20 = 0x4a.  */
-      idx1 = idx / 256 - 0x4a;
-      idx2 = idx % 256 + 0x80;
-
-      return ((idx1 / 2) * 256 + 0xe000 + idx2
-	      + (idx1 % 2 ? 0 :  (idx2 > 0xee ? 0x43 : 0x31) - 0xa1));
-    }
-  else
-    return 0;
-}
-
-static uint16_t
-johab_sym_from_ucs (uint32_t ch)
-{
-  uint16_t idx;
-  if (ucs4_to_ksc5601_sym (ch, &idx))
-    {
-      int idx1, idx2;
-
-      idx1 = idx / 256 - 0x21;
-      idx2 = idx % 256 + 0x80;
-
-      return ((idx1 / 2) * 256 + 0xd900 + idx2
-	      + (idx1 % 2 ? 0 : (idx2 > 0xee ? 0x43 : 0x31) - 0xa1));
-    }
-  else
-    return 0;
-}
-
-
-static inline void
-johab_from_ucs4 (uint32_t ch, unsigned char *cp)
-{
-  if (ch >= 0x7f)
-    {
-      int idx;
-
-      if (ch >= 0xac00 && ch <= 0xd7a3)
-	{
-	  ch -= 0xac00;
-	  idx = init_to_bit[ch / 588];  /* 21*28 = 588 */
-	  idx += mid_to_bit[(ch / 28) % 21];  /* (ch % (21 * 28)) / 28 */
-	  idx += final_to_bit[ch %  28]; /* (ch % (21 * 28)) % 28 */
-	}
-      /* KS C 5601-1992 Annex 3 regards  0xA4DA(Hangul Filler : U3164)
-         as symbol */
-      else if (ch >= 0x3131 && ch <= 0x3163)
-	idx = jamo_from_ucs_table[ch - 0x3131];
-      else if (ch >= 0x4e00 && ch <= 0x9fa5
-	       || ch >= 0xf900 && ch <= 0xfa0b)
-	idx = johab_hanja_from_ucs (ch);
-      /*       Half-width Korean Currency Won Sign
-	       else if ( ch == 0x20a9 )
-	       idx = 0x5c00;
-      */
-      else
-	idx = johab_sym_from_ucs (ch);
-
-      cp[0] = (unsigned char) (idx / 256);
-      cp[1] = (unsigned char) (idx & 0xff);
-
-    }
-  else
-    {
-      cp[0] = (unsigned char) ch;
-      cp[1] = 0;
-    }
-}
-
-
 /* Definitions used in the body of the `gconv' function.  */
 #define CHARSET_NAME		"JOHAB//"
 #define FROM_LOOP		from_johab
@@ -412,7 +334,7 @@ johab_from_ucs4 (uint32_t ch, unsigned char *cp)
 									      \
 	    outptr += 2;						      \
 	  }								      \
-	else								      \
+	else if (0) /* XXX */						      \
 	  {								      \
 	    size_t written;						      \
 									      \
