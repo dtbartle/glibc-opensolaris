@@ -336,7 +336,7 @@ define format-me
 makeinfo --no-validate --no-warn --no-headers $< -o $@
 -chmod a-w $@
 endef
-INSTALL: manual/maint.texi; $(format-me)
+INSTALL: manual/install.texi; $(format-me)
 NOTES: manual/creature.texi; $(format-me)
 manual/dir-add.texi manual/dir-add.info: FORCE
 	$(MAKE) $(PARALLELMFLAGS) -C $(@D) $(@F)
