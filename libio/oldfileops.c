@@ -129,8 +129,7 @@ _IO_old_file_init (fp)
 			     - (int) sizeof (struct _IO_FILE_complete));
   fp->file._fileno = -1;
 
-#if defined SHARED && defined _LIBC \
-    && SHLIB_COMPAT (libc, GLIBC_2_0, GLIBC_2_1)
+#if defined SHARED && defined _LIBC
   if (__builtin_expect (&_IO_stdin_used != NULL, 1)
       || (fp != (struct _IO_FILE_plus *) _IO_stdin
 	  && fp != (struct _IO_FILE_plus *) _IO_stdout
