@@ -156,7 +156,7 @@
 #if (!defined __STRICT_ANSI__ && !defined _POSIX_SOURCE && \
      !defined _POSIX_C_SOURCE)
 # define _POSIX_SOURCE	1
-# if defined _XOPEN_SOURCE && _XOPEN_SOURCE != 500
+# if defined _XOPEN_SOURCE && (_XOPEN_SOURCE - 0) != 500
 #  define _POSIX_C_SOURCE	2
 # else
 #  define _POSIX_C_SOURCE	199309L
@@ -177,7 +177,7 @@
 
 #ifdef	_XOPEN_SOURCE
 # define __USE_XOPEN	1
-# if _XOPEN_SOURCE == 500
+# if (_XOPEN_SOURCE - 0) == 500
 #  define __USE_XOPEN_EXTENDED	1
 #  define __USE_UNIX98	1
 #  undef _LARGEFILE_SOURCE
