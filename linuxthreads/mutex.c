@@ -85,7 +85,6 @@ int __pthread_mutex_lock(pthread_mutex_t * mutex)
     __pthread_lock(&mutex->__m_lock, NULL);
     break;
   case PTHREAD_MUTEX_RECURSIVE_NP:
-    self = thread_self();
     if (mutex->__m_owner == self) {
       mutex->__m_count++;
       return 0;
@@ -94,7 +93,6 @@ int __pthread_mutex_lock(pthread_mutex_t * mutex)
     mutex->__m_count = 0;
     break;
   case PTHREAD_MUTEX_ERRORCHECK_NP:
-    self = thread_self();
     if (mutex->__m_owner == self) return EDEADLK;
     __pthread_lock(&mutex->__m_lock, self);
     break;
