@@ -110,8 +110,8 @@ pthread_barrier_wait:
 	ENTER_KERNEL
 
 	/* Release the mutex.  We cannot release the lock before
-	waking the waiting threads since otherwise a new thread might
-	arrive and gets waken up, too.  */
+	   waking the waiting threads since otherwise a new thread might
+	   arrive and gets waken up, too.  */
 	LOCK
 	incl	MUTEX(%ebx)
 	jng	4f
