@@ -74,7 +74,7 @@ print_entry (const char *lib, int flag, unsigned long int hwcap, const char *key
 #endif
 #if defined __ia64__ || defined __i386__
     case FLAG_IA64_LIB64:
-      fputs (",64bit", stdout);
+      fputs (",IA-64", stdout);
 #endif
     case 0:
       break;
@@ -289,9 +289,9 @@ save_cache (const char *cache_name)
       file_entries_new->nlibs = cache_entry_count;
       file_entries_new->len_strings = total_strlen;
     }
-  
+
   pad = ALIGN_CACHE (file_entries_size) - file_entries_size;
-  
+
   /* If we have both formats, we hide the new format in the strings
      table, we have to adjust all string indices for this so that
      old libc5/glibc 2 dynamic linkers just ignore them.  */
