@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -22,9 +22,20 @@ Cambridge, MA 02139, USA.  */
 #undef putc
 
 int
-putc (c, stream)
+putc (c, fp)
      int c;
-     _IO_FILE *stream;
+     _IO_FILE *fp;
 {
-  return _IO_putc (c, stream);
+  int result;
+  CHECK_FILE (fp, EOF);
+  _IO_flockfile (fp);
+  result = _IO_putc_unlocked (c, fp);
+  _IO_funlockfile (fp);
+  return result;
 }
+
+#ifdef _IO_MTSAFE_IO
+# undef putc_locked
+
+weak_alias (putc_locked, putc)
+#endif

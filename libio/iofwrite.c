@@ -36,7 +36,9 @@ _IO_fwrite (buf, size, count, fp)
   CHECK_FILE (fp, 0);
   if (request == 0)
     return 0;
+  _IO_flockfile (fp);
   written = _IO_sputn (fp, (const char *) buf, request);
+  _IO_funlockfile (fp);
   /* Many traditional implementations return 0 if size==0 && count > 0,
      but ANSI seems to require us to return count in this case. */
   if (written == request)
