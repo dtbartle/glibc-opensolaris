@@ -1,4 +1,5 @@
-/* Copyright (C) 1991, 92, 93, 94, 95, 96 Free Software Foundation, Inc.
+/* Host configuration items kept as the whole contents of a file.
+Copyright (C) 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,20 +17,12 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
-#include <unistd.h>
-#include "hurdhost.h"
+/* Fetch and atomically store the contents of the file ITEM.
+   Returns the size read or written, or -1 for errors.
+   If BUFLEN is not big enough to contain the whole contents,
+   BUFLEN bytes of BUF are filled in and we fail with ENAMETOOLONG.  */
 
-/* Put the name of the current host in no more than LEN bytes of NAME.
-   The result is null-terminated if LEN is large enough for the full
-   name and the terminator.  */
-int
-DEFUN(__gethostname, (name, len),
-      char *name AND size_t len)
-{
-  /* The host name is just the contents of the file /etc/hostname.  */
-  ssize_t n = _hurd_get_host_config ("/etc/hostname", name, len);
-  return n < 0 ? -1 : 0;
-}
-
-weak_alias (__gethostname, gethostname)
+ssize_t _hurd_get_host_config (const char *item,
+			       char *buf, size_t buflen);
+ssize_t _hurd_set_host_config (const char *item,
+			       const char *value, size_t valuelen);
