@@ -1,4 +1,4 @@
-/* Mach thread state definitions for Hurd code.  Stub version.
+/* Mach thread state definitions for machine-independent code.  Stub version.
 Copyright (C) 1994 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
@@ -23,10 +23,10 @@ Cambridge, MA 02139, USA.  */
 
 /* Replace <machine> with "i386" or "mips" or whatever.  */
 
-#define HURD_THREAD_STATE_FLAVOR	<machine>_THREAD_STATE
-#define HURD_THREAD_STATE_COUNT		<machine>_THREAD_STATE_COUNT
+#define MACHINE_THREAD_STATE_FLAVOR	<machine>_THREAD_STATE
+#define MACHINE_THREAD_STATE_COUNT	<machine>_THREAD_STATE_COUNT
 
-#define hurd_thread_state <machine>_thread_state
+#define machine_thread_state <machine>_thread_state
 
 /* Define these to the member names in `struct <machine>_thread_state'
    for the PC and stack pointer.  */
