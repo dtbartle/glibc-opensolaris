@@ -159,7 +159,7 @@ extern struct localedef_t *load_locale (int locale, const char *name,
 
 
 /* Open the locale archive.  */
-extern void open_archive (struct locarhandle *ah);
+extern void open_archive (struct locarhandle *ah, bool readonly);
 
 /* Close the locale archive.  */
 extern void close_archive (struct locarhandle *ah);
