@@ -946,7 +946,11 @@ print_partial_compiled_pattern (start, end)
       putchar ('\n');
     }
 
-  printf ("%d:\tend of pattern.\n", p - start);
+#ifdef _LIBC
+  printf ("%t:\tend of pattern.\n", p - start);
+#else
+  printf ("%ld:\tend of pattern.\n", (long int) (p - start));
+#endif
 }
 
 
