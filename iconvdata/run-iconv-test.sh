@@ -79,7 +79,7 @@ while read from to subset targets; do
     # of the coded character set we test we convert the test to this
     # coded character set.  Otherwise we convert to all the TARGETS.
     if test $subset = Y; then
-      echo $ac_n "   suntzu: $from -> $to $ac_c"
+      echo $ac_n "   suntzu: $from -> $t -> $to $ac_c"
       $PROG -f $from -t $t testdata/suntzus |
       $PROG -f $t -t $to > $temp1 ||
 	{ echo "FAILED"; failed=1;
@@ -89,7 +89,7 @@ while read from to subset targets; do
 	{ echo "/FAILED";
 	  failed=1; continue; }
     else
-      echo $ac_n "   suntzu: $from -> ASCII $ac_c"
+      echo $ac_n "   suntzu: $from -> ASCII -> $to $ac_c"
       $PROG -f ASCII -t $to testdata/suntzus |
       $PROG -f $to -t ASCII > $temp1 ||
         { echo "FAILED";
