@@ -1,4 +1,4 @@
-/* Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+/* Copyright (C) 1999 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -372,7 +372,7 @@ extern td_err_e td_thr_getfpregs (const td_thrhandle_t *__th,
 
 /* Retrieve general register contents of process running thread TH.  */
 extern td_err_e td_thr_getgregs (const td_thrhandle_t *__th,
-				 prgregset_t *__gregs);
+				 prgregset_t __gregs);
 
 /* Retrieve extended register contents of process running thread TH.  */
 extern td_err_e td_thr_getxregs (const td_thrhandle_t *__th, void *__xregs);
@@ -386,7 +386,7 @@ extern td_err_e td_thr_setfpregs (const td_thrhandle_t *__th,
 
 /* Set general register contents of process running thread TH.  */
 extern td_err_e td_thr_setgregs (const td_thrhandle_t *__th,
-				 const prgregset_t *__gregs);
+				 prgregset_t __gregs);
 
 /* Set extended register contents of process running thread TH.  */
 extern td_err_e td_thr_setxregs (const td_thrhandle_t *__th,
