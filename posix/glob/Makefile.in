@@ -1,6 +1,6 @@
 # Makefile for standalone distribution of libglob.a (fnmatch, glob).
 
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 92, 93, 94, 95 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # This library is free software; you can redistribute it and/or
@@ -54,11 +54,12 @@ fnmatch.o: $(srcdir)/fnmatch.h fnmatch.c
 	$(CC) -I. -I$(srcdir) -c \
 	      $(DEFS) $(CPPFLAGS) $(CFLAGS) $< $(OUTPUT_OPTION)
 
-.PHONY: clean realclean glob-clean glob-realclean
+.PHONY: clean realclean glob-clean glob-realclean distclean
 clean glob-clean:
 	-rm -f libglob.a *.o core
-realclean glob-realclean: clean
-	-rm -f TAGS tags Makefile config.status
+distclean glob-realclean: clean
+	-rm -f TAGS tags Makefile config.status config.h config.log
+realcean: distclean
 
 # For inside the C library.
 glob.tar glob.tar.Z:
