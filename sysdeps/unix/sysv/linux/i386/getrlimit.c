@@ -29,6 +29,8 @@
    the limits are now unsigned.  */
 #if !defined __ASSUME_NEW_GETRLIMIT_SYSCALL && defined __NR_ugetrlimit
 static int no_new_getrlimit;
+#else
+# define no_new_getrlimit	0
 #endif
 
 int
