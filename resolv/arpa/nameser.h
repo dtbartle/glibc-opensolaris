@@ -69,6 +69,12 @@
 #endif
 #include <sys/cdefs.h>
 
+#ifdef _AUX_SOURCE
+#include <sys/types.h>			/* ech for A/UX */
+#define res_send ucb_res_send		/* already def'd in libc */
+#define _res_close _ucb_res_close    /* removing res_send.o from the library */
+#endif				     /* gives an undefined symbol... */
+
 /*
  * revision information.  this is the release date in YYYYMMDD format.
  * it can change every day so the right thing to do with it is use it
@@ -105,15 +111,17 @@
 #define IQUERY		0x1		/* inverse query */
 #define STATUS		0x2		/* nameserver status query */
 /*#define xxx		0x3		/* 0x3 reserved */
+#define	NS_NOTIFY_OP	0x4		/* notify secondary of SOA change */
+#ifdef ALLOW_UPDATES
 	/* non standard - supports ALLOW_UPDATES stuff from Mike Schwartz */
-#define UPDATEA		0x9		/* add resource record */
-#define UPDATED		0xa		/* delete a specific resource record */
-#define UPDATEDA	0xb		/* delete all named resource record */
-#define UPDATEM		0xc		/* modify a specific resource record */
-#define UPDATEMA	0xd		/* modify all named resource record */
-
-#define ZONEINIT	0xe		/* initial zone transfer */
-#define ZONEREF		0xf		/* incremental zone referesh */
+# define UPDATEA	0x9		/* add resource record */
+# define UPDATED	0xa		/* delete a specific resource record */
+# define UPDATEDA	0xb		/* delete all named resource record */
+# define UPDATEM	0xc		/* modify a specific resource record */
+# define UPDATEMA	0xd		/* modify all named resource record */
+# define ZONEINIT	0xe		/* initial zone transfer */
+# define ZONEREF	0xf		/* incremental zone referesh */
+#endif
 
 /*
  * Currently defined response codes
@@ -124,8 +132,10 @@
 #define NXDOMAIN	3		/* non existent domain */
 #define NOTIMP		4		/* not implemented */
 #define REFUSED		5		/* query refused */
+#ifdef ALLOW_UPDATES
 	/* non standard */
-#define NOCHANGE	0xf		/* update failed to change db */
+# define NOCHANGE	0xf		/* update failed to change db */
+#endif
 
 /*
  * Type values for resources and queries
@@ -134,7 +144,7 @@
 #define T_NS		2		/* authoritative server */
 #define T_MD		3		/* mail destination */
 #define T_MF		4		/* mail forwarder */
-#define T_CNAME		5		/* connonical name */
+#define T_CNAME		5		/* canonical name */
 #define T_SOA		6		/* start of authority zone */
 #define T_MB		7		/* mailbox domain name */
 #define T_MG		8		/* mail group member */
@@ -153,12 +163,17 @@
 #define T_RT		21		/* router */
 #define T_NSAP		22		/* NSAP address */
 #define T_NSAP_PTR	23		/* reverse NSAP lookup (deprecated) */
+#define	T_SIG		24		/* security signature */
+#define	T_KEY		25		/* security key */
+#define	T_PX		26		/* X.400 mail mapping */
+#define	T_GPOS		27		/* geographical position (withdrawn) */
+#define	T_AAAA		28		/* IP6 Address */
+#define	T_LOC		29		/* Location Information */
 	/* non standard */
 #define T_UINFO		100		/* user (finger) information */
 #define T_UID		101		/* user ID */
 #define T_GID		102		/* group ID */
 #define T_UNSPEC	103		/* Unspecified format (binary data) */
-#define T_SA		200		/* shuffle address */
 	/* Query type values which do not appear in resource records */
 #define T_AXFR		252		/* transfer zone of authority */
 #define T_MAILB		253		/* transfer mailbox records */
@@ -207,7 +222,7 @@
     defined(apollo) || defined(__convex__) || defined(_CRAY) || \
     defined(__hppa) || defined(__hp9000) || \
     defined(__hp9000s300) || defined(__hp9000s700) || \
-    defined (BIT_ZERO_ON_LEFT)
+    defined (BIT_ZERO_ON_LEFT) || defined(m68k)
 #define BYTE_ORDER	BIG_ENDIAN
 #endif
 #endif /* linux */
