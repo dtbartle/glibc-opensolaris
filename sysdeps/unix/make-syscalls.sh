@@ -48,6 +48,10 @@ echo "$calls" | while read file caller syscall nargs strong weak; do
 @@@ SYS_ify ($syscall)
 EOF
 
+  # Make sure only the first syscall rule is used, if multiple dirs
+  # define the same syscall.
+  echo "ifeq (,\$(filter $file,\$(unix-syscalls)))"
+
   # Accumulate the list of syscall files for this directory.
   echo "unix-syscalls += $file"
   test x$caller = x- || echo "unix-extra-syscalls += $file"
@@ -66,5 +70,7 @@ EOF
 
   # And finally, pipe this all into the compiler.
   echo '	) | $(COMPILE.S) -x assembler-with-cpp -o $@ -'
+
+  echo endif
 
 done
