@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -60,7 +60,8 @@ _S_catch_exception_raise (mach_port_t port,
 
   /* Post the signal.  */
   _hurd_internal_post_signal (ss, signo, sigcode, error,
-			      MACH_PORT_NULL, MACH_MSG_TYPE_PORT_SEND);
+			      MACH_PORT_NULL, MACH_MSG_TYPE_PORT_SEND,
+			      0);
 
   return KERN_SUCCESS;
 }
