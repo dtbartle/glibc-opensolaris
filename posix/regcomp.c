@@ -3292,57 +3292,61 @@ parse_bracket_exp (regexp, dfa, token, syntax, err)
   /* Ensure only single byte characters are set.  */
   if (dfa->mb_cur_max > 1)
     bitset_mask (sbcset, dfa->sb_char);
-#endif /* RE_ENABLE_I18N */
 
-  /* Build a tree for simple bracket.  */
-  br_token.type = SIMPLE_BRACKET;
-  br_token.opr.sbcset = sbcset;
-  work_tree = re_dfa_add_tree_node (dfa, NULL, NULL, &br_token);
-  if (BE (work_tree == NULL, 0))
-    goto parse_bracket_exp_espace;
-
-#ifdef RE_ENABLE_I18N
   if (mbcset->nmbchars || mbcset->ncoll_syms || mbcset->nequiv_classes
       || mbcset->nranges || (dfa->mb_cur_max > 1 && (mbcset->nchar_classes
 						     || mbcset->non_match)))
     {
-      re_token_t alt_token;
       bin_tree_t *mbc_tree;
       int sbc_idx;
       /* Build a tree for complex bracket.  */
       dfa->has_mb_node = 1;
-      for (sbc_idx = 0; sbc_idx < BITSET_UINTS; ++sbc_idx)
-	if (sbcset[sbc_idx])
-	  break;
-      /* If there are no bits set in sbcset, there is no point
-	 of having both SIMPLE_BRACKET and COMPLEX_BRACKET.  */
-      if (sbc_idx == BITSET_UINTS)
-	{
-	  re_free (sbcset);
-	  dfa->nodes[work_tree->node_idx].type = COMPLEX_BRACKET;
-	  dfa->nodes[work_tree->node_idx].opr.mbcset = mbcset;
-	  return work_tree;
-	}
       br_token.type = COMPLEX_BRACKET;
       br_token.opr.mbcset = mbcset;
       mbc_tree = re_dfa_add_tree_node (dfa, NULL, NULL, &br_token);
       if (BE (mbc_tree == NULL, 0))
 	goto parse_bracket_exp_espace;
-      /* Then join them by ALT node.  */
-      alt_token.type = OP_ALT;
-      dfa->has_plural_match = 1;
-      work_tree = re_dfa_add_tree_node (dfa, work_tree, mbc_tree, &alt_token);
-      if (BE (mbc_tree != NULL, 1))
-	return work_tree;
+      for (sbc_idx = 0; sbc_idx < BITSET_UINTS; ++sbc_idx)
+	if (sbcset[sbc_idx])
+	  break;
+      /* If there are no bits set in sbcset, there is no point
+	 of having both SIMPLE_BRACKET and COMPLEX_BRACKET.  */
+      if (sbc_idx < BITSET_UINTS)
+	{
+          re_token_t alt_token;
+          /* Build a tree for simple bracket.  */
+          br_token.type = SIMPLE_BRACKET;
+          br_token.opr.sbcset = sbcset;
+          work_tree = re_dfa_add_tree_node (dfa, NULL, NULL, &br_token);
+          if (BE (work_tree == NULL, 0))
+            goto parse_bracket_exp_espace;
+
+          /* Then join them by ALT node.  */
+          alt_token.type = OP_ALT;
+          dfa->has_plural_match = 1;
+          work_tree = re_dfa_add_tree_node (dfa, work_tree, mbc_tree, &alt_token);
+          if (BE (work_tree == NULL, 0))
+            goto parse_bracket_exp_espace;
+	}
+      else
+	{
+	  re_free (sbcset);
+	  work_tree = mbc_tree;
+	}
     }
   else
     {
+      /* Build a tree for simple bracket.  */
+      br_token.type = SIMPLE_BRACKET;
+      br_token.opr.sbcset = sbcset;
+      work_tree = re_dfa_add_tree_node (dfa, NULL, NULL, &br_token);
+      if (BE (work_tree == NULL, 0))
+        goto parse_bracket_exp_espace;
+
       free_charset (mbcset);
-      return work_tree;
     }
-#else /* not RE_ENABLE_I18N */
-  return work_tree;
 #endif /* not RE_ENABLE_I18N */
+  return work_tree;
 
  parse_bracket_exp_espace:
   *err = REG_ESPACE;
