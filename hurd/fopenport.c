@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -127,3 +127,5 @@ __fopenport (mach_port_t port, const char *mode)
 
   return stream;
 }
+
+weak_alias (__fopenport, fopenport)
