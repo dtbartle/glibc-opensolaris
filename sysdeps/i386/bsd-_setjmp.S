@@ -36,7 +36,7 @@ ENTRY (BP_SYM (_setjmp))
 	ENTER
 
 	movl JMPBUF(%esp), %eax
-	CHECK_BOUNDS_BOTH_WIDE (%eax, JMPBUF(%esp), $JB_SIZE)
+	CHECK_BOUNDS_BOTH_WIDE (%eax, JMPBUF(%esp), $(JB_SIZE+4))
 
      	/* Save registers.  */
 	movl %ebx, (JB_BX*4)(%eax)
