@@ -259,7 +259,7 @@ extern int lll_unlock_wake_cb (int *__futex) attribute_hidden;
     register __typeof (tid) _tid asm ("edx") = (tid);			      \
     if (_tid != 0)							      \
       __asm __volatile ("xorq %%r10, %%r10\n\t"				      \
-			"1:\tmovq %3, %%rax\n\t"			      \
+			"1:\tmovq %2, %%rax\n\t"			      \
 			"syscall\n\t"					      \
 			"cmpl $0, (%%rdi)\n\t"				      \
 			"jne 1b"					      \
