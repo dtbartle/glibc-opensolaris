@@ -13,3 +13,8 @@
    never omit a function here, since we are defining the system library.  */
 
 #undef BSD
+
+/* Some code does stupid compatibility kludges for SunOS braindeath
+   #ifdef sun.  */
+
+#undef sun
