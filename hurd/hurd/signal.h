@@ -1,5 +1,5 @@
 /* Implementing POSIX.1 signals under the Hurd.
-Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -226,14 +226,17 @@ extern void _hurd_exception2signal (int exception, int code, int subcode,
 
 
 /* Make the thread described by SS take the signal described by SIGNO and
-   SIGCODE.  When the signal can be considered delivered, sends a sig_post
-   reply message on REPLY_PORT indicating success.  SS->lock is held on
-   entry, and released before return.  */
+   SIGCODE.  If the process is traced, this will in fact stop with a SIGNO
+   as the stop signal unless UNTRACED is nonzero.  When the signal can be
+   considered delivered, sends a sig_post reply message on REPLY_PORT
+   indicating success.  SS->lock is held on entry, and released before
+   return.  */
 
 extern void _hurd_internal_post_signal (struct hurd_sigstate *ss,
 					int signo, long int sigcode, int error,
 					mach_port_t reply_port,
-					mach_msg_type_name_t reply_port_type);
+					mach_msg_type_name_t reply_port_type,
+					int untraced);
 
 /* Set up STATE and SS to handle signal SIGNO by running HANDLER.  If
    RPC_WAIT is nonzero, the thread needs to wait for a pending RPC to
