@@ -142,7 +142,7 @@ create_archive (const char *archivefname, struct locarhandle *ah)
 	{
 	  /* There is already an archive.  Must have been a localedef run
 	     which happened in parallel.  Simply open this file then.  */
-	  open_archive (ah);
+	  open_archive (ah, false);
 	  return;
 	}
 
@@ -334,7 +334,7 @@ enlarge_archive (struct locarhandle *ah, const struct locarhead *head)
 
 
 void
-open_archive (struct locarhandle *ah)
+open_archive (struct locarhandle *ah, bool readonly)
 {
   struct stat64 st;
   struct stat64 st2;
@@ -350,13 +350,27 @@ open_archive (struct locarhandle *ah)
 
  again:
   /* Open the archive.  We must have exclusive write access.  */
-  fd = open64 (archivefname, O_RDWR);
+  fd = open64 (archivefname, readonly ? O_RDONLY : O_RDWR);
   if (fd == -1)
     {
       /* Maybe the file does not yet exist.  */
       if (errno == ENOENT)
 	{
-	  create_archive (archivefname, ah);
+	  if (readonly)
+	    {
+	      static const struct locarhead nullhead =
+		{
+		  .namehash_used = 0,
+		  .namehash_offset = 0,
+		  .namehash_size = 0
+		};
+
+	      ah->addr = (void *) &nullhead;
+	      ah->fd = -1;
+	    }
+	  else
+	    create_archive (archivefname, ah);
+
 	  return;
 	}
       else
@@ -417,8 +431,11 @@ open_archive (struct locarhandle *ah)
 void
 close_archive (struct locarhandle *ah)
 {
-  munmap (ah->addr, ah->len);
-  close (ah->fd);
+  if (ah->fd != -1)
+    {
+      munmap (ah->addr, ah->len);
+      close (ah->fd);
+    }
 }
 
 
@@ -648,7 +665,7 @@ add_locales_to_archive (nlist, list, replace)
 
   /* Open the archive.  This call never returns if we cannot
      successfully open the archive.  */
-  open_archive (&ah);
+  open_archive (&ah, false);
 
   while (nlist-- > 0)
     {
@@ -847,7 +864,7 @@ delete_locales_from_archive (nlist, list)
 
   /* Open the archive.  This call never returns if we cannot
      successfully open the archive.  */
-  open_archive (&ah);
+  open_archive (&ah, false);
 
   head = ah.addr;
   namehashtab = (struct namehashent *) ((char *) ah.addr
@@ -916,7 +933,7 @@ show_archive_content (void)
 
   /* Open the archive.  This call never returns if we cannot
      successfully open the archive.  */
-  open_archive (&ah);
+  open_archive (&ah, true);
 
   head = ah.addr;
 
