@@ -63,7 +63,7 @@ _dl_init_next (void)
 	}
 
       if (l->l_info[DT_INIT] &&
-	  !(l->l_name[0] == '\0' && l->l_type = lt_executable))
+	  !(l->l_name[0] == '\0' && l->l_type == lt_executable))
 	{
 	  /* Run this object's initializer.  */
 	  l->l_init_running = 1;
