@@ -1053,6 +1053,7 @@ fi
 dnl Check whether the compiler supports subtraction of local labels.
 AC_CACHE_CHECK(for local label subtraction, libc_cv_gcc_subtract_local_labels,
 [cat > conftest.c <<EOF
+changequote(,)dnl
 #line __oline__ "configure"
 int foo (int a)
 {
@@ -1064,6 +1065,7 @@ int foo (int a)
  l2:
   return 2;
 }
+changequote([,])dnl
 EOF
 dnl No \ in command here because it ends up inside ''.
 if AC_TRY_COMMAND([${CC-cc} $CFLAGS -nostdlib -nostartfiles
