@@ -982,6 +982,7 @@ process_dl_debug (const char *dl_debug)
 		  _dl_debug_bindings = 1;
 		  _dl_debug_versions = 1;
 		  any_debug = 1;
+		  continue;
 		}
 	      break;
 
