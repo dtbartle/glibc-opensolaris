@@ -31,8 +31,8 @@ locales := $(filter-out $(addprefix locales/, CVS RCS %~), \
 				    $(wildcard locales/*))
 
 # List of repertoire maps.
-repertoires := $(filter-out $(addprefix repertoiremaps/, CVS RCS %~), \
-				    $(wildcard repertoiremaps/*))
+repertoiremaps := $(filter-out $(addprefix repertoiremaps/, CVS RCS %~), \
+					   $(wildcard repertoiremaps/*))
 
 test-srcs := collate-test xfrm-test tst-fmon tst-rpmatch
 test-input := de_DE.ISO-8859-1 da_DK.ISO-8859-1 fr_CA,2.13.ISO-8859-1
