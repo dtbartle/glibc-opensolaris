@@ -133,7 +133,7 @@ init1 (int argc, char *arg0, ...)
 #ifndef SHARED
   __libc_enable_secure = d->flags & EXEC_SECURE;
 
-  _dl_phdr = (const ElfW(Phdr) *) d->phdr;
+  _dl_phdr = (ElfW(Phdr) *) d->phdr;
   _dl_phnum = d->phdrsz / sizeof (ElfW(Phdr));
   assert (d->phdrsz % sizeof (ElfW(Phdr)) == 0);
 #endif
