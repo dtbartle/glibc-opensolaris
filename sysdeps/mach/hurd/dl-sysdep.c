@@ -421,7 +421,7 @@ mmap (caddr_t addr, size_t len, int prot, int flags, int fd, off_t offset)
 
   mapaddr = (vm_address_t) addr;
   errno = __vm_map (__mach_task_self (),
-		    &mapaddr, (vm_size_t) len, (vm_address_t) 0,
+		    &mapaddr, (vm_size_t) len, ELF_MACHINE_USER_ADDRESS_MASK,
 		    !(flags & MAP_FIXED),
 		    (mach_port_t) fd, (vm_offset_t) offset,
 		    flags & (MAP_COPY|MAP_PRIVATE),
