@@ -476,10 +476,6 @@ something like this:
 
 GROUP ( libc.so.6 libc_nonshared.a )
 
-or in ix86/Linux and alpha/Linux:
-
-GROUP ( libc.so.6 libc_nonshared.a )
-
 ??	How can I compile gcc 2.7.2.1 from the gcc source code using
 	glibc 2.x?
 
