@@ -39,36 +39,36 @@
    better code.  */
 #  define isgreater(x, y) \
      ({ register char __result;						      \
-	__asm__ ("fucomip; seta %%al"					      \
+	__asm__ ("fucomip %%st(1), %%st; seta %%al"			      \
 		 : "=a" (__result) : "u" (y), "t" (x) : "cc", "st");	      \
 	__result; })
 #  define isgreaterequal(x, y) \
      ({ register char __result;						      \
-	__asm__ ("fucomip; setae %%al"					      \
+	__asm__ ("fucomip %%st(1), %%st; setae %%al"			      \
 		 : "=a" (__result) : "u" (y), "t" (x) : "cc", "st");	      \
 	__result; })
 
 #  define isless(x, y) \
      ({ register char __result;						      \
-	__asm__ ("fucomip; setb %%al"					      \
-		 : "=a" (__result) : "u" (y), "t" (x) : "cc", "st");	      \
+	__asm__ ("fucomip %%st(1), %%st; seta %%al"			      \
+		 : "=a" (__result) : "u" (x), "t" (y) : "cc", "st");	      \
 	__result; })
 
 #  define islessequal(x, y) \
      ({ register char __result;						      \
-	__asm__ ("fucomip; setbe %%al"					      \
-		 : "=a" (__result) : "u" (y), "t" (x) : "cc", "st");	      \
+	__asm__ ("fucomip %%st(1), %%st; setae %%al"			      \
+		 : "=a" (__result) : "u" (x), "t" (y) : "cc", "st");	      \
 	__result; })
 
 #  define islessgreater(x, y) \
      ({ register char __result;						      \
-	__asm__ ("fucomip; setne %%al"					      \
+	__asm__ ("fucomip %%st(1), %%st; setne %%al"			      \
 		 : "=a" (__result) : "u" (y), "t" (x) : "cc", "st");	      \
 	__result; })
 
 #  define isunordered(x, y) \
      ({ register char __result;						      \
-	__asm__ ("fucomip; setp %%al"					      \
+	__asm__ ("fucomip %%st(1), %%st; setp %%al"			      \
 		 : "=a" (__result) : "u" (y), "t" (x) : "cc", "st");	      \
 	__result; })
 # else
