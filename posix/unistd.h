@@ -171,6 +171,7 @@ extern int access __P ((__const char *__name, int __type));
 #ifdef __USE_GNU
 /* Test for access to NAME using the effective UID and GID
    (as normal file operations use).  */
+extern int __euidaccess __P ((__const char *__name, int __type));
 extern int euidaccess __P ((__const char *__name, int __type));
 #endif
 
@@ -235,7 +236,6 @@ extern unsigned int alarm __P ((unsigned int __seconds));
    SIGALRM signal while inside `sleep' call, the handling of the SIGALRM
    signal afterwards is undefined.  There is no return value to indicate
    error, but if `sleep' returns SECONDS, it probably didn't work.  */
-extern unsigned int __sleep __P ((unsigned int __seconds));
 extern unsigned int sleep __P ((unsigned int __seconds));
 
 #if defined(__USE_BSD) || defined(__USE_XOPEN_EXTENDED)
