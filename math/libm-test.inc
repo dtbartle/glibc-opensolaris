@@ -1,4 +1,4 @@
-/* Copyright (C) 1997-2002, 2003 Free Software Foundation, Inc.
+/* Copyright (C) 1997-2002, 2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Andreas Jaeger <aj@suse.de>, 1997.
 
@@ -3311,6 +3311,7 @@ lround_test (void)
   TEST_f_l (lround, -1.5, -2);
   TEST_f_l (lround, 22514.5, 22515);
   TEST_f_l (lround, -22514.5, -22515);
+  TEST_f_l (lround, 1071930.0008, 1071930);
 #ifndef TEST_FLOAT
   TEST_f_l (lround, 2097152.5, 2097153);
   TEST_f_l (lround, -2097152.5, -2097153);
@@ -3336,6 +3337,7 @@ llround_test (void)
   TEST_f_L (llround, -1.5, -2);
   TEST_f_L (llround, 22514.5, 22515);
   TEST_f_L (llround, -22514.5, -22515);
+  TEST_f_l (llround, 1071930.0008, 1071930);
 #ifndef TEST_FLOAT
   TEST_f_L (llround, 2097152.5, 2097153);
   TEST_f_L (llround, -2097152.5, -2097153);
