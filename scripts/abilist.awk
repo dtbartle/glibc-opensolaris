@@ -18,8 +18,13 @@ BEGIN {
   sub(/^.*\//, "", soname);
   sub(/\.so\.[0-9]+$/, "", soname);
 
+  suppress = ((filename_regexp != "" && sofullname !~ filename_regexp) \
+	      || (libname_regexp != "" && soname !~ libname_regexp));
+
   next
 }
+
+suppress { next }
 
 # Normalize columns.
 /^[0-9a-fA-F]+      / { sub(/      /, "  -   ") }
@@ -95,6 +100,8 @@ NF == 0 || /DYNAMIC SYMBOL TABLE/ || /file format/ { next }
 function emit(end) {
   if (! parse_names || soname == "")
     return;
+  if (combine && !end)
+    return;
   tofile = !combine;
 
   nverslist = 0;
@@ -144,6 +151,8 @@ function emit(end) {
       outpipe = "sort >> " out;
     }
     else {
+      if (combine)
+	print "";
       print prefix version;
       outpipe = "sort";
     }
