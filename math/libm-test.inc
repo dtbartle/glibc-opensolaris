@@ -3101,6 +3101,8 @@ lrint_test (void)
   TEST_f_l (lrint, 8388600.3L, 8388600);
   TEST_f_l (lrint, -8388600.3L, -8388600);
 
+  TEST_f_l (lrint, 1071930.0008, 1071930);
+
   END (lrint);
 }
 
@@ -3124,6 +3126,8 @@ llrint_test (void)
 
   TEST_f_L (llrint, 8388600.3L, 8388600);
   TEST_f_L (llrint, -8388600.3L, -8388600);
+
+  TEST_f_l (llrint, 1071930.0008, 1071930);
 
   /* Test boundary conditions.  */
   /* 0x1FFFFF */
@@ -3359,7 +3363,7 @@ llround_test (void)
   /* 0x10000000000000 */
   TEST_f_L (llround, 4503599627370496.0, 4503599627370496LL);
   /* 0x10000080000000 */
-  TEST_f_L (llrint, 4503601774854144.0, 4503601774854144LL);
+  TEST_f_L (llround, 4503601774854144.0, 4503601774854144LL);
   /* 0x20000000000000 */
   TEST_f_L (llround, 9007199254740992.0, 9007199254740992LL);
   /* 0x80000000000000 */
