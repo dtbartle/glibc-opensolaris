@@ -19,7 +19,6 @@ Cambridge, MA 02139, USA.  */
 #include <hurd.h>
 #include <hurd/port.h>
 #include <hurd/id.h>
-#include <gnu-stabs.h>
 #include "set-hooks.h"
 
 /* Things in the library which want to be run when the auth port changes.  */
