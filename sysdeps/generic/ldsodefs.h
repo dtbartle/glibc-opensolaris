@@ -347,8 +347,10 @@ struct rtld_global
 #   define __rtld_local_attribute__
 #  endif
 extern struct rtld_global _rtld_local __rtld_local_attribute__;
+#  undef __rtld_local_attribute__
 # endif
 extern struct rtld_global _rtld_global __rtld_global_attribute__;
+# undef __rtld_global_attribute__
 #endif
 
 #ifndef SHARED
@@ -489,16 +491,23 @@ struct rtld_global_ro
 };
 # define __rtld_global_attribute__
 # ifdef IS_IN_rtld
+#  ifdef HAVE_VISIBILITY_ATTRIBUTE
+#   define __rtld_local_attribute__ __attribute__ ((visibility ("hidden")))
+#  else
+#   define __rtld_local_attribute__
+#  endif
 extern struct rtld_global_ro _rtld_local_ro
     attribute_relro __rtld_local_attribute__;
 extern struct rtld_global_ro _rtld_global_ro
     attribute_relro __rtld_global_attribute__;
+#  undef __rtld_local_attribute__
 # else
 /* We cheat a bit here.  We declare the variable as as const even
    though it is at startup.  */
 extern const struct rtld_global_ro _rtld_global_ro
     attribute_relro __rtld_global_attribute__;
 # endif
+# undef __rtld_global_attribute__
 #endif
 #undef EXTERN
 
