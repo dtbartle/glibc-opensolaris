@@ -226,11 +226,6 @@ enum
 									      \
 	written = ucs4_to_ksc5601 (ch, buf, 2);				      \
 									      \
-	if (NEED_LENGTH_TEST && written == 0)				      \
-	  {								      \
-	    result = GCONV_FULL_OUTPUT;					      \
-	    break;							      \
-	  }								      \
 	if (written == UNKNOWN_10646_CHAR)				      \
 	  {								      \
 	    /* Illegal character.  */					      \
