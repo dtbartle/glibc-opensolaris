@@ -23,4 +23,4 @@ crypt
 linuxthreads
 
 libc.prj .libc.prcs_aux
-libc.proj
+libc.proj .snprj
