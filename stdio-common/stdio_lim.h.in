@@ -37,5 +37,5 @@
 #endif
 
 #if defined __need_IOV_MAX && !defined IOV_MAX
-# define IOV_MAX @IOV_MAX@
+@define_IOV_MAX@
 #endif
