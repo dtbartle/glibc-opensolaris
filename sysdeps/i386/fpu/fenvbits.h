@@ -83,4 +83,9 @@ fenv_t;
 /* If the default argument is used we use this value.  */
 #define FE_DFL_ENV	((fenv_t *) -1)
 
+#ifdef __USE_GNU
+/* Floating-point environment where none of the exception is masked.  */
+# define FE_NOMASK_ENV	((fenv_t *) -2)
+#endif
+
 #endif /* fenvbits.h */
