@@ -48,6 +48,29 @@
 
 /* Recognizing extra environment variables.  */
 #define EXTRA_LD_ENVVARS \
+  case 13:								      \
+    if (memcmp (&envline[3], "ASSUME_KERNEL", 13) == 0)			      \
+      {									      \
+	unsigned long int i, j, osversion = 0;				      \
+	char *p = &envline[17], *q;					      \
+									      \
+	for (i = 0; i < 3; i++, p = q + 1)				      \
+	  {								      \
+	    j = __strtoul_internal (p, &q, 0, 0);			      \
+	    if (j >= 255 || p == q || (i < 2 && *q && *q != '.'))	      \
+	      {								      \
+		osversion = 0;						      \
+		break;							      \
+	      }								      \
+	    osversion |= j << (16 - 8 * i);				      \
+	    if (!*q)							      \
+	      break;							      \
+	  }								      \
+	if (osversion)							      \
+	  _dl_osversion = osversion;					      \
+	break;								      \
+      }									      \
+									      \
   case 15:								      \
     if (memcmp (&envline[3], "LIBRARY_VERSION", 15) == 0)		      \
       {									      \
