@@ -1,6 +1,6 @@
 /* Machine-dependent pthreads configuration and inline functions.
    SuperH version.
-   Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Niibe Yutaka <gniibe@m17n.org>.
 
@@ -32,11 +32,11 @@ testandset (int *spinlock)
   __asm__ __volatile__(
        "tas.b	@%1\n\t"
        "movt	%0"
-       : "=z" (ret)
+       : "=r" (ret)
        : "r" (spinlock)
        : "memory", "cc");
 
-  return ret;
+  return (ret == 0);
 }
 
 
