@@ -205,13 +205,12 @@ __stpcpy_small (char *__dest, __const char *__src, size_t __srclen)
    consists entirely of characters not in REJECT.  */
 #ifndef _HAVE_STRING_ARCH_strcspn
 # define strcspn(s, reject) \
-  (__extension__ (__builtin_constant_p (reject)				      \
-		  ? (((const char *) (reject))[0] == '\0'		      \
+  (__extension__ (__builtin_constant_p (reject) && sizeof ((reject)[0]) == 1  \
+		  ? ((reject)[0] == '\0'				      \
 		     ? strlen (s)					      \
-		     : (((const char *) (reject))[1] == '\0'		      \
-			? __strcspn_c1 (s, ((((const char *) (reject))[0]     \
-					     & 0xff) << 8))		      \
-			: strcspn (s, reject)))	      \
+		     : ((reject)[1] == '\0'				      \
+			? __strcspn_c1 (s, (reject)[0])			      \
+			: strcspn (s, reject)))				      \
 		  : strcspn (s, reject)))
 
 __STRING_INLINE size_t
@@ -229,11 +228,11 @@ __strcspn_c1 (__const char *__s, char __reject)
    consists entirely of characters in ACCEPT.  */
 #ifndef _HAVE_STRING_ARCH_strspn
 # define strspn(s, accept) \
-  (__extension__ (__builtin_constant_p (accept)				      \
-		  ? (((const char *) (accept))[0] == '\0'		      \
+  (__extension__ (__builtin_constant_p (accept) && sizeof ((accept)[0]) == 1  \
+		  ? ((accept)[0] == '\0'				      \
 		     ? 0						      \
-		     : (((const char *) (accept))[1] == '\0'		      \
-			? __strspn_c1 (s, ((const char *) (accept))[0])	      \
+		     : ((accept)[1] == '\0'				      \
+			? __strspn_c1 (s, (accept)[0])			      \
 			: strspn (s, accept)))				      \
 		  : strspn (s, accept)))
 
@@ -252,11 +251,11 @@ __strspn_c1 (__const char *__s, char __accept)
 /* Find the first occurrence in S of any character in ACCEPT.  */
 #ifndef _HAVE_STRING_ARCH_strpbrk
 # define strpbrk(s, accept) \
-  (__extension__ (__builtin_constant_p (accept)				      \
-		  ? (((const char *) (accept))[0] == '\0'		      \
+  (__extension__ (__builtin_constant_p (accept) && sizeof ((accept)[0]) == 1  \
+		  ? ((accept)[0] == '\0'				      \
 		     ? NULL						      \
-		     : (((const char *) (accept))[1] == '\0'		      \
-			? strchr (s, ((const char *) (accept))[0])	      \
+		     : ((accept)[1] == '\0'				      \
+			? strchr (s, (accept)[0])			      \
 			: strpbrk (s, accept)))				      \
 		  : strpbrk (s, accept)))
 #endif
@@ -265,11 +264,11 @@ __strspn_c1 (__const char *__s, char __accept)
 /* Find the first occurrence of NEEDLE in HAYSTACK.  */
 #ifndef _HAVE_STRING_ARCH_strstr
 # define strstr(haystack, needle) \
-  (__extension__ (__builtin_constant_p (needle)				      \
-		  ? (((const char *) (needle))[0] == '\0'		      \
+  (__extension__ (__builtin_constant_p (needle) && sizeof ((needle)[0]) == 1  \
+		  ? ((needle)[0] == '\0'				      \
 		     ? haystack						      \
-		     : (((const char *) (needle))[1] == '\0'		      \
-			? strchr (haystack, ((const char *) (needle))[0])     \
+		     : ((needle)[1] == '\0'				      \
+			? strchr (haystack, (needle)[0])		      \
 			: strstr (haystack, needle)))			      \
 		  : strstr (haystack, needle)))
 #endif
@@ -277,11 +276,45 @@ __strspn_c1 (__const char *__s, char __accept)
 
 #ifdef __USE_GNU
 # ifndef _HAVE_STRING_ARCH_strnlen
-extern __inline size_t
+__STRING_INLINE size_t
 strnlen (__const char *__string, size_t __maxlen)
 {
   __const char *__end = (__const char *) memchr (__string, '\0', __maxlen);
   return __end ? __end - __string : __maxlen;
+}
+# endif
+#endif
+
+
+#ifdef __USE_BSD
+# ifndef _HAVE_STRING_ARCH_strsep
+#  define strsep(s, reject) \
+  (__extension__ (__builtin_constant_p (reject) && sizeof ((reject)[0]) == 1  \
+		  ? ((reject)[0] == '\0'				      \
+		     ? NULL						      \
+		     : ((reject)[1] == '\0'				      \
+			? __strsep_1c (s, (reject)[0])			      \
+			: __strsep_g (s, reject)))			      \
+		  : __strsep_g (s, reject)))
+
+__STRING_INLINE char *
+__strsep_1c (char **__s, char __reject)
+{
+  register __const char *__retval = *__s;
+  while (*__retval == __reject)
+    ++__retval;
+  if ((*__s = strchr (__retval, __reject)) != NULL)
+    *(*__s)++ = '\0';
+  return __retval;
+}
+
+__STRING_INLINE char *
+__strsep_g (char **__s, __const char *__reject)
+{
+  register __const char *__retval = *__s;
+  if ((*__s = strpbrk (__retval, __reject)) != NULL)
+    *(*__s)++ = '\0';
+  return __retval;
 }
 # endif
 #endif
