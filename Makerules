@@ -539,5 +539,6 @@ $(gpl2lgpl): %: $(..)gpl2lgpl.sed /home/gd/gnu/lib/%
 # So I don't edit them by mistake.
 	chmod a-w $@-tmp
 	mv -f $@-tmp $@
+	test -d CVS && cvs commit -m'Updated from $^' $@
 endif
 endif
