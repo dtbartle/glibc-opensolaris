@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -35,15 +35,6 @@ DEFUN(__chmod, (file, mode), CONST char *file AND mode_t mode)
   errno = ENOSYS;
   return -1;
 }
+stub_warning (chmod)
 
-
-
-
-
-#ifdef	 HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
-stub_warning(__chmod);
-
-#endif	/* GNU stabs.  */
+weak_alias (__chmod, chmod)
