@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -25,3 +25,5 @@ PSEUDO (__Spipe, pipe, 1)
 	st %o1, [%o2 + 4]	/* PIPEDES[1] = %o1; */
 	retl			/* return 0; */
 	clr %o0
+
+weak_alias (__pipe, pipe)
