@@ -1,4 +1,5 @@
-/* Copyright (C) 1998, 2002 Free Software Foundation, Inc.
+/* Definition of `errno' variable.  Canonical version.
+   Copyright (C) 2002 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,20 +17,16 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sysdep.h>
+#include <errno.h>
+#include <tls.h>
+#undef errno
 
-/* The Linux version is in fact MIPS/ELF and the start.? file for this
-   system (sysdeps/mips/elf/start.S) is also used by The Hurd.  This file
-   must not contain the definition of the `errno' variable, we have to
-   define it somewhere else.
-
-   ...and this place is here.  */
-	.bss
-	.globl  errno
-	.type   errno,@object
-	.size   errno,4
-errno:	.word   4
-	.text
-weak_alias(errno, _errno)
-
-#include <sysdeps/unix/mips/sysdep.S>
+#if USE___THREAD
+__thread int errno;
+#else
+/* This differs from plain `int errno;' in that it doesn't create
+   a common definition, but a plain symbol that resides in .bss,
+   which can have an alias.  */
+int errno __attribute__ ((section (".bss")));
+strong_alias (errno, _errno)
+#endif
