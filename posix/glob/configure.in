@@ -5,10 +5,11 @@ AC_PROG_CC
 AC_CHECK_PROG(AR, ar, ar, ar)
 AC_PROG_RANLIB
 AC_PROG_CPP			dnl Later checks need this.
-AC_CONST
+dnl These two want to come early.
 AC_AIX
-AC_ISC_POSIX
 AC_MINIX
+AC_CONST
+AC_ISC_POSIX
 AC_HEADER_STDC
 AC_CHECK_HEADERS(memory.h unistd.h string.h)
 AC_HEADER_DIRENT
