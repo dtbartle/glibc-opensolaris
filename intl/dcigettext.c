@@ -1,5 +1,5 @@
 /* Implementation of the internal dcigettext function.
-   Copyright (C) 1995-2002, 2003 Free Software Foundation, Inc.
+   Copyright (C) 1995-2002, 2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -680,7 +680,7 @@ _nl_find_msg (domain_file, domainbinding, msgid, lengthp)
   char *result;
   size_t resultlen;
 
-  if (domain_file->decided == 0)
+  if (domain_file->decided <= 0)
     _nl_load_domain (domain_file, domainbinding);
 
   if (domain_file->data == NULL)
