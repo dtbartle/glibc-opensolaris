@@ -266,9 +266,6 @@ static char *plural_lookup PARAMS ((struct loaded_l10nfile *domain,
 				    const char *translation,
 				    size_t translation_len))
      internal_function;
-static unsigned long int plural_eval PARAMS ((struct expression *pexp,
-					      unsigned long int n))
-     internal_function;
 static const char *category_to_name PARAMS ((int category)) internal_function;
 static const char *guess_category_value PARAMS ((int category,
 						 const char *categoryname))
@@ -354,6 +351,9 @@ static int enable_secure;
 	enable_secure = -1;						      \
     }
 #endif
+
+/* Get the function to evaluate the plural expression.  */
+#include "plural-eval.c"
 
 /* Look up MSGID in the DOMAINNAME message catalog for the current
    CATEGORY locale and, if PLURAL is nonzero, search over string
@@ -960,87 +960,6 @@ plural_lookup (domain, n, translation, translation_len)
 	return (char *) translation;
     }
   return (char *) p;
-}
-
-
-/* Function to evaluate the plural expression and return an index value.  */
-static unsigned long int
-internal_function
-plural_eval (pexp, n)
-     struct expression *pexp;
-     unsigned long int n;
-{
-  switch (pexp->nargs)
-    {
-    case 0:
-      switch (pexp->operation)
-	{
-	case var:
-	  return n;
-	case num:
-	  return pexp->val.num;
-	default:
-	  break;
-	}
-      /* NOTREACHED */
-      break;
-    case 1:
-      {
-	/* pexp->operation must be lnot.  */
-	unsigned long int arg = plural_eval (pexp->val.args[0], n);
-	return ! arg;
-      }
-    case 2:
-      {
-	unsigned long int leftarg = plural_eval (pexp->val.args[0], n);
-	if (pexp->operation == lor)
-	  return leftarg || plural_eval (pexp->val.args[1], n);
-	else if (pexp->operation == land)
-	  return leftarg && plural_eval (pexp->val.args[1], n);
-	else
-	  {
-	    unsigned long int rightarg = plural_eval (pexp->val.args[1], n);
-
-	    switch (pexp->operation)
-	      {
-	      case mult:
-		return leftarg * rightarg;
-	      case divide:
-		return leftarg / rightarg;
-	      case module:
-		return leftarg % rightarg;
-	      case plus:
-		return leftarg + rightarg;
-	      case minus:
-		return leftarg - rightarg;
-	      case less_than:
-		return leftarg < rightarg;
-	      case greater_than:
-		return leftarg > rightarg;
-	      case less_or_equal:
-		return leftarg <= rightarg;
-	      case greater_or_equal:
-		return leftarg >= rightarg;
-	      case equal:
-		return leftarg == rightarg;
-	      case not_equal:
-		return leftarg != rightarg;
-	      default:
-		break;
-	      }
-	  }
-	/* NOTREACHED */
-	break;
-      }
-    case 3:
-      {
-	/* pexp->operation must be qmop.  */
-	unsigned long int boolarg = plural_eval (pexp->val.args[0], n);
-	return plural_eval (pexp->val.args[boolarg ? 1 : 2], n);
-      }
-    }
-  /* NOTREACHED */
-  return 0;
 }
 
 
