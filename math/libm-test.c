@@ -1433,11 +1433,11 @@ gamma_test (void)
   _LIB_VERSION = _SVID_;
 
   check_isinfp ("gamma (+inf) == +inf", FUNC(gamma) (plus_infty));
-  check_isinfp_exc ("gamma (0) == +inf plus divide by zero exception",
-		    FUNC(gamma) (0), DIVIDE_BY_ZERO_EXCEPTION);
+  check_exc ("gamma (0) == HUGE plus divide by zero exception",
+	     FUNC(gamma) (0), HUGE, DIVIDE_BY_ZERO_EXCEPTION);
 
-  check_isinfp_exc ("gamma (x) == +inf plus divide by zero exception for integer x <= 0",
-		    FUNC(gamma) (-3), DIVIDE_BY_ZERO_EXCEPTION);
+  check_exc ("gamma (x) == HUGE plus divide by zero exception for integer x <= 0",
+	     FUNC(gamma) (-3), HUGE, DIVIDE_BY_ZERO_EXCEPTION);
   check_isnan_exc ("gamma (-inf) == NaN plus invalid exception",
                    FUNC(gamma) (minus_infty), INVALID_EXCEPTION);
 
