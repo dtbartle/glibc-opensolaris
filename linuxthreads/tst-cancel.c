@@ -47,7 +47,7 @@ static void *
 t2 (void *arg)
 {
   pthread_cleanup_push (cleanup, (void *) (long int) 2);
-  inner ((int) arg);
+  inner ((int) (long int) arg);
   return NULL;
   pthread_cleanup_pop (0);
 }
