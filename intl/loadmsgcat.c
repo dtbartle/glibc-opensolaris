@@ -290,10 +290,29 @@ _nl_load_domain (domain_file)
 
 	  /* The output charset should normally be determined by the
 	     locale.  But sometimes the locale is not used or not correctly
-	     set up so we provide a possibility to override this.  */
-	  outcharset = getenv ("OUTPUT_CHARSET");
-	  if (outcharset == NULL || outcharset[0] == '\0')
-	    outcharset = (*_nl_current[LC_CTYPE])->values[_NL_ITEM_INDEX (CODESET)].string;
+	     set up, so we provide a possibility for the user to override
+	     this.  Moreover, the value specified through
+	     bind_textdomain_codeset overrides both.  */
+	  if (domain_file->domainbinding != NULL
+	      && domain_file->domainbinding->codeset != NULL)
+	    outcharset = domain_file->domainbinding->codeset;
+	  else
+	    {
+	      outcharset = getenv ("OUTPUT_CHARSET");
+	      if (outcharset == NULL || outcharset[0] == '\0')
+		{
+# ifdef _LIBC
+		  outcharset = (*_nl_current[LC_CTYPE])->values[_NL_ITEM_INDEX (CODESET)].string;
+# else
+#  if HAVE_ICONV
+		  extern const char *locale_charset (void);
+		  outcharset = locale_charset ();
+		  if (outcharset == NULL)
+		    outcharset = "";
+#  endif
+# endif
+		}
+	    }
 
 # ifdef _LIBC
 	  outcharset = norm_add_slashes (outcharset);
