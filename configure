@@ -63,8 +63,8 @@ ac_help="$ac_help
 ac_help="$ac_help
   --enable-static-nss     build static NSS modules [default=no]"
 ac_help="$ac_help
-  --disable-force-install  don't force installation of files from this package,
-			   even if they are older than the installed files"
+  --disable-force-install don't force installation of files from this package,
+			  even if they are older than the installed files"
 
 # Initialize some variables set by options.
 # The variables have the same names as the options, with
