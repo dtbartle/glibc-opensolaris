@@ -75,6 +75,15 @@ extern long int atol __P ((__const char *__nptr));
 
 /* Convert a string to a floating-point number.  */
 extern double strtod __P ((__const char *__nptr, char **__endptr));
+
+#ifdef	__USE_GNU
+/* Likewise for `float' and `long double' sizes of floating-point numbers.  */
+extern float __strtof __P ((__const char *__nptr, char **__endptr));
+extern float strtof __P ((__const char *__nptr, char **__endptr));
+extern __long_double_t __strtold __P ((__const char *__nptr, char **__endptr));
+extern __long_double_t strtold __P ((__const char *__nptr, char **__endptr));
+#endif
+
 /* Convert a string to a long integer.  */
 extern long int strtol __P ((__const char *__nptr, char **__endptr,
 			     int __base));
