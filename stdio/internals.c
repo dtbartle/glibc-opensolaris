@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -263,6 +263,14 @@ DEFUN(flushbuf, (fp, c),
 		/* We put C in the buffer, so don't write it again later.  */
 		flush_only = 1;
 	    }
+	}
+
+      if (fp->__bufp - fp->__buffer <= buffer_offset)
+	{
+	  /* There is nothing new in the buffer, only data that
+	     was read back aligned from the file.  */
+	  buffer_written = 0;
+	  goto end;
 	}
     }
 
