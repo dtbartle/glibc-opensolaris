@@ -34,7 +34,7 @@
 #if defined (_LIBC)
 # include <string.h>
 # include <memcopy.h>
-# include <stdlibh.h>
+# include <stdlib.h>
 #else
 # define reg_char char
 #endif
