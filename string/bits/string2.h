@@ -865,7 +865,7 @@ __strsep_g (char **__s, __const char *__reject)
 			  if (retval != NULL)				      \
 			    retval = (char *) memcpy (retval, s, len);	      \
 			  retval; }))					      \
-		  : strdup (s)))
+		  : __strdup (s)))
 
 # if defined __USE_SVID || defined __USE_BSD || defined __USE_XOPEN_EXTENDED
 #  define strdup(s) __strdup (s)
