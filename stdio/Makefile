@@ -57,10 +57,11 @@ routines := $(strip $(routines) $(mpn-routines))	\
 	    dbl2mpn ldbl2mpn				\
 	    mpn2flt mpn2dbl mpn2ldbl
 aux	:= errlist siglist defs glue mp_clz_tab fpioconst 
-distribute = $(mpn-headers) mpn-copy.mk _itoa.h fpioconst.h
+distribute = $(mpn-headers) gen-mpn-copy _itoa.h fpioconst.h
 
 tests := tst-printf tstscanf test_rdwr test-popen tstgetln test-fseek \
-	 temptest tst-fileno xbug errnobug \
+	 temptest tst-fileno test-fwrite \
+	 xbug errnobug \
 	 bug1 bug2 bug3 bug4 bug5 bug6 bug7
 
 
