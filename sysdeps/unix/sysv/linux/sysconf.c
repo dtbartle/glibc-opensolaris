@@ -1,5 +1,4 @@
-/* Copyright (C) 1991, 1993, 1995, 1996 Free Software Foundation, Inc.
-This file is part of the GNU C Library.
+/* Copyright (C) 1995, 1996 Free Software Foundation, Inc.
 
 The GNU C Library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public License as
@@ -13,291 +12,26 @@ Library General Public License for more details.
 
 You should have received a copy of the GNU Library General Public
 License along with the GNU C Library; see the file COPYING.LIB.  If
-not, write to the Free Software Foundation, Inc., 675 Mass Ave,
-Cambridge, MA 02139, USA.  */
+not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.  */
 
-#include <ansidecl.h>
-#include <errno.h>
+/* On Linux we must not ask __getdtablesize for te value for _SC_OPEN_MAX
+   because this would mean an endless loop.  */
+
 #include <limits.h>
 #include <unistd.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <time.h>
 
-extern size_t EXFUN(__getpagesize, (NOARGS));
+extern long int __default_sysconf (int name);
 
-/* Get the value of the system variable NAME.  */
 long int
-DEFUN(__sysconf, (name), int name)
+__sysconf (int name)
 {
-  switch (name)
-    {
-    default:
-      errno = EINVAL;
-      return -1;
+  if (name == _SC_OPEN_MAX)
+    return OPEN_MAX;
 
-    case _SC_ARG_MAX:
-#ifdef	ARG_MAX
-      return ARG_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_CHILD_MAX:
-#ifdef	CHILD_MAX
-      return CHILD_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_CLK_TCK:
-#ifdef	CLK_TCK
-      return CLK_TCK;
-#else
-      return 60;
-#endif
-
-    case _SC_NGROUPS_MAX:
-#ifdef	NGROUPS_MAX
-      return NGROUPS_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_OPEN_MAX:
-      return OPEN_MAX;
-
-    case _SC_STREAM_MAX:
-#ifdef	STREAM_MAX
-      return STREAM_MAX;
-#else
-      return FOPEN_MAX;
-#endif
-
-    case _SC_TZNAME_MAX:
-      return __tzname_max ();
-
-    case _SC_JOB_CONTROL:
-#ifdef	_POSIX_JOB_CONTROL
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_SAVED_IDS:
-#ifdef	_POSIX_SAVED_IDS
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_REALTIME_SIGNALS:
-#ifdef	_POSIX_REALTIME_SIGNALS
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_PRIORITY_SCHEDULING:
-#ifdef	_POSIX_PRIORITY_SCHEDULING
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_TIMERS:
-#ifdef	_POSIX_TIMERS
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_ASYNCHRONOUS_IO:
-#ifdef	_POSIX_ASYNCHRONOUS_IO
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_PRIORITIZED_IO:
-#ifdef	_POSIX_PRIORITIZED_IO
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_SYNCHRONIZED_IO:
-#ifdef	_POSIX_SYNCHRONIZED_IO
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_FSYNC:
-#ifdef	_POSIX_FSYNC
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_MAPPED_FILES:
-#ifdef	_POSIX_MAPPED_FILES
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_MEMLOCK:
-#ifdef	_POSIX_MEMLOCK
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_MEMLOCK_RANGE:
-#ifdef	_POSIX_MEMLOCK_RANGE
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_MEMORY_PROTECTION:
-#ifdef	_POSIX_MEMORY_PROTECTION
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_MESSAGE_PASSING:
-#ifdef	_POSIX_MESSAGE_PASSING
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_SEMAPHORES:
-#ifdef	_POSIX_SEMAPHORES
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_SHARED_MEMORY_OBJECTS:
-#ifdef	_POSIX_SHARED_MEMORY_OBJECTS
-      return 1;
-#else
-      return -1;
-#endif
-
-    case _SC_VERSION:
-      return _POSIX_VERSION;
-
-    case _SC_PAGESIZE:
-      return __getpagesize ();
-
-    case _SC_BC_BASE_MAX:
-#ifdef	BC_BASE_MAX
-      return BC_BASE_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_BC_DIM_MAX:
-#ifdef	BC_DIM_MAX
-      return BC_DIM_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_BC_SCALE_MAX:
-#ifdef	BC_SCALE_MAX
-      return BC_SCALE_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_BC_STRING_MAX:
-#ifdef	BC_STRING_MAX
-      return BC_STRING_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_EQUIV_CLASS_MAX:
-#ifdef	EQUIV_CLASS_MAX
-      return EQUIV_CLASS_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_EXPR_NEST_MAX:
-#ifdef	EXPR_NEST_MAX
-      return EXPR_NEST_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_LINE_MAX:
-#ifdef	LINE_MAX
-      return LINE_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_RE_DUP_MAX:
-#ifdef	RE_DUP_MAX
-      return RE_DUP_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_CHARCLASS_NAME_MAX:
-#ifdef	CHARCLASS_NAME_MAX
-      return CHARCLASS_NAME_MAX;
-#else
-      return -1;
-#endif
-
-    case _SC_2_VERSION:
-      /* This is actually supposed to return the version
-	 of the 1003.2 utilities on the system {POSIX2_VERSION}.  */
-      return _POSIX2_C_VERSION;
-
-    case _SC_2_C_BIND:
-#ifdef	_POSIX2_C_BIND
-      return _POSIX2_C_BIND;
-#else
-      return -1;
-#endif
-
-    case _SC_2_C_DEV:
-#ifdef	_POSIX2_C_DEV
-      return _POSIX2_C_DEV;
-#else
-      return -1;
-#endif
-
-    case _SC_2_FORT_DEV:
-#ifdef	_POSIX2_FORT_DEV
-      return _POSIX2_FORT_DEV;
-#else
-      return -1;
-#endif
-
-    case _SC_2_LOCALEDEF:
-#ifdef	_POSIX2_LOCALEDEF
-      return _POSIX2_LOCALEDEF;
-#else
-      return -1;
-#endif
-
-    case _SC_2_SW_DEV:
-#ifdef	_POSIX2_SW_DEV
-      return _POSIX2_SW_DEV;
-#else
-      return -1;
-#endif
-    }
+  return __default_sysconf (name);
 }
 
-weak_alias (__sysconf, sysconf)
+#define __sysconf __default_sysconf
+
+#include <sysdeps/posix/sysconf.c>
