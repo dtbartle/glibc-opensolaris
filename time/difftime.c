@@ -21,7 +21,6 @@ Cambridge, MA 02139, USA.  */
 
 
 /* Return the difference between TIME1 and TIME0.  */
-__CONSTVALUE
 double
 DEFUN(difftime, (time1, time0), time_t time1 AND time_t time0)
 {
