@@ -40,7 +40,8 @@ include ../Makeconfig
 
 ifeq ($(have-thread-library),yes)
 
-tests := tst-aio tst-aio64 tst-clock tst-shm tst-timer tst-aio2 tst-aio3
+tests := tst-aio tst-aio64 tst-clock tst-shm tst-timer tst-aio2 tst-aio3 \
+	 tst-aio4 tst-aio5
 
 extra-libs := librt
 extra-libs-others := $(extra-libs)
@@ -58,6 +59,8 @@ ifeq (yes,$(build-shared))
 $(objpfx)tst-aio: $(objpfx)librt.so $(shared-thread-library)
 $(objpfx)tst-aio2: $(objpfx)librt.so $(shared-thread-library)
 $(objpfx)tst-aio3: $(objpfx)librt.so $(shared-thread-library)
+$(objpfx)tst-aio4: $(objpfx)librt.so $(shared-thread-library)
+$(objpfx)tst-aio5: $(objpfx)librt.so $(shared-thread-library)
 $(objpfx)tst-aio64: $(objpfx)librt.so $(shared-thread-library)
 $(objpfx)tst-clock: $(objpfx)librt.so $(shared-thread-library)
 $(objpfx)tst-shm: $(objpfx)librt.so $(shared-thread-library)
@@ -65,6 +68,8 @@ else
 $(objpfx)tst-aio: $(objpfx)librt.a $(static-thread-library)
 $(objpfx)tst-aio2: $(objpfx)librt.a $(static-thread-library)
 $(objpfx)tst-aio3: $(objpfx)librt.a $(static-thread-library)
+$(objpfx)tst-aio4: $(objpfx)librt.a $(static-thread-library)
+$(objpfx)tst-aio5: $(objpfx)librt.a $(static-thread-library)
 $(objpfx)tst-aio64: $(objpfx)librt.a $(static-thread-library)
 $(objpfx)tst-clock: $(objpfx)librt.a $(static-thread-library)
 $(objpfx)tst-shm: $(objpfx)librt.a $(static-thread-library)
