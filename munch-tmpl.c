@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,14 +16,26 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
+#include <stdlib.h>
 
 
 EXTERNS
 
 void
-DEFUN(__libc_init, (argc, argv, envp),
-      int argc AND char **argv AND char **envp)
+__libc_init (argc, argv, envp)
+     int argc;
+     char **argv;
+     char **envp;
 {
   CALLS
+
+#ifdef HAVE_ELF
+    {
+      /* These functions are defined in crti.o to run the .init and .fini
+	 sections, which are used for initializers in ELF.  */
+      extern void _init __P ((void)), _fini __P ((void));
+      atexit (_fini);		/* Arrange for _fini to run at exit.  */
+      _init ();
+    }
+#endif
 }
