@@ -184,7 +184,7 @@ rwlock_have_already(pthread_descr *pself, pthread_rwlock_t *rwlock,
 
 int
 __pthread_rwlock_init (pthread_rwlock_t *rwlock,
-		     const pthread_rwlockattr_t *attr)
+		       const pthread_rwlockattr_t *attr)
 {
   __pthread_init_lock(&rwlock->__rw_lock);
   rwlock->__rw_readers = 0;
@@ -236,11 +236,11 @@ __pthread_rwlock_rdlock (pthread_rwlock_t *rwlock)
   have_lock_already = rwlock_have_already(&self, rwlock,
 					  &existing, &out_of_mem);
 
+  if (self == NULL)
+    self = thread_self ();
+
   for (;;)
     {
-      if (self == NULL)
-	self = thread_self ();
-
       __pthread_lock (&rwlock->__rw_lock, self);
 
       if (rwlock_can_rdlock(rwlock, have_lock_already))
@@ -265,6 +265,51 @@ __pthread_rwlock_rdlock (pthread_rwlock_t *rwlock)
   return 0;
 }
 strong_alias (__pthread_rwlock_rdlock, pthread_rwlock_rdlock)
+
+int
+__pthread_rwlock_timedrdlock (pthread_rwlock_t *rwlock,
+			      const struct timespec *abstime)
+{
+  pthread_descr self = NULL;
+  pthread_readlock_info *existing;
+  int out_of_mem, have_lock_already;
+
+  if (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000)
+    return EINVAL;
+
+  have_lock_already = rwlock_have_already(&self, rwlock,
+					  &existing, &out_of_mem);
+
+  if (self == NULL)
+    self = thread_self ();
+
+  for (;;)
+    {
+      if (__pthread_alt_timedlock (&rwlock->__rw_lock, self, abstime) == 0)
+	return ETIMEDOUT;
+
+      if (rwlock_can_rdlock(rwlock, have_lock_already))
+	break;
+
+      enqueue (&rwlock->__rw_read_waiting, self);
+      __pthread_unlock (&rwlock->__rw_lock);
+      suspend (self); /* This is not a cancellation point */
+    }
+
+  ++rwlock->__rw_readers;
+  __pthread_unlock (&rwlock->__rw_lock);
+
+  if (have_lock_already || out_of_mem)
+    {
+      if (existing != NULL)
+	existing->pr_lock_count++;
+      else
+	self->p_untracked_readlock_count++;
+    }
+
+  return 0;
+}
+strong_alias (__pthread_rwlock_timedrdlock, pthread_rwlock_timedrdlock)
 
 int
 __pthread_rwlock_tryrdlock (pthread_rwlock_t *rwlock)
@@ -331,6 +376,38 @@ __pthread_rwlock_wrlock (pthread_rwlock_t *rwlock)
     }
 }
 strong_alias (__pthread_rwlock_wrlock, pthread_rwlock_wrlock)
+
+
+int
+__pthread_rwlock_timedwrlock (pthread_rwlock_t *rwlock,
+			      const struct timespec *abstime)
+{
+  pthread_descr self;
+
+  if (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000)
+    return EINVAL;
+
+  self = thread_self ();
+
+  while(1)
+    {
+      if (__pthread_alt_timedlock (&rwlock->__rw_lock, self, abstime) == 0)
+	return ETIMEDOUT;
+
+      if (rwlock->__rw_readers == 0 && rwlock->__rw_writer == NULL)
+	{
+	  rwlock->__rw_writer = self;
+	  __pthread_unlock (&rwlock->__rw_lock);
+	  return 0;
+	}
+
+      /* Suspend ourselves, then try again */
+      enqueue (&rwlock->__rw_write_waiting, self);
+      __pthread_unlock (&rwlock->__rw_lock);
+      suspend (self); /* This is not a cancellation point */
+    }
+}
+strong_alias (__pthread_rwlock_timedwrlock, pthread_rwlock_timedwrlock)
 
 
 int
