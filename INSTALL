@@ -156,13 +156,14 @@ Recommended Tools to Install the GNU C Library
    We recommend installing the following GNU tools before attempting to
 build the GNU C library:
 
-   * `make' 3.75
+   * `make' 3.76.1
 
      You need the latest version of GNU `make'.  Modifying the GNU C
      Library to work with other `make' programs would be so hard that we
      recommend you port GNU `make' instead.  *Really.*  We recommend
-     version GNU `make' version 3.75 or later.  Version 3.76 is known
-     to have a bug which only shows up in big projects like GNU `libc'.
+     version GNU `make' version 3.75, 3.76.1 or later.  Version 3.76 is
+     known to have a bug which only shows up in big projects like GNU
+     `libc'.
 
    * GCC 2.7.2.3
 
@@ -745,7 +746,7 @@ parts of the library were contributed or worked on by other people.
    * The DES encryption function `crypt' and related functions were
      contributed by Michael Glad.
 
-   * The `ftw' function was contributed by Ian Lance Taylor.
+   * The `ftw' and `nftw' function was contributed by Ulrich Drepper.
 
    * The startup code to support SunOS shared libraries was contributed
      by Tom Quinn.
@@ -793,6 +794,10 @@ parts of the library were contributed or worked on by other people.
 
    * The port to Linux/m68k (`m68k-ANYTHING-linux') was contributed by
      Andreas Schwab.
+
+   * The ports to Linux/ARM (`arm-ANYTHING-linuxaout') and ARM
+     standalone (`arm-ANYTHING-none'), as well as parts of the IPv6
+     support code, were contributed by Philip Blundell.
 
    * Richard Henderson contributed the ELF dynamic linking code and
      other support for the Alpha processor.
