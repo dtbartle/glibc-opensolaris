@@ -24,7 +24,7 @@
    respect to the file associated with FD.  */
 
 int
-posix_fadvise (int fd, __off_t offset, size_t len, int advise)
+posix_fadvise (int fd, off_t offset, off_t len, int advise)
 {
 #ifdef __NR_fadvise64
   return INLINE_SYSCALL (fadvise64, 5, fd,
