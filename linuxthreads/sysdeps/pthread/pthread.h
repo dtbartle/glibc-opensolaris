@@ -288,6 +288,7 @@ extern int __pthread_attr_getguardsize __P ((__const pthread_attr_t *__attr,
 					     size_t *__guardsize));
 extern int pthread_attr_getguardsize __P ((__const pthread_attr_t *__attr,
 					   size_t *__guardsize));
+#endif
 
 /* Set the starting address of the stack of the thread to be created.
    Depending on whether the stack grows up or doen the value must either
@@ -317,7 +318,6 @@ extern int __pthread_attr_getstacksize __P ((__const pthread_attr_t *__attr,
 					     size_t *__stacksize));
 extern int pthread_attr_getstacksize __P ((__const pthread_attr_t *__attr,
 					   size_t *__stacksize));
-#endif
 
 /* Functions for scheduling control. */
 
