@@ -21,5 +21,5 @@ gen-as-const-headers += tcb-offsets.sym
 endif
 
 ifeq ($(subdir),nptl)
-CFLAGS-tst-align += -malign-double
+CFLAGS-tst-align.c += -malign-double
 endif
