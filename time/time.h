@@ -127,19 +127,25 @@ extern size_t strftime __P ((char *__s, size_t __maxsize,
    in Universal Coordinated Time (aka Greenwich Mean Time).  */
 extern struct tm *gmtime __P ((__const time_t *__timer));
 
+/* Return the `struct tm' representation
+   of *TIMER in the local timezone.  */
+extern struct tm *localtime __P ((__const time_t *__timer));
+
+#ifdef	__USE_REENTRANT
 /* Return the `struct tm' representation of *TIMER in UTC,
    using *TP to store the result.  */
 extern struct tm *__gmtime_r __P ((__const time_t *__timer,
 				   struct tm *__tp));
-
-/* Return the `struct tm' representation
-   of *TIMER in the local timezone.  */
-extern struct tm *localtime __P ((__const time_t *__timer));
+extern struct tm *gmtime_r __P ((__const time_t *__timer,
+				 struct tm *__tp));
 
 /* Return the `struct tm' representation of *TIMER in local time,
    using *TP to store the result.  */
 extern struct tm *__localtime_r __P ((__const time_t *__timer,
 				      struct tm *__tp));
+extern struct tm *localtime_r __P ((__const time_t *__timer,
+				    struct tm *__tp));
+#endif
 
 /* Compute the `struct tm' representation of *T,
    offset OFFSET seconds east of UTC,
