@@ -1398,6 +1398,25 @@ if test "$libc_cv_gcc_builtin_expect" = yes; then
   AC_DEFINE(HAVE_BUILTIN_EXPECT)
 fi
 
+AC_CACHE_CHECK(for __builtin_memset, libc_cv_gcc_builtin_memset, [dnl
+cat > conftest.c <<\EOF
+void zero (void *x)
+{
+  __builtin_memset (x, 0, 4);
+}
+EOF
+dnl
+if AC_TRY_COMMAND([${CC-cc} -O3 -S conftest.c -o - | fgrep "memset" > /dev/null]);
+then
+  libc_cv_gcc_builtin_memset=no
+else
+  libc_cv_gcc_builtin_memset=yes
+fi
+rm -f conftest* ])
+if test "$libc_cv_gcc_builtin_memset" = yes ; then
+  AC_DEFINE(HAVE_BUILTIN_MEMSET)
+fi
+
 dnl Check whether the compiler supports subtraction of local labels.
 AC_CACHE_CHECK(for local label subtraction, libc_cv_gcc_subtract_local_labels,
 [cat > conftest.c <<EOF
