@@ -39,6 +39,9 @@ DEFUN(__sigprocmask, (how, set, oset),
     new = *set;
 
   ss = _hurd_self_sigstate ();
+
+  __spin_lock (&ss->lock);
+
   old = ss->blocked;
 
   if (set != NULL)
@@ -58,7 +61,7 @@ DEFUN(__sigprocmask, (how, set, oset),
 	  break;
 
 	default:
-	  __mutex_unlock (&ss->lock);
+	  __spin_unlock (&ss->lock);
 	  errno = EINVAL;
 	  return -1;
 	}
@@ -68,7 +71,7 @@ DEFUN(__sigprocmask, (how, set, oset),
 
   pending = ss->pending & ~ss->blocked;
 
-  __mutex_unlock (&ss->lock);
+  __spin_unlock (&ss->lock);
 
   if (oset != NULL)
     *oset = old;
