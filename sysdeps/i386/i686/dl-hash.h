@@ -26,7 +26,7 @@
    optimized for the PII processors.  Though it will run on i586 it
    would be much slower than the generic C implementation.  So don't
    use it.  */
-static inline unsigned int
+static unsigned int
 _dl_elf_hash (const unsigned char *name)
 {
   unsigned int result;
