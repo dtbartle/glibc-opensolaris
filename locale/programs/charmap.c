@@ -244,9 +244,9 @@ default character map file `%s' not found"), DEFAULT_CHARMAP));
 
       do
 	{
-	  struct charseq * seq = charmap_find_symbol (result, p, 1);
+	  struct charseq *seq = charmap_find_symbol (result, p, 1);
 
-	  if (seq == NULL || seq->ucs4 != *p)
+	  if (seq == NULL || seq->ucs4 != (uint32_t) *p)
 	    failed = 1;
 	}
       while (*p++ != '\0');
