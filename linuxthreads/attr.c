@@ -452,6 +452,11 @@ int pthread_getattr_np (pthread_t thread, pthread_attr_t *attr)
 		  attr->__stacksize = rl.rlim_cur;
 		  attr->__stackaddr = (void *) to;
 
+		  /* The limit might be too high.  This is a bogus
+		     situation but try to avoid making it worse.  */
+		  if ((size_t) attr->__stacksize > (size_t) attr->__stackaddr)
+		    attr->__stacksize = (size_t) attr->__stackaddr;
+
 		  /* We succeed and no need to look further.  */
 		  ret = 0;
 		  break;
