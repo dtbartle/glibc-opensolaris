@@ -65,7 +65,7 @@ __get_sol (int af, socklen_t len)
   for (size_t cnt = 0; cnt < NSOL_MAP; ++cnt)
     {
       /* Just a test so that we make sure the special value used to
-	 signal the we have so far no socket level value is OK.  */
+	 signal the "we have so far no socket level value" is OK.  */
       assert (sol_map[cnt].sol != -1);
 
       if (len == sol_map[cnt].size)
