@@ -1006,6 +1006,7 @@ struct mallinfo public_mALLINFo(void);
 struct mallinfo public_mALLINFo();
 #endif
 
+#ifndef _LIBC
 /*
   independent_calloc(size_t n_elements, size_t element_size, Void_t* chunks[]);
 
@@ -1128,6 +1129,8 @@ Void_t** public_iCOMALLOc(size_t, size_t*, Void_t**);
 #else
 Void_t** public_iCOMALLOc();
 #endif
+
+#endif /* _LIBC */
 
 
 /*
@@ -1507,8 +1510,10 @@ Void_t*         _int_memalign(mstate, size_t, size_t);
 Void_t*         _int_valloc(mstate, size_t);
 static Void_t*  _int_pvalloc(mstate, size_t);
 /*static Void_t*  cALLOc(size_t, size_t);*/
+#ifndef _LIBC
 static Void_t** _int_icalloc(mstate, size_t, size_t, Void_t**);
 static Void_t** _int_icomalloc(mstate, size_t, size_t*, Void_t**);
+#endif
 static int      mTRIm(size_t);
 static size_t   mUSABLe(Void_t*);
 static void     mSTATs(void);
@@ -2305,7 +2310,9 @@ static void malloc_init_state(av) mstate av;
 static Void_t*  sYSMALLOc(INTERNAL_SIZE_T, mstate);
 static int      sYSTRIm(size_t, mstate);
 static void     malloc_consolidate(mstate);
+#ifndef _LIBC
 static Void_t** iALLOc(mstate, size_t, size_t*, int, Void_t**);
+#endif
 #else
 static Void_t*  sYSMALLOc();
 static int      sYSTRIm();
@@ -3729,6 +3736,8 @@ public_cALLOc(size_t n, size_t elem_size)
   return mem;
 }
 
+#ifndef _LIBC
+
 Void_t**
 public_iCALLOc(size_t n, size_t elem_size, Void_t** chunks)
 {
@@ -3758,8 +3767,6 @@ public_iCOMALLOc(size_t n, size_t sizes[], Void_t** chunks)
   (void)mutex_unlock(&ar_ptr->mutex);
   return m;
 }
-
-#ifndef _LIBC
 
 void
 public_cFREe(Void_t* m)
@@ -4964,6 +4971,7 @@ Void_t* cALLOc(n_elements, elem_size) size_t n_elements; size_t elem_size;
 }
 #endif /* 0 */
 
+#ifndef _LIBC
 /*
   ------------------------- independent_calloc -------------------------
 */
@@ -5127,6 +5135,7 @@ mstate av; size_t n_elements; size_t* sizes; int opts; Void_t* chunks[];
 
   return marray;
 }
+#endif /* _LIBC */
 
 
 /*
