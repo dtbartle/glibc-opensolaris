@@ -58,6 +58,8 @@ elf_get_dynamic_info (ElfW(Dyn) *dyn, ElfW(Addr) l_addr,
       ++dyn;
     }
 
+  if (info[DT_PLTGOT] != NULL)
+    info[DT_PLTGOT]->d_un.d_ptr += l_addr;
   if (info[DT_STRTAB] != NULL)
     info[DT_STRTAB]->d_un.d_ptr += l_addr;
   if (info[DT_SYMTAB] != NULL)
