@@ -30,6 +30,7 @@ DEFUN(__sigaction, (sig, act, oact),
 {
   struct hurd_sigstate *ss;
   struct sigaction a, old;
+  sigset_t pending;
 
   if (sig <= 0 || sig >= NSIG ||
       (act != NULL && act->sa_handler != SIG_DFL &&
@@ -45,22 +46,34 @@ DEFUN(__sigaction, (sig, act, oact),
     a = *act;
 
   ss = _hurd_self_sigstate ();
-  ss->critical_section = 1;
 
-  if (act != NULL && sig == SIGCHLD)
-    /* Inform the proc server whether or not it should send us SIGCHLD for
-       stopped children.  We do this with SS->lock held so that no SIGCHLD
-       can arrive in the middle and be of indeterminate status.  */
-    __USEPORT (PROC,
-	       __proc_mod_stopchild (port, !(a.sa_flags & SA_NOCLDSTOP)));
-
+  __spin_lock (&ss->lock);
   old = ss->actions[sig];
-
   if (act != NULL)
     ss->actions[sig] = a;
 
-  ss->critical_section = 0;
-  __mutex_unlock (&ss->lock);
+  if (act != NULL && sig == SIGCHLD)
+    {
+      ss->critical_section = 1;
+      __spin_unlock (&ss->lock);
+
+      /* Inform the proc server whether or not it should send us SIGCHLD for
+	 stopped children.  We do this in a critical section so that no
+	 SIGCHLD can arrive in the middle and be of indeterminate status.  */
+      __USEPORT (PROC,
+		 __proc_mod_stopchild (port, !(a.sa_flags & SA_NOCLDSTOP)));
+
+      __spin_lock (&ss->lock);
+      ss->critical_section = 0;
+      pending = ss->pending & ~ss->blocked;
+    }
+  else
+    pending = 0;
+
+  __spin_unlock (&ss->lock);
+
+  if (pending)
+    __msg_sig_post (_hurd_msgport, 0, __mach_task_self ());
 
   if (oact != NULL)
     *oact = old;
