@@ -23,6 +23,11 @@ Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 #include <string.h>
 
+/* Used to record that a particular select rpc returned.  I hope none of the
+   values from which it's derived has the high bit set...  */
+#define SELECT_RETURNED \
+    (((SELECT_READ | SELECT_WRITE | SELECT_URG) << 1) \
+     & ~(SELECT_READ | SELECT_WRITE | SELECT_URG))
 
 /* Check the first NFDS descriptors each in READFDS (if not NULL) for read
    readiness, in WRITEFDS (if not NULL) for write readiness, and in EXCEPTFDS
@@ -146,6 +151,7 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
 		  {
 		    /* Some port is ready.  TAG tells us which.  */
 		    types[tag] &= type;
+		    types[tag] |= SELECT_RETURNED;
 		    ++got;
 		  }
 		break;
@@ -222,6 +228,7 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
 		  /* This is a winning io_select_reply message!
 		     Record the readiness it indicates and send a reply.  */
 		  types[msg.success.tag] &= msg.success.result;
+		  types[msg.success.tag] |= SELECT_RETURNED;
 		  ++got;
 		}
 	    }
@@ -271,23 +278,24 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
 
   /* Set the user bitarrays.  */
   for (i = 0; i < nfds; ++i)
-    {
-      if (readfds != NULL)
-	if (types[i] & SELECT_READ)
-	  FD_SET (i, readfds);
-	else
-	  FD_CLR (i, readfds);
-      if (writefds != NULL)
-	if (types[i] & SELECT_WRITE)
-	  FD_SET (i, writefds);
-	else
-	  FD_CLR (i, writefds);
-      if (exceptfds != NULL)
-	if (types[i] & SELECT_URG)
-	  FD_SET (i, exceptfds);
-	else
-	  FD_CLR (i, exceptfds);
-    }
+    if (types[i] & SELECT_RETURNED)
+      {
+	if (readfds != NULL)
+	  if (types[i] & SELECT_READ)
+	    FD_SET (i, readfds);
+	  else
+	    FD_CLR (i, readfds);
+	if (writefds != NULL)
+	  if (types[i] & SELECT_WRITE)
+	    FD_SET (i, writefds);
+	  else
+	    FD_CLR (i, writefds);
+	if (exceptfds != NULL)
+	  if (types[i] & SELECT_URG)
+	    FD_SET (i, exceptfds);
+	  else
+	    FD_CLR (i, exceptfds);
+      }
 
   return got;
 }
