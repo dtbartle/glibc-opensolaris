@@ -372,6 +372,12 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 
   __libc_rwlock_rdlock (_nl_state_lock);
 
+  /* If DOMAINNAME is NULL, we are interested in the default domain.  If
+     CATEGORY is not LC_MESSAGES this might not make much sense but the
+     definition left this undefined.  */
+  if (domainname == NULL)
+    domainname = _nl_current_default_domain;
+
 #if defined HAVE_TSEARCH || defined _LIBC
   msgid_len = strlen (msgid1) + 1;
 
@@ -400,12 +406,6 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 
   /* See whether this is a SUID binary or not.  */
   DETERMINE_SECURE;
-
-  /* If DOMAINNAME is NULL, we are interested in the default domain.  If
-     CATEGORY is not LC_MESSAGES this might not make much sense but the
-     definition left this undefined.  */
-  if (domainname == NULL)
-    domainname = _nl_current_default_domain;
 
   /* First find matching binding.  */
   for (binding = _nl_domain_bindings; binding != NULL; binding = binding->next)
