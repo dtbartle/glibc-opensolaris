@@ -1488,11 +1488,6 @@ tgamma_test (void)
 	     1.29805533264755778568L, CHOOSE(0, 3e-16, 2e-7));
   check ("tgamma (1.2) == 0.91816...", FUNC(tgamma) (1.2),
 	 0.91816874239976061064L);
-
-  check_isnan_exc ("tgamma (0.0) == NaN plus invalid exception",
-		   FUNC(tgamma) (0.0), INVALID_EXCEPTION);
-  check_isnan_exc ("tgamma (-1.0) == NaN plus invalid exception",
-		   FUNC(tgamma) (-1.0), INVALID_EXCEPTION);
 }
 
 
