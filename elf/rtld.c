@@ -54,8 +54,6 @@ _dl_start (void *arg)
 {
   struct link_map rtld_map;
 
-  rtld_map.l_name = (char *) "<dynamic linker>";
-
   /* Figure out the run-time load address of the dynamic linker itself.  */
   rtld_map.l_addr = elf_machine_load_address ();
 
@@ -71,14 +69,9 @@ _dl_start (void *arg)
 
   /* Relocate ourselves so we can do normal function calls and
      data access using the global offset table.  */
-  {
-    Elf32_Addr resolve (const Elf32_Sym **ref)
-      {
-	assert ((*ref)->st_shndx != SHN_UNDEF);
-	return rtld_map.l_addr;
-      }
-    elf_dynamic_relocate (&rtld_map, 0, resolve);
-  }
+
+  ELF_DYNAMIC_RELOCATE (&rtld_map, 0, NULL);
+
 
   /* Now life is sane; we can call functions and access global data.
      Set up to use the operating system facilities, and find out from

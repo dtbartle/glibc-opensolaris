@@ -76,7 +76,7 @@ _dl_relocate_object (struct link_map *l, int lazy)
     else
       scope = _dl_loaded;
 
-    elf_dynamic_relocate (l, lazy, resolve);
+    ELF_DYNAMIC_RELOCATE (l, lazy, resolve);
 
     /* Restore list frobnication done above for DT_SYMBOLIC.  */
     l->l_next = real_next;
