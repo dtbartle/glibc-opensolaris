@@ -75,8 +75,7 @@ extern int __lll_mutex_unlock_wait (int *__futex) attribute_hidden;
 			      "2:"					      \
 			      : "=S" (ignore1), "=&D" (ignore2), "=m" (futex) \
 			      : "0" (1), "2" (futex)			      \
-			      : "memory"); })
-
+			      : "cx", "r11", "cc", "memory"); })
 
 #define lll_mutex_timedlock(futex, timeout) \
   ({ int result, ignore1, ignore2, ignore3;				      \
@@ -95,7 +94,7 @@ extern int __lll_mutex_unlock_wait (int *__futex) attribute_hidden;
 		       : "=a" (result), "=&D" (ignore1), "=&S" (ignore2),     \
 			 "=&d" (ignore3), "=m" (futex)			      \
 		       : "0" (1), "4" (futex), "m" (timeout)		      \
-		       : "memory", "cx", "cc", "r10");			      \
+		       : "memory", "cx", "cc", "r10", "r11");		      \
      result; })
 
 
@@ -113,7 +112,7 @@ extern int __lll_mutex_unlock_wait (int *__futex) attribute_hidden;
 			      "2:"					      \
 			      : "=m" (futex), "=&D" (ignore)		      \
 			      : "0" (futex)				      \
-			      : "memory"); })
+			      : "cx", "r11", "cc", "memory"); })
 
 
 #define lll_mutex_islocked(futex) \
@@ -166,7 +165,7 @@ extern int lll_unlock_wake_cb (int *__futex) attribute_hidden;
 			      "2:"					      \
 			      : "=S" (ignore1), "=&D" (ignore2), "=m" (futex) \
 			      : "0" (-1), "2" (futex)			      \
-			      : "memory"); })
+			      : "cx", "r11", "cc", "memory"); })
 
 
 # define lll_unlock(futex) \
@@ -183,7 +182,7 @@ extern int lll_unlock_wake_cb (int *__futex) attribute_hidden;
 			      "2:"					      \
 			      : "=m" (futex), "=&D" (ignore)		      \
 			      : "0" (futex)				      \
-			      : "memory"); })
+			      : "cx", "r11", "cc", "memory"); })
 #else
 /* Special versions of the macros for use in libc itself.  They avoid
    the lock prefix when the thread library is not used.
@@ -219,7 +218,7 @@ extern int lll_unlock_wake_cb (int *__futex) attribute_hidden;
 			      "2:"					      \
 			      : "=S" (ignore1), "=&D" (ignore2), "=m" (futex) \
 			      : "0" (-1), "2" (futex)			      \
-			      : "memory"); })
+			      : "cx", "r11", "cc", "memory"); })
 
 
 # define lll_unlock(futex) \
@@ -239,7 +238,7 @@ extern int lll_unlock_wake_cb (int *__futex) attribute_hidden;
 			      "2:"					      \
 			      : "=m" (futex), "=&D" (ignore)		      \
 			      : "0" (futex)				      \
-			      : "memory"); })
+			      : "cx", "r11", "cc", "memory"); })
 #endif
 
 
