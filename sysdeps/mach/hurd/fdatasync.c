@@ -16,17 +16,16 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
 #include <errno.h>
 #include <unistd.h>
 #include <hurd.h>
 #include <hurd/fd.h>
 
-/* Make all changes done to FD actually appear on disk.  */
+/* Make all changes done to FD's file data actually appear on disk.  */
 int
-DEFUN(fsync, (fd), int fd)
+fdatasync (int fd)
 {
-  error_t err = HURD_DPORT_USE (fd, __file_sync (port, 1, 0));
+  error_t err = HURD_DPORT_USE (fd, __file_sync (port, 1, 1));
   if (err)
     return __hurd_dfail (fd, err);
   return 0;
