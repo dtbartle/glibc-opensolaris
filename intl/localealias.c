@@ -82,9 +82,6 @@ void free ();
    because some ANSI C functions will require linking with this object
    file and the name space must not be polluted.  */
 # define strcasecmp __strcasecmp
-# ifndef strdup
-#  define strdup __strdup
-# endif
 
 # define mempcpy __mempcpy
 # define HAVE_MEMPCPY	1
