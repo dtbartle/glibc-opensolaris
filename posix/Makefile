@@ -122,41 +122,6 @@ ptestcases.h: PTESTS PTESTS2C.sed
 ifeq ($(with-cvs),yes)
 	test ! -d CVS || cvs $(CVSOPTS) commit -mRegenerated $@
 endif
-
-# Make the standalone glob/fnmatch package.
-
-glob.tar: glob/ChangeLog glob/COPYING.LIB \
-	  glob/Makefile.in glob/configure glob/configure.in glob/configure.bat\
-	  glob/SCOPTIONS glob/SMakefile glob/Makefile.ami \
-	  glob/fnmatch.h glob/glob.h glob/fnmatch.c glob/glob.c
-	tar cho$(verbose)f $@ $^
-glob/%.c: %.c
-	rm -f $@
-	ln -s ../$< $@
-glob/%.h: %.h
-	rm -f $@
-	ln -s ../$< $@
-
-glob/configure: glob/configure.in
-	cd glob && autoconf $(ACFLAGS)
-ifeq ($(with-cvs),yes)
-	test ! -d CVS || cvs $(CVSOPTS) commit -m'Regenerated: autoconf $(ACFLAGS) $<' $@
-endif
-
-glob/ChangeLog: ../ChangeLog
-	changelog-extract --regexp 'posix/(glob|fnmatch).*' < $< > $@.new
-	chmod a-w $@.new
-	mv -f $@.new $@
-ifeq ($(with-cvs),yes)
-	test ! -d CVS || cvs $(CVSOPTS) commit -mRegenerated $@
-endif
-
-%.Z: %
-	compress -c $< > $@-tmp
-	mv $@-tmp $@
-%.gz: %
-	gzip -9v -c $< > $@-tmp
-	mv $@-tmp $@
 
 # Run a test on the header files we use.
 # XXX Please note that for now we ignore the result of this test.
