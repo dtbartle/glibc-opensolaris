@@ -1333,8 +1333,8 @@ module	INTERNAL		MAC-UK//		MAC-UK		1
 #	from			to			module		cost
 alias	MS-MAC-CYRILLIC//	CP10007//
 alias	MSMACCYRILLIC//		CP10007//
-module	CP10007//		INTERNAL		MAC-CYRILLIC	1
-module	INTERNAL		CP10007//		MAC-CYRILLIC	1
+module	CP10007//		INTERNAL		CP10007		1
+module	INTERNAL		CP10007//		CP10007		1
 
 #	from			to			module		cost
 alias	ISO-IR-9-1//		NATS-DANO//
