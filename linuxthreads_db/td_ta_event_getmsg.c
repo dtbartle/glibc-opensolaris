@@ -71,8 +71,15 @@ td_ta_event_getmsg (const td_thragent_t *ta, td_event_msg_t *msg)
 
       for (i = 0; i < ta->pthread_threads_max && num > 0; ++i)
 	{
-	  if (handles[i].h_descr == NULL || handles[i].h_descr == addr)
-	    /* Not this entry.  */
+	  if (handles[i].h_descr == NULL)
+	    /* No entry here.  */
+	    continue;
+
+	  /* First count this active thread.  */
+	  --num;
+
+	  if (handles[i].h_descr == addr)
+	    /* We already handled this.  */
 	    continue;
 
 	  /* Read the event data for this thread.  */
