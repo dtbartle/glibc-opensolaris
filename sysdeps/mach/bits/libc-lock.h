@@ -76,21 +76,21 @@ typedef cthread_key_t __libc_key_t;
 
 
 /* Start a critical region with a cleanup function */
-#define __libc_cleanup_region_start(FCT, ARG)				    \
+#define __libc_cleanup_region_start(DOIT, FCT, ARG)			    \
 {									    \
-  typeof (***(FCT)) *__save_FCT = FCT;					    \
+  typeof (***(FCT)) *__save_FCT = (DOIT) ? (FCT) : 0;			    \
   typeof (ARG) __save_ARG = ARG;					    \
   /* close brace is in __libc_cleanup_region_end below. */
 
 /* End a critical region started with __libc_cleanup_region_start. */
 #define __libc_cleanup_region_end(DOIT)					    \
-  if (DOIT)								    \
+  if ((DOIT) && __save_FCT != 0)					    \
     (*__save_FCT)(__save_ARG);						    \
 }
 
 /* Sometimes we have to exit the block in the middle.  */
 #define __libc_cleanup_end(DOIT)					    \
-  if (DOIT)								    \
+  if ((DOIT) && __save_FCT != 0)					    \
     (*__save_FCT)(__save_ARG);						    \
 
 
