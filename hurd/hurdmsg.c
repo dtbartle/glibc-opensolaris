@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ Cambridge, MA 02139, USA.  */
 /* Snarfing and frobbing the init ports.  */
 
 kern_return_t
-_S_get_init_port (mach_port_t msgport, mach_port_t auth, int which,
+_S_msg_get_init_port (mach_port_t msgport, mach_port_t auth, int which,
 		  mach_port_t *result, mach_msg_type_name_t *result_type)
 {
   AUTHCHECK;
@@ -43,7 +43,7 @@ _S_get_init_port (mach_port_t msgport, mach_port_t auth, int which,
 }
 
 kern_return_t
-_S_set_init_port (mach_port_t msgport, mach_port_t auth,
+_S_msg_set_init_port (mach_port_t msgport, mach_port_t auth,
 		  int which, mach_port_t port)
 {
   error_t err;
@@ -58,7 +58,7 @@ _S_set_init_port (mach_port_t msgport, mach_port_t auth,
 }
 
 kern_return_t
-_S_get_init_ports (mach_port_t msgport, mach_port_t auth,
+_S_msg_get_init_ports (mach_port_t msgport, mach_port_t auth,
 		   mach_port_t **ports,
 		   mach_msg_type_name_t *ports_type,
 		   mach_msg_type_number_t *nports)
@@ -92,7 +92,7 @@ _S_get_init_ports (mach_port_t msgport, mach_port_t auth,
 }
 
 kern_return_t
-_S_set_init_ports (mach_port_t msgport, mach_port_t auth,
+_S_msg_set_init_ports (mach_port_t msgport, mach_port_t auth,
 		   mach_port_t *ports, mach_msg_type_number_t nports)
 {
   mach_msg_type_number_t i;
@@ -154,7 +154,7 @@ get_int (int which, int *value)
 }
 
 kern_return_t
-_S_get_init_int (mach_port_t msgport, mach_port_t auth,
+_S_msg_get_init_int (mach_port_t msgport, mach_port_t auth,
 		 int which, int *value)
 {
   AUTHCHECK;
@@ -163,7 +163,7 @@ _S_get_init_int (mach_port_t msgport, mach_port_t auth,
 }
 
 kern_return_t
-_S_get_init_ints (mach_port_t msgport, mach_port_t auth,
+_S_msg_get_init_ints (mach_port_t msgport, mach_port_t auth,
 		  int **values, mach_msg_type_number_t *nvalues)
 {
   error_t err;
@@ -239,7 +239,7 @@ set_int (int which, int value)
 }
 
 kern_return_t
-_S_set_init_int (mach_port_t msgport, mach_port_t auth,
+_S_msg_set_init_int (mach_port_t msgport, mach_port_t auth,
 		 int which, int value)
 {
   AUTHCHECK;
@@ -248,7 +248,7 @@ _S_set_init_int (mach_port_t msgport, mach_port_t auth,
 }
 
 kern_return_t
-_S_set_init_ints (mach_port_t msgport, mach_port_t auth,
+_S_msg_set_init_ints (mach_port_t msgport, mach_port_t auth,
 		  int *values, mach_msg_type_number_t nvalues)
 {
   error_t err;
@@ -272,7 +272,7 @@ _S_set_init_ints (mach_port_t msgport, mach_port_t auth,
 
 
 kern_return_t
-_S_get_fd (mach_port_t msgport, mach_port_t auth,
+_S_msg_get_fd (mach_port_t msgport, mach_port_t auth,
 	   int which, mach_port_t *result, mach_msg_type_name_t *result_type)
 {
   AUTHCHECK;
@@ -288,7 +288,7 @@ _S_get_fd (mach_port_t msgport, mach_port_t auth,
 }
 
 kern_return_t
-_S_set_fd (mach_port_t msgport, mach_port_t auth,
+_S_msg_set_fd (mach_port_t msgport, mach_port_t auth,
 	   int which, mach_port_t port)
 {
   AUTHCHECK;
@@ -300,7 +300,7 @@ _S_set_fd (mach_port_t msgport, mach_port_t auth,
 /* Snarfing and frobbing environment variables.  */
 
 kern_return_t
-_S_get_env_variable (mach_port_t msgport,
+_S_msg_get_env_variable (mach_port_t msgport,
 		     char *variable,
 		     char **data, mach_msg_type_number_t *datalen)
 {
@@ -317,7 +317,7 @@ _S_get_env_variable (mach_port_t msgport,
 
 
 kern_return_t
-_S_set_env_variable (mach_port_t msgport, mach_port_t auth,
+_S_msg_set_env_variable (mach_port_t msgport, mach_port_t auth,
 		     char *variable,
 		     char *value,
 		     int replace)
@@ -330,7 +330,7 @@ _S_set_env_variable (mach_port_t msgport, mach_port_t auth,
 }
 
 kern_return_t
-_S_get_environment (mach_port_t msgport,
+_S_msg_get_environment (mach_port_t msgport,
 		    char **data, mach_msg_type_number_t *datalen)
 {
   /* Pack the environment into an array with nulls separating elements.  */
@@ -362,7 +362,7 @@ _S_get_environment (mach_port_t msgport,
 }
 
 kern_return_t
-_S_set_environment (mach_port_t msgport, mach_port_t auth,
+_S_msg_set_environment (mach_port_t msgport, mach_port_t auth,
 		    char *data, mach_msg_type_number_t datalen)
 {
   int _hurd_split_args (char *, mach_msg_type_number_t, char **);
@@ -379,13 +379,54 @@ _S_set_environment (mach_port_t msgport, mach_port_t auth,
   __environ = envp;		/* XXX cooperate with loadenv et al */
   return 0;
 }
+
+/* Get and frob the exec flags.  */
 
+kern_return_t
+_S_msg_get_exec_flags (mach_port_t process, mach_port_t refport,
+		       int *flags)
+{
+  AUTHCHECK;
+
+  *flags = _hurd_exec_flags;
+  return 0;
+}
+
+kern_return_t
+_S_msg_set_all_exec_flags (mach_port_t process, mach_port_t refport,
+			   int flags)
+{
+  AUTHCHECK;
+
+  _hurd_exec_flags = flags;
+  return 0;
+}
+
+kern_return_t
+_S_msg_set_some_exec_flags (mach_port_t process, mach_port_t refport,
+			    int flags)
+{
+  AUTHCHECK;
+
+  _hurd_exec_flags |= flags;
+  return 0;
+}
+
+kern_return_t
+_S_msg_clear_some_exec_flags (mach_port_t process, mach_port_t refport,
+			      int flags)
+{
+  AUTHCHECK;
+
+  _hurd_exec_flags &= ~flags;
+  return 0;
+}
 
 
 /* XXX */
 
 kern_return_t
-_S_get_dtable (mach_port_t process,
+_S_msg_get_dtable (mach_port_t process,
 	       mach_port_t refport,
 	       portarray_t *dtable,
 	       mach_msg_type_name_t *dtablePoly,
@@ -393,32 +434,12 @@ _S_get_dtable (mach_port_t process,
 { return EOPNOTSUPP; }
 
 kern_return_t
-_S_set_dtable (mach_port_t process,
+_S_msg_set_dtable (mach_port_t process,
 	       mach_port_t refport,
 	       portarray_t dtable,
 	       mach_msg_type_number_t dtableCnt)
 { return EOPNOTSUPP; }
 
 kern_return_t
-_S_io_select_done (mach_port_t notify_port,
-		   mach_msg_type_name_t notify_port_type,
-		   int select_result,
-		   int id_tag)
-{ return EOPNOTSUPP; }
-
-kern_return_t
-_S_startup_dosync (mach_port_t process)
-{ return EOPNOTSUPP; }
-
-kern_return_t
-_S_dir_changed (mach_port_t notify_port,
-		dir_changed_type_t change,
-		string_t name)
-{ return EOPNOTSUPP; }
-
-kern_return_t
-_S_file_changed (mach_port_t notify_port,
-		 file_changed_type_t change,
-		 off_t start,
-		 off_t end)
+_S_msg_startup_dosync (mach_port_t process)
 { return EOPNOTSUPP; }
