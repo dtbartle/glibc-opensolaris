@@ -51,12 +51,19 @@ double atan(double x) {
 
 
   double cor,s1,ss1,s2,ss2,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,u,u2,u3,
-         v,vv,w,ww,y,yy,y1,y2,z,zz;
-  int i,ux,dx,p;
+         v,vv,w,ww,y,yy,z,zz;
+#if 0
+  double y1,y2;
+#endif
+  int i,ux,dx;
+#if 0
+  int p;
+#endif
   static const int pr[M]={6,8,10,32};
   number num;
-
+#if 0
   mp_no mpt1,mpx,mpy,mpy1,mpy2,mperr;
+#endif
 
   num.d = x;  ux = num.i[HIGH_HALF];  dx = num.i[LOW_HALF];
 
