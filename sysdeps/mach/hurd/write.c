@@ -22,10 +22,7 @@
 #include <hurd/fd.h>
 
 ssize_t
-__libc_write (fd, buf, nbytes)
-     int fd;
-     const void *buf;
-     size_t nbytes;
+__libc_write (int fd, const void *buf, size_t nbytes)
 {
   error_t err = HURD_FD_USE (fd, _hurd_fd_write (descriptor, buf, &nbytes));
   return err ? __hurd_dfail (fd, err) : nbytes;

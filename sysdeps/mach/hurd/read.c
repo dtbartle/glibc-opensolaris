@@ -23,10 +23,7 @@
 
 /* Read NBYTES into BUF from FD.  Return the number read or -1.  */
 ssize_t
-__libc_read (fd, buf, nbytes)
-     int fd;
-     void *buf;
-     size_t nbytes;
+__libc_read (int fd, void *buf, size_t nbytes)
 {
   error_t err = HURD_FD_USE (fd, _hurd_fd_read (descriptor, buf, &nbytes));
   return err ? __hurd_dfail (fd, err) : nbytes;
