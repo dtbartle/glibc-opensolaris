@@ -48,11 +48,12 @@ _hurd_fd_read (struct hurd_fd *fd, void *buf, size_t *nbytes)
 	       else
 		 {
 		   ss = _hurd_self_sigstate ();
+		   __spin_lock (&ss->lock);
 		   if (__sigismember (&ss->blocked, SIGTTIN) ||
 		       ss->actions[SIGTTIN].sa_handler == SIG_IGN)
 		     /* We are blocking or ignoring SIGTTIN.  Just fail.  */
 		     err = EIO;
-		   __mutex_unlock (&ss->lock);
+		   __spin_unlock (&ss->lock);
 		 }
 	       if (err == EBACKGROUND)
 		 {
@@ -63,10 +64,10 @@ _hurd_fd_read (struct hurd_fd *fd, void *buf, size_t *nbytes)
 		      SIGTTIN or resumed after being stopped.  Now this is
 		      still a "system call", so check to see if we should
 		      restart it.  */
-		   __mutex_lock (&ss->lock);
+		   __spin_lock (&ss->lock);
 		   if (!(ss->actions[SIGTTIN].sa_flags & SA_RESTART))
 		     err = EINTR;
-		   __mutex_unlock (&ss->lock);
+		   __spin_unlock (&ss->lock);
 		 }
 	     }
 	 } while (err == EBACKGROUND);
