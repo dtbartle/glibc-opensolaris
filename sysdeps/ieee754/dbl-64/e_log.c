@@ -47,7 +47,10 @@ void __mplog(mp_no *, mp_no *, int);
 double __ieee754_log(double x) {
 #define M 4
   static const int pr[M]={8,10,18,32};
-  int i,j,k,n,ux,dx,p;
+  int i,j,n,ux,dx,p;
+#if 0
+  int k;
+#endif
   double dbl_n,u,p0,q,r0,w,nln2a,luai,lubi,lvaj,lvbj,
          sij,ssij,ttij,A,B,B0,y,y1,y2,polI,polII,sa,sb,
          t1,t2,t3,t4,t5,t6,t7,t8,t,ra,rb,ww,
