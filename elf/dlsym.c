@@ -29,10 +29,10 @@ dlsym (void *handle, const char *name)
   struct link_map *map = handle;
   struct link_map *real_next;
   Elf32_Addr loadbase;
+  const Elf32_Sym *ref = NULL;
   int lose;
   void doit (void)
     {
-      const Elf32_Sym *ref = NULL;
       loadbase = _dl_lookup_symbol (name, &ref, map, map->l_name, 1);
     }
 
