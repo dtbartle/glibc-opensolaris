@@ -258,14 +258,13 @@ _nl_load_domain (domain_file)
   domain->conv = (iconv_t) -1;
 # endif
 #endif
+  domain->conv_tab = NULL;
   nullentry = _nl_find_msg (domain_file, "", 0);
   if (nullentry != NULL)
     {
-      const char *charsetstr;
-      const char *plural;
-      const char *nplurals;
-
 #if defined _LIBC || HAVE_ICONV
+      const char *charsetstr;
+
       charsetstr = strstr (nullentry, "charset=");
       if (charsetstr != NULL)
 	{
@@ -305,19 +304,18 @@ _nl_load_domain (domain_file)
 # endif
 	}
 #endif /* _LIBC || HAVE_ICONV */
+    }
 
-      /* Also look for a plural specification.  */
+  /* Also look for a plural specification.  */
+  if (nullentry != NULL)
+    {
+      const char *plural;
+      const char *nplurals;
+
       plural = strstr (nullentry, "plural=");
       nplurals = strstr (nullentry, "nplurals=");
       if (plural == NULL || nplurals == NULL)
-	{
-	  /* By default we are using the Germanic form: singular form only
-	     for `one', the plural form otherwise.  Yes, this is also what
-	     English is using since English is a Germanic language.  */
-	no_plural:
-	  domain->plural = &germanic_plural;
-	  domain->nplurals = 2;
-	}
+	goto no_plural;
       else
 	{
 	  /* First get the number.  */
@@ -341,6 +339,15 @@ _nl_load_domain (domain_file)
 	    goto no_plural;
 	  domain->plural = args.res;
 	}
+    }
+  else
+    {
+      /* By default we are using the Germanic form: singular form only
+         for `one', the plural form otherwise.  Yes, this is also what
+         English is using since English is a Germanic language.  */
+    no_plural:
+      domain->plural = &germanic_plural;
+      domain->nplurals = 2;
     }
 }
 
