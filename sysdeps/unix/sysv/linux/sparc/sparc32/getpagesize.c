@@ -1,4 +1,4 @@
-/* Copyright (C) 1997, 2002 Free Software Foundation, Inc.
+/* Copyright (C) 1997, 2002, 2003 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <sys/param.h>
 #include <ldsodefs.h>
+#include <sysdep.h>
 
 /* Return the system page size.  This value will either be 4k or 8k depending
    on whether or not we are running on Sparc v9 machine.  */
@@ -27,13 +28,14 @@
    via the AT_PAGESZ auxiliary argument.  If we are a static program, we
    use the getpagesize system call.  */
 
-extern size_t __syscall_getpagesize(void);
-
 int
 __getpagesize ()
 {
   if (GL(dl_pagesize) == 0)
-    GL(dl_pagesize) = __syscall_getpagesize();
+    {
+      INTERNAL_SYSCALL_DECL (err);
+      GL(dl_pagesize) = INTERNAL_SYSCALL (getpagesize, err, 0);
+    }
   return GL(dl_pagesize);
 }
 libc_hidden_def (__getpagesize)
