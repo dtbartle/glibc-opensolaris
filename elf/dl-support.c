@@ -53,6 +53,9 @@ struct r_search_path *_dl_search_paths;
 const char *_dl_profile;
 struct link_map *_dl_profile_map;
 
+/* Mask for hardware capabilities.  */
+unsigned long int _dl_important_hwcaps;
+
 
 static void non_dynamic_init (void) __attribute__ ((unused));
 
