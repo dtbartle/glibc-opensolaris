@@ -67,10 +67,12 @@ __setreuid (uid_t ruid, uid_t euid)
     }
 
 # ifdef __NR_setresuid
-  return INLINE_SYSCALL (setresuid, 3, ruid, euid, -1);
-# else
-  return INLINE_SYSCALL (setreuid, 2, ruid, euid);
+  itn result = INLINE_SYSCALL (setresuid, 3, ruid, euid, -1);
 # endif
+  if (result == -1 && errno == ENOSYS)
+    result = INLINE_SYSCALL (setreuid, 2, ruid, euid);
+
+  return result;
 #endif
 }
 weak_alias (__setreuid, setreuid)
