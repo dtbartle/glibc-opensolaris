@@ -620,6 +620,16 @@ add_alias (struct locarhandle *ah, const char *alias, bool replace,
   namehashent->locrec_offset = locrec_offset;
 }
 
+static int			/* qsort comparator used below */
+cmpcategorysize (const void *a, const void *b)
+{
+  if (*(const void **) a == NULL)
+    return 1;
+  if (*(const void **) b == NULL)
+    return -1;
+  return ((*(const struct locale_category_data **) a)->size
+	  - (*(const struct locale_category_data **) b)->size);
+}
 
 /* Check the content of the archive for duplicates.  Add the content
    of the files if necessary.  Returns the locrec_offset.  */
@@ -642,23 +652,52 @@ add_locale (struct locarhandle *ah,
   struct locrecent *locrecent;
   off64_t lastoffset;
   char *ptr;
+  struct locale_category_data *size_order[__LC_LAST];
+  const size_t pagesz = getpagesize ();
+  int small_mask;
 
   head = ah->addr;
   sumhashtab = (struct sumhashent *) ((char *) ah->addr
 				      + head->sumhash_offset);
 
   memset (file_offsets, 0, sizeof (file_offsets));
+
+  size_order[LC_ALL] = NULL;
+  for (cnt = 0; cnt < __LC_LAST; ++cnt)
+    if (cnt != LC_ALL)
+      size_order[cnt] = &data[cnt];
+
+  /* Sort the array in ascending order of data size.  */
+  qsort (size_order, __LC_LAST, sizeof size_order[0], cmpcategorysize);
+
+  small_mask = 0;
   data[LC_ALL].size = 0;
   for (cnt = 0; cnt < __LC_LAST; ++cnt)
-    if (cnt != LC_ALL && cnt != LC_CTYPE && cnt != LC_COLLATE)
-      data[LC_ALL].size += (data[cnt].size + 15) & -16;
+    if (size_order[cnt] != NULL)
+      {
+	const size_t rounded_size = (size_order[cnt]->size + 15) & -16;
+	if (data[LC_ALL].size + rounded_size > 2 * pagesz)
+	  {
+	    /* This category makes the small-categories block
+	       stop being small, so this is the end of the road.  */
+	    do
+	      size_order[cnt++] = NULL;
+	    while (cnt < __LC_LAST);
+	    break;
+	  }
+	data[LC_ALL].size += rounded_size;
+	small_mask |= 1 << (size_order[cnt] - data);
+      }
+
+  /* Copy the data for all the small categories into the LC_ALL
+     pseudo-category.  */
 
   data[LC_ALL].addr = alloca (data[LC_ALL].size);
   memset (data[LC_ALL].addr, 0, data[LC_ALL].size);
 
   ptr = data[LC_ALL].addr;
   for (cnt = 0; cnt < __LC_LAST; ++cnt)
-    if (cnt != LC_ALL && cnt != LC_CTYPE && cnt != LC_COLLATE)
+    if (small_mask & (1 << cnt))
       {
 	memcpy (ptr, data[cnt].addr, data[cnt].size);
 	ptr += (data[cnt].size + 15) & -16;
@@ -668,7 +707,7 @@ add_locale (struct locarhandle *ah,
   /* For each locale category data set determine whether the same data
      is already somewhere in the archive.  */
   for (cnt = 0; cnt < __LC_LAST; ++cnt)
-    if (cnt == LC_ALL || cnt == LC_CTYPE || cnt == LC_COLLATE)
+    if (small_mask == 0 ? cnt != LC_ALL : !(small_mask & (1 << cnt)))
       {
 	++num_new_offsets;
 
@@ -715,7 +754,7 @@ add_locale (struct locarhandle *ah,
 
   /* Add the locale data which is not yet in the archive.  */
   for (cnt = 0, lastoffset = 0; cnt < __LC_LAST; ++cnt)
-    if ((cnt == LC_ALL || cnt == LC_CTYPE || cnt == LC_COLLATE)
+    if ((small_mask == 0 ? cnt != LC_ALL : !(small_mask & (1 << cnt)))
 	&& file_offsets[cnt] == 0)
       {
 	/* The data for this section is not yet available in the
@@ -727,26 +766,22 @@ add_locale (struct locarhandle *ah,
 	if (lastpos == (off64_t) -1)
 	  error (EXIT_FAILURE, errno, _("cannot add to locale archive"));
 
-	/* If block of small locales would cross page boundary, align it
-	   unless it follows immediately LC_CTYPE or LC_COLLATE.  */
-	if (cnt == LC_ALL && lastoffset != lastpos)
+	/* If block of small categories would cross page boundary,
+	   align it unless it immediately follows a large category.  */
+	if (cnt == LC_ALL && lastoffset != lastpos
+	    && ((((lastpos & (pagesz - 1)) + data[cnt].size + pagesz - 1)
+		 & -pagesz)
+		> ((data[cnt].size + pagesz - 1) & -pagesz)))
 	  {
-	    size_t pagesz = getpagesize ();
+	    size_t sz = pagesz - (lastpos & (pagesz - 1));
+	    char *zeros = alloca (sz);
 
-	    if ((((lastpos & (pagesz - 1)) + data[cnt].size + pagesz - 1)
-		  & -pagesz)
-		> ((data[cnt].size + pagesz - 1) & -pagesz))
-	      {
-		size_t sz = pagesz - (lastpos & (pagesz - 1));
-		char *zeros = alloca (sz);
+	    memset (zeros, 0, sz);
+	    if (TEMP_FAILURE_RETRY (write (ah->fd, zeros, sz) != sz))
+	      error (EXIT_FAILURE, errno,
+		     _("cannot add to locale archive"));
 
-		memset (zeros, 0, sz);
-		if (TEMP_FAILURE_RETRY (write (ah->fd, zeros, sz) != sz))
-		  error (EXIT_FAILURE, errno,
-			 _("cannot add to locale archive"));
-
-		lastpos += sz;
-	      }
+	    lastpos += sz;
 	  }
 
 	/* Align all data to a 16 byte boundary.  */
@@ -791,7 +826,7 @@ add_locale (struct locarhandle *ah,
 
   lastoffset = file_offsets[LC_ALL];
   for (cnt = 0; cnt < __LC_LAST; ++cnt)
-    if (cnt != LC_ALL && cnt != LC_CTYPE && cnt != LC_COLLATE)
+    if (small_mask & (1 << cnt))
       {
 	file_offsets[cnt] = lastoffset;
 	lastoffset += (data[cnt].size + 15) & -16;
@@ -1400,7 +1435,12 @@ show_archive_content (int verbose)
 					 + names[cnt].locrec_offset);
 	  for (idx = 0; idx < __LC_LAST; ++idx)
 	    if (locrec->record[LC_ALL].offset != 0
-		? (idx == LC_ALL || idx == LC_CTYPE || idx == LC_COLLATE)
+		? (idx == LC_ALL
+		   || (locrec->record[idx].offset
+		       < locrec->record[LC_ALL].offset)
+		   || (locrec->record[idx].offset + locrec->record[idx].len
+		       > (locrec->record[LC_ALL].offset
+			  + locrec->record[LC_ALL].len)))
 		: idx != LC_ALL)
 	      {
 		struct dataent *data, dataent;
@@ -1427,11 +1467,14 @@ show_archive_content (int verbose)
 	      {
 		struct dataent *data, dataent;
 
-		if (idx != LC_CTYPE && idx != LC_COLLATE
-		    && locrec->record[LC_ALL].offset)
+		dataent.file_offset = locrec->record[idx].offset;
+		if (locrec->record[LC_ALL].offset != 0
+		    && dataent.file_offset >= locrec->record[LC_ALL].offset
+		    && (dataent.file_offset + locrec->record[idx].len
+			<= (locrec->record[LC_ALL].offset
+			    + locrec->record[LC_ALL].len)))
 		  dataent.file_offset = locrec->record[LC_ALL].offset;
-		else
-		  dataent.file_offset = locrec->record[idx].offset;
+
 		data = (struct dataent *) bsearch (&dataent, files, sumused,
 						   sizeof (struct dataent),
 						   dataentcmp);
