@@ -274,6 +274,11 @@ DEFUN(vfprintf, (s, format, args),
 	    }
 	}
 
+      /* If there was a precision specified, ignore the 0 flag and always
+	 pad with spaces.  */
+      if (prec != -1)
+	pad = ' ';
+
       /* Check for type modifiers.  */
       is_short = is_long = is_long_double = 0;
       while (*f == 'h' || *f == 'l' || *f == 'L' || *f == 'q')
