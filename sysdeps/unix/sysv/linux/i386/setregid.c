@@ -67,10 +67,12 @@ __setregid (gid_t rgid, gid_t egid)
     }
 
 # ifdef __NR_setresgid
-  return INLINE_SYSCALL (setresgid, 3, rgid, egid, -1);
-# else
-  return INLINE_SYSCALL (setregid, 2, rgid, egid);
+  int result = INLINE_SYSCALL (setresgid, 3, rgid, egid, -1);
 # endif
+  if (result == -1 && errno == ENOSYS)
+    result = INLINE_SYSCALL (setregid, 2, rgid, egid);
+
+  return result;
 #endif
 }
 weak_alias (__setregid, setregid)
