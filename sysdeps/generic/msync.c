@@ -25,7 +25,7 @@
    unpredictable before this is done.  */
 
 int
-msync (void *addr, size_t len, int flags)
+msync (__ptr_t addr, size_t len, int flags)
 {
   __set_errno (ENOSYS);
   return -1;
