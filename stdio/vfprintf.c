@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -164,11 +164,11 @@ DEFUN(vfprintf, (s, format, args),
 
       if (*f != '%')
 	{
-	  /* This isn't a format spec, so write
-	     everything out until the next one.  */
-	  CONST char *next = strchr(f + 1, '%');
-	  if (next == NULL)
-	    next = strchr(f + 1, '\0');
+	  /* This isn't a format spec, so write everything out until the
+	     next one.  */
+	  CONST char *next = f;
+	  while (*next != '\0' && isascii (*next) && *next != '%')
+	    ++next;
 	  if (next - f > 20)
 	    {
 	      size_t written = fwrite((PTR) f, 1, next - f, s);
