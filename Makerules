@@ -352,7 +352,8 @@ lib%.a: lib%.a(__.SYMDEF) ;
 libobjs: $(foreach o,$(object-suffixes),\
 		   $(common-objpfx)$(patsubst %,$(libtype$o),c)(\
 		   $(notdir $(objects:.o=$o))))
-lib-noranlib: libobjs $(addprefix $(objpfx),$(install-lib))
+lib-noranlib: libobjs
+others: $(addprefix $(objpfx),$(install-lib))
 
 ifdef objects
 
