@@ -419,7 +419,7 @@ internal_ucs4le_loop_single (const unsigned char **inptrp,
 	  if ((wc & encoding_mask[step - 2]) == 0)			      \
 	    break;							      \
 									      \
-	if (outptr + step >= outend)					      \
+	if (outptr + step > outend)					      \
 	  {								      \
 	    /* Too long.  */						      \
 	    result = __GCONV_FULL_OUTPUT;				      \
