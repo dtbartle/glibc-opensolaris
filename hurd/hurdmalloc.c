@@ -1,12 +1,6 @@
 #include <stdlib.h>
 #include "hurdmalloc.h"		/* XXX see that file */
 
-#include <gnu-stabs.h>
-text_set_element (_hurd_fork_prepare_hook, malloc_fork_prepare);
-text_set_element (_hurd_fork_parent_hook, malloc_fork_parent);
-text_set_element (_hurd_fork_child_hook, malloc_fork_child);
-text_set_element (_hurd_preinit_hook, malloc_init);
-
 #include <mach.h>
 #define vm_allocate __vm_allocate
 #define vm_page_size __vm_page_size
@@ -39,7 +33,10 @@ text_set_element (_hurd_preinit_hook, malloc_init);
 /*
  * HISTORY
  * $Log$
- * Revision 1.6  1994/12/07 19:41:26  roland
+ * Revision 1.7  1995/01/26 04:22:02  roland
+ * Don't include gnu-stabs.h.
+ *
+ * Revision 1.6  1994/12/07  19:41:26  roland
  * (vm_allocate, vm_page_size): #define these to __ names at top.
  *
  * Revision 1.5  1994/06/04  01:48:44  roland
@@ -390,3 +387,9 @@ static void malloc_fork_child()
 	spin_unlock(&malloc_free_list[i].lock);
     }
 }
+
+
+text_set_element (_hurd_fork_prepare_hook, malloc_fork_prepare);
+text_set_element (_hurd_fork_parent_hook, malloc_fork_parent);
+text_set_element (_hurd_fork_child_hook, malloc_fork_child);
+text_set_element (_hurd_preinit_hook, malloc_init);
