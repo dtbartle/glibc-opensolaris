@@ -161,10 +161,11 @@ _IO_file_finish (fp, dummy)
 }
 
 _IO_FILE *
-_IO_file_fopen (fp, filename, mode)
+_IO_file_fopen (fp, filename, mode, is32not64)
      _IO_FILE *fp;
      const char *filename;
      const char *mode;
+     int is32not64;
 {
   int oflags = 0, omode;
   int read_write, fdesc;
@@ -196,57 +197,13 @@ _IO_file_fopen (fp, filename, mode)
       omode = O_RDWR;
       read_write &= _IO_IS_APPENDING;
     }
-  fdesc = open (filename, omode|oflags, oprot);
-  if (fdesc < 0)
-    return NULL;
-  fp->_fileno = fdesc;
-  _IO_mask_flags (fp, read_write,_IO_NO_READS+_IO_NO_WRITES+_IO_IS_APPENDING);
-  if (read_write & _IO_IS_APPENDING)
-    if (_IO_SEEKOFF (fp, (_IO_off64_t)0, _IO_seek_end, _IOS_INPUT|_IOS_OUTPUT)
-	== _IO_pos_BAD && errno != ESPIPE)
-      return NULL;
-  _IO_link_in (fp);
-  return fp;
-}
-
 #ifdef _G_OPEN64
-_IO_FILE *
-_IO_file_fopen64 (fp, filename, mode)
-     _IO_FILE *fp;
-     const char *filename;
-     const char *mode;
-{
-  int oflags = 0, omode;
-  int read_write, fdesc;
-  int oprot = 0666;
-  if (_IO_file_is_open (fp))
-    return 0;
-  switch (*mode++)
-    {
-    case 'r':
-      omode = O_RDONLY;
-      read_write = _IO_NO_WRITES;
-      break;
-    case 'w':
-      omode = O_WRONLY;
-      oflags = O_CREAT|O_TRUNC;
-      read_write = _IO_NO_READS;
-      break;
-    case 'a':
-      omode = O_WRONLY;
-      oflags = O_CREAT|O_APPEND;
-      read_write = _IO_NO_READS|_IO_IS_APPENDING;
-      break;
-    default:
-      __set_errno (EINVAL);
-      return NULL;
-    }
-  if (mode[0] == '+' || (mode[0] == 'b' && mode[1] == '+'))
-    {
-      omode = O_RDWR;
-      read_write &= _IO_IS_APPENDING;
-    }
-  fdesc = _G_OPEN64 (filename, omode|oflags, oprot);
+  fdesc = (is32not64
+	   ? open (filename, omode|oflags, oprot)
+	   : _G_OPEN64 (filename, omode|oflags, oprot));
+#else
+  fdesc = open (filename, omode|oflags, oprot);
+#endif
   if (fdesc < 0)
     return NULL;
   fp->_fileno = fdesc;
@@ -258,7 +215,6 @@ _IO_file_fopen64 (fp, filename, mode)
   _IO_link_in (fp);
   return fp;
 }
-#endif
 
 _IO_FILE *
 _IO_file_attach (fp, fd)
