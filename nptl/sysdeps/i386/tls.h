@@ -253,16 +253,17 @@ union user_desc_init
 
 
 /* Same as THREAD_GETMEM, but the member offset can be non-constant.  */
-# define THREAD_GETMEM_NC(descr, member) \
-  ({ __typeof (descr->member) __value;					      \
+# define THREAD_GETMEM_NC(descr, member, idx) \
+  ({ __typeof (descr->member[0]) __value;				      \
      if (sizeof (__value) == 1)						      \
-       asm ("movb %%gs:(%2),%b0"					      \
+       asm ("movb %%gs:%P2(%3),%b0"					      \
 	    : "=q" (__value)						      \
-	    : "0" (0), "r" (offsetof (struct pthread, member)));	      \
+	    : "0" (0), "i" (offsetof (struct pthread, member[0])),	      \
+	      "r" (idx));						      \
      else if (sizeof (__value) == 4)					      \
-       asm ("movl %%gs:(%1),%0"						      \
+       asm ("movl %%gs:%P1(,%2,4),%0"					      \
 	    : "=r" (__value)						      \
-	    : "r" (offsetof (struct pthread, member)));			      \
+	    : "i" (offsetof (struct pthread, member[0])), "r" (idx));	      \
      else								      \
        {								      \
 	 if (sizeof (__value) != 8)					      \
@@ -270,10 +271,10 @@ union user_desc_init
 	      4 or 8.  */						      \
 	   abort ();							      \
 									      \
-	 asm ("movl %%gs:(%1),%%eax\n\t"				      \
-	      "movl %%gs:4(%1),%%edx"					      \
+	 asm ("movl %%gs:%P1(,%2,8),%%eax\n\t"				      \
+	      "movl %%gs:4+%P1(,%2,8),%%edx"				      \
 	      : "=&A" (__value)						      \
-	      : "r" (offsetof (struct pthread, member)));		      \
+	      : "i" (offsetof (struct pthread, member[0])), "r" (idx));	      \
        }								      \
      __value; })
 
@@ -304,26 +305,29 @@ union user_desc_init
 
 
 /* Set member of the thread descriptor directly.  */
-# define THREAD_SETMEM_NC(descr, member, value) \
-  ({ if (sizeof (descr->member) == 1)					      \
-       asm volatile ("movb %0,%%gs:(%1)" :				      \
+# define THREAD_SETMEM_NC(descr, member, idx, value) \
+  ({ if (sizeof (descr->member[0]) == 1)				      \
+       asm volatile ("movb %0,%%gs:%P1(%2)" :				      \
 		     : "iq" (value),					      \
-		       "r" (offsetof (struct pthread, member)));	      \
-     else if (sizeof (descr->member) == 4)				      \
-       asm volatile ("movl %0,%%gs:(%1)" :				      \
+		       "i" (offsetof (struct pthread, member)),		      \
+		       "r" (idx));					      \
+     else if (sizeof (descr->member[0]) == 4)				      \
+       asm volatile ("movl %0,%%gs:%P1(,%2,4)" :			      \
 		     : "ir" (value),					      \
-		       "r" (offsetof (struct pthread, member)));	      \
+		       "i" (offsetof (struct pthread, member)),		      \
+		       "r" (idx));					      \
      else								      \
        {								      \
-	 if (sizeof (descr->member) != 8)				      \
+	 if (sizeof (descr->member[0]) != 8)				      \
 	   /* There should not be any value with a size other than 1,	      \
 	      4 or 8.  */						      \
 	   abort ();							      \
 									      \
-	 asm volatile ("movl %%eax,%%gs:(%1)\n\t"			      \
-		       "movl %%edx,%%gs:4(%1)" :			      \
+	 asm volatile ("movl %%eax,%%gs:%P1(,%2,8)\n\t"			      \
+		       "movl %%edx,%%gs:4+%P1(,%2,8)" :			      \
 		       : "A" (value),					      \
-			 "r" (offsetof (struct pthread, member)));	      \
+			 "i" (offsetof (struct pthread, member)),	      \
+			 "r" (idx));					      \
        }})
 
 
