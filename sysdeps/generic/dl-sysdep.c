@@ -1,5 +1,5 @@
 /* Operating system support for run-time dynamic linker.  Generic Unix version.
-   Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -231,7 +231,7 @@ _dl_show_auxv (void)
 			    "\n", NULL);
 	break;
       case AT_PLATFORM:
-	_dl_sysdep_message ("AT_PLATFORM: ", av->a_un.a_ptr, NULL);
+	_dl_sysdep_message ("AT_PLATFORM: ", av->a_un.a_ptr, "\n", NULL);
 	break;
       case AT_HWCAP:
 	_dl_sysdep_message ("AT_HWCAP:    ",
