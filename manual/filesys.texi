@@ -1228,6 +1228,8 @@ One other difference is that the buffer @var{resolved} will contain the
 part of the path component which does not exist or is not readable if
 the function returns @code{NULL} and @code{errno} is set to
 @code{EACCES} or @code{ENOENT}.
+
+This function is declared in @file{stdlib.h}.
 @end deftypefun
 
 The advantage of using this function is that it is more widely
