@@ -512,8 +512,8 @@ Code using this function often looks similar to this:
   if (! mbsinit (&state))
     @{
       /* @r{Emit code to return to initial state.}  */
-      const char empty[] = "";
-      const char **srcp = &empty;
+      const wchar_t empty[] = L"";
+      const wchar_t *srcp = empty;
       wcsrtombs (outbuf, &srcp, outbuflen, &state);
     @}
   ...
