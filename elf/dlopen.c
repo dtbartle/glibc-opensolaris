@@ -21,15 +21,31 @@
 #include <link.h>
 #include <dlfcn.h>
 
+struct dlopen_args
+{
+  /* The arguments for dlopen_doit.  */
+  const char *file;
+  int mode;
+  /* The return value of dlopen_doit.  */
+  struct link_map *new;
+};
+
+
+static void
+dlopen_doit (void *a)
+{
+  struct dlopen_args *args = (struct dlopen_args *) a;
+
+  args->new = _dl_open (args->file ?: "", args->mode);
+}
+
+
 void *
 dlopen (const char *file, int mode)
 {
-  struct link_map *new;
+  struct dlopen_args args;
+  args.file = file;
+  args.mode = mode;
 
-  void doit (void)
-    {
-      new = _dl_open (file ?: "", mode);
-    }
-
-  return _dlerror_run (doit) ? NULL : new;
+  return _dlerror_run (dlopen_doit, &args) ? NULL : args.new;
 }
