@@ -34,7 +34,7 @@ static int no_new_getrlimit;
 #endif
 
 int
-getrlimit (resource, rlimits)
+__getrlimit (resource, rlimits)
      enum __rlimit_resource resource;
      struct rlimit *rlimits;
 {
@@ -61,3 +61,4 @@ getrlimit (resource, rlimits)
   return INLINE_SYSCALL (getrlimit, 2, resource, rlimits);
 #endif
 }
+weak_alias (__getrlimit, getrlimit)
