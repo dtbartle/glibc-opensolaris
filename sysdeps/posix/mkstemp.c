@@ -21,6 +21,7 @@ Cambridge, MA 02139, USA.  */
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 /* Generate a unique temporary file name from TEMPLATE.
    The last six characters of TEMPLATE must be "XXXXXX";
@@ -38,13 +39,13 @@ DEFUN(mkstemp, (template), char *template)
   if (len < 6 || strcmp (&template[len - 6], "XXXXXX"))
     {
       errno = EINVAL;
-      return NULL;
+      return -1;
     }
 
   if (sprintf (&template[len - 5], "%.5u",
 	       (unsigned int) getpid () % 100000) != 5)
     /* Inconceivable lossage.  */
-    return NULL;
+    return -1;
 
   for (i = 0; i < sizeof (letters); ++i)
     {
