@@ -44,7 +44,7 @@ __setregid (gid_t rgid, gid_t egid)
 #if __ASSUME_32BITUIDS > 0
   return INLINE_SYSCALL (setresgid32, 3, rgid, egid, -1);
 #else
-# ifdef __NR_setregid32
+# ifdef __NR_setresgid32
   if (__libc_missing_32bit_uids <= 0)
     {
       int result;
@@ -66,7 +66,11 @@ __setregid (gid_t rgid, gid_t egid)
       return -1;
     }
 
+# ifdef __NR_setresgid
   return INLINE_SYSCALL (setresgid, 3, rgid, egid, -1);
+# else
+  return INLINE_SYSCALL (setregid, 2, rgid, egid);
+# endif
 #endif
 }
 weak_alias (__setregid, setregid)
