@@ -20,8 +20,10 @@
 #ifndef _DBG_LOG_H
 #define _DBG_LOG_H	1
 
-extern int debug_flag;
+extern int debug_level;
 
-extern void dbg_log (const char *, ...);
+extern void dbg_log (const char *str, ...);
+
+extern int set_logfile (const char *logfile);
 
 #endif
