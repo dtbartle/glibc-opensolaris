@@ -1,5 +1,5 @@
 /* Definitions of macros to access `dev_t' values.
-   Copyright (C) 1996, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1996, 1997, 1999 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@
    Boston, MA 02111-1307, USA.  */
 
 #ifndef _SYS_SYSMACROS_H
-
 #define _SYS_SYSMACROS_H	1
 
 /* For compatibility we provide alternative names.
@@ -35,4 +34,4 @@
 # define makedev(major, minor) { (((major) << 8) | (minor)), 0 }
 #endif
 
-#endif /* _SYS_SYSMACROS_H */
+#endif /* sys/sysmacros.h */
