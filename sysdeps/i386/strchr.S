@@ -65,7 +65,7 @@ ENTRY (strchr)
 	jz L(2)			/* yes => return NULL */
 	incl %eax		/* increment pointer */
 
-	testb $3, %eax		/* correctly aligned ? */
+	testb $3, %al		/* correctly aligned ? */
 	jz L(11)		/* yes => begin loop */
 	movb (%eax), %cl	/* load byte in question (we need it twice) */
 	cmpb %cl, %dl		/* compare byte */
@@ -74,7 +74,7 @@ ENTRY (strchr)
 	jz L(2)			/* yes => return NULL */
 	incl %eax		/* increment pointer */
 
-	testb $3, %eax		/* correctly aligned ? */
+	testb $3, %al		/* correctly aligned ? */
 	jz L(11)		/* yes => begin loop */
 	movb (%eax), %cl	/* load byte in question (we need it twice) */
 	cmpb %cl, %dl		/* compare byte */
