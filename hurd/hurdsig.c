@@ -121,7 +121,7 @@ _hurd_thread_sigstate (thread_t thread)
 #include <sys/wait.h>
 #include "thread_state.h"
 #include <hurd/msg_server.h>
-#include <hurd/msg_reply.h>	/* For __sig_post_reply.  */
+#include <hurd/msg_reply.h>	/* For __msg_sig_post_reply.  */
 #include <assert.h>
 #include <hurd/interrupt.h>
 
@@ -189,7 +189,7 @@ post_reply (mach_port_t *reply_port, mach_msg_type_name_t reply_port_type,
 {
   if (reply_port == NULL || *reply_port == MACH_PORT_NULL)
     return;
-  (untraced ? __sig_post_untraced_reply : __sig_post_reply)
+  (untraced ? __msg_sig_post_untraced_reply : __msg_sig_post_reply)
     (*reply_port, reply_port_type, result);
   *reply_port = MACH_PORT_NULL;
 }
