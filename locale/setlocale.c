@@ -55,7 +55,7 @@ struct locale_data * *const _nl_current[] =
 
 /* Array indexed by category of pointers to _nl_C_CATEGORY slots.
    Elements are zero for categories whose data is never used.  */
-struct locale_data *const _nl_C[] =
+struct locale_data *const _nl_C[] attribute_hidden =
   {
 #define DEFINE_CATEGORY(category, category_name, items, a) \
     [category] = &_nl_C_##category,
@@ -429,8 +429,6 @@ setlocale (int category, const char *locale)
       return (char *) newname[0];
     }
 }
-
-extern struct loaded_l10nfile *_nl_locale_file_list[];
 
 static void __attribute__ ((unused))
 free_mem (void)
