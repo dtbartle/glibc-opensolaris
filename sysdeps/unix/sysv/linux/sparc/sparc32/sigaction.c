@@ -24,7 +24,7 @@
 
 /* The variable is shared between all wrappers around signal handling
    functions which have RT equivalents.  */
-int __libc_have_rt_sigs = 0;
+int __libc_have_rt_sigs = -1;
 
 /* Commented out while I figure out what the fuck goes on */
 long ____sig_table [NSIG];
