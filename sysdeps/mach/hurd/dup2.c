@@ -68,11 +68,11 @@ DEFUN(__dup2, (fd, fd2), int fd AND int fd2)
 	  /* Get a hold of the destination descriptor.  */
 	  struct hurd_fd *d2;
 
-	  if (fd2 > _hurd_dtablesize)
+	  if (fd2 >= _hurd_dtablesize)
 	    {
-	    /* The table is not large enough to hold the destination
-	       descriptor.  Enlarge it as necessary to allocate this
-	       descriptor.  */
+	      /* The table is not large enough to hold the destination
+		 descriptor.  Enlarge it as necessary to allocate this
+		 descriptor.  */
 	      __mutex_unlock (&_hurd_dtable_lock);
 	      /* We still hold FD1's lock, but this is safe because
 		 _hurd_alloc_fd will only examine the cells starting
