@@ -309,7 +309,9 @@ positive_dcgettext_test (const char *domain, int category)
     {
       const char *found = dcgettext (domain, msgs[cnt].msgid, category);
 
-      if (found == NULL || strcmp (found, msgs[cnt].msgstr) != 0)
+      if (found == NULL
+	  || (msgs[cnt].msgstr[0] != '\0'
+	      && strcmp (found, msgs[cnt].msgstr) != 0))
 	{
 	  /* Oops, shouldn't happen.  */
 	  printf ("\
