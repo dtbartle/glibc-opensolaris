@@ -830,7 +830,7 @@ print_search_path (struct r_search_path_elem **list,
     _dl_debug_message ("\t\t(", what, " from file ",
 			name[0] ? name : _dl_argv[0], ")\n", NULL);
   else
-    _dl_debu_message ("\t\t(", what, ")\n", NULL);
+    _dl_debug_message ("\t\t(", what, ")\n", NULL);
 }
 
 /* Try to open NAME in one of the directories in DIRS.
