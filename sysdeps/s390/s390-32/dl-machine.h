@@ -364,12 +364,8 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
 		 const Elf32_Sym *sym, const struct r_found_version *version,
 		  Elf32_Addr *const reloc_addr)
 {
-  if (ELF32_R_TYPE (reloc->r_info) == R_390_RELATIVE) {
-#ifndef RTLD_BOOTSTRAP
-    if (map != &_dl_rtld_map) /* Already done in rtld itself.  */
-#endif
-      *reloc_addr = map->l_addr + reloc->r_addend;
-  }
+  if (ELF32_R_TYPE (reloc->r_info) == R_390_RELATIVE)
+    *reloc_addr = map->l_addr + reloc->r_addend;
   else if (ELF32_R_TYPE (reloc->r_info) != R_390_NONE)
     {
       const Elf32_Sym *const refsym = sym;
@@ -437,6 +433,12 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
     }
 }
 
+static inline void
+elf_machine_rel_relative (Elf32_Addr l_addr, const Elf32_Rel *reloc,
+			  Elf32_Addr *const reloc_addr)
+{
+  *reloc_addr = l_addr + reloc->r_addend;
+}
 
 static inline void
 elf_machine_lazy_rel (struct link_map *map,
