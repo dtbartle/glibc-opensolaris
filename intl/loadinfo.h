@@ -32,6 +32,12 @@
 # define internal_function
 #endif
 
+/* Tell the compiler when a conditional or integer expression is
+   almost always true or almost always false.  */
+#ifndef HAVE_BUILTIN_EXPECT
+# define __builtin_expect(expr, val) (expr)
+#endif
+
 /* Encoding of locale name parts.  */
 #define CEN_REVISION		1
 #define CEN_SPONSOR		2
