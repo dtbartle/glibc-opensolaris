@@ -35,7 +35,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU libc 2.3.1\n"
 "POT-Creation-Date: 2002-10-02 17:22-0700\n"
-"PO-Revision-Date: 2002-10-13 17:52+0200\n"
+"PO-Revision-Date: 2002-10-13 21:17+0200\n"
 "Last-Translator: Karl Eichwalder <ke@suse.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4749,7 +4749,7 @@ msgstr "Replik :\n"
 #: nis/nis_print.c:175
 #, c-format
 msgid "\tName       : %s\n"
-msgstr "\tName         : %s\n"
+msgstr "\tName       : %s\n"
 
 #: nis/nis_print.c:176
 msgid "\tPublic Key : "
@@ -4794,11 +4794,11 @@ msgstr "Standard-Zugriffsrechte :\n"
 #: nis/nis_print.c:238
 #, c-format
 msgid "\tType         : %s\n"
-msgstr "\tTyp            : %s\n"
+msgstr "\tTyp          : %s\n"
 
 #: nis/nis_print.c:239
 msgid "\tAccess rights: "
-msgstr "\tZugriffsrechte : "
+msgstr "\tZugriffsrechte: "
 
 #: nis/nis_print.c:252
 msgid "Group Flags :"
@@ -4810,7 +4810,7 @@ msgid ""
 "Group Members :\n"
 msgstr ""
 "\n"
-"Gruppen Mitglieder :\n"
+"Gruppen-Mitglieder:\n"
 
 #: nis/nis_print.c:266
 #, c-format
@@ -4826,7 +4826,7 @@ msgstr "Anzahl der Spalten  : %d\n"
 #: nis/nis_print.c:268
 #, c-format
 msgid "Character Separator : %c\n"
-msgstr "Trennzeichen : %c\n"
+msgstr "Trennzeichen        : %c\n"
 
 #: nis/nis_print.c:269
 #, c-format
@@ -4844,7 +4844,7 @@ msgstr "\t[%d]\tName          : %s\n"
 
 #: nis/nis_print.c:275
 msgid "\t\tAttributes    : "
-msgstr "\t\tAttribute      : "
+msgstr "\t\tAttribute     : "
 
 #: nis/nis_print.c:277
 msgid "\t\tAccess Rights : "
@@ -4908,7 +4908,7 @@ msgid ""
 "Time to Live  : "
 msgstr ""
 "\n"
-"Time to Live        : "
+"Time to Live  : "
 
 #: nis/nis_print.c:329
 #, c-format
@@ -5015,7 +5015,7 @@ msgstr "netname2user: (NIS+ Lookup): %s\n"
 #: nis/nss_nisplus/nisplus-publickey.c:304
 #, c-format
 msgid "netname2user: DES entry for %s in directory %s not unique"
-msgstr "netname2user: DES Eintrag für »%s« im Verzeichnis »%s« ist nicht eindeutig"
+msgstr "netname2user: DES-Eintrag für »%s« im Verzeichnis »%s« ist nicht eindeutig"
 
 # XXX gibt es eine bessere Übersetzung?
 #: nis/nss_nisplus/nisplus-publickey.c:322
@@ -5132,20 +5132,20 @@ msgstr "Fehler beim Allozieren des Eintrages in die Hash-Tabelle"
 #: nscd/cache.c:150 nscd/connections.c:185
 #, c-format
 msgid "cannot stat() file `%s': %s"
-msgstr "Kann den Status (stat()) der Datei »%s« nicht lesen: %s"
+msgstr "Der Status (stat()) der Datei »%s« nicht gelesen werden: %s"
 
 #: nscd/connections.c:146
 msgid "cannot read configuration file; this is fatal"
-msgstr "Kann die Konfigurationsdatei nicht lesen; das ist fatal"
+msgstr "Die Konfigurationsdatei nicht gelesen werden; das ist fatal"
 
 #: nscd/connections.c:153
 msgid "Cannot run nscd in secure mode as unprivileged user"
-msgstr ""
+msgstr "Der nscd kann nicht im sicheren Modus als unprivilegierter Benutzer laufen"
 
 #: nscd/connections.c:199
 #, c-format
 msgid "cannot open socket: %s"
-msgstr "Kann den Socket nicht öffnen: %s"
+msgstr "Der Socket kann nicht geöffnet werden: %s"
 
 # ;-)
 #: nscd/connections.c:217
@@ -5161,12 +5161,12 @@ msgstr "handle_request: Anforderung empfangen (Version = %d)"
 #: nscd/connections.c:265
 #, c-format
 msgid "cannot handle old request version %d; current version is %d"
-msgstr "Kann die alte Version %d nicht verarbeiten; aktuelle Version ist %d"
+msgstr "Nicht möglich die alte Version %d zu verarbeiten; aktuelle Version ist %d"
 
 #: nscd/connections.c:303 nscd/connections.c:325
 #, c-format
 msgid "cannot write result: %s"
-msgstr "Kann das Ergebnis nicht schreiben: %s"
+msgstr "Das Ergebnis kann nicht geschrieben werden: %s"
 
 #: nscd/connections.c:404 nscd/connections.c:498
 #, c-format
@@ -5198,17 +5198,15 @@ msgstr "Kurzer Read beim Lesen des Anforderungsschlüssels: %s"
 #: nscd/connections.c:623 nscd/connections.c:629 nscd/connections.c:636
 #, c-format
 msgid "Failed to run nscd as user '%s'"
-msgstr ""
+msgstr "Fehler beim Starten des nscd als Benutzer »%s«"
 
 #: nscd/connections.c:611
-#, fuzzy
 msgid "getgrouplist failed"
-msgstr "Fehler beim Ermitteln des Link-Status mit »lstat«"
+msgstr "Fehler bei getgrouplist"
 
 #: nscd/connections.c:624
-#, fuzzy
 msgid "setgroups failed"
-msgstr "Fehler beim Ermitteln des Datei-Status mit »fstat«"
+msgstr "Fehler bei setgroups"
 
 #: nscd/grpcache.c:102 nscd/hstcache.c:110 nscd/pwdcache.c:108
 msgid "while allocating key copy"
@@ -5226,23 +5224,23 @@ msgstr "Kurzer Write in »%s«: %s"
 #: nscd/grpcache.c:217
 #, c-format
 msgid "Haven't found \"%s\" in group cache!"
-msgstr "Habe »%s« nicht im Group-Cache gefunden!"
+msgstr "»%s« ist im Group-Cache nicht vorhanden!"
 
 #: nscd/grpcache.c:292
 #, c-format
 msgid "Invalid numeric gid \"%s\"!"
-msgstr ""
+msgstr "Ungültige numerische gid »%s«!"
 
 #: nscd/grpcache.c:299
 #, c-format
 msgid "Haven't found \"%d\" in group cache!"
-msgstr "Habe »%d« nicht im Group-Cache gefunden!"
+msgstr "»%d« ist im Group-Cache nicht vorhanden!"
 
 #: nscd/hstcache.c:303 nscd/hstcache.c:378 nscd/hstcache.c:456
 #: nscd/hstcache.c:533
 #, c-format
 msgid "Haven't found \"%s\" in hosts cache!"
-msgstr "Habe »%s« nicht im Host-Cache gefunden!"
+msgstr "»%s« ist im Host-Cache nicht vorhanden!"
 
 #: nscd/nscd.c:80
 msgid "Read configuration data from NAME"
@@ -5250,7 +5248,7 @@ msgstr "Die Konfiguration aus NAME lesen"
 
 #: nscd/nscd.c:82
 msgid "Do not fork and display messages on the current tty"
-msgstr "Führe kein »fork()« aus und zeige Nachrichten auf dem aktuellen tty an"
+msgstr "kein »fork()« ausführen und Nachrichten auf dem aktuellen tty anzeigen"
 
 #: nscd/nscd.c:83
 msgid "NUMBER"
@@ -5258,11 +5256,11 @@ msgstr "NUMMER"
 
 #: nscd/nscd.c:83
 msgid "Start NUMBER threads"
-msgstr "Starte die Anzahl NUMBER Threads"
+msgstr "NUMBER Threads starten"
 
 #: nscd/nscd.c:84
 msgid "Shut the server down"
-msgstr "Stoppt den Server"
+msgstr "Den Server stoppen"
 
 #: nscd/nscd.c:85
 msgid "Print current configuration statistic"
@@ -5274,7 +5272,7 @@ msgstr "TABELLE"
 
 #: nscd/nscd.c:87
 msgid "Invalidate the specified cache"
-msgstr "Der angegebene Cache wird verworfen"
+msgstr "Den angegebenen Cache verwerfen"
 
 #: nscd/nscd.c:88
 msgid "TABLE,yes"
@@ -5309,7 +5307,7 @@ msgstr "Es ist nicht möglich, die Protokolldatei »%s« zu erstellen"
 
 #: nscd/nscd_conf.c:182
 msgid "Must specify user name for server-user option"
-msgstr ""
+msgstr "Der Name des Benutzers für die Option Server-User muss angegeben werden"
 
 #: nscd/nscd_conf.c:187
 #, c-format
@@ -5319,7 +5317,7 @@ msgstr "Unbekannte Option: %s %s %s"
 #: nscd/nscd_stat.c:87
 #, c-format
 msgid "cannot write statistics: %s"
-msgstr "Kann die Statistik nicht schreiben: %s"
+msgstr "Die Statistik kann nicht geschrieben werden: %s"
 
 #: nscd/nscd_stat.c:105
 msgid "nscd not running!\n"
@@ -5327,11 +5325,11 @@ msgstr "nscd läuft nicht!\n"
 
 #: nscd/nscd_stat.c:116
 msgid "write incomplete"
-msgstr "Der 'Write' wurde nur unvollständig ausgeführt"
+msgstr "'Write' wurde nur unvollständig ausgeführt"
 
 #: nscd/nscd_stat.c:128
 msgid "cannot read statistics data"
-msgstr "Kann keine Statistikdaten lesen"
+msgstr "Statistikdaten können nicht gelesen werden"
 
 #: nscd/nscd_stat.c:131
 #, c-format
