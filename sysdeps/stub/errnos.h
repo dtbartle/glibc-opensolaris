@@ -18,14 +18,18 @@ Cambridge, MA 02139, USA.  */
 
 /* This file defines the `errno' constants.  */
 
-#ifdef	_ERRNO_H
-#define	ENOSYS	1
-#endif
-
 #if !defined(__Emath_defined) && (defined(_ERRNO_H) || defined(__need_Emath))
 #undef	__need_Emath
 #define	__Emath_defined	1
 
-#define	EDOM	2
-#define	ERANGE	3
+#define	EDOM	1
+#define	ERANGE	2
 #endif
+
+#ifdef	_ERRNO_H
+#define	ENOSYS	3
+#define	EINVAL	4
+#define	ESPIPE	5
+#define	EBADF	6
+#endif
+
