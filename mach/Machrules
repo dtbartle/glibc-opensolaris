@@ -213,6 +213,7 @@ extra-libs += $(interface-library)
 # produce a bogus libmachuser.so.
 +preinit = 
 +postinit = 
++interp =
 interface.so = $(interface-library:lib%=%.so)
 LDFLAGS-$(interface.so) = -nostdlib -nostartfiles
 
