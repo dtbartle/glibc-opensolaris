@@ -1,4 +1,4 @@
-/* Copyright (C) 19911993 Free Software Foundation, Inc.
+/* Copyright (C) 1993 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -22,6 +22,8 @@ Cambridge, MA 02139, USA.  */
 #define SYS_syscall	0
 #endif
 
+/* This works if the kernel does an "indirect system call" for system call 0,
+   taking the first argument word off the stack as the system call number.  */
 
 SYSCALL (syscall, 1)
 	ret
