@@ -2,6 +2,7 @@ dl-brk.S
 fe_nomask.c
 ipc_priv.h
 kernel_termios.h
+ldd-rewrite.sed
 oldgetrlimit64.c
 sys/procfs.h
 sys/ptrace.h
