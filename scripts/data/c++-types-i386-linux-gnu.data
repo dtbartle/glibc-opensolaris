@@ -41,7 +41,6 @@ size_t:j
 socklen_t:j
 ssize_t:i
 suseconds_t:l
-timer_t:i
 time_t:l
 u_char:h
 uid_t:j
