@@ -24,32 +24,93 @@ Cambridge, MA 02139, USA.  */
 #include <limits.h>
 #include <math.h>
 #include <stdarg.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <printf.h>
 #include <assert.h>
 #include "_itoa.h"
 
+/* This function from the GNU C library is also used in libio.
+   To compile for use in libio, compile with -DUSE_IN_LIBIO.  */
 
-/* If it's an unbuffered stream that we provided
-   temporary buffering for, remove that buffering.  */
-#define	RETURN(x)							      \
+#ifdef USE_IN_LIBIO
+/* This code is for use in libio.  */
+#include <libioP.h>
+#define PUT(f, s, n)	_IO_sputn (f, s, n)
+#define PAD(padchar)	_IO_padn (s, padchar, width)
+#define PUTC(c, f)	_IO_putc(c, f)
+#define vfprintf	_IO_vfprintf
+#define size_t		_IO_size_t
+#define FILE		_IO_FILE
+#define va_list		_IO_va_list
+#undef	BUFSIZ
+#define BUFSIZ		_IO_BUFSIZ
+#define ARGCHECK(s, format) \
   do									      \
     {									      \
-      done = (x);							      \
-      goto do_return;							      \
+      /* Check file argument for consistence.  */			      \
+      CHECK_FILE(s, -1);						      \
+      if (s->_flags & _IO_NO_WRITES || format == NULL)			      \
+	{								      \
+	  MAYBE_SET_EINVAL;						      \
+	  return -1;							      \
+	}								      \
     } while (0)
+#define UNBUFFERED_P(s)	((s)->IO_file_flags & _IO_UNBUFFERED)
+#else /* ! USE_IN_LIBIO */
+/* This code is for use in the GNU C library.  */
+#include <stdio.h>
+#define PUTC(c, f)	putc (c, f)
+#define PUT(f, s, n)	fwrite (s, 1, n, f)
+static int __pad __P ((FILE *, char pad, int n));
+#define PAD(padchar)	__pad (s, padchar, width)
+#define ARGCHECK(s, format) \
+  do									      \
+    {									      \
+      /* Check file argument for consistence.  */			      \
+      if (!__validfp(s) || !s->__mode.__write || format == NULL)	      \
+	{								      \
+	  errno = EINVAL;						      \
+	  return -1;							      \
+	}								      \
+      if (!s->__seen)							      \
+	{								      \
+	  if (__flshfp (s, EOF) == EOF)					      \
+	    return -1;							      \
+	}								      \
+    } while (0)
+#define UNBUFFERED_P(s)	((s)->__buffer == NULL)
+#endif /* USE_IN_LIBIO */
+
 
 #define	outchar(x)							      \
   do									      \
     {									      \
       register CONST int outc = (x);					      \
       if (putc(outc, s) == EOF)						      \
-	RETURN(-1);							      \
+	return -1;							      \
       else								      \
 	++done;								      \
     } while (0)
+
+/* Advances STRING after writing LEN chars of it.  */
+#define outstring(string, len)						      \
+  do									      \
+    {									      \
+      if (len > 20)							      \
+	{								      \
+	  if (PUT (s, string, len) != len)				      \
+	    return -1;							      \
+	  done += len;							      \
+	  string += len;						      \
+	}								      \
+      else								      \
+	while (len-- > 0)						      \
+	  outchar (*string++);						      \
+    } while (0)
+
+/* Helper function to provide temporary buffering for unbuffered streams.  */
+static int buffered_vfprintf __P ((FILE *stream, const char *fmt, va_list));
 
 /* Cast the next arg, of type ARGTYPE, into CASTTYPE, and put it in VAR.  */
 #define	castarg(var, argtype, casttype) \
@@ -79,36 +140,15 @@ DEFUN(vfprintf, (s, format, args),
   /* Number of characters written.  */
   register size_t done = 0;
 
-  /* Nonzero we're providing buffering.  */
-  char our_buffer;
-  /* Temporary buffer for unbuffered streams.  */
-  char temporary_buffer[BUFSIZ];
+  ARGCHECK (s, format);
 
-  if (!__validfp(s) || !s->__mode.__write || format == NULL)
-    {
-      errno = EINVAL;
-      return -1;
-    }
-
-  if (!s->__seen)
-    {
-      if (__flshfp(s, EOF) == EOF)
-	return EOF;
-    }
-
-  our_buffer = s->__buffer == NULL;
-  if (our_buffer)
-    {
-      /* If it's an unbuffered stream, buffer it
-	 at least inside this function call.  */
-      s->__bufp = s->__buffer = temporary_buffer;
-      s->__bufsize = sizeof(temporary_buffer);
-      s->__put_limit = s->__buffer + s->__bufsize;
-      s->__get_limit = s->__buffer;
-    }
+  if (UNBUFFERED_P (s))
+    /* Use a helper function which will allocate a local temporary buffer
+       for the stream and then call us again.  */
+    return buffered_vfprintf (s, format, args);
 
   /* Reset multibyte characters to their initial state.  */
-  (void) mblen((char *) NULL, 0);
+  (void) mblen ((char *) NULL, 0);
 
   f = format;
   while (*f != '\0')
@@ -153,11 +193,10 @@ DEFUN(vfprintf, (s, format, args),
       if (!isascii(*f))
 	{
 	  /* Non-ASCII, may be a multibyte.  */
-	  int len = mblen(f, strlen(f));
+	  int len = mblen (f, strlen (f));
 	  if (len > 0)
 	    {
-	      while (len-- > 0)
-		outchar(*f++);
+	      outstring (f, len);
 	      continue;
 	    }
 	}
@@ -165,21 +204,14 @@ DEFUN(vfprintf, (s, format, args),
       if (*f != '%')
 	{
 	  /* This isn't a format spec, so write everything out until the
-	     next one.  */
-	  CONST char *next = f;
-	  while (*next != '\0' && isascii (*next) && *next != '%')
-	    ++next;
-	  if (next - f > 20)
-	    {
-	      size_t written = fwrite((PTR) f, 1, next - f, s);
-	      done += written;
-	      if (written != next - f)
-		break;
-	      f += written;
-	    }
-	  else
-	    while (f < next)
-	      outchar(*f++);
+	     next one.  To properly handle multibyte characters, we cannot
+	     just search for a '%'.  Since multibyte characters are hairy
+	     (and dealt with above), if we hit any byte above 127 (only
+	     those can start a multibyte character) we just punt back to
+	     that code.  */
+	  do
+	    outchar (*f++);
+	  while (*f != '\0' && *f != '%' && isascii (*f));
 	  continue;
 	}
 
@@ -242,7 +274,7 @@ DEFUN(vfprintf, (s, format, args),
 	  ++f;
 	}
       else
-	while (isdigit(*f))
+	while (isdigit (*f))
 	  {
 	    width *= 10;
 	    width += *f++ - '0';
@@ -263,15 +295,18 @@ DEFUN(vfprintf, (s, format, args),
 		prec = -1;
 	      ++f;
 	    }
-	  else if (isdigit(*f))
+	  else if (isdigit (*f))
 	    {
-	      prec = 0;
-	      while (*f != '\0' && isdigit(*f))
+	      prec = *f++ - '0';
+	      while (*f != '\0' && isdigit (*f))
 		{
 		  prec *= 10;
 		  prec += *f++ - '0';
 		}
 	    }
+	  else
+	    /* "%.?" is treated like "%.0?".  */
+	    prec = 0;
 	}
 
       /* If there was a precision specified, ignore the 0 flag and always
@@ -415,8 +450,7 @@ DEFUN(vfprintf, (s, format, args),
 		--width;
 
 	      if (!left && pad == ' ')
-		while (width-- > 0)
-		  outchar(' ');
+		PAD (' ');
 
 	      if (is_neg)
 		outchar('-');
@@ -432,16 +466,14 @@ DEFUN(vfprintf, (s, format, args),
 		}
 
 	      if (!left && pad == '0')
-		while (width-- > 0)
-		  outchar('0');
+		PAD ('0');
 
 	      /* Write the number.  */
 	      while (++w <= workend)
 		outchar(*w);
 
 	      if (left)
-		while (width-- > 0)
-		  outchar(' ');
+		PAD (' ');
 	    }
 	    break;
 
@@ -461,12 +493,13 @@ DEFUN(vfprintf, (s, format, args),
 	    /* Character.  */
 	    nextarg(num, int);
 	    if (!left)
-	      while (--width > 0)
-		outchar(' ');
-	    outchar((unsigned char) num);
+	      {
+		--width;
+		PAD (' ');
+	      }
+	    outchar ((unsigned char) num);
 	    if (left)
-	      while (--width > 0)
-		outchar(' ');
+	      PAD (' ');
 	    break;
 
 	  case 's':
@@ -498,19 +531,10 @@ DEFUN(vfprintf, (s, format, args),
 	      width -= len;
 
 	      if (!left)
-		while (width-- > 0)
-		  outchar(' ');
-	      if (len < 20)
-		while (len-- > 0)
-		  outchar(*str++);
-	      else
-		if (fwrite(str, 1, len, s) != len)
-		  RETURN(-1);
-		else
-		  done += len;
+		PAD (' ');
+	      outstring (str, len);
 	      if (left)
-		while (width-- > 0)
-		  outchar(' ');
+		PAD (' ');
 	    }
 	    break;
 
@@ -537,13 +561,11 @@ DEFUN(vfprintf, (s, format, args),
 
 		  width -= sizeof (nil) - 1;
 		  if (!left)
-		    while (width-- > 0)
-		      outchar (' ');
+		    PAD (' ');
 		  for (p = nil; *p != '\0'; ++p)
 		    outchar (*p);
 		  if (left)
-		    while (width-- > 0)
-		      outchar (' ');
+		    PAD (' ');
 		}
 	    }
 	    break;
@@ -616,29 +638,18 @@ DEFUN(vfprintf, (s, format, args),
 
 	  function_done = (*function)(s, &info, &args);
 	  if (function_done < 0)
-	    RETURN(-1);
+	    return -1;
 
 	  done += function_done;
 	}
     }
 
- do_return:;
-  if (our_buffer)
-    {
-      if (fflush(s) == EOF)
-	return -1;
-      s->__buffer = s->__bufp = s->__get_limit = s->__put_limit = NULL;
-      s->__bufsize = 0;
-    }
   return done;
 }
 
 
-#undef	RETURN
-#define	RETURN	return
-
 static int
-DEFUN(printf_unknown, (s, type, info, arg),
+DEFUN(printf_unknown, (s, info, arg),
       FILE *s AND CONST struct printf_info *info AND va_list *arg)
 {
   int done = 0;
@@ -686,3 +697,135 @@ DEFUN(printf_unknown, (s, type, info, arg),
 
   return done;
 }
+
+#ifdef USE_IN_LIBIO
+/* Helper "class" for `fprintf to unbuffered': creates a temporary buffer.  */
+struct helper_file
+  {
+    struct _IO_FILE_plus _f;
+    _IO_FILE *_put_stream;
+  };
+
+static int
+DEFUN(_IO_helper_overflow, (s, c), _IO_FILE *s AND int c)
+{
+  _IO_FILE *target = ((struct helper_file*) s)->_put_stream;
+  int used = s->_IO_write_ptr - s->_IO_write_base;
+  if (used)
+    {
+      _IO_size_t written = _IO_sputn (target, s->_IO_write_base, used);
+      s->_IO_write_ptr -= written;
+    }
+  return _IO_putc (c, s);
+}
+
+static const struct _IO_jump_t _IO_helper_jumps =
+  {
+    _IO_helper_overflow,
+    _IO_default_underflow,
+    _IO_default_xsputn,
+    _IO_default_xsgetn,
+    _IO_default_read,
+    _IO_default_write,
+    _IO_default_doallocate,
+    _IO_default_pbackfail,
+    _IO_default_setbuf,
+    _IO_default_sync,
+    _IO_default_finish,
+    _IO_default_close,
+    _IO_default_stat,
+    _IO_default_seek,
+    _IO_default_seekoff,
+    _IO_default_seekpos,
+    _IO_default_uflow
+  };
+
+static int
+DEFUN(buffered_vfprintf, (s, format, args),
+      register _IO_FILE *s AND char CONST *format AND _IO_va_list args)
+{
+  char buf[_IO_BUFSIZ];
+  struct helper_file helper;
+  register _IO_FILE *hp = (_IO_FILE *) &helper;
+  int result, to_flush;
+
+  /* Initialize helper.  */
+  helper._put_stream = s;
+  hp->_IO_write_base = buf;
+  hp->_IO_write_ptr = buf;
+  hp->_IO_write_end = buf + sizeof buf;
+  hp->_IO_file_flags = _IO_MAGIC|_IO_NO_READS;
+  hp->_jumps = &_IO_helper_jumps;
+  
+  /* Now print to helper instead.  */
+  result = _IO_vfprintf (hp, format, args);
+
+  /* Now flush anything from the helper to the S. */
+  if ((to_flush = hp->_IO_write_ptr - hp->_IO_write_base) > 0)
+    {
+      if (_IO_sputn (s, hp->_IO_write_base, to_flush) != to_flush)
+	return -1;
+    }
+
+  return result;
+}
+
+#else /* !USE_IN_LIBIO */
+
+static int
+DEFUN(buffered_vfprintf, (s, format, args),
+      register FILE *s AND char CONST *format AND va_list args)
+{
+  char buf[BUFSIZ];
+  int result;
+
+  s->__bufp = s->__buffer = buf;
+  s->__bufsize = sizeof buf;
+  s->__put_limit = s->__buffer + s->__bufsize;
+  s->__get_limit = s->__buffer;
+
+  /* Now use buffer to print.  */
+  result = vfprintf (s, format, args);
+
+  if (fflush (s) == EOF)
+    return -1;
+  s->__buffer = s->__bufp = s->__get_limit = s->__put_limit = NULL;
+  s->__bufsize = 0;
+
+  return result;
+}
+
+
+/* Pads string with given number of a specified character.
+   This code is taken from iopadn.c of the GNU I/O library.  */
+#define PADSIZE 16
+static const char blanks[PADSIZE] =
+{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
+static const char zeroes[PADSIZE] =
+{'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'};
+
+static ssize_t
+DEFUN(__pad, (s, pad, count), FILE *s AND char pad AND int count)
+{
+  CONST char *padptr;
+  register int i;
+  size_t written = 0, w;
+
+  padptr = pad == ' ' ? blanks : zeroes;
+
+  for (i = count; i >= PADSIZE; i -= PADSIZE)
+    {
+      w = PUT(s, padptr, PADSIZE);
+      written += w;
+      if (w != PADSIZE)
+	return written;
+    }
+  if (i > 0)
+    {
+      w = PUT(s, padptr, i);
+      written += w;
+    }
+  return written;
+}
+#undef PADSIZE
+#endif /* USE_IN_LIBIO */
