@@ -278,7 +278,7 @@ static const char from_ucs4[][2] =
   /* 0x0014 */ "\x14\x00", "\x15\x00", "\x16\x00", "\x17\x00", "\x18\x00",
   /* 0x0019 */ "\x19\x00", "\x1a\x00", "\x1b\x00", "\x1c\x00", "\x1d\x00",
   /* 0x001e */ "\x1e\x00", "\x1f\x00", "\x20\x00", "\x21\x00", "\x22\x00",
-  /* 0x0023 */ "\x23\x00", "\x24\x00", "\x25\x00", "\x26\x00", "\x27\x00",
+  /* 0x0023 */ "\xa6\x00", "\xa4\x00", "\x25\x00", "\x26\x00", "\x27\x00",
   /* 0x0028 */ "\x28\x00", "\x29\x00", "\x2a\x00", "\x2b\x00", "\x2c\x00",
   /* 0x002d */ "\x2d\x00", "\x2e\x00", "\x2f\x00", "\x30\x00", "\x31\x00",
   /* 0x0032 */ "\x32\x00", "\x33\x00", "\x34\x00", "\x35\x00", "\x36\x00",
@@ -296,7 +296,7 @@ static const char from_ucs4[][2] =
   /* 0x006e */ "\x6e\x00", "\x6f\x00", "\x70\x00", "\x71\x00", "\x72\x00",
   /* 0x0073 */ "\x73\x00", "\x74\x00", "\x75\x00", "\x76\x00", "\x77\x00",
   /* 0x0078 */ "\x78\x00", "\x79\x00", "\x7a\x00", "\x00\x00", "\x7c\x00",
-  /* 0x007d */ "\x00\x00", "\x00\x00", "\x7f\x00", "\x00\x80", "\x00\x81",
+  /* 0x007d */ "\x00\x00", "\x00\x00", "\x7f\x00", "\x80\x00", "\x81\x00",
   /* 0x0082 */ "\x82\x00", "\x83\x00", "\x84\x00", "\x85\x00", "\x86\x00",
   /* 0x0087 */ "\x87\x00", "\x88\x00", "\x89\x00", "\x8a\x00", "\x8b\x00",
   /* 0x008c */ "\x8c\x00", "\x8d\x00", "\x8e\x00", "\x8f\x00", "\x90\x00",
@@ -444,7 +444,7 @@ static const char from_ucs4[][2] =
 	  cp = "\xe0";							      \
 	else if (ch == 0x2c7)						      \
 	  cp = "\xcf\x20";						      \
-	else if (ch < 0x2d8 || ch > 0x2dd)				      \
+	else if (ch < 0x2d8 || ch > 0x2dd || ch == 0x02dc)		      \
 	  {								      \
 	    /* Illegal characters.  */					      \
 	    result = GCONV_ILLEGAL_INPUT;				      \
@@ -452,7 +452,7 @@ static const char from_ucs4[][2] =
 	  }								      \
 	else								      \
 	  {								      \
-	    static const char map[5] = "\xc6\xc7\xca\xce\xcd";		      \
+	    static const char map[6] = "\xc6\xc7\xca\xce\x00\xcd";	      \
 									      \
 	    tmp[0] = map[ch - 0x2d8];					      \
 	    tmp[1] = ' ';						      \
