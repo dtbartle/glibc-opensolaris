@@ -44,7 +44,7 @@ int
 __lll_timedlock_wait (int *futex, int val, const struct timespec *abstime)
 {
   /* Reject invalid timeouts.  */
-  if (abstime->tv_nsec >= 1000000000)
+  if (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000)
     return EINVAL;
 
   do
