@@ -19,6 +19,15 @@
 
 #include <sysdep.h>
 
+/*
+   This code is used in dl-runtime.c to call the `fixup' function
+   and then redirect to the address it returns. `fixup()' takes two
+   arguments, however profile_fixup() takes three.
+
+   The ABI specifies that we will never see more than 8 input
+   registers to a function call, thus it is safe to simply allocate
+   those, and simpler than playing stack games.  */
+
 ENTRY(_dl_runtime_resolve)
 	{ .mmi
 	  .prologue
