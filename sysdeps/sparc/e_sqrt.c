@@ -26,7 +26,7 @@ Cambridge, MA 02139, USA.  */
 
 /* Return the square root of X.  */
 double
-DEFUN(sqrt, (x), double x)
+DEFUN(__ieee754_sqrt, (x), double x)
 {
   register double result;
   asm("fsqrtd %1, %0" : "=f" (result) : "f" (x));
