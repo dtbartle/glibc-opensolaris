@@ -1968,7 +1968,7 @@ loading in statically linked programs.  On platforms without his
 capability it is therefore not possible to use this interface in
 statically linked programs.  The GNU C library has on ELF platforms no
 problems with dynamic loading in in these situations and therefore this
-point is mood.  The danger is that one gets acquainted with this and
+point is moot.  The danger is that one gets acquainted with this and
 forgets about the restrictions on other systems.
 
 A second thing to know about other @code{iconv} implementations is that
