@@ -43,7 +43,7 @@ do {									      \
   void *const *ptr;							      \
   for (ptr = symbol_set_first_element (NAME);				      \
        ! symbol_set_end_p (NAME, ptr); ++ptr)				      \
-    (*(__##NAME##_hook_function_t *) ptr) ARGS;				      \
+    ((__##NAME##_hook_function_t *) *ptr) ARGS;				      \
 } while (0)
 
 /* Define a hook variable with NAME and PROTO, and a function called RUNNER
