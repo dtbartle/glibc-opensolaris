@@ -860,14 +860,14 @@ hol_append (struct hol *hol, struct hol *more)
 	    }
 
 	  *so = '\0';
+
+	  free (hol->entries);
+	  free (hol->short_options);
+
+	  hol->entries = entries;
+	  hol->num_entries = num_entries;
+	  hol->short_options = short_options;
 	}
-
-	free (hol->entries);
-	free (hol->short_options);
-
-	hol->entries = entries;
-	hol->num_entries = num_entries;
-	hol->short_options = short_options;
       }
 
   hol_free (more);
