@@ -222,7 +222,7 @@ _IO_new_popen (command, mode)
   new_f->fpx.file.file._lock = &new_f->lock;
 #endif
   fp = &new_f->fpx.file.file;
-  _IO_init (fp, 0);
+  INTUSE(_IO_init) (fp, 0);
   _IO_JUMPS (&new_f->fpx.file) = &_IO_proc_jumps;
   _IO_new_file_init (&new_f->fpx.file);
 #if  !_IO_UNIFIED_JUMPTABLES
