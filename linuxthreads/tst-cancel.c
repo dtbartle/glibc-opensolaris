@@ -15,7 +15,7 @@ pthread_barrier_t bar;
 static void
 cleanup (void *arg)
 {
-  int nr = (int) arg;
+  int nr = (int) (long int) arg;
   char s[30];
   char *cp = stpcpy (s, "cleanup ");
   *cp++ = '0' + nr;
@@ -27,7 +27,7 @@ cleanup (void *arg)
 static void *
 t1 (void *arg)
 {
-  pthread_cleanup_push (cleanup, (void *) 1);
+  pthread_cleanup_push (cleanup, (void *) (long int) 1);
   return NULL;
   pthread_cleanup_pop (0);
 }
@@ -36,7 +36,7 @@ t1 (void *arg)
 static void
 inner (int a)
 {
-  pthread_cleanup_push (cleanup, (void *) a);
+  pthread_cleanup_push (cleanup, (void *) (long int) a);
   if (a)
     return;
   pthread_cleanup_pop (0);
@@ -46,7 +46,7 @@ inner (int a)
 static void *
 t2 (void *arg)
 {
-  pthread_cleanup_push (cleanup, (void *) 2);
+  pthread_cleanup_push (cleanup, (void *) (long int) 2);
   inner ((int) arg);
   return NULL;
   pthread_cleanup_pop (0);
@@ -56,8 +56,8 @@ t2 (void *arg)
 static void *
 t3 (void *arg)
 {
-  pthread_cleanup_push (cleanup, (void *) 4);
-  inner ((int) arg);
+  pthread_cleanup_push (cleanup, (void *) (long int) 4);
+  inner ((int) (long int) arg);
   pthread_exit (NULL);
   pthread_cleanup_pop (0);
 }
