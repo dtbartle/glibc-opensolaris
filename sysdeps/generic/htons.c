@@ -21,7 +21,7 @@
 #undef	htons
 
 u_int16_t
-htons (x)
+__htons (x)
      u_int16_t x;
 {
 #if BYTE_ORDER == LITTLE_ENDIAN
@@ -30,3 +30,6 @@ htons (x)
 
   return x;
 }
+strong_alias (__htons, __ntohs)
+weak_alias (__htons, htons)
+weak_alias (__ntohs, ntohs)
