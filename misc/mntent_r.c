@@ -20,6 +20,7 @@
 #include <alloca.h>
 #include <mntent.h>
 #include <stdio.h>
+#include <stdio_ext.h>
 #include <string.h>
 #include <sys/types.h>
 
