@@ -3130,7 +3130,7 @@ static const char uhc_hangul_from_ucs[11172][2] =
 	  }								      \
 	else								      \
 	  {								      \
-	    ch = ksc5601_to_ucs4 (&inptr, 2, 0x80);
+	    ch = ksc5601_to_ucs4 (&inptr, 2, 0x80);			      \
 	    if (ch == UNKNOWN_10646_CHAR)				      \
 	      {								      \
 		/* Illegal.  */						      \
@@ -3155,7 +3155,7 @@ static const char uhc_hangul_from_ucs[11172][2] =
     uint32_t ch = *((uint32_t *) inptr);				      \
 									      \
     if (ch < 0x7f)							      \
-      /* XXX Think about 0x5c ; '\'.  */
+      /* XXX Think about 0x5c ; '\'.  */				      \
       *outptr = ch;							      \
     else if (ch >= 0xac00 && ch <= 0xd7a3)				      \
       {									      \
@@ -3190,10 +3190,10 @@ static const char uhc_hangul_from_ucs[11172][2] =
 	*outptr++ |= 0x80;						      \
 	*outptr++ |= 0x80;						      \
       }									      \
-/* Half-width Korean Currency Won Sign
-      else if (ch == 0x20a9)
-        idx = 0x5c00;
-*/
+/* Half-width Korean Currency Won Sign					      \
+      else if (ch == 0x20a9)						      \
+        idx = 0x5c00;							      \
+*/									      \
     else								      \
       {									      \
 	size_t written = ucs4_to_ksc5601_sym (ch, outptr,		      \
