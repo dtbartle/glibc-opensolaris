@@ -35,5 +35,5 @@ done
 
 exit $status
 # Local Variables:
-#  mode:ksh
+#  mode:shell-script
 # End:
