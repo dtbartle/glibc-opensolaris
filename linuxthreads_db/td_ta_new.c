@@ -62,6 +62,13 @@ td_ta_new (struct ps_prochandle *ps, td_thragent_t **ta)
       return TD_ERR;
     }
 
+  /* Get the pointer to the variable containing the number of active
+     threads.  */
+  if (ps_pglobal_lookup (ps, LIBPTHREAD_SO,
+			 "__pthread_handles_num",
+			 &(*ta)->pthread_handles_num) != PS_OK)
+    goto free_return;
+
   /* See whether the library contains the necessary symbols.  */
   if (ps_pglobal_lookup (ps, LIBPTHREAD_SO, "__pthread_handles",
 		         &addr) != PS_OK)
