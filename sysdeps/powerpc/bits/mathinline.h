@@ -1,5 +1,5 @@
 /* Inline math functions for powerpc.
-   Copyright (C) 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1995, 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 
 #if defined __GNUC__ && !defined _SOFT_FLOAT
 
-#ifdef __USE_ISOC9X
+#ifdef __USE_ISOC99
 # define __unordered_cmp(x, y) \
   (__extension__							      \
    ({ __typeof__(x) __x = (x); __typeof__(y) __y = (y);			      \
@@ -34,7 +34,7 @@
 # define islessequal(x, y) ((__unordered_cmp (x, y) & 0xA) != 0)
 # define islessgreater(x, y) ((__unordered_cmp (x, y) & 0xC) != 0)
 # define isunordered(x, y) (__unordered_cmp (x, y) & 1)
-#endif /* __USE_ISOC9X && !_SOFT_FLOAT */
+#endif /* __USE_ISOC99 && !_SOFT_FLOAT */
 
 #if !defined __NO_MATH_INLINES && defined __OPTIMIZE__
 
@@ -44,7 +44,7 @@
 # define __MATH_INLINE extern __inline
 #endif  /* __cplusplus */
 
-#ifdef __USE_ISOC9X
+#ifdef __USE_ISOC99
 __MATH_INLINE long int lrint (double __x);
 __MATH_INLINE long int
 lrint (double __x)
@@ -83,6 +83,6 @@ fdimf (float __x, float __y)
   return __x < __y ? 0 : __x - __y;
 }
 
-#endif /* __USE_ISOC9X */
+#endif /* __USE_ISOC99 */
 #endif /* !__NO_MATH_INLINES && __OPTIMIZE__ */
 #endif /* __GNUC__ && !_SOFT_FLOAT */
