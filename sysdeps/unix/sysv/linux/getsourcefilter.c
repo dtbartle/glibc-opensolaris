@@ -35,17 +35,17 @@ getsourcefilter (int s, uint32_t interface, struct sockaddr *group,
   /* We have to create an struct ip_msfilter object which we can pass
      to the kernel.  */
   socklen_t needed = GROUP_FILTER_SIZE (*numsrc);
-  int use_malloc = __libc_use_alloca (needed);
+  int use_alloca = __libc_use_alloca (needed);
 
   struct group_filter *gf;
-  if (use_malloc)
+  if (use_alloca)
+    gf = (struct group_filter *) alloca (needed);
+  else
     {
       gf = (struct group_filter *) malloc (needed);
       if (gf == NULL)
 	return -1;
     }
-  else
-    gf = (struct group_filter *) alloca (needed);
 
   gf->gf_interface = interface;
   memcpy (&gf->gf_group, group, grouplen);
@@ -63,7 +63,7 @@ getsourcefilter (int s, uint32_t interface, struct sockaddr *group,
       *numsrc = gf->gf_numsrc;
     }
 
-  if (use_malloc)
+  if (! use_alloca)
     {
       int save_errno = errno;
       free (gf);
