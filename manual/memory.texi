@@ -154,7 +154,7 @@ grows, but doesn't shrink when the stack shrinks.
 
 
 @node Memory Allocation
-@section Allocating Storage For a Program's Data
+@section Allocating Storage For Program Data
 
 This section covers how ordinary programs manage storage for their data,
 including the famous @code{malloc} function and some fancier facilities
