@@ -29,11 +29,13 @@ routines := getutent getutent_r getutid getutline getutid_r getutline_r \
 
 others = utmpd
 install-sbin = utmpd
-utmpd-routines := connection database error request xtmp
+utmpd-routines := utmpd connection database error request xtmp
+extra-objs := $(utmpd-routines:=.o)
 
 distribute := utmp-private.h programs/xtmp.h programs/utmpd.h \
-	      programs/utmpd-private.h
+	      programs/utmpd-private.h $(utmpd-routines:%=programs/%.c)
 
+subdir-dirs = programs
 vpath %.c programs
 
 # Build the -lutil library with these extra functions.
