@@ -4,6 +4,8 @@
    files from future BIND distributions without change.  */
 
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 
 /* Some BIND code decides it can omit the definitions of some functions
    if BSD is defined to some value.  That might make sense when the BIND
