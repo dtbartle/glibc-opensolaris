@@ -21,6 +21,7 @@
 #include <sysdep.h>
 #include <time.h>
 #include <unistd.h>
+#include <not-cancel.h>
 
 static long int posix_sysconf (int name);
 
@@ -51,16 +52,16 @@ __sysconf (int name)
       {
 	/* Try to read the information from the /proc/sys/kernel/ngroups_max
 	   file.  */
-	int fd = __open_nocancel ("/proc/sys/kernel/ngroups_max", O_RDONLY);
+	int fd = open_not_cancel_2 ("/proc/sys/kernel/ngroups_max", O_RDONLY);
 	if (fd != -1)
 	  {
 	    /* This is more than enough, the file contains a single
 	       integer.  */
 	    char buf[32];
 	    ssize_t n;
-	    n = TEMP_FAILURE_RETRY (__read_nocancel (fd, buf,
+	    n = TEMP_FAILURE_RETRY (read_not_cancel (fd, buf,
 						     sizeof (buf) - 1));
-	    __close_nocancel (fd);
+	    close_not_cancel_no_status (fd);
 
 	    if (n > 0)
 	      {
