@@ -141,6 +141,7 @@ authdes_pk_create (const char *servername, netobj * pkey, u_int window,
    */
   auth = ALLOC (AUTH);
   ad = ALLOC (struct ad_private);
+  memset (ad, 0, sizeof (struct ad_private));
   memcpy (ad->ad_pkey, pkey->n_bytes, pkey->n_len);
   if (!getnetname (namebuf))
     goto failed;
@@ -201,11 +202,11 @@ failed:
     FREE (auth, sizeof (AUTH));
   if (ad != NULL)
     {
-      FREE (ad, sizeof (struct ad_private));
       if (ad->ad_fullname != NULL)
 	FREE (ad->ad_fullname, ad->ad_fullnamelen + 1);
       if (ad->ad_servername != NULL)
 	FREE (ad->ad_servername, ad->ad_servernamelen + 1);
+      FREE (ad, sizeof (struct ad_private));
     }
   return (NULL);
 }
