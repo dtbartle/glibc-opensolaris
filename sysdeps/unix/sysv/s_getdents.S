@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1992 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -18,9 +18,5 @@ Cambridge, MA 02139, USA.  */
 
 #include <sysdep.h>
 
-SYSCALL (time, 1)
-	movl 4(%esp), %edx	/* Put passed pointer in %edx.  */
-	testl %edx, %edx	/* Is it non-nil?  */
-	je null
-	movl %eax, (%edx)	/* Yes; store the time there.  */
-null:	ret
+SYSCALL__ (getdents, 3)
+	ret
