@@ -37,6 +37,7 @@ do_test (void)
 
   /* XXX Remove if default value is clear.  */
   pthread_attr_setinheritsched (&a, PTHREAD_INHERIT_SCHED);
+  pthread_attr_setschedpolicy (&a, SCHED_OTHER);
 
   for (i = 0; i < 10000; ++i)
     {
@@ -88,6 +89,31 @@ detach state changed to %d by invalid setdetachstate call\n", s);
 	    {
 	      printf ("\
 inheritsched changed to %d by invalid setinheritsched call\n", s);
+	      exit (1);
+	    }
+	}
+
+      if (r != SCHED_OTHER && r != SCHED_RR && r != SCHED_FIFO)
+	{
+	  int e = pthread_attr_setschedpolicy (&a, r);
+
+	  if (e == 0)
+	    {
+	      printf ("attr_setschedpolicy with value %ld succeeded\n", r);
+	      exit (1);
+	    }
+
+	  int s;
+	  if (pthread_attr_getschedpolicy (&a, &s) != 0)
+	    {
+	      puts ("attr_getschedpolicy failed");
+	      exit (1);
+	    }
+
+	  if (s != SCHED_OTHER)
+	    {
+	      printf ("\
+schedpolicy changed to %d by invalid setschedpolicy call\n", s);
 	      exit (1);
 	    }
 	}
