@@ -140,6 +140,12 @@ _hurd_proc_init (char **argv)
      on the _hurd_subinit hook because things there assume that things done
      here, like _hurd_pid, are already initialized.  */
   RUN_HOOK (_hurd_proc_subinit, ());
+
+  if (_hurd_exec_flags & EXEC_TRACED)
+    /* This process is "traced", meaning it should stop on signals or exec.
+       We are all set up now to handle signals.  Stop ourselves, to inform
+       our parent (presumably a debugger) that the exec has completed.  */
+    _hurd_raise_signal (NULL, SIGTRAP, 0, 0);
 }
 
 /* Called when we get a message telling us to change our proc server port.  */
