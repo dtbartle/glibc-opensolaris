@@ -4693,43 +4693,52 @@ round_test (void)
 static void
 lround_test (void)
 {
-  check_long ("lround(0) = 0", lround (0), 0);
-  check_long ("lround(-0) = 0", lround (minus_zero), 0);
-  check_long ("lround(0.2) = 0", lround (0.2), 0.0);
-  check_long ("lround(-0.2) = 0", lround (-0.2), 0);
-  check_long ("lround(0.5) = 1", lround (0.5), 1);
-  check_long ("lround(-0.5) = -1", lround (-0.5), -1);
-  check_long ("lround(0.8) = 1", lround (0.8), 1);
-  check_long ("lround(-0.8) = -1", lround (-0.8), -1);
-  check_long ("lround(1.5) = 2", lround (1.5), 2);
-  check_long ("lround(-1.5) = -2", lround (-1.5), -2);
-  check_long ("lround(2097152.5) = 2097153", lround (2097152.5), 2097153);
-  check_long ("lround(-2097152.5) = -2097153", lround (-2097152.5),
+  check_long ("lround(0) = 0", FUNC(lround) (0), 0);
+  check_long ("lround(-0) = 0", FUNC(lround) (minus_zero), 0);
+  check_long ("lround(0.2) = 0", FUNC(lround) (0.2), 0.0);
+  check_long ("lround(-0.2) = 0", FUNC(lround) (-0.2), 0);
+  check_long ("lround(0.5) = 1", FUNC(lround) (0.5), 1);
+  check_long ("lround(-0.5) = -1", FUNC(lround) (-0.5), -1);
+  check_long ("lround(0.8) = 1", FUNC(lround) (0.8), 1);
+  check_long ("lround(-0.8) = -1", FUNC(lround) (-0.8), -1);
+  check_long ("lround(1.5) = 2", FUNC(lround) (1.5), 2);
+  check_long ("lround(-1.5) = -2", FUNC(lround) (-1.5), -2);
+  check_long ("lround(22514.5) = 22514", FUNC(lround) (1.5), 2);
+  check_long ("lround(-22514.5) = -22514", FUNC(lround) (-1.5), -2);
+#ifndef TEST_FLOAT
+  check_long ("lround(2097152.5) = 2097153", FUNC(lround) (2097152.5),
+	      2097153);
+  check_long ("lround(-2097152.5) = -2097153", FUNC(lround) (-2097152.5),
 	      -2097153);
+#endif
 }
 
 
 static void
 llround_test (void)
 {
-  check_longlong ("llround(0) = 0", llround (0), 0);
-  check_longlong ("llround(-0) = 0", llround (minus_zero), 0);
-  check_longlong ("llround(0.2) = 0", llround (0.2), 0.0);
-  check_longlong ("llround(-0.2) = 0", llround (-0.2), 0);
-  check_longlong ("llround(0.5) = 1", llround (0.5), 1);
-  check_longlong ("llround(-0.5) = -1", llround (-0.5), -1);
-  check_longlong ("llround(0.8) = 1", llround (0.8), 1);
-  check_longlong ("llround(-0.8) = -1", llround (-0.8), -1);
-  check_longlong ("llround(1.5) = 2", llround (1.5), 2);
-  check_longlong ("llround(-1.5) = -2", llround (-1.5), -2);
+  check_longlong ("llround(0) = 0", FUNC(llround) (0), 0);
+  check_longlong ("llround(-0) = 0", FUNC(llround) (minus_zero), 0);
+  check_longlong ("llround(0.2) = 0", FUNC(llround) (0.2), 0.0);
+  check_longlong ("llround(-0.2) = 0", FUNC(llround) (-0.2), 0);
+  check_longlong ("llround(0.5) = 1", FUNC(llround) (0.5), 1);
+  check_longlong ("llround(-0.5) = -1", FUNC(llround) (-0.5), -1);
+  check_longlong ("llround(0.8) = 1", FUNC(llround) (0.8), 1);
+  check_longlong ("llround(-0.8) = -1", FUNC(llround) (-0.8), -1);
+  check_longlong ("llround(1.5) = 2", FUNC(llround) (1.5), 2);
+  check_longlong ("llround(-1.5) = -2", FUNC(llround) (-1.5), -2);
+  check_longlong ("llround(22514.5) = 22514", FUNC(llround) (1.5), 2);
+  check_longlong ("llround(-22514.5) = -22514", FUNC(llround) (-1.5), -2);
+#ifndef TEST_FLOAT
   check_longlong ("llround(2097152.5) = 2097153",
-		  llround (2097152.5), 2097153);
+		  FUNC(llround) (2097152.5), 2097153);
   check_longlong ("llround(-2097152.5) = -2097153",
-		  llround (-2097152.5), -2097153);
+		  FUNC(llround) (-2097152.5), -2097153);
   check_longlong ("llround(34359738368.5) = 34359738369",
-		  llround (34359738368.5), 34359738369ll);
+		  FUNC(llround) (34359738368.5), 34359738369ll);
   check_longlong ("llround(-34359738368.5) = -34359738369",
-		  llround (-34359738368.5), -34359738369ll);
+		  FUNC(llround) (-34359738368.5), -34359738369ll);
+#endif
 }
 
 
