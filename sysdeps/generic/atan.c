@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@ Cambridge, MA 02139, USA.  */
 #include <math.h>
 
 /* Return the inverse tangent of X.  */
-__CONSTVALUE double
+double
 DEFUN(atan, (x), register double x)
 {
   return atan2(x, 1.0);
