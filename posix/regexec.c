@@ -337,7 +337,7 @@ re_search_2_stub (bufp, string1, length1, string2, length2, start, range, regs,
   rval = re_search_stub (bufp, str, len, start, range, stop, regs,
                          ret_len);
   if (free_str)
-      re_free ((char *) str);
+    re_free ((char *) str);
   return rval;
 }
 
@@ -586,6 +586,7 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
     return REG_NOMATCH;
 
   re_node_set_init_empty (&empty_set);
+  memset (&mctx, '\0', sizeof (re_match_context_t));
 
   /* We must check the longest matching, if nmatch > 0.  */
   fl_longest_match = (nmatch != 0);
@@ -593,12 +594,12 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
   err = re_string_allocate (&input, string, length, dfa->nodes_len + 1,
                             preg->translate, preg->syntax & RE_ICASE);
   if (BE (err != REG_NOERROR, 0))
-    return err;
+    goto free_return;
   input.stop = stop;
 
   err = match_ctx_init (&mctx, eflags, &input, dfa->nbackref * 2);
   if (BE (err != REG_NOERROR, 0))
-    return err;
+    goto free_return;
 
   /* We will log all the DFA states through which the dfa pass,
      if nmatch > 1, or this dfa has "multibyte node", which is a
@@ -608,7 +609,10 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
     {
       mctx.state_log = re_malloc (re_dfastate_t *, dfa->nodes_len + 1);
       if (BE (mctx.state_log == NULL, 0))
-        return REG_ESPACE;
+        {
+          err = REG_ESPACE;
+          goto free_return;
+        }
     }
   else
     mctx.state_log = NULL;
@@ -639,8 +643,12 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
           /* If MATCH_FIRST is out of the valid range, reconstruct the
              buffers.  */
           if (input.raw_mbs_idx + input.valid_len <= match_first)
-            re_string_reconstruct (&input, match_first, eflags,
-                                   preg->newline_anchor);
+            {
+              err = re_string_reconstruct (&input, match_first, eflags,
+                                           preg->newline_anchor);
+              if (BE (err != REG_NOERROR, 0))
+                goto free_return;
+            }
           /* If MATCH_FIRST is out of the buffer, leave it as '\0'.
              Note that MATCH_FIRST must not be smaller than 0.  */
           ch = ((match_first >= length) ? 0
@@ -664,8 +672,10 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
         {
           /* Reconstruct the buffers so that the matcher can assume that
              the matching starts from the begining of the buffer.  */
-          re_string_reconstruct (&input, match_first, eflags,
-                                 preg->newline_anchor);
+          err = re_string_reconstruct (&input, match_first, eflags,
+                                       preg->newline_anchor);
+          if (BE (err != REG_NOERROR, 0))
+            goto free_return;
 #ifdef RE_ENABLE_I18N
           /* Eliminate it when it is a component of a multibyte character
              and isn't the head of a multibyte character.  */
@@ -679,7 +689,10 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
               if (match_last != -1)
                 {
                   if (BE (match_last == -2, 0))
-                    return REG_ESPACE;
+                    {
+                      err = REG_ESPACE;
+                      goto free_return;
+                    }
                   else
                     break; /* We found a matching.  */
                 }
@@ -722,28 +735,42 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
               match_ctx_clear_flag (&mctx);
               sifted_states = re_malloc (re_dfastate_t *, match_last + 1);
               if (BE (sifted_states == NULL, 0))
-                return REG_ESPACE;
+                {
+                  err = REG_ESPACE;
+                  goto free_return;
+                }
               if (dfa->nbackref)
                 {
                   lim_states = calloc (sizeof (re_dfastate_t *),
                                        match_last + 1);
                   if (BE (lim_states == NULL, 0))
-                    return REG_ESPACE;
+                    {
+                      re_free (sifted_states);
+                      err = REG_ESPACE;
+                      goto free_return;
+                    }
                 }
               sift_ctx_init (&sctx, sifted_states, lim_states, halt_node,
                              mctx.match_last, 0);
               err = sift_states_backward (preg, &mctx, &sctx);
+              re_node_set_free (&sctx.limits);
               if (BE (err != REG_NOERROR, 0))
-                return err;
+                {
+                  re_free (sifted_states);
+                  re_free (lim_states);
+                  goto free_return;
+                }
               if (lim_states != NULL)
                 {
                   err = merge_state_array (dfa, sifted_states, lim_states,
                                            match_last + 1);
-                  if (BE (err != REG_NOERROR, 0))
-                    return err;
                   re_free (lim_states);
+                  if (BE (err != REG_NOERROR, 0))
+                    {
+                      re_free (sifted_states);
+                      goto free_return;
+                    }
                 }
-              re_node_set_free (&sctx.limits);
               re_free (mctx.state_log);
               mctx.state_log = sifted_states;
             }
@@ -751,7 +778,7 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
           err = set_regs (preg, &mctx, nmatch, pmatch,
                           dfa->has_plural_match && dfa->nbackref > 0);
           if (BE (err != REG_NOERROR, 0))
-            return err;
+            goto free_return;
         }
 
       /* At last, add the offset to the each registers, since we slided
@@ -763,13 +790,13 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
             pmatch[reg_idx].rm_eo += match_first;
           }
     }
-
+  err = (match_last == -1) ? REG_NOMATCH : REG_NOERROR;
+ free_return:
   re_free (mctx.state_log);
   if (dfa->nbackref)
     match_ctx_free (&mctx);
   re_string_destruct (&input);
-
-  return (match_last == -1) ? REG_NOMATCH : REG_NOERROR;
+  return err;
 }
 
 /* Acquire an initial state and return it.
@@ -1099,11 +1126,13 @@ push_fail_stack (fs, str_idx, dests, nregs, regs, eps_via_nodes)
   int num = fs->num++;
   if (fs->num == fs->alloc)
     {
+      struct re_fail_stack_ent_t *new_array;
       fs->alloc *= 2;
-      fs->stack = realloc (fs->stack, (sizeof (struct re_fail_stack_ent_t)
+      new_array = realloc (fs->stack, (sizeof (struct re_fail_stack_ent_t)
                                        * fs->alloc));
-      if (fs->stack == NULL)
+      if (new_array == NULL)
         return REG_ESPACE;
+      fs->stack = new_array;
     }
   fs->stack[num].idx = str_idx;
   fs->stack[num].node = dests[1];
@@ -1301,7 +1330,7 @@ sift_states_backward (preg, mctx, sctx)
     return err;
   err = update_cur_sifted_state (preg, mctx, sctx, str_idx, &cur_dest);
   if (BE (err != REG_NOERROR, 0))
-    return err;
+    goto free_return;
 
   /* Then check each states in the state_log.  */
   while (str_idx > 0)
@@ -1365,7 +1394,10 @@ sift_states_backward (preg, mctx, sctx)
             }
           ret = re_node_set_insert (&cur_dest, prev_node);
           if (BE (ret == -1, 0))
-            return err;
+            {
+              err = REG_ESPACE;
+              goto free_return;
+            }
         }
 
       /* Add all the nodes which satisfy the following conditions:
@@ -1374,11 +1406,12 @@ sift_states_backward (preg, mctx, sctx)
          And update state_log.  */
       err = update_cur_sifted_state (preg, mctx, sctx, str_idx, &cur_dest);
       if (BE (err != REG_NOERROR, 0))
-        return err;
+        goto free_return;
     }
-
+  err = REG_NOERROR;
+ free_return:
   re_node_set_free (&cur_dest);
-  return REG_NOERROR;
+  return err;
 }
 
 /* Helper functions.  */
@@ -1409,7 +1442,8 @@ clean_state_log_if_need (mctx, next_state_log_idx)
   return REG_NOERROR;
 }
 
-static reg_errcode_t merge_state_array (dfa, dst, src, num)
+static reg_errcode_t
+merge_state_array (dfa, dst, src, num)
      re_dfa_t *dfa;
      re_dfastate_t **dst;
      re_dfastate_t **src;
@@ -1429,9 +1463,9 @@ static reg_errcode_t merge_state_array (dfa, dst, src, num)
           if (BE (err != REG_NOERROR, 0))
             return err;
           dst[st_idx] = re_acquire_state (&err, dfa, &merged_set);
+          re_node_set_free (&merged_set);
           if (BE (err != REG_NOERROR, 0))
             return err;
-          re_node_set_free (&merged_set);
         }
     }
   return REG_NOERROR;
@@ -1512,7 +1546,10 @@ add_epsilon_src_nodes (dfa, dest_nodes, candidates)
                                        dfa->inveclosures
                                        + src_copy.elems[src_idx]);
       if (BE (err != REG_NOERROR, 0))
-        return err;
+        {
+          re_node_set_free (&src_copy);
+          return err;
+        }
     }
   re_node_set_free (&src_copy);
   return REG_NOERROR;
@@ -1549,7 +1586,10 @@ sub_epsilon_src_nodes (dfa, node, dest_nodes, candidates)
                 err = re_node_set_add_intersect (&except_nodes, candidates,
                                                  dfa->inveclosures + cur_node);
                 if (BE (err != REG_NOERROR, 0))
-                  return err;
+                  {
+                    re_node_set_free (&except_nodes);
+                    return err;
+                  }
               }
           }
       }
@@ -1791,7 +1831,7 @@ search_subexp (preg, mctx, sctx, str_idx, dest_nodes)
               local_sctx = *sctx;
               err = re_node_set_init_copy (&local_sctx.limits, &sctx->limits);
               if (BE (err != REG_NOERROR, 0))
-                return err;
+                goto free_return;
             }
           local_sctx.check_subexp = -sctx->check_subexp;
           local_sctx.limited_states = sctx->limited_states;
@@ -1801,7 +1841,7 @@ search_subexp (preg, mctx, sctx, str_idx, dest_nodes)
           err = sift_states_backward (preg, mctx, &local_sctx);
           local_sctx.sifted_states[str_idx] = cur_state;
           if (BE (err != REG_NOERROR, 0))
-            return err;
+            goto free_return;
           /* There must not 2 same node in a node set.  */
           break;
         }
@@ -1823,7 +1863,7 @@ search_subexp (preg, mctx, sctx, str_idx, dest_nodes)
               reg_errcode_t err;
               err = extend_buffers (mctx);
               if (BE (err != REG_NOERROR, 0))
-                return err;
+                goto free_return;
             }
           buf = (char *) re_string_get_buffer (mctx->input);
           if (strncmp (buf + str_idx, buf + bkref_str_idx, subexp_len) != 0)
@@ -1835,17 +1875,20 @@ search_subexp (preg, mctx, sctx, str_idx, dest_nodes)
               if (lim_states == NULL)
                 {
                   lim_states = re_malloc (re_dfastate_t *, str_idx + 1);
+                  if (BE (lim_states == NULL, 0))
+                    {
+                      err = REG_ESPACE;
+                      goto free_return;
+                    }
                 }
               if (local_sctx.sifted_states == NULL)
                 {
                   /* It hasn't been initialized yet, initialize it now.  */
                   local_sctx = *sctx;
-                  if (BE (lim_states == NULL, 0))
-                    return REG_ESPACE;
                   err = re_node_set_init_copy (&local_sctx.limits,
                                                &sctx->limits);
                   if (BE (err != REG_NOERROR, 0))
-                    return err;
+                    goto free_return;
                 }
               local_sctx.check_subexp = 0;
               local_sctx.last_node = node;
@@ -1855,7 +1898,7 @@ search_subexp (preg, mctx, sctx, str_idx, dest_nodes)
                       sizeof (re_dfastate_t*) * (str_idx + 1));
               err = sift_states_backward (preg, mctx, &local_sctx);
               if (BE (err != REG_NOERROR, 0))
-                return err;
+                goto free_return;
               if (local_sctx.sifted_states[0] == NULL
                   && local_sctx.limited_states[0] == NULL)
                 {
@@ -1869,10 +1912,10 @@ search_subexp (preg, mctx, sctx, str_idx, dest_nodes)
           err = match_ctx_add_entry (mctx, sctx->cur_bkref, bkref_str_idx,
                                      str_idx, sctx->cls_subexp_idx);
           if (BE (err != REG_NOERROR, 0))
-            return err;
+            goto free_return;
           err = clean_state_log_if_need (mctx, dest_str_idx);
           if (BE (err != REG_NOERROR, 0))
-            return err;
+            goto free_return;
           break;
         }
     }
@@ -1882,18 +1925,19 @@ search_subexp (preg, mctx, sctx, str_idx, dest_nodes)
     {
       err = sub_epsilon_src_nodes(dfa, node, dest_nodes, candidates);
       if (BE (err != REG_NOERROR, 0))
-        return err;
+        goto free_return;
       /* Update state_log.  */
       sctx->sifted_states[str_idx] = re_acquire_state (&err, dfa, dest_nodes);
       if (BE (err != REG_NOERROR, 0))
-        return err;
+        goto free_return;
     }
-
+  err = REG_NOERROR;
+ free_return:
   if (local_sctx.sifted_states != NULL)
     re_node_set_free (&local_sctx.limits);
   if (lim_states != NULL)
     re_free (lim_states);
-  return REG_NOERROR;
+  return err;
 }
 
 static reg_errcode_t
@@ -1958,11 +2002,11 @@ sift_states_bkref (preg, mctx, sctx, str_idx, dest_nodes)
                                              cur_bkref_idx, entry->subexp_from,
                                              entry->subexp_to);
                   if (BE (err != REG_NOERROR, 0))
-                    return err;
+		    goto free_return;
                   err = clean_state_log_if_need (mctx, cur_bkref_idx
                                                  + subexp_len);
                   if (BE (err != REG_NOERROR, 0))
-                    return err;
+		    goto free_return;
                 }
               else
                 {
@@ -1984,24 +2028,27 @@ sift_states_bkref (preg, mctx, sctx, str_idx, dest_nodes)
                       err = re_node_set_init_copy (&local_sctx.limits,
                                                    &sctx->limits);
                       if (BE (err != REG_NOERROR, 0))
-                        return err;
+			goto free_return;
                     }
                   local_sctx.last_node = node;
                   local_sctx.last_str_idx = str_idx;
                   err = re_node_set_insert (&local_sctx.limits, enabled_idx);
                   if (BE (err < 0, 0))
-                    return REG_ESPACE;
+		    {
+		      err = REG_ESPACE;
+		      goto free_return;
+		    }
                   cur_state = local_sctx.sifted_states[str_idx];
                   err = sift_states_backward (preg, mctx, &local_sctx);
                   if (BE (err != REG_NOERROR, 0))
-                    return err;
+		    goto free_return;
                   if (sctx->limited_states != NULL)
                     {
                       err = merge_state_array (dfa, sctx->limited_states,
                                                local_sctx.sifted_states,
                                                str_idx + 1);
                       if (BE (err != REG_NOERROR, 0))
-                        return err;
+                        goto free_return;
                     }
                   local_sctx.sifted_states[str_idx] = cur_state;
                   re_node_set_remove (&local_sctx.limits, enabled_idx);
@@ -2019,12 +2066,14 @@ sift_states_bkref (preg, mctx, sctx, str_idx, dest_nodes)
             }
         }
     }
+  err = REG_NOERROR;
+ free_return:
   if (local_sctx.sifted_states != NULL)
     {
       re_node_set_free (&local_sctx.limits);
     }
 
-  return REG_NOERROR;
+  return err;
 }
 
 
@@ -2215,7 +2264,10 @@ transit_state_sb (err, preg, state, fl_search, mctx)
           *err = re_node_set_merge (&next_nodes,
                                     dfa->eclosures + dfa->nexts[cur_node]);
           if (BE (*err != REG_NOERROR, 0))
-            return NULL;
+            {
+              re_node_set_free (&next_nodes);
+              return NULL;
+            }
         }
     }
   if (fl_search)
@@ -2235,7 +2287,10 @@ transit_state_sb (err, preg, state, fl_search, mctx)
           *err = re_node_set_merge (&next_nodes,
                                     dfa->init_state->entrance_nodes);
           if (BE (*err != REG_NOERROR, 0))
-            return NULL;
+            {
+              re_node_set_free (&next_nodes);
+              return NULL;
+            }
         }
     }
   context = re_string_context_at (mctx->input, cur_str_idx, mctx->eflags,
@@ -2313,10 +2368,10 @@ transit_state_mb (preg, pstate, mctx)
                                       preg->newline_anchor);
       mctx->state_log[dest_idx]
         = re_acquire_state_context (&err, dfa, &dest_nodes, context);
-      if (BE (mctx->state_log[dest_idx] == NULL && err != REG_NOERROR, 0))
-        return err;
       if (dest_state != NULL)
         re_node_set_free (&dest_nodes);
+      if (BE (mctx->state_log[dest_idx] == NULL && err != REG_NOERROR, 0))
+        return err;
     }
   return REG_NOERROR;
 }
@@ -2389,7 +2444,7 @@ transit_state_bkref_loop (preg, nodes, work_state_log, mctx)
       match_ctx_clear_flag (mctx);
       err = sift_states_backward (preg, mctx, &sctx);
       if (BE (err != REG_NOERROR, 0))
-        return err;
+        goto free_return;
 
       /* And add the epsilon closures (which is `new_dest_nodes') of
          the backreference to appropriate state_log.  */
@@ -2424,7 +2479,7 @@ transit_state_bkref_loop (preg, nodes, work_state_log, mctx)
                                             context);
               if (BE (mctx->state_log[dest_str_idx] == NULL
                       && err != REG_NOERROR, 0))
-                return err;
+                goto free_return;
             }
           else
             {
@@ -2433,13 +2488,16 @@ transit_state_bkref_loop (preg, nodes, work_state_log, mctx)
                                             dest_state->entrance_nodes,
                                             new_dest_nodes);
               if (BE (err != REG_NOERROR, 0))
-                return err;
+                {
+                  re_node_set_free (&dest_nodes);
+                  goto free_return;
+                }
               mctx->state_log[dest_str_idx]
                 = re_acquire_state_context (&err, dfa, &dest_nodes, context);
+              re_node_set_free (&dest_nodes);
               if (BE (mctx->state_log[dest_str_idx] == NULL
                       && err != REG_NOERROR, 0))
-                return err;
-              re_node_set_free (&dest_nodes);
+                goto free_return;
             }
           /* We need to check recursively if the backreference can epsilon
              transit.  */
@@ -2449,12 +2507,14 @@ transit_state_bkref_loop (preg, nodes, work_state_log, mctx)
               err = transit_state_bkref_loop (preg, new_dest_nodes,
                                               work_state_log, mctx);
               if (BE (err != REG_NOERROR, 0))
-                return err;
+                goto free_return;
             }
         }
     }
+  err = REG_NOERROR;
+ free_return:
   re_free (cur_regs);
-  return REG_NOERROR;
+  return err;
 }
 
 /* Build transition table for the state.
@@ -2776,14 +2836,14 @@ group_nodes_into_DFAstates (preg, state, dests_node, dests_ch)
               bitset_copy (dests_ch[j], intersec);
               err = re_node_set_init_copy (dests_node + ndests, &dests_node[j]);
               if (BE (err != REG_NOERROR, 0))
-                return -1;
+                goto error_return;
               ++ndests;
             }
 
           /* Put the position in the current group. */
           err = re_node_set_insert (&dests_node[j], cur_nodes->elems[i]);
           if (BE (err < 0, 0))
-            return -1;
+            goto error_return;
 
           /* If all characters are consumed, go to next node. */
           if (!not_consumed)
@@ -2795,12 +2855,16 @@ group_nodes_into_DFAstates (preg, state, dests_node, dests_ch)
           bitset_copy (dests_ch[ndests], accepts);
           err = re_node_set_init_1 (dests_node + ndests, cur_nodes->elems[i]);
           if (BE (err != REG_NOERROR, 0))
-            return -1;
+            goto error_return;
           ++ndests;
           bitset_empty (accepts);
         }
     }
   return ndests;
+ error_return:
+  for (j = 0; j < ndests; ++j)
+    re_node_set_free (dests_node + j);
+  return -1;
 }
 
 #ifdef RE_ENABLE_I18N
@@ -3099,10 +3163,12 @@ extend_buffers (mctx)
   if (mctx->state_log != NULL)
     {
       /* And double the length of state_log.  */
-      mctx->state_log = re_realloc (mctx->state_log, re_dfastate_t *,
-                                    pstr->bufs_len * 2);
-      if (BE (mctx->state_log == NULL, 0))
+      re_dfastate_t **new_array;
+      new_array = re_realloc (mctx->state_log, re_dfastate_t *,
+                              pstr->bufs_len * 2);
+      if (BE (new_array == NULL, 0))
         return REG_ESPACE;
+      mctx->state_log = new_array;
     }
 
   /* Then reconstruct the buffers.  */
@@ -3174,13 +3240,17 @@ match_ctx_add_entry (mctx, node, str_idx, from, to)
 {
   if (mctx->nbkref_ents >= mctx->abkref_ents)
     {
-      mctx->bkref_ents = re_realloc (mctx->bkref_ents,
-                                     struct re_backref_cache_entry,
-                                     mctx->abkref_ents * 2);
-      if (BE (mctx->bkref_ents == NULL, 0))
-        return REG_ESPACE;
+      struct re_backref_cache_entry* new_entry;
+      new_entry = re_realloc (mctx->bkref_ents, struct re_backref_cache_entry,
+                              mctx->abkref_ents * 2);
+      if (BE (new_entry == NULL, 0))
+        {
+          re_free (mctx->bkref_ents);
+          return REG_ESPACE;
+        }
+      mctx->bkref_ents = new_entry;
       memset (mctx->bkref_ents + mctx->nbkref_ents, '\0',
-             sizeof (struct re_backref_cache_entry) * mctx->abkref_ents);
+              sizeof (struct re_backref_cache_entry) * mctx->abkref_ents);
       mctx->abkref_ents *= 2;
     }
   mctx->bkref_ents[mctx->nbkref_ents].node = node;
