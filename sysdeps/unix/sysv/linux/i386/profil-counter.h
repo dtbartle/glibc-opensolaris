@@ -1,5 +1,5 @@
 /* Low-level statistical profiling support function.  Linux/i386 version.
-   Copyright (C) 1996, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1996, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 
 #include <signal.h>
 
-void
+static void
 profil_counter (int signo, struct sigcontext sc)
 {
   profil_count ((void *) sc.eip);
