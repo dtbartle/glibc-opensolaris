@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1994, 1995, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 
 /* Read NBYTES into BUF from FD.  Return the number read or -1.  */
 ssize_t
-__read (fd, buf, nbytes)
+__libc_read (fd, buf, nbytes)
      int fd;
      void *buf;
      size_t nbytes;
@@ -32,4 +32,5 @@ __read (fd, buf, nbytes)
   return err ? __hurd_dfail (fd, err) : nbytes;
 }
 
-weak_alias (__read, read)
+weak_alias (__libc_read, __read)
+weak_alias (__libc_read, read)
