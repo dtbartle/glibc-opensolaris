@@ -88,15 +88,15 @@ do_test (void)
 
   pthread_attr_t at;
 
-  if (pthread_attr_setstacksize (&at, 1 * 1024 * 1024) != 0)
+  if (pthread_attr_init (&at) != 0)
     {
-      puts ("attr_setstacksize failed");
+      puts ("attr_init failed");
       return 1;
     }
 
-  if (pthread_mutex_lock (&lock) != 0)
+  if (pthread_attr_setstacksize (&at, 1 * 1024 * 1024) != 0)
     {
-      puts ("locking in parent failed");
+      puts ("attr_setstacksize failed");
       return 1;
     }
 
