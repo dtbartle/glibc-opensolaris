@@ -380,7 +380,7 @@ nss_lookup_function (service_user *ni, const char *fct_name)
 	      /* Load the shared library.  */
 	      size_t shlen = (7 + strlen (ni->library->name) + 3
 			      + strlen (__nss_shlib_revision) + 1);
-
+	      int saved_errno = errno;
 	      struct do_open_args args;
 	      args.shlib_name = __alloca (shlen);
 	      args.ni = ni;
@@ -393,8 +393,11 @@ nss_lookup_function (service_user *ni, const char *fct_name)
 			__nss_shlib_revision);
 
 	      if (nss_dlerror_run (do_open, &args) != 0)
-		/* Failed to load the library.  */
-		ni->library->lib_handle = (void *) -1l;
+		{
+		  /* Failed to load the library.  */
+		  ni->library->lib_handle = (void *) -1l;
+		  __set_errno (saved_errno);
+		}
 	    }
 
 	  if (ni->library->lib_handle == (void *) -1l)
