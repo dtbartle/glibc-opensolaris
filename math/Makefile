@@ -27,7 +27,7 @@ headers	:= math.h __math.h huge_val.h nan.h
 routines := acos asin atan cos sin tan cosh sinh tanh exp fabs ldexp	\
 	    log log10 floor sqrt fmod frexp pow atan2 ceil modf		\
 	    isinf isnan finite infnan copysign drem logb		\
-	    rint hypot cabs cbrt expm1 log1p acosh asinh atanh 
+	    rint hypot cabs cbrt expm1 log1p acosh asinh atanh		\
 	    isinfl isnanl
 tests := # test-math
 install-lib := libm.a
