@@ -39,7 +39,7 @@
 #include "mydefs.h"
 #include "dla.h"
 
-double usqrt(double x);
+double __ieee754_sqrt(double x);
 
 int4 tab54[32] = {
    262143, 11585, 1782, 511, 210, 107, 63, 42,
