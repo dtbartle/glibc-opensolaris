@@ -1,23 +1,23 @@
-/* Handle aliases for locale names.
+/* localealias.c -- handle aliases for locale names
    Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
 
-   This file is part of the GNU C Library.  Its master source is NOT part of
-   the C library, however.  The master source lives in /gd/gnu/lib.
+This file is part of the GNU C Library.  Its master source is NOT part of
+the C library, however.  The master source lives in /gd/gnu/lib.
 
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public License as
-   published by the Free Software Foundation; either version 2 of the
-   License, or (at your option) any later version.
+The GNU C Library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version.
 
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+The GNU C Library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Library General Public License for more details.
 
-   You should have received a copy of the GNU Library General Public
-   License along with the GNU C Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
+You should have received a copy of the GNU Library General Public
+License along with the GNU C Library; see the file COPYING.LIB.  If
+not, write to the Free Software Foundation, Inc., 675 Mass Ave,
+Cambridge, MA 02139, USA.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -229,6 +229,19 @@ read_alias_file (fname, fname_len)
 	/* EOF reached.  */
 	break;
 
+      /* Possibly not the whole line fits into the buffer.  Ignore
+	 the rest of the line.  */
+      if (strchr (buf, '\n') == NULL)
+	{
+	  char altbuf[BUFSIZ];
+	  do
+	    if (fgets (altbuf, sizeof altbuf, fp) == NULL)
+	      /* Make sure the inner loop will be left.  The outer loop
+		 will exit at the `feof' test.  */
+	      break;
+	  while (strchr (altbuf, '\n') == NULL);
+	}
+
       cp = buf;
       /* Ignore leading white space.  */
       while (isspace (cp[0]))
@@ -295,17 +308,6 @@ read_alias_file (fname, fname_len)
 	      ++nmap;
 	      ++added;
 	    }
-	}
-
-      /* Possibly not the whole line fits into the buffer.  Ignore
-	 the rest of the line.  */
-      while (strchr (cp, '\n') == NULL)
-	{
-	  cp = buf;
-	  if (fgets (buf, BUFSIZ, fp) == NULL)
-	    /* Make sure the inner loop will be left.  The outer loop
-	       will exit at the `feof' test.  */
-	    *cp = '\n';
 	}
     }
 
