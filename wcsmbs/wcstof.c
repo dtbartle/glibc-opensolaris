@@ -22,8 +22,12 @@
    These macros tell it to produce the `float' version, `wcstof'.  */
 
 #define	FLOAT		float
-#define	FLT		LDBL
-#define	STRTOF		wcstof
+#define	FLT		FLT
+#ifdef USE_IN_EXTENDED_LOCALE_MODEL
+# define STRTOF		__wcstof_l
+#else
+# define STRTOF		wcstof
+#endif
 #define	MPN2FLOAT	__mpn_construct_float
 #define	FLOAT_HUGE_VAL	HUGE_VALF
 #define	USE_WIDE_CHAR	1
