@@ -605,6 +605,10 @@ The @code{pthread_mutex_timedlock} is similar to the
 indefinite time if the mutex is locked by another thread, it returns
 when the time specified in @var{abstime} is reached.
 
+This function can only be used on standard (``timed'') and ``error
+checking'' mutexes.  It behaves just like @code{pthread_mutex_lock} for
+all other types.
+
 If the mutex is successfully locked, the function returns zero.  If the
 time specified in @var{abstime} is reached without the mutex being locked,
 @code{ETIMEDOUT} is returned.
