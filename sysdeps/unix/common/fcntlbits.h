@@ -1,5 +1,5 @@
 /* O_*, F_*, FD_* bit values for SVR4 and Irix 4.
-Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -87,6 +87,8 @@ Cambridge, MA 02139, USA.  */
 #define	F_SETLK		6	/* Set record locking info (non-blocking).  */
 #define	F_SETLKW	7	/* Set record locking info (blocking).  */
 #ifdef	__USE_SVID
+#define	F_ALLOCSP	10	/* Allocate space in the file.  */
+#define	F_FREESP	11	/* Free space in the file.  */
 #define	F_RGETLK	20	/* Get remote record locking info.  */
 #define	F_RSETLK	21	/* Set remote locking info (non-blocking).  */
 #define	F_RSETLKW	22	/* Set remote locking info (blocking).  */
