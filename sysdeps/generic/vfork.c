@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1992 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -19,24 +19,8 @@ Cambridge, MA 02139, USA.  */
 #include <ansidecl.h>
 #include <errno.h>
 #include <unistd.h>
-
-
-/* Clone the calling process, but without copying the whole address space.
-   The the calling process is suspended until the the new process exits or is
-   replaced by a call to `execve'.  Return -1 for errors, 0 to the new process,
-   and the process ID of the new process to the old process.  */
-int
-DEFUN_VOID(__vfork)
-{
-  errno = ENOSYS;
-  return -1;
-}
-
-
-#ifdef	 HAVE_GNU_LD
-
 #include <gnu-stabs.h>
 
-stub_warning(__vfork);
+/* If we don't have vfork, fork is close enough.  */
 
-#endif	/* GNU stabs.  */
+function_alias (__vfork, __fork, __pid_t, (), DEFUN_VOID(__vfork))
