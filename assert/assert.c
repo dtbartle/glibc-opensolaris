@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ CONST char *__assert_program_name;
    	a.c:10: foobar: Assertion `a == b' failed.
    It then aborts program execution via a call to `abort'.  */
 
-__NORETURN int
+void
 DEFUN(__assert_fail, (assertion, file, line, function),
       CONST char *assertion AND
       CONST char *file AND unsigned int line AND CONST char *function)      
@@ -50,16 +50,11 @@ DEFUN(__assert_fail, (assertion, file, line, function),
   (void) fflush (stderr);
 
   abort ();
-
-  /* This function never returns, so making it void would make sense,
-     but returning something makes the assert macro easier to write.  */
-  return 0;
 }
 
 #ifdef	HAVE_GNU_LD
 
 #include <string.h>
-#include <gnu-stabs.h>
 
 static void
 DEFUN(set_progname, (argc, argv, envp),
