@@ -96,8 +96,6 @@ typedef enum
   NON_TYPE = 0,
 
   /* Token type, these are used only by token.  */
-  OP_OPEN_SUBEXP,
-  OP_CLOSE_SUBEXP,
   OP_OPEN_BRACKET,
   OP_CLOSE_BRACKET,
   OP_CHARSET_RANGE,
@@ -124,6 +122,8 @@ typedef enum
 #endif /* RE_ENABLE_I18N */
 
   /* Node type, These are used by token, node, tree.  */
+  OP_OPEN_SUBEXP,
+  OP_CLOSE_SUBEXP,
   OP_PERIOD,
   CHARACTER,
   END_OF_RE,
@@ -203,8 +203,9 @@ typedef struct
 } re_token_t;
 
 #define IS_EPSILON_NODE(type) \
-  ((type) == OP_ALT || (type) == OP_DUP_ASTERISK || (type) == OP_DUP_PLUS || \
-   (type) == OP_DUP_QUESTION || (type) == ANCHOR)
+  ((type) == OP_ALT || (type) == OP_DUP_ASTERISK || (type) == OP_DUP_PLUS \
+   || (type) == OP_DUP_QUESTION || (type) == ANCHOR \
+   || (type) == OP_OPEN_SUBEXP || (type) == OP_CLOSE_SUBEXP)
 
 #define ACCEPT_MB_NODE(type) \
   ((type) == COMPLEX_BRACKET || (type) == OP_PERIOD)
