@@ -1,4 +1,4 @@
-/* Copyright (C) 1998 Free Software Foundation, Inc.
+/* Copyright (C) 1998, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -22,5 +22,7 @@
 int
 fstatvfs (int fd, struct statvfs *buf)
 {
+  /* `struct statvfs' is in fact identical to `struct statfs' so we
+     can simply call fstatfs.  */
   return __fstatfs (fd, (struct statfs *)buf);
 }
