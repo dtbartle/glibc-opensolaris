@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1997, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -58,6 +58,8 @@
 #ifdef _LIBC
 # undef isatty
 # define isatty(Fd) __isatty (Fd)
+
+# include <device-nrs.h>
 #endif
 
 /*
@@ -73,7 +75,6 @@ _IO_file_doallocate (fp)
      _IO_FILE *fp;
 {
   _IO_size_t size;
-  int couldbetty;
   char *p;
   struct _G_stat64 st;
 
@@ -88,7 +89,6 @@ _IO_file_doallocate (fp)
 
   if (fp->_fileno < 0 || _IO_SYSSTAT (fp, &st) < 0)
     {
-      couldbetty = 0;
       size = _IO_BUFSIZ;
 #if 0
       /* do not try to optimise fseek() */
@@ -97,7 +97,16 @@ _IO_file_doallocate (fp)
     }
   else
     {
-      couldbetty = S_ISCHR (st.st_mode);
+      if (S_ISCHR (st.st_mode))
+	{
+	  /* Possibly a tty.  */
+	  if (
+#ifdef DEV_TTY_P
+	      DEV_TTY_P (st.st_rdev) ||
+#endif
+	      isatty (fp->_fileno))
+	    fp->_flags |= _IO_LINE_BUF;
+	}
 #if _IO_HAVE_ST_BLKSIZE
       size = st.st_blksize <= 0 ? _IO_BUFSIZ : st.st_blksize;
 #else
@@ -106,7 +115,5 @@ _IO_file_doallocate (fp)
     }
   ALLOC_BUF (p, size, EOF);
   _IO_setb (fp, p, p + size, 1);
-  if (couldbetty && isatty (fp->_fileno))
-    fp->_flags |= _IO_LINE_BUF;
   return 1;
 }
