@@ -35,9 +35,9 @@ putpwent (p, stream)
       return -1;
     }
 
-  if (fprintf (stream, "%s:%s:%u:%u:%s:%s:%s\n",
+  if (fprintf (stream, "%s:%s:%lu:%lu:%s:%s:%s\n",
 	       p->pw_name, _S (p->pw_passwd),
-	       p->pw_uid, p->pw_gid,
+	       (unsigned long int) p->pw_uid, (unsigned long int) p->pw_gid,
 	       _S (p->pw_gecos), _S (p->pw_dir), _S (p->pw_shell)) < 0)
     return -1;
 
