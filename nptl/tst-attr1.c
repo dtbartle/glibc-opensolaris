@@ -35,6 +35,9 @@ do_test (void)
       exit (1);
     }
 
+  /* XXX Remove if default value is clear.  */
+  pthread_attr_setinheritsched (&a, PTHREAD_INHERIT_SCHED);
+
   for (i = 0; i < 10000; ++i)
     {
       long int r = random ();
@@ -60,6 +63,31 @@ do_test (void)
 	    {
 	      printf ("\
 detach state changed to %d by invalid setdetachstate call\n", s);
+	      exit (1);
+	    }
+	}
+
+      if (r != PTHREAD_INHERIT_SCHED && r != PTHREAD_EXPLICIT_SCHED)
+	{
+	  int e = pthread_attr_setinheritsched (&a, r);
+
+	  if (e == 0)
+	    {
+	      printf ("attr_setinheritsched with value %ld succeeded\n", r);
+	      exit (1);
+	    }
+
+	  int s;
+	  if (pthread_attr_getinheritsched (&a, &s) != 0)
+	    {
+	      puts ("attr_getinheritsched failed");
+	      exit (1);
+	    }
+
+	  if (s != PTHREAD_INHERIT_SCHED)
+	    {
+	      printf ("\
+inheritsched changed to %d by invalid setinheritsched call\n", s);
 	      exit (1);
 	    }
 	}
