@@ -17,50 +17,50 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#include <sys/types.h>
+#include <errno.h>
+#include <paths.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <termios.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
 #include <unistd.h>
 
-#include "pty-internal.h"
-
 #include <stdio-common/_itoa.h>
-#include <sys/sysmacros.h>
 
-/* Given the file descriptor of a master pty, return the pathname
-   of the associated slave.  */
+/* Directory where we can find the slave pty nodes.  */
+#define _PATH_DEVPTS "/dev/pts/"
 
-static char namebuf[PTYNAMELEN];
-extern const char __ptyname1[], __ptyname2[]; /* Defined in getpt.c.  */
+/* The are declared in getpt.c.  */
+extern const char *__libc_ptyname1;
+extern const char *__libc_ptyname2;
 
+/* Static buffer for `ptsname'.  */
+static char buffer[sizeof (_PATH_DEVPTS) + 20];
+
+
+/* Return the pathname of the pseudo terminal slave assoicated with
+   the master FD is open on, or NULL on errors.
+   The returned storage is good until the next call to this function.  */
 char *
-ptsname (fd)
-     int fd;
+ptsname (int fd)
 {
-  return __ptsname_r (fd, namebuf, PTYNAMELEN) != 0 ? NULL : namebuf;
+  return __ptsname_r (fd, buffer, sizeof (buffer)) != 0 ? NULL : buffer;
 }
 
+
+/* Store at most BUFLEN characters of the pathname of the slave pseudo
+   terminal associated with the master FD is open on in BUF.
+   Return 0 on success, otherwise an error number.  */
 int
-__ptsname_r (fd, buf, buflen)
-     int fd;
-     char *buf;
-     size_t buflen;
+__ptsname_r (int fd, char *buf, size_t buflen)
 {
+  int save_errno = errno;
   struct stat st;
-  int save = errno;
   int ptyno;
-  char nbuf[PTYNAMELEN], idbuf[6];
-  char *cp;
-
-#ifdef TIOCGPTN
-  static int tiocgptn_works = 1;
-#endif
-
-  if (!buf)
+  
+  if (buf == NULL)
     {
       __set_errno (EINVAL);
       return EINVAL;
@@ -73,61 +73,60 @@ __ptsname_r (fd, buf, buflen)
     }
 
 #ifdef TIOCGPTN
-  if (tiocgptn_works)
+  if (__ioctl (fd, TIOCGPTN, &ptyno) == 0)
     {
-      if (__ioctl (fd, TIOCGPTN, &ptyno) == 0)
-	goto gotit;
-      else
+      /* Buffer we use to print the number in.  For a maximum size for
+         `int' of 8 bytes we never need more than 20 digits.  */
+      char numbuf[21];
+      const char *devpts = _PATH_DEVPTS;
+      const size_t devptslen = strlen (devpts);
+      char *p;
+
+      numbuf[20] = '\0';
+      p = _itoa_word (ptyno, &numbuf[20], 10, 0);
+
+      if (buflen < devptslen + strlen (p) + 1)
 	{
-	  if(errno != EINVAL)
-	    return errno;
-	  else
-	    tiocgptn_works = 0;
+	  __set_errno (ERANGE);
+	  return ERANGE;
 	}
+
+      __stpcpy (__stpcpy (buf, devpts), p);
     }
+  else if (errno == EINVAL)
 #endif
-  if (__fxstat (_STAT_VER, fd, &st) < 0)
+    {
+      char *p;
+      
+      if (buflen < strlen (_PATH_TTY) + 3)
+	{
+	  __set_errno (ERANGE);
+	  return ERANGE;
+	}
+
+      if (__fstat (fd, &st) < 0)
+	return errno;
+
+      ptyno = minor (st.st_rdev);
+      if (major (st.st_rdev) == 4)
+	ptyno -= 128;
+
+      if (ptyno / 16 >= strlen (__libc_ptyname1))
+	{
+	  __set_errno (ENOTTY);
+	  return ENOTTY;
+	}
+      
+      p = __stpcpy (buf, _PATH_TTY);
+      p[0] = __libc_ptyname1[ptyno / 16];
+      p[1] = __libc_ptyname2[ptyno % 16];
+      p[2] = '\0';
+    }
+    
+  if (__stat (buf, &st) < 0)
     return errno;
 
-  ptyno = minor (st.st_rdev);
-  if (major (st.st_rdev) == 4)
-    ptyno -= 128;
-
-#ifdef TIOCGPTN
- gotit:
-#endif
-  /* Two different possible naming schemes for pty slaves:
-     the SVr4 way.  */
-
-  idbuf[5] = '\0';
-  __stpcpy (__stpcpy (nbuf, "/dev/pts/"),
-	    _itoa_word (ptyno, &idbuf[5], 10, 0));
-  if (__xstat (_STAT_VER, nbuf, &st) < 0)
-    {
-      if (errno != ENOENT)
-	return errno;
-
-      /* ...and the BSD way.  */
-      nbuf[5]  = 't';
-      nbuf[7]  = 'y';
-      nbuf[8]  = __ptyname1[ptyno / 16];
-      nbuf[9]  = __ptyname2[ptyno % 16];
-      nbuf[10] = '\0';
-
-      if (__xstat (_STAT_VER, nbuf, &st) < 0)
-	return errno;
-    }
-
-  if (buflen < strlen (nbuf) + 1)
-    {
-      __set_errno (ERANGE);
-      return ERANGE;
-    }
-
-  cp = __stpncpy (buf, nbuf, buflen);
-  cp[0] = '\0';
-
-  __set_errno (save);
+  __set_errno (save_errno);
   return 0;
 }
 weak_alias (__ptsname_r, ptsname_r)
