@@ -123,9 +123,4 @@ ifeq ($(subdir),nis)
 CFLAGS-ypclnt.c = -DUSE_BINDINGDIR=1
 endif
 
-ifeq ($(subdir),elf)
-others += lddlibc4
-install-bin += lddlibc4
-endif
-
 common-generated += bits/stdio_lim.h bits/stdio_lim.d
