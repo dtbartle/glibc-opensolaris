@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -22,8 +22,10 @@ Cambridge, MA 02139, USA.  */
 #undef	__finite
 
 /* Return nonzero if VALUE is finite and not NaN.  */
-__CONSTVALUE int
+int
 DEFUN(__finite, (value), double value)
 {
   return !__isinf (value) && !__isnan (value);
 }
+
+weak_alias (__finite, finite)
