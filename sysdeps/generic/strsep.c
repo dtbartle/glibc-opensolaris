@@ -44,7 +44,7 @@ __strsep (char **stringp, const char *delim)
 	  if (*begin == ch)
 	    end = begin;
 	  else
-	    end = strchr (begin, delim[0]);
+	    end = strchr (begin + 1, ch);
 	}
     }
   else
