@@ -60,10 +60,10 @@ GLIBC_2.0 {
     _IO_getc; _IO_peekc_unlocked; _IO_putc; _IO_feof; _IO_ferror;
     __xstat; __fxstat; __lxstat; __xstat64; __fxstat64; __lxstat64; __xmknod;
     __dcgettext; __uflow; __underflow; __overflow; __iswctype; __sigpause;
-    __ctype_get_mb_cur_max;
+    __ctype_get_mb_cur_max; __bzero;
 
     # functions used in other libraries
-    __printf_fp; __stpncpy; __stpcpy; __strdup;
+    __printf_fp; __stpncpy; __stpcpy; __strdup; __mempcpy;
     _nss_files_parse_grent; _nss_files_parse_pwent; _nss_files_parse_spent;
     __nss_database_lookup; __internal_endnetgrent; __internal_getnetgrent_r;
     __internal_setnetgrent; __gmtime_r; __secure_getenv;
@@ -261,7 +261,7 @@ GLIBC_2.0 {
     mbtowc; mcheck; mcount;
 
     memalign; memccpy; memchr; memcmp; memcpy; memfrob; memmem;
-    memmove; memset;
+    memmove; mempcpy; memset;
 
     mkdir; mkfifo; mkstemp; mktemp; mktime; mlock;
     mlockall; mmap; mmap64; modf; modff; modfl; moncontrol; monstartup; mount;
@@ -280,8 +280,8 @@ GLIBC_2.0 {
     parse_printf_format; passwd2des; pathconf; pause; pciconfig_read;
     pciconfig_write; pclose; perror;
     personality; pipe; pmap_getmaps; pmap_getport; pmap_rmtcall; pmap_set;
-    pmap_unset; poll; popen; pread; printf; printf_size; printf_size_info;
-    profil; profil_counter; pwrite; pselect; psignal;
+    pmap_unset; poll; popen; prctl; pread; printf; printf_size;
+    printf_size_info; profil; profil_counter; pwrite; pselect; psignal;
 
     pthread_attr_destroy;
     pthread_attr_getdetachstate; pthread_attr_getinheritsched;
