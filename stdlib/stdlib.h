@@ -188,23 +188,35 @@ extern __long_double_t __strtold_internal __P ((__const char *
 						__restrict __nptr,
 						char **__restrict __endptr,
 						int __group));
+#ifndef __strtol_internal_defined
 extern long int __strtol_internal __P ((__const char *__restrict __nptr,
 					char **__restrict __endptr,
 					int __base, int __group));
+# define __strtol_internal_defined	1
+#endif
+#ifndef __strtoul_internal_defined
 extern unsigned long int __strtoul_internal __P ((__const char *
 						  __restrict __nptr,
 						  char **__restrict __endptr,
 						  int __base, int __group));
-#ifdef __GNUC__
+# define __strtoul_internal_defined	1
+#endif
+#if defined __GNUC__ || defined __USE_ISOC9X
+# ifndef __strtoll_internal_defined
 extern long long int __strtoll_internal __P ((__const char *__restrict __nptr,
 					      char **__restrict __endptr,
 					      int __base, int __group));
+#  define __strtoll_internal_defined	1
+# endif
+# ifndef __strtoull_internal_defined
 extern unsigned long long int __strtoull_internal __P ((__const char *
 							__restrict __nptr,
 							char **
 							__restrict __endptr,
 							int __base,
 							int __group));
+#  define __strtoull_internal_defined	1
+# endif
 #endif /* GCC */
 
 #if defined __OPTIMIZE__ && __GNUC__ >= 2
