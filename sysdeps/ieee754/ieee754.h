@@ -18,6 +18,46 @@ Cambridge, MA 02139, USA.  */
 
 #include <endian.h>
 
+union ieee754_float
+  {
+    float f;
+    
+    /* This is the IEEE 754 single-precision format.  */
+    struct
+      {
+#if	__BYTE_ORDER == __BIG_ENDIAN
+	unsigned int negative:1;
+	unsigned int exponent:8;
+	unsigned int mantissa:23;
+#endif				/* Big endian.  */
+#if	__BYTE_ORDER == __LITTLE_ENDIAN
+	unsigned int mantissa:23;
+	unsigned int exponent:8;
+	unsigned int negative:1;
+#endif				/* Little endian.  */
+      } ieee;
+
+    /* This format makes it easier to see if a NaN is a signalling NaN.  */
+    struct
+      {
+#if	__BYTE_ORDER == __BIG_ENDIAN
+	unsigned int negative:1;
+	unsigned int exponent:8;
+	unsigned int quiet_nan:1;
+	unsigned int mantissa:22;
+#endif				/* Big endian.  */
+#if	__BYTE_ORDER == __LITTLE_ENDIAN
+	unsigned int mantissa:22;
+	unsigned int quiet_nan:1;
+	unsigned int exponent:8;
+	unsigned int negative:1;
+#endif				/* Little endian.  */
+      } ieee_nan;
+  };
+
+#define IEEE754_FLOAT_BIAS	0x7f /* Added to exponent.  */
+
+
 union ieee754_double
   {
     double d;
