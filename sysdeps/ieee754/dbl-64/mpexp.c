@@ -35,7 +35,7 @@
 
 /* Multi-Precision exponential function subroutine (for p >= 4,          */
 /* 2**(-55) <= abs(x) <= 1024).                                          */
-void mpexp(mp_no *x, mp_no *y, int p) {
+void __mpexp(mp_no *x, mp_no *y, int p) {
 
   int i,j,k,m,m1,m2,n;
   double a,b;
