@@ -62,9 +62,9 @@ struct sym_val
 #ifdef SHARED
 /* Statistics function.  */
 unsigned long int _dl_num_relocations;
-# define bump_num_relocation() ++_dl_num_relocations
+# define bump_num_relocations() ++_dl_num_relocations
 #else
-# define bump_num_relocation() ((void) 0)
+# define bump_num_relocations() ((void) 0)
 #endif
 
 
