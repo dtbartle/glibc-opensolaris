@@ -62,6 +62,12 @@ __BEGIN_DECLS
 #define	__need_size_t
 #include <stddef.h>
 
+#ifdef __USE_MISC
+/* Old compatibility names for C types.  */
+typedef unsigned short int ushort;
+typedef unsigned int uint;
+#endif
+
 #ifdef __USE_BSD
 /* These size-specific names are used by some of the inet code.  */
 
