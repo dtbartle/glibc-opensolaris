@@ -1,5 +1,4 @@
-/* pty.h - Functions for pseudo TTY handling.
-   Copyright (C) 1996 Free Software Foundation, Inc.
+/* Copyright (C) 1996 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,27 +16,14 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#ifndef _PTY_H
+#include <sysdep.h>
 
-#define _PTY_H	1
-#include <features.h>
+/* The mremap system call is special because it needs to return
+   its value in register %a0.  */
 
-#include <termios.h>
-
-
-__BEGIN_DECLS
-
-/* Create pseudo tty master slave pair with NAME and set terminal
-   attributes according to TERMP and WINP and return handles for both
-   ends in AMASTER and ASLAVE.  */
-extern int openpty __P ((int *__amaster, int *__aslave, char *__name,
-			 struct termios *__termp, struct winsize *__winp));
-
-/* Create child process and establish the slave pseudo terminal as the
-   child's controlling terminal.  */
-extern int forkpty __P ((int *__amaster, char *__name,
-			 struct termios *__termp, struct winsize *__winp));
-
-__END_DECLS
-
-#endif	/* pty.h */
+	.text
+PSEUDO (__mremap, mremap, 4)
+	move.l %d0, %a0
+	rts
+PSEUDO_END (__mremap)
+weak_alias (__mremap, mremap)
