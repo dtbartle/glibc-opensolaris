@@ -295,4 +295,19 @@ __assert_fail (const char *assertion,
 }
 weak_symbol (__assert_fail)
 
+void
+__assert_perror_fail (int errnum,
+		      const char *file, unsigned int line,
+		      const char *function)
+{
+  char buf[64];
+  buf[sizeof buf - 1] = '\0';
+  _dl_sysdep_fatal ("BUG IN DYNAMIC LINKER ld.so: ",
+		    file, ": ", _itoa (line, buf + sizeof buf - 1, 10, 0),
+		    ": ", function ?: "", function ? ": " : "",
+		    "Unexpected error: ", strerror (errnum), "\n", NULL);
+
+}
+weak_symbol (__assert_perror_fail)
+
 #endif
