@@ -1,4 +1,4 @@
-/* Copyright (C) 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -24,5 +24,5 @@ ENTRY (syscall)
 	popl %eax		/* Pop syscall number into %eax.  */
 	pushl %ecx		/* Push back return address.  */
 	.byte 0x9a, 0, 0, 0, 0, 7, 0 /* lcall $7, $0 -- gas bug */
-	jb syscall_error
+	jb JUMPTARGET(syscall_error)
 	ret
