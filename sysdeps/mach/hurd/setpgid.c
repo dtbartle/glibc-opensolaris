@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -52,3 +52,5 @@ DEFUN(__setpgrp, (pid, pgid), pid_t pid AND pid_t pgid)
   return 0;
 
 }
+
+weak_alias (__setpgrp, setpgrp)
