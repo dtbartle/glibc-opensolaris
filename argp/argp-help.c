@@ -858,9 +858,9 @@ hol_append (struct hol *hol, struct hol *more)
 		    }
 		}
 	    }
-	}
 
-	*so = '\0';
+	  *so = '\0';
+	}
 
 	free (hol->entries);
 	free (hol->short_options);
