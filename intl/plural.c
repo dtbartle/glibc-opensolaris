@@ -39,6 +39,13 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+/* The bison generated parser uses alloca.  AIX 3 forces us to put this
+   declaration at the beginning of the file.  The declaration in bison's
+   skeleton file comes too late.  This must come before <config.h>
+   because <config.h> may include arbitrary system headers.  */
+#if defined _AIX && !defined __GNUC__
+ #pragma alloca
+#endif
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -55,13 +62,13 @@
 #define YYLEX_PARAM	&((struct parse_args *) arg)->cp
 #define YYPARSE_PARAM	arg
 
-#line 41 "plural.y"
+#line 48 "plural.y"
 typedef union {
   unsigned long int num;
   enum operator op;
   struct expression *exp;
 } YYSTYPE;
-#line 47 "plural.y"
+#line 54 "plural.y"
 
 /* Prototypes for local functions.  */
 static struct expression *new_exp PARAMS ((int nargs, enum operator op,
@@ -223,8 +230,8 @@ static const short yyrhs[] = {    17,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   166,   174,   178,   182,   186,   190,   194,   198,   202,   206,
-   210,   215
+   173,   181,   185,   189,   193,   197,   201,   205,   209,   213,
+   217,   222
 };
 #endif
 
@@ -834,7 +841,7 @@ yyreduce:
   switch (yyn) {
 
 case 1:
-#line 167 "plural.y"
+#line 174 "plural.y"
 {
 	    if (yyvsp[0].exp == NULL)
 	      YYABORT;
@@ -842,68 +849,68 @@ case 1:
 	  ;
     break;}
 case 2:
-#line 175 "plural.y"
+#line 182 "plural.y"
 {
 	    yyval.exp = new_exp_3 (qmop, yyvsp[-4].exp, yyvsp[-2].exp, yyvsp[0].exp);
 	  ;
     break;}
 case 3:
-#line 179 "plural.y"
+#line 186 "plural.y"
 {
 	    yyval.exp = new_exp_2 (lor, yyvsp[-2].exp, yyvsp[0].exp);
 	  ;
     break;}
 case 4:
-#line 183 "plural.y"
+#line 190 "plural.y"
 {
 	    yyval.exp = new_exp_2 (land, yyvsp[-2].exp, yyvsp[0].exp);
 	  ;
     break;}
 case 5:
-#line 187 "plural.y"
+#line 194 "plural.y"
 {
 	    yyval.exp = new_exp_2 (yyvsp[-1].op, yyvsp[-2].exp, yyvsp[0].exp);
 	  ;
     break;}
 case 6:
-#line 191 "plural.y"
+#line 198 "plural.y"
 {
 	    yyval.exp = new_exp_2 (yyvsp[-1].op, yyvsp[-2].exp, yyvsp[0].exp);
 	  ;
     break;}
 case 7:
-#line 195 "plural.y"
+#line 202 "plural.y"
 {
 	    yyval.exp = new_exp_2 (yyvsp[-1].op, yyvsp[-2].exp, yyvsp[0].exp);
 	  ;
     break;}
 case 8:
-#line 199 "plural.y"
+#line 206 "plural.y"
 {
 	    yyval.exp = new_exp_2 (yyvsp[-1].op, yyvsp[-2].exp, yyvsp[0].exp);
 	  ;
     break;}
 case 9:
-#line 203 "plural.y"
+#line 210 "plural.y"
 {
 	    yyval.exp = new_exp_1 (lnot, yyvsp[0].exp);
 	  ;
     break;}
 case 10:
-#line 207 "plural.y"
+#line 214 "plural.y"
 {
 	    yyval.exp = new_exp_0 (var);
 	  ;
     break;}
 case 11:
-#line 211 "plural.y"
+#line 218 "plural.y"
 {
 	    if ((yyval.exp = new_exp_0 (num)) != NULL)
 	      yyval.exp->val.num = yyvsp[0].num;
 	  ;
     break;}
 case 12:
-#line 216 "plural.y"
+#line 223 "plural.y"
 {
 	    yyval.exp = yyvsp[-1].exp;
 	  ;
@@ -1130,7 +1137,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 221 "plural.y"
+#line 228 "plural.y"
 
 
 void
