@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -18,14 +18,13 @@ Cambridge, MA 02139, USA.  */
 
 #include <hurd/fd.h>
 
-/* FD is locked.  Close and unlock it, so it can be reallocated.  */
-
 error_t
 _hurd_fd_close (struct hurd_fd *fd)
 {
   /* Clear the descriptor's port cells.
      This deallocates the ports if noone else is still using them.  */
 
+  __spin_lock (&fd->port.lock);
   _hurd_port_set (&fd->ctty, MACH_PORT_NULL);
   _hurd_port_locked_set (&fd->port, MACH_PORT_NULL);
 
