@@ -1,3 +1,7 @@
+1999-11-03  Ulrich Drepper  <drepper@cygnus.com>
+
+	* td_thr_get_info.c (td_thr_get_info): Initialize ti_traceme.
+
 1999-11-02  Ulrich Drepper  <drepper@cygnus.com>
 
 	* td_ta_thr_iter.c (td_ta_thr_iter): Optimize a bit.  Read all
