@@ -531,7 +531,7 @@ DCIGETTEXT (domainname, msgid1, msgid2, plural, n, category)
 
       /* Find structure describing the message catalog matching the
 	 DOMAINNAME and CATEGORY.  */
-      domain = _nl_find_domain (dirname, single_locale, xdomainname);
+      domain = _nl_find_domain (dirname, single_locale, xdomainname, binding);
 
       if (domain != NULL)
 	{
@@ -1073,15 +1073,19 @@ free_mem (void)
   struct binding *runp;
 
   for (runp = _nl_domain_bindings; runp != NULL; runp = runp->next)
-    if (runp->dirname != _nl_default_dirname)
-      /* Yes, this is a pointer comparison.  */
-      free (runp->dirname);
+    {
+      if (runp->dirname != _nl_default_dirname)
+	/* Yes, this is a pointer comparison.  */
+	free (runp->dirname);
+      if (runp->codeset != NULL)
+	free (runp->codeset);
+    }
 
   if (_nl_current_default_domain != _nl_default_default_domain)
     /* Yes, again a pointer comparison.  */
     free ((char *) _nl_current_default_domain);
 
-  /* Remove the search tree with the know translations.  */
+  /* Remove the search tree with the known translations.  */
   __tdestroy (root, free);
 }
 
