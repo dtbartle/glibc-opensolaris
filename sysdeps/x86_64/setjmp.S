@@ -43,4 +43,4 @@ ENTRY (__sigsetjmp)
 	jmp BP_SYM (__sigjmp_save)
 #endif
 END (BP_SYM (__sigsetjmp))
-libc_hidden_def (__sigsetjmp)
+hidden_def (__sigsetjmp)
