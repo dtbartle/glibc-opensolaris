@@ -50,9 +50,9 @@ Cambridge, MA 02139, USA.  */
 
 # define va_list	_IO_va_list
 # define ungetc(c, s)	_IO_ungetc (c, s)
-# define inchar()	((c = _IO_getc(s)), ++read_in, c)
+# define inchar()	((c = _IO_getc (s)), ++read_in, c)
 # define conv_error()	return ((errp != NULL && (*errp |= 2)), \
-				(c == EOF || _IO_ungetc(c, s)), done)
+				(c == EOF || _IO_ungetc (c, s)), done)
 
 # define input_error()	return ((errp != NULL && (*errp |= 1)), \
 				done == 0 ? EOF : done)
@@ -69,8 +69,8 @@ Cambridge, MA 02139, USA.  */
        }								     \
     } while (0)
 #else
-# define inchar()	((c = getc(s)) == EOF ? EOF : (++read_in, c))
-# define conv_error()	return (ungetc(c, s), done)
+# define inchar()	((c = getc (s)), ++read_in, c)
+# define conv_error()	return (ungetc (c, s), done)
 # define input_error()	return (done == 0 ? EOF : done)
 # define memory_error()	return ((errno = ENOMEM), EOF)
 # define ARGCHECK(s, format)						     \
@@ -148,8 +148,8 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
   /* Workspace.  */
   char *tw;			/* Temporary pointer.  */
   char *wp = NULL;		/* Workspace.  */
-  size_t wpsize = 0;		/* Currently used bytes in workspace.  */
   size_t wpmax = 0;		/* Maximal size of workspace.  */
+  size_t wpsize;		/* Currently used bytes in workspace.  */
 #define ADDW(Ch)							    \
   do									    \
     {									    \
@@ -158,7 +158,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	  char *old = wp;						    \
 	  wpmax = 200 > 2 * wpmax ? 200 : 2 * wpmax;			    \
 	  wp = (char *) alloca (wpmax);					    \
-	  if (wpsize > 0)						    \
+	  if (old != NULL)						    \
 	    memcpy (wp, old, wpsize);					    \
 	}								    \
       wp[wpsize++] = (Ch);						    \
@@ -247,6 +247,9 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
       do_assign = 1;
       group_flag = 0;
       is_short = is_long = is_long_double = malloc_string = 0;
+
+      /* Prepare temporary buffer.  */
+      wpsize = 0;
 
       /* Check for a positional parameter specification.  */
       if (isdigit (*f))
@@ -365,6 +368,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	case '%':	/* Must match a literal '%'.  */
 	  if (c != fc)
 	    conv_error ();
+	  inchar ();
 	  break;
 
 	case 'n':	/* Answer number of assignments done.  */
@@ -513,7 +517,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	    }
 
 	  /* Look for a leading indication of base.  */
-	  if (c == '0')
+	  if (width != 0 && c == '0')
 	    {
 	      if (width > 0)
 		--width;
@@ -521,7 +525,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 
 	      (void) inchar ();
 
-	      if (tolower (c) == 'x')
+	      if (width != 0 && tolower (c) == 'x')
 		{
 		  if (base == 0)
 		    base = 16;
@@ -540,7 +544,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	    base = 10;
 
 	  /* Read the number into workspace.  */
-	  do
+	  while (c != EOF && width != 0)
 	    {
 	      if (base == 16 ? !isxdigit (c) :
 		  (!isdigit (c) || c - '0' >= base))
@@ -548,8 +552,9 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	      ADDW (c);
 	      if (width > 0)
 		--width;
+
+	      (void) inchar ();
 	    }
-	  while (inchar () != EOF && width != 0);
 
 	  if (wpsize == 0 ||
 	      (wpsize == 1 && (wp[0] == '+' || wp[0] == '-')))
