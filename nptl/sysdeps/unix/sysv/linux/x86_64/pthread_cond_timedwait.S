@@ -124,7 +124,7 @@ __pthread_cond_timedwait:
 	jne	3f
 
 4:	callq	__pthread_enable_asynccancel
-	movq	%rax, (%rsp)
+	movl	%eax, (%rsp)
 
 	/* Get the current time.  */
 #ifdef __NR_clock_gettime
@@ -181,7 +181,7 @@ __pthread_cond_timedwait:
 	syscall
 	movq	%rax, %r14
 
-	movq	(%rsp), %rdi
+	movl	(%rsp), %edi
 	callq	__pthread_disable_asynccancel
 
 	/* Lock.  */
