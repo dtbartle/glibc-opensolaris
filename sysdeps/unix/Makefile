@@ -292,4 +292,8 @@ $(objpfx)sysd-syscalls: $(..)sysdeps/unix/make-syscalls.sh \
 	done > $@T
 	mv -f $@T $@
 
+# This syscall objects depend on s-proto.d, which is generated to
+# specify dependencies generated syscalls with have on headers.
+-include $(objpfx)s-proto.d
+
 endif
