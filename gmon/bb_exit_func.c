@@ -25,6 +25,7 @@
 #include <sys/types.h>
 
 #include <stdio.h>
+#include <stdio_ext.h>
 #include <string.h>
 
 #define OUT_NAME	"gmon.out"
