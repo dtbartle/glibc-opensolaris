@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,22 +16,26 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
 #include <stdarg.h>
 #include <stdio.h>
 
+#ifdef USE_IN_LIBIO
+# define vdprintf _IO_vdprintf
+#endif
 
 /* Write formatted output to D, according to the format string FORMAT.  */
 /* VARARGS2 */
 int
-DEFUN(dprintf, (d, format), int d AND CONST char *format DOTS)
+dprintf (d, format)
+     int d;
+     const char *format;
 {
   va_list arg;
   int done;
 
-  va_start(arg, format);
-  done = vdprintf(d, format, arg);
-  va_end(arg);
+  va_start (arg, format);
+  done = vdprintf (d, format, arg);
+  va_end (arg);
 
   return done;
 }
