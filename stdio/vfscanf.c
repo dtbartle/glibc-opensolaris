@@ -78,8 +78,6 @@ DEFUN(__vfscanf, (s, format, arg),
   /* Integral holding variables.  */
   long int num;
   unsigned long int unum;
-  /* Floating-point holding variable.  */
-  LONG_DOUBLE fp_num;
   /* Character-buffer pointer.  */
   register char *str, **strptr;
   size_t strsize;
@@ -481,25 +479,33 @@ DEFUN(__vfscanf, (s, format, arg),
 	  if (w[-1] == '-' || w[-1] == '+' || w[-1] == 'e')
 	    conv_error();
 
-#ifndef MIB_HACKS
 	  /* Convert the number.  */
 	  *w = '\0';
-	  fp_num = strtod(work, &w);
+	  if (is_long_double)
+	    {
+	      long double d = __strtold (work, &w);
+	      if (do_assign && w != work)
+		*va_arg (arg, long double *) = d;
+	    }
+	  else if (is_long)
+	    {
+	      double d = strtod (work, &w);
+	      if (do_assign && w != work)
+		*va_arg (arg, double *) = d;
+	    }
+	  else
+	    {
+	      float d = __strtof (work, &w);
+	      if (do_assign && w != work)
+		*va_arg (arg, float *) = d;
+	    }
+
 	  if (w == work)
-	    conv_error();
+	    conv_error ();
 
 	  if (do_assign)
-	    {
-	      if (is_long_double)
-		*va_arg(arg, LONG_DOUBLE *) = fp_num;
-	      else if (is_long)
-		*va_arg(arg, double *) = (double) fp_num;
-	      else
-		*va_arg(arg, float *) = (float) fp_num;
-	      ++done;
-	    }
+	    ++done;
 	  break;
-#endif /* MIB_HACKS */
 
 	case '[':	/* Character class.  */
 	  STRING_ARG;
