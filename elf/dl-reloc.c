@@ -57,12 +57,12 @@ _dl_relocate_object (struct link_map *l, struct link_map *scope[], int lazy)
       = ((void *) l->l_addr + l->l_info[DT_STRTAB]->d_un.d_ptr);
 
     /* This macro is used as a callback from the ELF_DYNAMIC_RELOCATE code.  */
-#define RESOLVE(ref, version, flags) \
-    ((version) != NULL && (version)->hash != 0				      \
-     ? _dl_lookup_versioned_symbol (strtab + (*ref)->st_name, (ref), scope,   \
-				    l->l_name, (version), (flags))	      \
-     : _dl_lookup_symbol (strtab + (*ref)->st_name, (ref), scope,	      \
-			  l->l_name, (flags)))
+#define RESOLVE(ref, flags) \
+    (((*ref)->st_shndx != SHN_UNDEF &&					      \
+      ELFW(ST_BIND) ((*ref)->st_info) == STB_LOCAL)			      \
+     ? l->l_addr							      \
+     : _dl_lookup_symbol (strtab + (*ref)->st_name, ref, scope,		      \
+			  l->l_name, flags))
 
 #include "dynamic-link.h"
     ELF_DYNAMIC_RELOCATE (l, lazy);
