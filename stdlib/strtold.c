@@ -3,7 +3,10 @@
 
 #define	FLOAT		long double
 #define	FLT		LDBL
-#define	STRTOF		strtold
+#define	STRTOF		__strtold
 #define	MPN2FLOAT	__mpn_construct_long_double
+#define	FLOAT_HUGE_VAL	HUGE_VALl
 
 #include "strtod.c"
+
+weak_alias (__strtold, strtold)
