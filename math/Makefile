@@ -119,3 +119,9 @@ override CFLAGS += -Wno-uninitialized -Wno-write-strings
 $(objpfx)libieee.a: $(objpfx)ieee-math.o
 	rm -f $@
 	ln $< $@
+
+ifeq ($(build-shared),yes)
+$(addprefix $(objpfx),$(tests)): $(objpfx)libm.so$(libm.so-version)
+else
+$(addprefix $(objpfx),$(tests)): $(objpfx)libm.a
+endif
