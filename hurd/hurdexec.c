@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -217,7 +217,7 @@ _hurd_exec (task_t task, file_t file,
       }
 
     err = __file_exec (file, task,
-		       0,	/* No particular flags.  */
+		       _hurd_exec_flags & EXEC_INHERITED,
 		       args, argslen, env, envlen,
 		       dtable, MACH_MSG_TYPE_COPY_SEND, dtablesize, 
 		       ports, MACH_MSG_TYPE_COPY_SEND, _hurd_nports, 
