@@ -52,7 +52,8 @@ __md5_crypt_r (key, salt, buffer, buflen)
      char *buffer;
      int buflen;
 {
-  unsigned char alt_result[16];
+  unsigned char alt_result[16]
+    __attribute__ ((__aligned__ (__alignof__ (md5_uint32))));
   struct md5_ctx ctx;
   struct md5_ctx alt_ctx;
   size_t salt_len;
@@ -73,7 +74,7 @@ __md5_crypt_r (key, salt, buffer, buflen)
     {
       char *tmp = (char *) alloca (key_len + __alignof__ (md5_uint32));
       key = memcpy (tmp + __alignof__ (md5_uint32)
-		    + (tmp - (char *) 0) % __alignof__ (md5_uint32),
+		    - (tmp - (char *) 0) % __alignof__ (md5_uint32),
 		    key, key_len);
       assert ((key - (char *) 0) % __alignof__ (md5_uint32) == 0);
     }
@@ -82,7 +83,7 @@ __md5_crypt_r (key, salt, buffer, buflen)
     {
       char *tmp = (char *) alloca (salt_len + __alignof__ (md5_uint32));
       salt = memcpy (tmp + __alignof__ (md5_uint32)
-		     + (tmp - (char *) 0) % __alignof__ (md5_uint32),
+		     - (tmp - (char *) 0) % __alignof__ (md5_uint32),
 		     salt, salt_len);
       assert ((salt - (char *) 0) % __alignof__ (md5_uint32) == 0);
     }
