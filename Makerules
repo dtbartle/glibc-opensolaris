@@ -416,6 +416,14 @@ symdef.%: $(foreach o,$(object-suffixes),\
 .PHONY: objects objs
 objects objs: $(foreach o,$(object-suffixes),$(objects:.o=$o)) \
 	      $(addprefix $(objpfx),$(extra-objs))
+
+# Canned sequence for building an extra library archive.
+define build-extra-lib
+$(patsubst %,cd %;,$(objdir)) \
+$(AR) cru$(verbose) $(@:$(objpfx)%=%) \
+      $(patsubst $(objpfx)%,%,$^)
+$(RANLIB) $@
+endef
 
 # Installation.
 
