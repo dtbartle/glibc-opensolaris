@@ -18,9 +18,10 @@
    Boston, MA 02111-1307, USA.  */
 
 #include <signal.h>
+#include <sigcontextinfo.h>
 
 static void
-profil_counter (int signo, struct sigcontext sc)
+profil_counter (int signo, SIGCONTEXT scp)
 {
-  profil_count ((void *) sc.eip);
+  profil_count ((void *) GET_PC (scp));
 }
