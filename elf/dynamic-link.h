@@ -91,6 +91,3 @@ elf_get_dynamic_info (Elf32_Dyn *dyn, Elf32_Dyn *info[DT_NUM + DT_PROCNUM])
 #define ELF_DYNAMIC_RELOCATE(map, lazy, resolve) \
   do { ELF_DYNAMIC_DO_REL ((map), (lazy), (resolve)); \
        ELF_DYNAMIC_DO_RELA ((map), (lazy), (resolve)); } while (0)
-
-/* Helper function used by lazy PLT trampoline code.  */
-extern Elf32_Addr _dl_runtime_resolve (struct link_map *, Elf32_Word);
