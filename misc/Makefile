@@ -84,6 +84,8 @@ CFLAGS-usleep.c = -fexceptions
 CFLAGS-syslog.c = -fexceptions
 CFLAGS-error.c = -fexceptions
 CFLAGS-getpass.c = -fexceptions
+CFLAGS-mkstemp.c = -fexceptions
+CFLAGS-mkstemp64.c = -fexceptions
 
 include ../Rules
 
