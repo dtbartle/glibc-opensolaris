@@ -1,2 +1,10 @@
-*.gz *.Z *.tar
+*.gz *.Z *.tar *.tgz
 =*
+TODO COPYING* AUTHORS copyr-* copying.*
+glibc-*
+
+configparms 
+
+sun4 i386 i386-gnuelf hp300-netbsd hp300
+
+ieeetest hppa-sysdeps regex
