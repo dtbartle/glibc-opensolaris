@@ -489,23 +489,23 @@ fi
 # Check whether --enable-shared or --disable-shared was given.
 enableval="$enable_shared"
 if test -n "$enableval"; then
-  shared=yes
+  shared=$enableval
 else
-  shared=no
+  shared=default
 fi
 
 # Check whether --enable-profile or --disable-profile was given.
 enableval="$enable_profile"
 if test -n "$enableval"; then
-  profile=yes
+  profile=$enableval
 else
-  profile=no
+  profile=yes
 fi
 
 # Check whether --enable-omitfp or --disable-omitfp was given.
 enableval="$enable_omitfp"
 if test -n "$enableval"; then
-  omitfp=yes
+  omitfp=$enableval
 else
   omitfp=no
 fi
