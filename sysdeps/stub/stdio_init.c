@@ -26,5 +26,5 @@ Cambridge, MA 02139, USA.  */
 void
 DEFUN(__stdio_init_stream, (stream), FILE *stream)
 {
-  __bufsize(stream) = BUFSIZ;
+  stream->__bufsize = BUFSIZ;
 }
