@@ -17,10 +17,10 @@ extern struct tm _tmbuf;
 extern char *__tzstring (const char *string);
 
 /* Defined in tzset.c. */
-extern size_t __tzname_cur_max;
+extern size_t __tzname_cur_max attribute_hidden;
 
 
-extern int __use_tzfile;
+extern int __use_tzfile attribute_hidden;
 
 extern void __tzfile_read (const char *file, size_t extra,
 			   char **extrap);
