@@ -54,7 +54,7 @@ endif
 subdirs = csu assert ctype db locale intl catgets math setjmp signal stdlib \
 	  stdio-common $(stdio) malloc string wcsmbs time dirent grp pwd \
 	  posix io termios resource misc login socket sysvipc gmon gnulib \
-	  wctype manual shadow md5-crypt nss $(sysdep-subdirs) po argp \
+	  wctype manual shadow md5-crypt nss $(sysdep-subdirs) po \
 	  $(add-ons) elf
 export subdirs := $(subdirs)	# Benign, useless in GNU make before 3.63.
 
@@ -279,7 +279,7 @@ parent_echo-distinfo:
 
 # Make the distribution tarfile.
 
-distribute  := README INSTALL FAQ NOTES NEWS PROJECTS			\
+distribute  := README INSTALL FAQ NOTES NEWS PROJECTS BUGS		\
 	       COPYING.LIB COPYING ChangeLog ChangeLog.[0-9]		\
 	       Makefile Makeconfig Makerules Rules Make-dist MakeTAGS	\
 	       extra-lib.mk o-iterator.mk				\
@@ -289,7 +289,7 @@ distribute  := README INSTALL FAQ NOTES NEWS PROJECTS			\
 	       autolock.sh rellns-sh munch-tmpl.c munch.awk interp.c	\
 	       sysdep.h set-hooks.h libc-symbols.h version.h shlib-versions \
 	       rpm/Makefile rpm/template rpm/rpmrc nsswitch.h netgroup.h \
-	       mcheck.h glibcbug.in xlocale.h
+	       mcheck.h glibcbug.in
 
 distribute := $(strip $(distribute))
 generated := $(generated) stubs.h version-info.h
