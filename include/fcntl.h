@@ -12,6 +12,9 @@ extern int __fcntl_internal (int __fd, int __cmd, ...);
 
 #ifndef NOT_IN_libc
 # define __fcntl(fd, cmd, args...) INTUSE(__fcntl) (fd, cmd, ##args)
+# ifdef SHARED
+#  define __libc_fcntl(fd, cmd, args...) __fcntl_internal (fd, cmd, ##args)
+# endif
 #endif
 
 #endif
