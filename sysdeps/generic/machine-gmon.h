@@ -22,6 +22,10 @@
      void *__builtin_return_address (unsigned int N)
    returns the return address of the frame N frames up.  */
 
+/* Be warned that GCC cannot usefully compile __builtin_return_address(N) 
+   for N != 0 on all machines.  In this case, you may have to write
+   your own version of _mcount().  */
+
 #if __GNUC__ < 2
  #error "This file uses __builtin_return_address, a GCC 2 extension."
 #endif
