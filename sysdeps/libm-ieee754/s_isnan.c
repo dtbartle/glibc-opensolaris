@@ -5,7 +5,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -32,8 +32,11 @@ static char rcsid[] = "$NetBSD: s_isnan.c,v 1.8 1995/05/10 20:47:36 jtc Exp $";
 	int32_t hx,lx;
 	EXTRACT_WORDS(hx,lx,x);
 	hx &= 0x7fffffff;
-	hx |= (u_int32_t)(lx|(-lx))>>31;	
+	hx |= (u_int32_t)(lx|(-lx))>>31;
 	hx = 0x7ff00000 - hx;
 	return (int)((u_int32_t)(hx))>>31;
 }
 weak_alias (__isnan, isnan)
+#ifdef NO_LONG_DOUBLE
+weak_alias (__isnan, isnanl)
+#endif
