@@ -70,15 +70,19 @@ __chown_is_lchown (const char *file, uid_t owner, gid_t group)
 #endif
 
 #if defined HAVE_ELF && defined PIC && defined DO_VERSIONING
-symbol_version (__chown_is_lchown, __chown, GLIBC_2.0)
-symbol_version (__chown_is_lchown, chown, GLIBC_2.0)
+strong_alias (__chown_is_lchown, _chown_is_lchown)
+symbol_version (__chown_is_lchown, __chown, GLIBC_2.0);
+symbol_version (_chown_is_lchown, chown, GLIBC_2.0);
 
 # ifdef __NR_lchown
-default_symbol_version (__real_chown, __chown, GLIBC_2.1)
-default_symbol_version (__real_chown, chown, GLIBC_2.1)
+strong_alias (__real_chown, _real_chown)
+default_symbol_version (__real_chown, __chown, GLIBC_2.1);
+default_symbol_version (_real_chown, chown, GLIBC_2.1);
 # else
-default_symbol_version (__chown_is_lchown, __chown, GLIBC_2.1)
-default_symbol_version (__chown_is_lchown, chown, GLIBC_2.1)
+strong_alias (__chown_is_lchown, __chown_is_lchown21)
+strong_alias (__chown_is_lchown, _chown_is_lchown21)
+default_symbol_version (__chown_is_lchown21, __chown, GLIBC_2.1);
+default_symbol_version (_chown_is_lchown21, chown, GLIBC_2.1);
 # endif
 #else
 # ifdef __NR_lchown
