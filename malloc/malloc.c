@@ -2050,7 +2050,8 @@ new_heap(size) size_t size;
       return 0;
     }
   }
-  if(mprotect(p2, size, PROT_READ|PROT_WRITE) != 0) {
+  if(MMAP(p2, size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED)
+     == (char *) MAP_FAILED) {
     munmap(p2, HEAP_MAX_SIZE);
     return 0;
   }
@@ -2078,7 +2079,8 @@ grow_heap(h, diff) heap_info *h; long diff;
     new_size = (long)h->size + diff;
     if(new_size > HEAP_MAX_SIZE)
       return -1;
-    if(mprotect((char *)h + h->size, diff, PROT_READ|PROT_WRITE) != 0)
+    if(MMAP((char *)h + h->size, diff, PROT_READ|PROT_WRITE,
+	    MAP_PRIVATE|MAP_FIXED) == (char *) MAP_FAILED)
       return -2;
   } else {
     new_size = (long)h->size + diff;
