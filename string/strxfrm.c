@@ -25,11 +25,7 @@
 # define STRING_TYPE char
 # define USTRING_TYPE unsigned char
 # define L_(Ch) Ch
-# ifdef USE_IN_EXTENDED_LOCALE_MODEL
-#  define STRXFRM __strxfrm_l
-# else
-#  define STRXFRM strxfrm
-# endif
+# define STRXFRM strxfrm
 # define STRLEN strlen
 # define STPNCPY __stpncpy
 #endif
@@ -145,30 +141,9 @@ print_val (u_int32_t value, wchar_t *dest, size_t max, size_t act)
    the same as the result of strcoll on the two strings before
    their transformation.  The transformed string is put in at
    most N characters of DEST and its length is returned.  */
-#ifndef USE_IN_EXTENDED_LOCALE_MODEL
 size_t
 STRXFRM (STRING_TYPE *dest, const STRING_TYPE *src, size_t n)
-#else
-size_t
-STRXFRM (STRING_TYPE *dest, const STRING_TYPE *src, size_t n, __locale_t l)
-#endif
 {
-#ifdef USE_IN_EXTENDED_LOCALE_MODEL
-  struct locale_data *current = l->__locales[LC_COLLATE];
-# if BYTE_ORDER == BIG_ENDIAN
-  const u_int32_t *collate_table = (const u_int32_t *)
-    current->values[_NL_ITEM_INDEX (_NL_COLLATE_TABLE_EB)].string;
-  const u_int32_t *collate_extra = (const u_int32_t *)
-    current->values[_NL_ITEM_INDEX (_NL_COLLATE_EXTRA_EB)].string;
-# elif BYTE_ORDER == LITTLE_ENDIAN
-  const u_int32_t *collate_table = (const u_int32_t *)
-    current->values[_NL_ITEM_INDEX (_NL_COLLATE_TABLE_EL)].string;
-  const u_int32_t *collate_extra = (const u_int32_t *)
-    current->values[_NL_ITEM_INDEX (_NL_COLLATE_EXTRA_EL)].string;
-# else
-#  error bizarre byte order
-# endif
-#endif
   weight_t *forw = NULL;
   weight_t *backw = NULL;
   size_t pass;
@@ -197,14 +172,16 @@ STRXFRM (STRING_TYPE *dest, const STRING_TYPE *src, size_t n, __locale_t l)
       const weight_t *run = forward ? forw : backw;
       int idx = forward ? 0 : run->data[pass].number - 1;
 
-      do
+      while (1)
 	{
 	  int ignore = 0;
-	  u_int32_t w;
+	  u_int32_t w = 0;
 
 	  /* Here we have to check for IGNORE entries.  If these are
 	     found we count them and go on with he next value.  */
-	  while ((w = run->data[pass].value[idx]) == (u_int32_t) IGNORE_CHAR)
+	  while (run != NULL
+		 && ((w = run->data[pass].value[idx])
+		     == (u_int32_t) IGNORE_CHAR))
 	    {
 	      ++ignore;
 	      if ((forward && ++idx >= run->data[pass].number)
@@ -214,12 +191,19 @@ STRXFRM (STRING_TYPE *dest, const STRING_TYPE *src, size_t n, __locale_t l)
 		  if (nextp == NULL)
 		    {
 		      w = 0;
-		      break;
+		      /* No more non-INGOREd elements means lowest
+			possible value.  */
+		      ignore = -1;
 		    }
+		  else
+		    idx = forward ? 0 : nextp->data[pass].number - 1;
 		  run = nextp;
-		  idx = forward ? 0 : run->data[pass].number - 1;
 		}
 	    }
+
+	  /* Stop if all characters are processed.  */
+	  if (run == NULL)
+	    break;
 
 	  /* Now we have information of the number of ignored weights
 	     and the value of the next weight.  We have to add 2
@@ -245,7 +229,6 @@ STRXFRM (STRING_TYPE *dest, const STRING_TYPE *src, size_t n, __locale_t l)
 		  idx = run->data[pass].number - 1;
 	      }
 	}
-      while (run != NULL);
 
       /* Write marker for end of word.  */
       if (pass + 1 < collate_nrules)
