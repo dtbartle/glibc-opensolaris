@@ -863,7 +863,7 @@ sparc64 | ultrasparc)
 esac
 
 
-if test "$base_machine" -eq "i386"; then
+if test "$base_machine" = "i386"; then
   cat >> confdefs.h <<\EOF
 #define USE_REGPARMS 1
 EOF
