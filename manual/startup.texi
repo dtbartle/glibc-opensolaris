@@ -364,9 +364,8 @@ the old entry is replaced by the new one.
 
 Please note that you cannot remove an entry completely using this function.
 
-This function is part of the BSD library.  The GNU C Library provides
-this function for compatibility but it may not be available on other
-systems.
+This function was originally part of the BSD library but is now part of
+the Unix standard.
 @end deftypefun
 
 @comment stdlib.h
