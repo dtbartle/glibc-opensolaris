@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -32,8 +32,8 @@ _hurd_refport_secure_p (mach_port_t ref)
 }
 
 kern_return_t
-_S_add_auth (mach_port_t me,
-	     auth_t addauth)
+_S_msg_add_auth (mach_port_t me,
+		 auth_t addauth)
 {
   error_t err;
   auth_t newauth;
@@ -57,10 +57,10 @@ _S_add_auth (mach_port_t me,
 }
 
 kern_return_t
-_S_del_auth (mach_port_t me,
-	     task_t task,
-	     intarray_t uids, mach_msg_type_number_t nuids,
-	     intarray_t gids, mach_msg_type_number_t ngids)
+_S_msg_del_auth (mach_port_t me,
+		 task_t task,
+		 intarray_t uids, mach_msg_type_number_t nuids,
+		 intarray_t gids, mach_msg_type_number_t ngids)
 {
   error_t err;
   auth_t newauth;
