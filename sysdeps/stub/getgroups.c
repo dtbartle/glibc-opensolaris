@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -39,11 +39,8 @@ DEFUN(__getgroups, (size, list), int size AND gid_t *list)
   return -1;
 }
 
-
 #if defined (HAVE_GNU_LD) && !(defined (NGROUPS_MAX) && NGROUPS_MAX == 0)
+stub_warning (getgroups);
+#endif
 
-#include <gnu-stabs.h>
-
-stub_warning (__getgroups);
-
-#endif	/* GNU stabs.  */
+weak_alias (__getgroups, getgroups)
