@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ Cambridge, MA 02139, USA.  */
 
 /* Get the process group ID of process PID.  */
 int
-DEFUN(__getpgrp, (pid), pid_t pid)
+DEFUN(__getpgid, (pid), pid_t pid)
 {
   error_t err;
   pid_t pgrp;
@@ -40,3 +40,5 @@ DEFUN(__getpgrp, (pid), pid_t pid)
 
   return err ? __hurd_fail (err) : pgrp;
 }
+
+weak_alias (__getpgid, getpgid)
