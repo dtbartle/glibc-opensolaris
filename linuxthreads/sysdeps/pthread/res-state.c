@@ -39,7 +39,9 @@ __res_state (void)
       pthread_descr self = thread_self();
       return LIBC_THREAD_GETMEM (self, p_resp);
     }
-#endif
   return &_res;
+#else
+  return __resp;
+#endif
 }
 libc_hidden_def (__res_state)
