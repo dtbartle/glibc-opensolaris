@@ -1605,7 +1605,7 @@ if eval "test \"`echo '$''{'libc_cv_asm_symver_directive'+set}'`\" = set"; then
 else
   cat > conftest.s <<EOF
 .text
-_sym: ret
+_sym:
 .symver _sym,sym@VERS
 EOF
 if ${CC-cc} -c $CFLAGS $CPPFLAGS conftest.s 1>&5 2>&5; then
@@ -1625,7 +1625,7 @@ else
   if test $libc_cv_asm_symver_directive = yes; then
   cat > conftest.s <<EOF
 .text
-_sym: ret
+_sym:
 .symver _sym,sym@VERS
 EOF
   cat > conftest.map <<EOF
