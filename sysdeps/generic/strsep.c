@@ -18,6 +18,7 @@
 
 #include <string.h>
 
+#undef __strsep
 #undef strsep
 
 char *
