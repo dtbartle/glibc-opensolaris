@@ -208,7 +208,7 @@ day_of_the_week (struct tm *tm)
      the weekday.  */
   int corr_year = tm->tm_mon >= 2 ? tm->tm_year : tm->tm_year - 1;
   int wday = (-473
-	      + (365 * (tm->tm_year - 1970))
+	      + (365 * tm->tm_year)
 	      + (corr_year / 4)
 	      - ((corr_year / 4) / 25) + ((corr_year / 4) % 25 < 0)
 	      + (((corr_year / 4) / 25) / 4)
@@ -217,6 +217,7 @@ day_of_the_week (struct tm *tm)
   tm->tm_wday = wday;
 }
 
+/* Compute the day of the year.  */
 static void
 day_of_the_year (struct tm *tm)
 {
