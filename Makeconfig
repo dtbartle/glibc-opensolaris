@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -301,13 +301,6 @@ else						# not -s
 +cmdecho	:= echo
 endif	   					# -s
 
-# These are preprocessor macros we want to predefine.  configure will
-# define HAVE_GNU_LD for you if you use GNU ld (which you should do if
-# possible).  If you do this, you may need the GNU assembler as well.  If
-# you don't do this, your library won't work as well (and won't be strictly
-# compliant with the ANSI C and POSIX.1 standards).
-+defines = $(config-defines) $(defines)
-
 # These are the flags given to the compiler to tell
 # it what sort of optimization and/or debugging output to do.
 ifndef	+cflags
@@ -343,7 +336,8 @@ endif	# gcc
 
 
 # These are the variables that the implicit compilation rules use.
-CPPFLAGS = $(+includes) $(+defines) -D_LIBC $(sysdep-CPPFLAGS)
+CPPFLAGS = $(+includes) $(defines) -include $(..)libc-symbols.h \
+	   $(sysdep-CPPFLAGS)
 override CFLAGS	= $(+cflags) $(sysdep-CFLAGS)
 
 
@@ -352,14 +346,7 @@ ifneq "$(filter -g,$(+cflags))" "" # -g is in $(+cflags)
 LDFLAGS	:= -g
 endif
 
-
-ifneq "$(filter -DHAVE_GNU_LD -DHAVE_GNU_LD=1,$(CPPFLAGS))" ""
-+gnu-stabs := yes
-endif
-
-ifneq "$(filter -DHAVE_GNU_AS -DHAVE_GNU_AS=1,$(CPPFLAGS))" ""
-gnu-as := yes
-endif
++gnu-stabs = $(shell echo>&2 '*** BARF ON ME')
 
 ifneq ($(BUILD_CC),$(CC))
 cross-compiling := yes
