@@ -1,5 +1,5 @@
 /* System-dependent timing definitions.  Hurd version.
-   Copyright (C) 1996, 1997, 1999 Free Software Foundation, Inc.
+   Copyright (C) 1996, 1997, 1999, 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@
    presents the real value for clock ticks per second for the system.
    This value is determined at runtime.  */
 #   define CLK_TCK __libc_clk_tck()
-extern int __libc_clk_tck __P ((void)) __attribute__ ((const));
+extern int __libc_clk_tck (void) __attribute__ ((__const__));
 #  endif
 
 /* Clock ID used in clock and timer functions.  */
