@@ -1,5 +1,10 @@
 Fri Feb 17 12:16:27 1995  Roland McGrath  <roland@duality.gnu.ai.mit.edu>
 
+	* sysdeps/mach/hurd/Makefile (errlist.c, errnos.h): Do cvs commit
+ 	if there is a CVS directory.
+	* sysdeps/sparc/Makefile (divrem output): Likewise.
+	* sysdeps/alpha/Makefile (divrem output): Likewise.
+
 	* Makerules (rule to install lib%.a from $(install-lib)): Fix
  	patsubst to elide ranlib for $(non-lib.a).
 
