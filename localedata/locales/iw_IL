@@ -11,8 +11,8 @@ escape_char  /
 % Fax: +45 - 33256543
 % Language: iw
 % Territory: IL
-% Revision: 4.3
-% Date: 1996-10-15
+% Revision: 4.4
+% Date: 1997-03-18
 % Users: general
 % Repertoiremap: mnemonic,ds
 % Charset: ISO-8859-8
@@ -32,7 +32,7 @@ int_curr_symbol   "<I><L><S><SP>"
 currency_symbol   "<Sh><X+>"
 mon_decimal_point "<.>"
 mon_thousands_sep "<,>"
-mon_grouping      3;0
+mon_grouping      3;3
 positive_sign     ""
 negative_sign     "<->"
 int_frac_digits   2
@@ -48,7 +48,7 @@ END LC_MONETARY
 LC_NUMERIC
 decimal_point     "<.>"
 thousands_sep     "<,>"
-grouping          3;0
+grouping          3;3
 END LC_NUMERIC
 
 LC_TIME
@@ -81,13 +81,13 @@ abmon   "<J+><N+><W+>";"<P+><B+><R+>";/
         "<S+><P+><Tj>";"<A+><W+><Q+>";/
         "<N+><W+><B+>";"<D+><ZJ><M+>"
 d_t_fmt "<%><Z><SP><%><H><:><%><M><:><%><S><SP><%><Y><SP><%><b><SP><%><d><SP><%><a>"
-d_fmt   "<%><d></><%><m></><%><y>"
+d_fmt   "<%><d><//><%><m><//><%><y>"
 t_fmt   "<%><H><:><%><M><:><%><S>"
 am_pm   "<A><M>";"<P><M>"
 t_fmt_ampm  "<%><I><:><%><M><:><%><S><SP><%><P>"
 END LC_TIME
 
 LC_MESSAGES
-yesexpr "<<(><Y><y><K+><)><.><*>"
-noexpr  "<<(><N><n><L+><)><.><*>"
+yesexpr "<<(><Y><y><K+><)/>><.><*>"
+noexpr  "<<(><N><n><L+><)/>><.><*>"
 END LC_MESSAGES
