@@ -53,6 +53,8 @@ fi
 # If the user gave a minimal version number test whether the available
 # kernel headers are young enough.
 if test -n "$minimum_kernel"; then
+  echo $ac_n "checking for kernel header at least $minimum_kernel""... $ac_c" 1>&6
+echo "configure:58: checking for kernel header at least $minimum_kernel" >&5
   decnum=`echo "$minimum_kernel.0.0.0" | sed 's/\(0-9*\)\.\(0-9*\)\.\(\(0-9*\)\|\).*/(\1 * 65536 + \2 * 256 + \3)/'`;
   cat > conftest.$ac_ext <<EOF
 #include <linux/version.h>
@@ -67,6 +69,11 @@ EOF
 #define __LINUX_KERNEL_VERSION $decnum
 EOF
 
+    echo "$ac_t""ok" 1>&6
+  else
+    echo "$ac_t""too old!" 1>&6
+    { echo "configure: error: *** The available kernel headers are not at least as old as the requested
+*** compatible kernel version" 1>&2; exit 1; }
   fi
   rm -f conftest*
 fi
@@ -157,7 +164,7 @@ if test $host = $build; then
     ac_prefix=$ac_default_prefix
   fi
   echo $ac_n "checking for symlinks in ${ac_prefix}/include""... $ac_c" 1>&6
-echo "configure:161: checking for symlinks in ${ac_prefix}/include" >&5
+echo "configure:168: checking for symlinks in ${ac_prefix}/include" >&5
   ac_message=
   if test -L ${ac_prefix}/include/net; then
     ac_message="$ac_message
