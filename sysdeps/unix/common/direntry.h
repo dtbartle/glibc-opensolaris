@@ -1,4 +1,5 @@
-/* Copyright (C) 1991, 1995, 1996 Free Software Foundation, Inc.
+/* Directory entry structure `struct dirent'.  SVR4/Linux version.
+Copyright (C) 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,18 +17,13 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
-#include <stddef.h>
-#include <dirent.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <dirstream.h>
+struct dirent
+  {
+    unsigned int d_fileno;
+    int d_off;			/* Position in directory of following entry. */
+    unsigned short int d_reclen;
+    char d_name[0];		/* Variable length.  */
+  };
 
-/* Rewind DIRP to the beginning of the directory.  */
-void
-DEFUN(rewinddir, (dirp), DIR *dirp)
-{
-  (void) lseek(dirp->fd, (off_t) 0, SEEK_SET);
-  dirp->offset = 0;
-  dirp->size = 0;
-}
+#define _DIRENT_HAVE_D_RECLEN 1
+#define _DIRENT_HAVE_D_OFF 1
