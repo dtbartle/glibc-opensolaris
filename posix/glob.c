@@ -447,7 +447,7 @@ static int
 prefix_array (dirname, array, n)
      const char *dirname;
      char **array;
-     const size_t n;
+     size_t n;
 {
   register size_t i;
   size_t dirlen = strlen (dirname);
@@ -484,7 +484,7 @@ prefix_array (dirname, array, n)
 static int
 glob_pattern_p (pattern, quote)
      const char *pattern;
-     const int quote;
+     int quote;
 {
   register const char *p;
   int open = 0;
