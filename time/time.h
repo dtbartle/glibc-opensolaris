@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -102,7 +102,8 @@ extern clock_t clock __P ((void));
 extern time_t time __P ((time_t *__timer));
 
 /* Return the difference between TIME1 and TIME0.  */
-extern __CONSTVALUE double difftime __P ((time_t __time1, time_t __time0));
+extern double difftime __P ((time_t __time1, time_t __time0))
+     __attribute__ ((__const__));
 
 /* Return the `time_t' representation of TP and normalize TP.  */
 extern time_t mktime __P ((struct tm *__tp));
