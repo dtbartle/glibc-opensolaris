@@ -260,6 +260,14 @@ elf_machine_fixup_plt (struct link_map *map, const Elf32_Rela *reloc,
 #endif
 }
 
+/* Return the final value of a plt relocation.  */
+static inline Elf32_Addr
+elf_machine_plt_value (struct link_map *map, const Elf32_Rela *reloc,
+		       Elf32_Addr value)
+{
+  return value + reloc->r_addend;
+}
+
 #ifdef RESOLVE
 
 /* Perform the relocation specified by RELOC and SYM (which is fully resolved).
