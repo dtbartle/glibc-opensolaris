@@ -1,4 +1,4 @@
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -28,32 +28,28 @@ headers	:= sys/uio.h sys/ioctl.h sys/ptrace.h ioctls.h sys/file.h	\
 	   sys/mman.h sys/param.h fstab.h
 
 routines := brk sbrk sstk ioctl \
-	    __brk __sbrk __ioctl \
 	    readv writev \
 	    setreuid setregid \
-	    __setreuid __setregid \
 	    seteuid setegid \
-	    getpgsz \
-	    __getpgsz \
+	    getpagesize \
 	    getdtsz \
-	    __getdtsz \
-	    __gethstnm gethstnm sethostnam getdomain setdomain \
-	    __select select \
+	    gethostname sethostname getdomain setdomain \
+	    select \
 	    acct chroot fsync sync reboot \
 	    gethostid sethostid \
-	    mknod __mknod \
+	    mknod \
 	    swapon vhangup mktemp mkstemp \
 	    ualarm usleep \
 	    gtty stty \
 	    ptrace \
 	    nlist fstab \
-	    utimes __utimes \
+	    utimes \
 	    truncate ftruncate \
 	    chflags fchflags \
-	    insremque getttyent getusersh getpass ttyslot \
+	    insremque getttyent getusershell getpass ttyslot \
 	    syslog syscall daemon \
 	    mmap munmap mprotect msync madvise
-aux := data_start progname init-misc
+aux := progname init-misc
 distribute := bsd-compat.c
 extra-objs := bsd-compat.o
 install-lib := libbsd-compat.a libg.a
