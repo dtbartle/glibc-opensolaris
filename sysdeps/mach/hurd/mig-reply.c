@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -40,6 +40,7 @@ __mig_get_reply_port (void)
 
   return reply_port;
 }
+weak_alias (__mig_get_reply_port, mig_get_reply_port)
 
 /* Called by MiG to deallocate the reply port.  */
 void
@@ -54,6 +55,7 @@ __mig_dealloc_reply_port (mach_port_t arg)
   __mach_port_mod_refs (__mach_task_self (), port,
 			MACH_PORT_RIGHT_RECEIVE, -1);
 }
+weak_alias (__mig_dealloc_reply_port, mig_dealloc_reply_port)
 
 /* Called by mig interfaces when done with a port.  Used to provide the
    same interface as needed when a custom allocator is used.  */
@@ -62,7 +64,7 @@ __mig_put_reply_port(mach_port_t port)
 {
   /* Do nothing.  */
 }
-
+weak_alias (__mig_put_reply_port, mig_put_reply_port)
 
 /* Called at startup with STACK == NULL.  When per-thread variables are set
    up, this is called again with STACK set to the new stack being switched
@@ -81,3 +83,4 @@ __mig_init (void *stack)
       global_reply_port = MACH_PORT_NULL;
     }
 }
+weak_alias (__mig_init, mig_init)
