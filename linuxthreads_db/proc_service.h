@@ -34,19 +34,6 @@ typedef enum
    */
 }       ps_err_e;
 
-typedef unsigned long paddr_t;
-
-/* Addresses.  */
-typedef void *psaddr_t;
-
-/* Register sets.  Linux has different names.  */
-typedef gregset_t prgregset_t;
-typedef fpregset_t prfpregset_t;
-
-/* We don't have any differences between processes and threads,
-   therefore habe only ine PID type.  */
-typedef pid_t lwpid_t;
-
 
 struct ps_prochandle;		/* user defined. */
 
