@@ -364,7 +364,7 @@ extern int pthread_once (pthread_once_t *__once_control,
 
 /* Functions for handling cancellation.
 
-   Note that these functions iare explicitly not marked to not throw an
+   Note that these functions are explicitly not marked to not throw an
    exception in C++ code.  If cancellation is implemented by unwinding
    this is necessary to have the compiler generate the unwind information.  */
 
