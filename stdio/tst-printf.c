@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -185,7 +185,6 @@ I am ready for my first lesson today.";
 
   printf ("%#03x\n", 1);
 
-
   {
     double d = FLT_MIN;
     int niter = 17;
@@ -225,5 +224,75 @@ I am ready for my first lesson today.";
   printf ("%g should be 10\n", 10.0);
   printf ("%g should be 0.02\n", 0.02);
 
+  {
+    double x=1.0;
+    printf("%.17f\n",(1.0/x/10.0+1.0)*x-x);
+  }
+
+  puts ("--- Should be no further output. ---");
+  rfg1 ();
+  rfg2 ();
+
   exit(EXIT_SUCCESS);
+}
+
+rfg1 ()
+{
+  char buf[100];
+
+  sprintf (buf, "%5.s", "xyz");
+  if (strcmp (buf, "     ") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "     ");
+  sprintf (buf, "%5.f", 33.3);
+  if (strcmp (buf, "   33") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "   33");
+  sprintf (buf, "%8.e", 33.3e7);
+  if (strcmp (buf, "   3e+08") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "   3e+08");
+  sprintf (buf, "%8.E", 33.3e7);
+  if (strcmp (buf, "   3E+08") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "   3E+08");
+  sprintf (buf, "%.g", 33.3);
+  if (strcmp (buf, "3e+01") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "3e+01");
+  sprintf (buf, "%.G", 33.3);
+  if (strcmp (buf, "3E+01") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "3E+01");
+  return 0;
+}
+
+rfg2 ()
+{
+  int prec;
+  char buf[100];
+
+  prec = 0;
+  sprintf (buf, "%.*g", prec, 3.3);
+  if (strcmp (buf, "3") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "3");
+  prec = 0;
+  sprintf (buf, "%.*G", prec, 3.3);
+  if (strcmp (buf, "3") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "3");
+  prec = 0;
+  sprintf (buf, "%7.*G", prec, 3.33);
+  if (strcmp (buf, "      3") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "      3");
+  prec = 3;
+  sprintf (buf, "%04.*o", prec, 33);
+  if (strcmp (buf, " 041") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, " 041");
+  prec = 7;
+  sprintf (buf, "%09.*u", prec, 33);
+  if (strcmp (buf, "  0000033") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, "  0000033");
+  prec = 3;
+  sprintf (buf, "%04.*x", prec, 33);
+  if (strcmp (buf, " 021") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, " 021");
+  prec = 3;
+  sprintf (buf, "%04.*X", prec, 33);
+  if (strcmp (buf, " 021") != 0)
+    printf ("got: '%s', expected: '%s'\n", buf, " 021");
+  return 0;
 }
