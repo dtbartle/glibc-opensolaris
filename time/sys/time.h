@@ -50,7 +50,7 @@ __BEGIN_DECLS
 #endif
 
 
-#if defined __USE_GNU || defined __USE_BSD
+#ifdef __USE_BSD
 /* Structure crudely representing a timezone.
    This is obsolete and should never be used.  */
 struct timezone
@@ -72,7 +72,7 @@ typedef void *__restrict __timezone_ptr_t;
 extern int gettimeofday (struct timeval *__restrict __tv,
 			 __timezone_ptr_t __tz) __THROW;
 
-#ifdef __USE_MISC
+#ifdef __USE_BSD
 /* Set the current time of day and timezone information.
    This call is restricted to the super-user.  */
 extern int settimeofday (__const struct timeval *__tv,
