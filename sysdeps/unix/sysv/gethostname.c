@@ -29,7 +29,7 @@ DEFUN(__gethostname, (name, len),
       char *name AND size_t len)
 {
   struct utsname buf;
-  if (uname (&buf) < 0)
+  if (uname (&buf))
     return -1;
   strncpy (name, buf.nodename, len);
   return 0;
