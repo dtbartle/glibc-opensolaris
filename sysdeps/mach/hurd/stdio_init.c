@@ -1,4 +1,4 @@
-/* Copyright (C) 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -41,8 +41,11 @@ DEFUN(__stdio_init_stream, (stream), FILE *stream)
     return;
 
   /* Find out what sort of file this is.  */
+  HURD_CRITICAL_BEGIN;
   __spin_lock (&d->port.lock);
-  if (err = HURD_FD_PORT_USE (d, __io_stat (port, &statb)))
+  err = HURD_FD_PORT_USE (d, __io_stat (port, &statb));
+  HURD_CRITICAL_END;
+  if (err)
     return;
 
   if (S_ISFIFO (statb.st_mode))
@@ -57,27 +60,17 @@ DEFUN(__stdio_init_stream, (stream), FILE *stream)
       /* It's a character device.
 	 Make it line-buffered if it's a terminal.  */
       mach_port_t cttyid;
+      HURD_CRITICAL_BEGIN;
       __spin_lock (&d->port.lock);
-      if (! HURD_FD_PORT_USE (d, __term_getctty (port, &cttyid)))
+      err = HURD_FD_PORT_USE (d, __term_getctty (port, &cttyid));
+      HURD_CRITICAL_END;
+      if (! err)
 	{
 	  __mach_port_deallocate (__mach_task_self (), cttyid);
-
 	  stream->__linebuf = 1;
-
-	  /* Unix terminal devices have the bad habit of claiming to be
-	     seekable.  On systems I have tried, seeking on a terminal
-	     device seems to set its file position as specified, such that
-	     a later tell says the same thing.  This is in no way related
-	     to actual seekability--the ability to seek back and read old
-	     data.  Unix terminal devices will let you "seek back", and
-	     then read more new data from the terminal.  I can think of
-	     nothing to do about this lossage except to preemptively disable
-	     seeking on terminal devices.  */
-
-	  stream->__io_funcs.__seek = NULL; /* Seeks get ESPIPE.  */
 	}
     }
-  
+
   /* Use the block-size field to determine
      the system's optimal buffering size.  */
   stream->__bufsize = statb.st_blksize;
