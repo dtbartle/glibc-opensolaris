@@ -34,7 +34,7 @@ rm -f conftest*
 fi
 
 echo "$ac_t""$libc_cv_linux2" 1>&6
-if test $libc_cv_linux2 != '2.0 or later'; then
+if test "$libc_cv_linux2' != '2.0 or later'; then
   { echo "configure: error: 'GNU libc requires kernel header files from Linux 2.0 or later
 	to be installed (/usr/include/{asm,linux}) before configuring'" 1>&2; exit 1; }
 fi
