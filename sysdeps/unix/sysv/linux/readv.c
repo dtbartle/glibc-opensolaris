@@ -23,6 +23,8 @@
 #include <sys/uio.h>
 
 extern ssize_t __syscall_readv __P ((int, __const struct iovec *, int));
+static ssize_t __atomic_readv_replacement __P ((int, __const struct iovec *,
+						int));
 
 
 /* Not all versions of the kernel support the large number of records.  */
