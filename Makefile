@@ -48,7 +48,7 @@ sysdep-subdirs := $(subst $(\n), ,$(sysdep-subdirs))
 +ansi_dirs	:= assert ctype locale math setjmp \
 		   signal stdio stdlib malloc string time
 +posix_dirs	:= dirent grp pwd posix io termios
-+other_dirs	:= resource socket misc gnulib $(wildcard crypt) manual
++other_dirs	:= resource socket misc gnulib $(wildcard crypt) manual csu
 subdirs		:= $(strip $(+ansi_dirs) $(+posix_dirs) $(+other_dirs) \
 			   $(sysdep-subdirs))
 export subdirs := $(subdirs)	# Benign, useless in GNU make before 3.63.
