@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@ Cambridge, MA 02139, USA.  */
 
 /* The first piece of initialized data.  */
 int __data_start = 0;
+weak_alias (__data_start, data_start)
 
 mach_port_t *_hurd_init_dtable;
 mach_msg_type_number_t _hurd_init_dtablesize;
@@ -46,6 +47,7 @@ vm_address_t _hurd_stack_base;
 vm_size_t _hurd_stack_size;
 
 char **__environ;
+weak_alias (__environ, environ)
 
 /* Things that want to be run before _hurd_init or much anything else.
    Importantly, these are called before anything tries to use malloc.  */
@@ -56,7 +58,7 @@ extern void __libc_init (int argc, char **argv, char **envp);
 extern int main (int argc, char **argv, char **envp);
 
 void *(*_cthread_init_routine) (void); /* Returns new SP to use.  */
-__NORETURN void (*_cthread_exit_routine) (int status);
+void (*_cthread_exit_routine) (int status) __attribute__ ((__noreturn__));
 
 int _hurd_split_args (char *, size_t, char **);
 
@@ -71,7 +73,7 @@ static char **argv, **envp;
 static int argc;
 
 
-static __NORETURN void start1 (void);
+static void start1 (void) __attribute__ ((__noreturn__));
 
 
 /* Entry point.  This is the first thing in the text segment.
@@ -99,7 +101,7 @@ START_MACHDEP
 #define _start _start0
 #endif
 
-__NORETURN void
+void
 _start (START_ARGS)
 {
   error_t err;
@@ -181,7 +183,7 @@ _start (START_ARGS)
 }
 
 
-static __NORETURN void
+static void
 start1 (void)
 {
   register int envc = 0;
