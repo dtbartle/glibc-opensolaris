@@ -1,5 +1,13 @@
 1999-11-02  Ulrich Drepper  <drepper@cygnus.com>
 
+	* td_ta_thr_iter.c (td_ta_thr_iter): Optimize a bit.  Read all
+	handles at once.
+
+	* thread_dbP.h (struct th_thragent): Add pthread_handle_num.
+	* td_ta_new.c: Initialize pthread_handle_num.
+	* td_ta_event_getmsg.c: If last event was already reported search
+	for another unreported event.
+
 	* td_thr_get_info.c (td_thr_get_info): Initialize ti_events.
 
 	* Makefile (libthread_db-routines): Add td_ta_set_event,
