@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@ Cambridge, MA 02139, USA.  */
 #include "hurdmalloc.h"		/* XXX */
 
 
+int _hurd_exec_flags;
 struct hurd_port *_hurd_ports;
 unsigned int _hurd_nports;
 mode_t _hurd_umask;
@@ -45,6 +46,8 @@ _hurd_init (int flags, char **argv,
 	    int *intarray, size_t intarraysize)
 {
   int i;
+
+  _hurd_exec_flags = flags;
 
   _hurd_ports = malloc (portarraysize * sizeof (*_hurd_ports));
   if (_hurd_ports == NULL)
