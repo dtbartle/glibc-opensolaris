@@ -76,6 +76,8 @@ __pthread_cond_timedwait:
 	movq	%rsi, 16(%rsp)
 	movq	%rdx, %r13
 
+	movq	%rsi, dep_mutex(%rdi)
+
 	/* Get internal lock.  */
 	movl	$1, %esi
 	LOCK
@@ -88,9 +90,7 @@ __pthread_cond_timedwait:
 	jne	1f
 
 	/* Unlock the mutex.  */
-2:	movq	%rdi, %rax
-	movq	16(%rsp), %rdi
-	movq	%rdi, dep_mutex(%rax)
+2:	movq	16(%rsp), %rdi
 	callq	__pthread_mutex_unlock_internal
 
 	testl	%eax, %eax
