@@ -405,7 +405,9 @@ re_compile_fastmap_iter (bufp, init_state, fastmap)
           for (i = 0; i < cset->nmbchars; ++i)
             {
               char buf[256];
-              wctomb (buf, cset->mbchars[i]);
+	      mbstate_t state;
+	      memset (&state, '\0', sizeof (state));
+              __wcrtomb (buf, cset->mbchars[i], &state);
               re_set_fastmap (fastmap, icase, *(unsigned char *) buf);
             }
         }
