@@ -1426,11 +1426,7 @@ duplicate_node (new_idx, dfa, org_idx, constraint)
      int *new_idx, org_idx;
      unsigned int constraint;
 {
-  re_token_t dup;
-  int dup_idx;
-
-  dup = dfa->nodes[org_idx];
-  dup_idx = re_dfa_add_node (dfa, dup, 1);
+  int dup_idx = re_dfa_add_node (dfa, dfa->nodes[org_idx], 1);
   if (BE (dup_idx == -1, 0))
     return REG_ESPACE;
   dfa->nodes[dup_idx].constraint = constraint;
