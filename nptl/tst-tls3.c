@@ -145,7 +145,7 @@ do_test (void)
 	      exit (1);
 	    }
 
-	  if (sem_wait (&s) != 0)
+	  if (TEMP_FAILURE_RETRY (sem_wait (&s)) != 0)
 	    {
 	      puts ("sem_wait failed");
 	      exit (1);
