@@ -136,7 +136,7 @@ extern int utimes (__const char *__file, __const struct timeval __tvp[2])
      __THROW;
 
 
-#ifdef __USE_GNU
+#ifdef __USE_BSD
 /* Convenience macros for operations on timevals.
    NOTE: `timercmp' does not work for >= or <=.  */
 # define timerisset(tvp)	((tvp)->tv_sec || (tvp)->tv_usec)
@@ -164,7 +164,7 @@ extern int utimes (__const char *__file, __const struct timeval __tvp[2])
       (result)->tv_usec += 1000000;					      \
     }									      \
   } while (0)
-#endif	/* GNU */
+#endif	/* BSD */
 
 __END_DECLS
 
