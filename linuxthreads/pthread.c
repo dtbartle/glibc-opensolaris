@@ -71,10 +71,10 @@ struct _pthread_descr_struct __pthread_initial_thread = {
   &__pthread_initial_thread,  /* pthread_descr p_self */
   0,                          /* Always index 0 */
   0,                          /* int p_report_events */
-  {{0, }, 0, NULL},           /* td_eventbuf_t p_eventbuf */
+  {{{0, }}, 0, NULL},         /* td_eventbuf_t p_eventbuf */
   ATOMIC_INITIALIZER,         /* struct pthread_atomic p_resume_count */
   0,                          /* char p_woken_by_cancel */
-  NULL                       /* struct pthread_extricate_if *p_extricate */
+  NULL                        /* struct pthread_extricate_if *p_extricate */
 };
 
 /* Descriptor of the manager thread; none of this is used but the error
@@ -117,12 +117,12 @@ struct _pthread_descr_struct __pthread_manager_thread = {
   NULL,                       /* void * p_guardaddr */
   0,                          /* size_t p_guardsize */
   &__pthread_manager_thread,  /* pthread_descr p_self */
-  1,                           /* Always index 1 */
+  1,                          /* Always index 1 */
   0,                          /* int p_report_events */
-  {{0, }, 0, NULL},           /* td_eventbuf_t p_eventbuf */
+  {{{0, }}, 0, NULL},         /* td_eventbuf_t p_eventbuf */
   ATOMIC_INITIALIZER,         /* struct pthread_atomic p_resume_count */
   0,                          /* char p_woken_by_cancel */
-  NULL                       /* struct pthread_extricate_if *p_extricate */
+  NULL                        /* struct pthread_extricate_if *p_extricate */
 };
 
 /* Pointer to the main thread (the father of the thread manager thread) */
