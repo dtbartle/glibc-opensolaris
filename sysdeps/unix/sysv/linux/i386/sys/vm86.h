@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.  */
 #include <features.h>
 
 /* Get constants and data types from kernel header file.  */
-#include <linux/vm86.h>
+#include <asm/vm86.h>
 
 __BEGIN_DECLS
 
