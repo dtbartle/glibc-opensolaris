@@ -24,7 +24,7 @@ shift
 args="$*"
 
 if test $# -eq 0; then
-  case "$args" in
+  case "$prog" in
     --h | --he | --hel | --help)
       echo 'Usage: catchsegv PROGRAM ARGS...'
       echo '  --help      print this help, then exit'
@@ -49,14 +49,14 @@ LD_PRELOAD="${LD_PRELOAD:+${LD_PRELOAD}:}@SLIB@/libSegFault.so@SOVER@"
 export LD_PRELOAD
 SEGFAULT_USE_ALTSTACK=1
 export SEGFAULT_USE_ALTSTACK
-SEGFAULT_OUTPUT_NAME="$prog.segv.$$"
+SEGFAULT_OUTPUT_NAME="${TMPDIR:-/tmp}/`basename $prog`.segv.$$"
 export SEGFAULT_OUTPUT_NAME
 
 $prog $args
 exval=$?
 
 unset LD_PRELOAD
-# Check for an segmentation fault.
+# Check for an segmentation error.
 if test $exval -eq 139; then
   # We caught a segmentation error.  The output is in the file with the
   # name we have in SEGFAULT_OUTPUT_NAME.  In the output the names of
