@@ -1,6 +1,5 @@
 /* Copyright (C) 1999, 2002, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Andreas Schwab <schwab@gnu.org>.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,71 +16,19 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sysdep.h>
-#define _ERRNO_H	1
-#include <bits/errno.h>
-#include <kernel-features.h>
 #include <tcb-offsets.h>
 
-/* Clone the calling process, but without copying the whole address space.
-   The calling process is suspended until the new process exits or is
-   replaced by a call to `execve'.  Return -1 for errors, 0 to the new process,
-   and the process ID of the new process to the old process.  */
-
-ENTRY (__vfork)
-
-#ifdef __NR_vfork
-
-	/* Pop the return PC value into ECX.  */
-	popl	%ecx
-
-	/* Save the PID value.  */
-	movl	%gs:PID, %edx
+/* Save the PID value.  */
+#define SAVE_PID \
+	movl	%gs:PID, %edx; 						      \
 	movl	$-1, %gs:PID
 
-	/* Stuff the syscall number in EAX and enter into the kernel.  */
-	movl	$SYS_ify (vfork), %eax
-	int	$0x80
+/* Restore the old PID value in the parent.  In the child store 0.  */
+#define RESTORE_PID \
+	testl	%eax, %eax;						      \
+	je	1f;							      \
+	movl	%edx, %gs:PID;						      \
+1:
 
-	/* Jump to the return PC.  Don't jump directly since this
-	   disturbs the branch target cache.  Instead push the return
-	   address back on the stack.  */
-	pushl	%ecx
 
-	/* Restore the old PID value in the parent.  In the child store 0.  */
-	testl	%eax, %eax
-	je	1f
-	movl	%edx, %gs:PID
-
-1:	cmpl	$-4095, %eax
-	/* Branch forward if it failed.  */
-# ifdef __ASSUME_VFORK_SYSCALL
-	jae	SYSCALL_ERROR_LABEL
-.Lpseudo_end:
-# else
-	jae	.Lerror
-# endif
-	ret
-
-# ifndef __ASSUME_VFORK_SYSCALL
-.Lerror:
-	/* Check if vfork syscall is known at all.  */
-	cmpl	$-ENOSYS, %eax
-	jne	SYSCALL_ERROR_LABEL
-# endif
-#endif
-
-#ifndef __ASSUME_VFORK_SYSCALL
-	/* If we don't have vfork, fork is close enough.  */
-
-	movl	$SYS_ify (fork), %eax
-	int	$0x80
-	cmpl	$-4095, %eax
-	jae	SYSCALL_ERROR_LABEL
-.Lpseudo_end:
-	ret
-#endif
-PSEUDO_END (__vfork)
-libc_hidden_def (__vfork)
-
-weak_alias (__vfork, vfork)
+#include <sysdeps/unix/sysv/linux/i386/vfork.S>
