@@ -257,7 +257,7 @@ free_mem (void)
 	    if (data != NULL && data->usage_count != UNDELETABLE)
 	      _nl_unload_locale (data);
 	    runp = runp->next;
-	    free (here->filename);
+	    free ((char *) here->filename);
 	    free (here);
 	  }
       }
