@@ -17,20 +17,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <stdlib.h>
 #include "pthreadP.h"
 
 
 void
-_pthread_cleanup_push_defer (buffer, routine, arg)
-     struct _pthread_cleanup_buffer *buffer;
-     void (*routine) (void *);
-     void *arg;
+__cleanup_fct_attribute
+__pthread_register_cancel_defer (__pthread_unwind_buf_t *buf)
 {
+  struct pthread_unwind_buf *ibuf = (struct pthread_unwind_buf *) buf;
   struct pthread *self = THREAD_SELF;
 
-  buffer->__routine = routine;
-  buffer->__arg = arg;
-  buffer->__prev = THREAD_GETMEM (self, cleanup);
+  /* Store old info.  */
+  ibuf->priv.data.prev = THREAD_GETMEM (self, cleanup_jmp_buf);
+  ibuf->priv.data.cleanup = THREAD_GETMEM (self, cleanup);
 
   int cancelhandling = THREAD_GETMEM (self, cancelhandling);
 
@@ -38,61 +38,55 @@ _pthread_cleanup_push_defer (buffer, routine, arg)
   if (__builtin_expect (cancelhandling & CANCELTYPE_BITMASK, 0))
     while (1)
       {
-	int newval = THREAD_ATOMIC_CMPXCHG_VAL (self, cancelhandling,
+	int curval = THREAD_ATOMIC_CMPXCHG_VAL (self, cancelhandling,
 						cancelhandling
 						& ~CANCELTYPE_BITMASK,
 						cancelhandling);
-	if (__builtin_expect (newval == cancelhandling, 1))
+	if (__builtin_expect (curval == cancelhandling, 1))
 	  /* Successfully replaced the value.  */
 	  break;
 
 	/* Prepare for the next round.  */
-	cancelhandling = newval;
+	cancelhandling = curval;
       }
 
-  buffer->__canceltype = (cancelhandling & CANCELTYPE_BITMASK
-			  ? PTHREAD_CANCEL_ASYNCHRONOUS
-			  : PTHREAD_CANCEL_DEFERRED);
+  ibuf->priv.data.canceltype = (cancelhandling & CANCELTYPE_BITMASK
+				? PTHREAD_CANCEL_ASYNCHRONOUS
+				: PTHREAD_CANCEL_DEFERRED);
 
-  THREAD_SETMEM (self, cleanup, buffer);
+  /* Store the new cleanup handler info.  */
+  THREAD_SETMEM (self, cleanup_jmp_buf, buf);
 }
-strong_alias (_pthread_cleanup_push_defer, __pthread_cleanup_push_defer)
 
 
 void
-_pthread_cleanup_pop_restore (buffer, execute)
-     struct _pthread_cleanup_buffer *buffer;
-     int execute;
+__cleanup_fct_attribute
+__pthread_unregister_cancel_restore (__pthread_unwind_buf_t *buf)
 {
   struct pthread *self = THREAD_SELF;
+  struct pthread_unwind_buf *ibuf = (struct pthread_unwind_buf *) buf;
 
-  THREAD_SETMEM (self, cleanup, buffer->__prev);
+  THREAD_SETMEM (self, cleanup_jmp_buf, ibuf->priv.data.prev);
 
   int cancelhandling;
-  if (__builtin_expect (buffer->__canceltype != PTHREAD_CANCEL_DEFERRED, 0)
+  if (ibuf->priv.data.canceltype != PTHREAD_CANCEL_DEFERRED
       && ((cancelhandling = THREAD_GETMEM (self, cancelhandling))
 	  & CANCELTYPE_BITMASK) == 0)
     {
       while (1)
 	{
-	  int newval = THREAD_ATOMIC_CMPXCHG_VAL (self, cancelhandling,
+	  int curval = THREAD_ATOMIC_CMPXCHG_VAL (self, cancelhandling,
 						  cancelhandling
 						  | CANCELTYPE_BITMASK,
 						  cancelhandling);
-	  if (__builtin_expect (newval == cancelhandling, 1))
+	  if (__builtin_expect (curval == cancelhandling, 1))
 	    /* Successfully replaced the value.  */
 	    break;
 
 	  /* Prepare for the next round.  */
-	  cancelhandling = newval;
+	  cancelhandling = curval;
 	}
 
       CANCELLATION_P (self);
     }
-
-  /* If necessary call the cleanup routine after we removed the
-     current cleanup block from the list.  */
-  if (execute)
-    buffer->__routine (buffer->__arg);
 }
-strong_alias (_pthread_cleanup_pop_restore, __pthread_cleanup_pop_restore)
