@@ -271,3 +271,5 @@ DEFUN(__select, (nfds, readfds, writefds, exceptfds, timeout),
 
   return got;
 }
+
+weak_alias (__select, select)
