@@ -63,7 +63,7 @@ if test -n "$minimum_kernel"; then
 
   user_version=$((`echo "$minimum_kernel.0.0.0" | sed 's/\(0-9*\)\.\(0-9*\)\.\(0-9*\).*/\1 \* 65536 + \2 \* 256 + \3/'`))
   arch_version=$((`echo "$arch_minimum_kernel.0.0.0" | sed 's/\(0-9*\)\.\(0-9*\)\.\(0-9*\).*/\1 \* 65536 + \2 \* 256 + \3/'`))
-  if test $user_version -lt $arch_version_kernel; then
+  if test $user_version -lt $arch_version; then
     echo "configure: warning: minimum kernel version reset to $arch_minimum_kernel" 1>&2
     minimum_kernel=$arch_minimum_kernel
   fi
