@@ -121,6 +121,8 @@ EXTRACT_PLURAL_EXPRESSION (nullentry, pluralp, npluralsp)
 	  nplurals += 9;
 	  while (*nplurals != '\0' && isspace ((unsigned char) *nplurals))
 	    ++nplurals;
+	  if (!(*nplurals >= '0' && *nplurals <= '9'))
+	    goto no_plural;
 #if defined HAVE_STRTOUL || defined _LIBC
 	  n = strtoul (nplurals, &endp, 10);
 #else
