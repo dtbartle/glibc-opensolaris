@@ -29,5 +29,7 @@ Cambridge, MA 02139, USA.  */
   unsigned char sa_prefix##len;		\
   unsigned char sa_prefix##family
 
+#define __SOCKADDR_COMMON_SIZE	(2 * sizeof (unsigned char))
+
 
 #endif	/* sockaddrcom.h */
