@@ -1,4 +1,4 @@
-/* Copyright (C) 2002 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -17,8 +17,37 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+/* This is tricky.  GCC doesn't like #include_next in the primary
+   source file and even if it did, the first #include_next is this
+   exact file anyway.  */
+#ifndef LIBC_SIGACTION
+
 /* We use the libc implementation but we tell it to not allow
    SIGCANCEL to be handled.  */
-#define SIGCANCEL __SIGRTMIN
+# define SIGCANCEL __SIGRTMIN
+# define LIBC_SIGACTION	1
 
-#include_next <sigaction.c>
+# include <nptl/sysdeps/pthread/sigaction.c>
+
+int
+__sigaction (sig, act, oact)
+     int sig;
+     const struct sigaction *act;
+     struct sigaction *oact;
+{
+  if (sig == SIGCANCEL)
+    {
+      __set_errno (EINVAL);
+      return -1;
+    }
+
+  return __libc_sigaction (sig, act, oact);
+}
+libc_hidden_weak (__sigaction)
+weak_alias (__sigaction, sigaction)
+
+#else
+
+# include_next <sigaction.c>
+
+#endif /* LIBC_SIGACTION */
