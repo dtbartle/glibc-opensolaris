@@ -19,6 +19,9 @@
 #include <time.h>
 #include <libc-internal.h>
 
+#include "cpuclock-init.h"
+
+
 /* This implementation uses the TSC register in modern (i586 and up) IA-32
    processors (most modern clones also provide it).  Since we need the
    resolution of the clock and since determining this is not cheap, we
@@ -33,17 +36,42 @@
 static unsigned long long int freq;
 
 
-/* We add an limitation here: we assume that the machine is not up as
-   long as it takes to wrap-around the 64-bit timestamp counter.  On a
-   4GHz machine it would take 136 years of uptime to wrap around so
-   this "limitation" is not severe.
+/* We need the starting time for the process.  */
+CPUCLOCK_VARDECL (_dl_cpuclock_offset);
 
-   We use this clock also as the monotonic clock since we don't allow
-   setting the CPU-time clock.  If this should ever change we will have
-   to separate the two.  */
+
+/* This function is defined in the thread library.  */
+extern int __pthread_clock_gettime (unsigned long long int freq,
+				    struct timespec *tp)
+     __attribute__ ((__weak__));
+
+
+/* We add an limitation here: we assume that the process is not
+   running as long as it takes to wrap-around the 64-bit timestamp
+   counter.  On a 4GHz machine it would take 136 years of uptime to
+   wrap around so this "limitation" is not severe.  */
 #define EXTRA_CLOCK_CASES \
-  case CLOCK_PROCESS_CPUTIME_ID:					      \
   case CLOCK_THREAD_CPUTIME_ID:						      \
+    if (__pthread_clock_gettime != NULL)				      \
+      {									      \
+	if (__builtin_expect (freq == 0, 0))				      \
+	  {								      \
+	    /* This can only happen if we haven't initialized the `freq'      \
+	       variable yet.  Do this now. We don't have to protect this      \
+	       code against multiple execution since all of them should	      \
+	       lead to the same result.  */				      \
+	    freq = __get_clockfreq ();					      \
+	    if (__builtin_expect (freq == 0, 0))			      \
+	      /* Something went wrong.  */				      \
+	      break;							      \
+	  }								      \
+									      \
+	retval = __pthread_clock_gettime (freq, tp);			      \
+	break;								      \
+      }									      \
+    /* FALLTHROUGH */							      \
+									      \
+  case CLOCK_PROCESS_CPUTIME_ID:					      \
     {									      \
       unsigned long long int tsc;					      \
 									      \
@@ -61,6 +89,9 @@ static unsigned long long int freq;
 									      \
       /* Get the current counter.  */					      \
       asm volatile ("rdtsc" : "=A" (tsc));				      \
+									      \
+      /* Compute the offset since the start time of the process.  */	      \
+      tsc -= _dl_cpuclock_offset;					      \
 									      \
       /* Compute the seconds.  */					      \
       tp->tv_sec = tsc / freq;						      \
