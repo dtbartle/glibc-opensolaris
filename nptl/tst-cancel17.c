@@ -18,6 +18,7 @@
    02111-1307 USA.  */
 
 #include <aio.h>
+#include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,7 +53,7 @@ tf (void *arg)
 
   const struct aiocb *l[1] = { arg };
 
-  aio_suspend (l, 1, NULL);
+  TEMP_FAILURE_RETRY (aio_suspend (l, 1, NULL));
 
   pthread_cleanup_pop (0);
 
