@@ -21,13 +21,10 @@ Boston, MA 02111-1307, USA.  */
 
 extern char *_strerror_internal __P ((int, char *, size_t));
 
-/* Return a string descibing the errno code in ERRNUM.
-   The storage is good only until the next call to strerror.
-   Writing to the storage causes undefined behavior.  */
+/* Return a string descibing the errno code in ERRNUM.  At most BUFLEN
+   characters of the result will be placed in STRERRBUF.  */
 char *
-strerror (errnum)
-     int errnum;
+strerror_r (int errnum, char *buf, size_t buflen)
 {
-  static char buf[1024];
-  return _strerror_internal (errnum, buf, sizeof buf);
+  return _strerror_internal (errnum, buf, buflen);
 }
