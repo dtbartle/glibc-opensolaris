@@ -53,7 +53,7 @@ Cambridge, MA 02139, USA.  */
 
 
 #ifdef PIC
-#define JUMPTARGET(name) name@PLT
+#define JUMPTARGET(name) name##@PLT
 #else
 #define JUMPTARGET(name) name
 #endif
