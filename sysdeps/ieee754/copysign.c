@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ Cambridge, MA 02139, USA.  */
 #include "ieee754.h"
 
 /* Return X with its signed changed to Y's.  */
-__CONSTVALUE double
+double
 DEFUN(__copysign, (x, y), double x AND double y)
 {
   union ieee754_double ux, uy;
@@ -33,3 +33,5 @@ DEFUN(__copysign, (x, y), double x AND double y)
 
   return ux.d;
 }
+
+weak_alias (__copysign, copysign)
