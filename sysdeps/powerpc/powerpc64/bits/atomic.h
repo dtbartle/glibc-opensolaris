@@ -175,7 +175,7 @@
 			"	addi	%0,%0,1\n"			      \
 			"	stdcx.	%0,0,%2\n"			      \
 			"	bne-	1b"				      \
-			: "=&r" (__val), "=m" (*mem)			      \
+			: "=&b" (__val), "=m" (*mem)			      \
 			: "b" (mem), "m" (*mem)				      \
 			: "cr0", "memory");				      \
       __val;								      \
