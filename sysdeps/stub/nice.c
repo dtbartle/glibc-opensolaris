@@ -20,12 +20,13 @@ Cambridge, MA 02139, USA.  */
 #include <errno.h>
 #include <unistd.h>
 
-
+/* Increment the scheduling priority of the calling process by INCR.
+   The superuser may use a negative INCR to decrement the priority.  */
 int
 DEFUN(nice, (incr), int incr)
 {
   errno = ENOSYS;
-  return(-1);
+  return -1;
 }
 
 
