@@ -130,11 +130,18 @@ extern printf_function **__printf_function_table;
 #define	LONGLONG	long
 #endif
 
+static char *group_number __P ((char *, char *, const char *, wchar_t));
 
 int
 DEFUN(vfprintf, (s, format, args),
       register FILE *s AND CONST char *format AND va_list args)
 {
+  /* The character used as thousands separator.  */
+  wchar_t thousands_sep;
+
+  /* The string describing the size of groups of digits.  */
+  const char *grouping; 
+
   /* Pointer into the format string.  */
   register CONST char *f;
 
@@ -151,6 +158,14 @@ DEFUN(vfprintf, (s, format, args),
   /* Reset multibyte characters to their initial state.  */
   (void) mblen ((char *) NULL, 0);
 
+  /* Figure out the thousands seperator character.  */
+  if (mbtowc (&thousands_sep, _numeric_info->thousands_sep,
+	      strlen (_numeric_info->thousands_sep)) <= 0)
+    thousands_sep = (wchar_t) *_numeric_info->thousands_sep;
+  grouping = _numeric_info->grouping; /* Cache the grouping info array.  */
+  if (*grouping == '\0' || thousands_sep == L'\0')
+    grouping = NULL;
+
   f = format;
   while (*f != '\0')
     {
@@ -163,7 +178,7 @@ DEFUN(vfprintf, (s, format, args),
 #define	is_longlong	0
 #endif
       /* Format spec modifiers.  */
-      char space, showsign, left, alt;
+      char space, showsign, left, alt, group;
 
       /* Padding character: ' ' or '0'.  */
       char pad;
@@ -230,9 +245,10 @@ DEFUN(vfprintf, (s, format, args),
 	}
 
       /* Check for spec modifiers.  */
-      space = showsign = left = alt = 0;
+      space = showsign = left = alt = group = 0;
       pad = ' ';
-      while (*f == ' ' || *f == '+' || *f == '-' || *f == '#' || *f == '0')
+      while (*f == ' ' || *f == '+' || *f == '-' || *f == '#' || *f == '0' ||
+	     *f == '\'')
 	switch (*f++)
 	  {
 	  case ' ':
@@ -255,6 +271,11 @@ DEFUN(vfprintf, (s, format, args),
 	  case '0':
 	    /* Pad with 0s.  */
 	    pad = '0';
+	    break;
+	  case '\'':
+	    /* Show grouping in numbers if the locale information
+	       indicates any.  */
+	    group = 1;
 	    break;
 	  }
       if (left)
@@ -428,6 +449,8 @@ DEFUN(vfprintf, (s, format, args),
 
 	      /* Put the number in WORK.  */
 	      w = _itoa (num, workend + 1, base, fc == 'X') - 1;
+	      if (group && grouping)
+		w = group_number (w, workend, grouping, thousands_sep);
 	      width -= workend - w;
 	      prec -= workend - w;
 
@@ -552,6 +575,7 @@ DEFUN(vfprintf, (s, format, args),
 		  alt = 1;
 		  num = (unsigned LONGLONG int) (unsigned long int) ptr;
 		  is_neg = 0;
+		  group = 0;
 		  goto number;
 		}
 	      else
@@ -635,9 +659,10 @@ DEFUN(vfprintf, (s, format, args),
 	  info.space = space;
 	  info.left = left;
 	  info.showsign = showsign;
+	  info.group = group;
 	  info.pad = pad;
 
-	  function_done = (*function)(s, &info, &args);
+	  function_done = (*function) (s, &info, &args);
 	  if (function_done < 0)
 	    return -1;
 
@@ -699,6 +724,59 @@ DEFUN(printf_unknown, (s, info, arg),
   return done;
 }
 
+/* Group the digits according to the grouping rules of the current locale.
+   The interpretation of GROUPING is as in `struct lconv' from <locale.h>.  */
+
+static char *
+group_number (char *w, char *workend, const char *grouping,
+	      wchar_t thousands_sep)
+{
+  int len;
+  char *src, *s;
+
+  /* We treat all negative values like CHAR_MAX.  */
+
+  if (*grouping == CHAR_MAX || *grouping < 0)
+    /* No grouping should be done.  */
+    return w;
+
+  len = *grouping;
+
+  /* Copy existing string so that nothing gets overwritten.  */
+  src = (char *) alloca (workend - w);
+  memcpy (src, w + 1, workend - w);
+  s = &src[workend - w - 1];
+  w = workend;
+
+  /* Process all characters in the string.  */
+  while (s >= src)
+    {
+      *w-- = *s--;
+
+      if (--len == 0 && s >= src)
+	{
+	  /* A new group begins.  */
+	  *w-- = thousands_sep;
+
+	  len = *grouping++;
+	  if (*grouping == '\0')
+	    /* The previous grouping repeats ad infinitum.  */
+	    --grouping;
+	  else if (*grouping == CHAR_MAX || *grouping < 0)
+	    {
+	      /* No further grouping to be done.
+		 Copy the rest of the number.  */
+	      do
+		*w-- = *s--;
+	      while (s >= src);
+	      break;
+	    }
+	}
+    }
+
+  return w;
+}
+
 #ifdef USE_IN_LIBIO
 /* Helper "class" for `fprintf to unbuffered': creates a temporary buffer.  */
 struct helper_file
@@ -756,7 +834,7 @@ DEFUN(buffered_vfprintf, (s, format, args),
   hp->_IO_write_ptr = buf;
   hp->_IO_write_end = buf + sizeof buf;
   hp->_IO_file_flags = _IO_MAGIC|_IO_NO_READS;
-  hp->_jumps = (struct _IO_jumps_t *) &_IO_helper_jumps;
+  hp->_jumps = (struct _IO_jump_t *) &_IO_helper_jumps;
   
   /* Now print to helper instead.  */
   result = _IO_vfprintf (hp, format, args);
