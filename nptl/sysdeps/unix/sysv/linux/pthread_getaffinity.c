@@ -41,3 +41,4 @@ pthread_getaffinity_np (th, cpuset)
 
   return 0;
 }
+hidden_def (pthread_getaffinity_np)
