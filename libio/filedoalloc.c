@@ -83,19 +83,12 @@ _IO_file_doallocate (fp)
      function it points to.  This is to make sure _IO_cleanup gets called
      on exit.  We call it from _IO_file_doallocate, since that is likely
      to get called by any program that does buffered I/O. */
-  if (_IO_cleanup_registration_needed)
+  if (__builtin_expect (_IO_cleanup_registration_needed != NULL, 0))
     (*_IO_cleanup_registration_needed) ();
 #endif
 
-  if (fp->_fileno < 0 || _IO_SYSSTAT (fp, &st) < 0)
-    {
-      size = _IO_BUFSIZ;
-#if 0
-      /* do not try to optimise fseek() */
-      fp->_flags |= __SNPT;
-#endif
-    }
-  else
+  size = _IO_BUFSIZ;
+  if (fp->_fileno >= 0 && __builtin_expect (_IO_SYSSTAT (fp, &st), 0) >= 0)
     {
       if (S_ISCHR (st.st_mode))
 	{
@@ -108,9 +101,8 @@ _IO_file_doallocate (fp)
 	    fp->_flags |= _IO_LINE_BUF;
 	}
 #if _IO_HAVE_ST_BLKSIZE
-      size = st.st_blksize <= 0 ? _IO_BUFSIZ : st.st_blksize;
-#else
-      size = _IO_BUFSIZ;
+      if (st.st_blksize > 0)
+	size = st.st_blksize;
 #endif
     }
   ALLOC_BUF (p, size, EOF);
