@@ -49,9 +49,9 @@ errnoh == 2 && $1 == "@deftypevr" && $2 == "Macro" && $3 == "int" \
   }
 errnoh == 3 && $1 == "@comment" && $2 == "errno" \
   {
-    if ($3 !~ ".*/.*")
-      next;
     errno = $3 + 0;
+    if (errno == 0)
+      next;
     if (alias[e])
       printf "#if defined (%s) && %s != %s\n", e, e, alias[e];
     else
