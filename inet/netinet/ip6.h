@@ -111,4 +111,8 @@ struct ip6_frag
 #define IP6F_MORE_FRAG      0x0100  /* more-fragments flag */
 #endif
 
+/* Special option types for padding.  */
+#define IP6OPT_PAD1	0
+#define IP6OPT_PADN	1
+
 #endif /* netinet/ip6.h */
