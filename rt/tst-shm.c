@@ -156,7 +156,10 @@ do_test (void)
     }
 
   if (fstat (fd, &st) == -1 || st.st_size != 4000)
-    error (EXIT_FAILURE, 0, "initial stat failed");
+    {
+      shm_unlink ("/shm-test");
+      error (EXIT_FAILURE, 0, "initial stat failed");
+    }
 
   /* Spawn to processes which will do the work.  */
   pid1 = fork ();
