@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -49,7 +49,10 @@ Cambridge, MA 02139, USA.  */
 /*
  * HISTORY
  * $Log$
- * Revision 1.2  1994/10/10 07:20:14  roland
+ * Revision 1.3  1995/01/21 15:00:57  roland
+ * Converted to use weak aliases with macros from libc-symbols.h.
+ *
+ * Revision 1.2  1994/10/10  07:20:14  roland
  * Increase default MAX_SIZE to two pages.
  *
  * Revision 1.1  1993/12/06  23:25:25  roland
@@ -176,7 +179,7 @@ __mach_msg_server_timeout (boolean_t (*demux) (mach_msg_header_t *request,
 	}
     }
 }
-
+weak_alias (__mach_msg_server_timeout, mach_msg_server_timeout)
 
 mach_msg_return_t
 __mach_msg_server (demux, max_size, rcv_name)
@@ -188,3 +191,4 @@ __mach_msg_server (demux, max_size, rcv_name)
 				    MACH_MSG_OPTION_NONE,
 				    MACH_MSG_TIMEOUT_NONE);
 }
+weak_alias (__mach_msg_server, mach_msg_server)

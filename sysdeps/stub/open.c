@@ -1,4 +1,4 @@
-/* Copyright (C) 1991 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -46,12 +46,6 @@ DEFUN(__open, (file, oflag), CONST char *file AND int oflag DOTS)
   errno = ENOSYS;
   return -1;
 }
+stub_warning (open)
 
-
-#ifdef	 HAVE_GNU_LD
-
-#include <gnu-stabs.h>
-
-stub_warning(__open);
-
-#endif	/* GNU stabs.  */
+weak_alias (__open, open)
