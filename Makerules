@@ -84,6 +84,7 @@ endif
 # being included individually by a subdir makefile (hurd/Makefile needs this).
 in-Makerules := yes
 
+ifndef avoid-generated
 include $(+sysdir_pfx)sysd-Makefile
 $(+sysdir_pfx)sysd-Makefile: $(+sysdir_pfx)config.make $(..)Makerules
 	-@rm -f $@T
@@ -95,7 +96,7 @@ $(+sysdir_pfx)sysd-Makefile: $(+sysdir_pfx)config.make $(..)Makerules
 	 done; \
 	 echo 'sysd-Makefile-done=t') > $@T
 	mv -f $@T $@
-
+endif
 
 # Reorder before-compile so that mach things come first, and hurd things
 # second, before all else.  The mach and hurd subdirectories have many
@@ -335,7 +336,7 @@ endef
 
 # This makes all the object files.
 .PHONY: objects objs
-objects objs: $(objects)
+objects objs: $(objects) $(addprefix $(objpfx),$(extra-objs))
 
 # Installation.
 
