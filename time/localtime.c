@@ -80,3 +80,4 @@ __localtime_r (timer, tp)
   tp->tm_zone = __tzname[__daylight];
   return tp;
 }
+weak_alias (__localtime_r, localtime_r)
