@@ -43,6 +43,9 @@ Cambridge, MA 02139, USA.  */
 #define	O_APPEND	0x0008	/* Writes append to the file.  */
 #define	O_NONBLOCK	0x4000	/* Non-blocking I/O.  */
 
+/* Sun defines O_NDELAY one way for BSD behavior and another for System V
+   behavior.  In the GNU C library, you get the BSD behavior unless you
+   define _USG_SOURCE without also defining _BSD_SOURCE or _GNU_SOURCE.  */
 #ifdef __USE_BSD
 #define	O_NDELAY	0x0004
 #endif
@@ -69,8 +72,8 @@ Cambridge, MA 02139, USA.  */
 #define FAPPEND		O_APPEND
 #define FNONBLOCK	O_NONBLOCK
 #define FNONBIO		O_NONBLOCK
-#define FNDELAY		0x0004
-#define	FNBIO		0x1000
+#define FNDELAY		0x0004	/* BSD O_NDELAY.  */
+#define	FNBIO		0x1000	/* System V O_NDELAY.  */
 #endif
 
 /* Mask for file access modes.  This is system-dependent in case
