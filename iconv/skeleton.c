@@ -57,7 +57,12 @@
 			from the current characters.
      TO_LOOP		likewise for the other direction
 
-     RESET_STATE	in case of an error we must reset the state for
+     ONE_DIRECTION	optional.  If defined to 1, only one conversion
+			direction is defined instead of two.  In this
+			case, FROM_DIRECTION should be defined to 1, and
+			FROM_LOOP and TO_LOOP should have the same value.
+
+     SAVE_RESET_STATE	in case of an error we must reset the state for
 			the rerun so this macro must be defined for
 			stateful encodings.  It takes an argument which
 			is nonzero when saving.
@@ -184,8 +189,8 @@ static int to_object;
 #endif
 
 
-/* For conversions from a fixed width character sets to another fixed width
-   character set we we can define RESET_INPUT_BUFFER is necessary.  */
+/* For conversions from a fixed width character set to another fixed width
+   character set we can define RESET_INPUT_BUFFER in a very fast way.  */
 #if !defined RESET_INPUT_BUFFER && !defined SAVE_RESET_STATE
 # if MIN_NEEDED_FROM == MAX_NEEDED_FROM && MIN_NEEDED_TO == MAX_NEEDED_TO
 /* We have to use these `if's here since the compiler cannot know that
@@ -233,7 +238,7 @@ gconv_init (struct __gconv_step *step)
   else
     return __GCONV_NOCONV;
 
-#ifdef RESET_STATE
+#ifdef SAVE_RESET_STATE
   step->__stateful = 1;
 #else
   step->__stateful = 0;
@@ -245,8 +250,8 @@ gconv_init (struct __gconv_step *step)
 
 
 /* The default destructor function does nothing in the moment and so
-   be define it at all.  But we still provide the macro just in case
-   we need it some day.  */
+   we don't define it at all.  But we still provide the macro just in
+   case we need it some day.  */
 #if DEFINE_FINI
 #endif
 
@@ -580,7 +585,7 @@ FUNCTION_NAME (struct __gconv_step *step, struct __gconv_step_data *data,
 #undef EMIT_SHIFT_TO_INIT
 #undef FROM_LOOP
 #undef TO_LOOP
-#undef RESET_STATE
+#undef SAVE_RESET_STATE
 #undef RESET_INPUT_BUFFER
 #undef FUNCTION_NAME
 #undef PREPARE_LOOP
