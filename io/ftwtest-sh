@@ -104,7 +104,7 @@ rm $testout
 # For the next test everything must be readable.
 chmod -R a+x $tmpdir
 
-LANGUAGE=C LD_LIBRARY_PATH=$objpfx $ldso $testprogram --chdir $tmpdir 2>&1 |
+LD_LIBRARY_PATH=$objpfx $ldso $testprogram --chdir $tmpdir |
     sort > $testout
 
 cat <<EOF | cmp $testout - || exit 1
