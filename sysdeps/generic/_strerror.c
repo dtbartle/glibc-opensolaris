@@ -59,7 +59,8 @@ _strerror_internal (int errnum, char *buf, size_t buflen)
 	__stpncpy (q, p, buflen - unklen);
 
       /* Terminate the string in any case.  */
-      buf[buflen - 1] = '\0';
+      if (buflen > 0)
+	buf[buflen - 1] = '\0';
 
       return buf;
     }
