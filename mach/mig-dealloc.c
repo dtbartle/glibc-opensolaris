@@ -1,4 +1,4 @@
-/* Copyright (C) 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -25,3 +25,4 @@ __mig_deallocate (vm_address_t addr,
 {
   (void) __vm_deallocate (__mach_task_self (), addr, size);
 }
+weak_alias (__mig_deallocate, mig_deallocate)
