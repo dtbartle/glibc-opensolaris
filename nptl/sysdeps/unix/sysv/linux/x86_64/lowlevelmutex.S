@@ -87,10 +87,11 @@ __lll_mutex_timedlock_wait:
 
 	movq	%rdi, %r12
 	movq	%rdx, %r13
-	leaq	1(%rsi), %r14
+
+1:	leaq	1(%rsi), %r14
 
 	/* Get current time.  */
-1:	movq	%rsp, %rdi
+	movq	%rsp, %rdi
 	xorq	%rsi, %rsi
 	movq	$VSYSCALL_ADDR_vgettimeofday, %rax
 	/* This is a regular function call, all calleer-save registers
@@ -122,10 +123,10 @@ __lll_mutex_timedlock_wait:
 	movq	$SYS_futex, %rax
 	syscall
 
-	movl	$1, %r14d
+	movl	$1, %rsi
 	LOCK
-	xaddl	%r14d, (%rdi)
-	testl	%r14d, %r14d
+	xaddl	%rsi, (%rdi)
+	testl	%rsi, %rsi
 	jne	7f
 
 	movl	$2, (%rdi)
