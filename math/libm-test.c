@@ -102,10 +102,10 @@ static MATHTYPE plus_infty, minus_infty, nan_value;
 typedef MATHTYPE (*mathfunc) (MATHTYPE);
 
 
-#define ISINF(x)                                \
-(sizeof (x) == sizeof (float) ?                 \
- isinff (x)                                   \
- : sizeof (x) == sizeof (double) ?              \
+#define ISINF(x) \
+(sizeof (x) == sizeof (float) ?						      \
+ isinff (x)								      \
+ : sizeof (x) == sizeof (double) ?					      \
  isinf (x) : isinfl (x))
 
 
@@ -1382,6 +1382,63 @@ copysign_test (void)
 
 
 static void
+trunc_test (void)
+{
+  check ("trunc(0) = 0", FUNC(trunc) (0), 0);
+  check ("trunc(-0) = -0", FUNC(trunc) (minus_zero), minus_zero);
+  check ("trunc(0.625) = 0", FUNC(trunc) (0.625), 0);
+  check ("trunc(-0.625) = -0", FUNC(trunc) (-0.625), minus_zero);
+  check ("trunc(1) = 1", FUNC(trunc) (1), 1);
+  check ("trunc(-1) = -1", FUNC(trunc) (-1), -1);
+  check ("trunc(1.625) = 1", FUNC(trunc) (1.625), 1);
+  check ("trunc(-1.625) = -1", FUNC(trunc) (-1.625), -1);
+
+  check ("trunc(1048580.625) = 1048580", FUNC(trunc) (1048580.625L),
+	 1048580L);
+  check ("trunc(-1048580.625) = -1048580", FUNC(trunc) (-1048580.625L),
+	 -1048580L);
+
+  check ("trunc(8388610.125) = 8388610", FUNC(trunc) (8388610.125L),
+	 8388610.0L);
+  check ("trunc(-8388610.125) = -8388610", FUNC(trunc) (-8388610.125L),
+	 -8388610.0L);
+
+  check ("trunc(4294967296.625) = 4294967296", FUNC(trunc) (4294967296.625L),
+	 4294967296.0L);
+  check ("trunc(-4294967296.625) = -4294967296",
+	 FUNC(trunc) (-4294967296.625L), -4294967296.0L);
+
+  check_isinfp ("trunc(+inf) = +inf", FUNC(trunc) (plus_infty));
+  check_isinfn ("trunc(-inf) = -inf", FUNC(trunc) (minus_infty));
+  check_isnan ("trunc(NaN) = NaN", FUNC(trunc) (nan_value));
+}
+
+
+static void
+remquo_test (void)
+{
+  int quo;
+  MATHTYPE result;
+
+  result = FUNC(remquo) (1.625, 1.0, &quo);
+  check ("remquo(1.625, 1.0, &x) == -0.375", result, -0.375);
+  check ("remquo(1.625, 1.0, &x) puts 1 in x", quo, 1);
+
+  result = FUNC(remquo) (-1.625, 1.0, &quo);
+  check ("remquo(-1.625, 1.0, &x) == 0.375", result, 0.375);
+  check ("remquo(-1.625, 1.0, &x) puts 1 in x", quo, -1);
+
+  result = FUNC(remquo) (1.625, -1.0, &quo);
+  check ("remquo(1.125, -1.0, &x) == 0.125", result, 0.125);
+  check ("remquo(1.125, -1.0, &x) puts 1 in x", quo, -1);
+
+  result = FUNC(remquo) (-1.625, -1.0, &quo);
+  check ("remquo(-1.125, -1.0, &x) == 0.125", result, 0.125);
+  check ("remquo(-1.125, -1.0, &x) puts 1 in x", quo, 1);
+}
+
+
+static void
 inverse_func_pair_test (const char *test_name,
 			mathfunc f1, mathfunc inverse,
 			MATHTYPE x, MATHTYPE epsilon)
@@ -1403,33 +1460,33 @@ inverse_func_pair_test (const char *test_name,
 static void
 inverse_functions (void)
 {
-  inverse_func_pair_test ("(asin(sin(x)) == x",
+  inverse_func_pair_test ("asin(sin(x)) == x",
 			FUNC(sin), FUNC(asin), 1.0, CHOOSE (0, 0, 1e-7L));
-  inverse_func_pair_test ("(sin(asin(x)) == x",
+  inverse_func_pair_test ("sin(asin(x)) == x",
 			  FUNC(asin), FUNC(sin), 1.0, 0.0);
 
-  inverse_func_pair_test ("(acos(cos(x)) == x",
+  inverse_func_pair_test ("acos(cos(x)) == x",
 		       FUNC(cos), FUNC(acos), 1.0, CHOOSE (0, 1e-15L, 0));
-  inverse_func_pair_test ("(cos(acos(x)) == x",
+  inverse_func_pair_test ("cos(acos(x)) == x",
 			  FUNC(acos), FUNC(cos), 1.0, 0.0);
-  inverse_func_pair_test ("(atan(tan(x)) == x",
+  inverse_func_pair_test ("atan(tan(x)) == x",
 			  FUNC(tan), FUNC(atan), 1.0, 0.0);
-  inverse_func_pair_test ("(tan(atan(x)) == x",
+  inverse_func_pair_test ("tan(atan(x)) == x",
 		       FUNC(atan), FUNC(tan), 1.0, CHOOSE (0, 1e-15L, 0));
 
-  inverse_func_pair_test ("(asinh(sinh(x)) == x",
+  inverse_func_pair_test ("asinh(sinh(x)) == x",
 		     FUNC(sinh), FUNC(asinh), 1.0, CHOOSE (1e-18L, 0, 0));
-  inverse_func_pair_test ("(sinh(asinh(x)) == x",
+  inverse_func_pair_test ("sinh(asinh(x)) == x",
 			  FUNC(asinh), FUNC(sinh), 1.0, 0.0);
 
-  inverse_func_pair_test ("(acosh(cosh(x)) == x",
+  inverse_func_pair_test ("acosh(cosh(x)) == x",
 		FUNC(cosh), FUNC(acosh), 1.0, CHOOSE (1e-18L, 1e-15L, 0));
-  inverse_func_pair_test ("(cosh(acosh(x)) == x",
+  inverse_func_pair_test ("cosh(acosh(x)) == x",
 			  FUNC(acosh), FUNC(cosh), 1.0, 0.0);
 
-  inverse_func_pair_test ("(atanh(tanh(x)) == x",
+  inverse_func_pair_test ("atanh(tanh(x)) == x",
 		     FUNC(tanh), FUNC(atanh), 1.0, CHOOSE (0, 1e-15L, 0));
-  inverse_func_pair_test ("(tanh(atanh(x)) == x",
+  inverse_func_pair_test ("tanh(atanh(x)) == x",
 			  FUNC(atanh), FUNC(tanh), 1.0, 0.0);
 
 }
@@ -1693,6 +1750,11 @@ main (int argc, char *argv[])
   fmax_test ();
   nextafter_test ();
   copysign_test ();
+  trunc_test ();
+#if 0
+  /* XXX I'm not sure what is the correct result.  */
+  remquo_test ();
+#endif
 
   identities ();
   inverse_functions ();
