@@ -1,4 +1,4 @@
-/* Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -20,7 +20,6 @@ Cambridge, MA 02139, USA.  */
 
 #include <ansidecl.h>
 #include <string.h>
-#include <gnu-stabs.h>
 
 char *program_invocation_name;
 char *program_invocation_short_name;
