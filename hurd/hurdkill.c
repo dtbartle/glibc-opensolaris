@@ -81,3 +81,4 @@ _hurd_sig_post (pid_t pid, int sig, mach_port_t arg_refport)
      fail with ESRCH.  */
   return delivered ? 0 : err ?: ESRCH;
 }
+weak_alias (_hurd_sig_post, hurd_sig_post)
