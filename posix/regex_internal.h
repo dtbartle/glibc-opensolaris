@@ -43,7 +43,7 @@ extern const char re_error_msgid[];
 extern const size_t re_error_msgid_idx[];
 
 /* Number of bits in an unsinged int.  */
-#define UINT_BITS (sizeof(unsigned int) * BYTE_BITS)
+#define UINT_BITS (sizeof (unsigned int) * BYTE_BITS)
 /* Number of unsigned int in an bit_set.  */
 #define BITSET_UINTS ((SBC_MAX + UINT_BITS - 1) / UINT_BITS)
 typedef unsigned int bitset[BITSET_UINTS];
@@ -221,21 +221,21 @@ struct re_string_t
 };
 typedef struct re_string_t re_string_t;
 
-static reg_errcode_t re_string_construct(re_string_t *pstr,
-                                         const unsigned char *str, int len,
-                                         RE_TRANSLATE_TYPE trans);
-static reg_errcode_t re_string_construct_toupper(re_string_t *pstr,
-                                                 const unsigned char *str,
-                                                 int len,
-                                                 RE_TRANSLATE_TYPE trans);
-static void re_string_destruct(re_string_t *pstr);
+static reg_errcode_t re_string_construct (re_string_t *pstr,
+					  const unsigned char *str, int len,
+					  RE_TRANSLATE_TYPE trans);
+static reg_errcode_t re_string_construct_toupper (re_string_t *pstr,
+						  const unsigned char *str,
+						  int len,
+						  RE_TRANSLATE_TYPE trans);
+static void re_string_destruct (re_string_t *pstr);
 #ifdef RE_ENABLE_I18N
-static int re_string_elem_size_at(const re_string_t *pstr, int idx);
-static inline int re_string_char_size_at(const re_string_t *pstr, int idx);
-static inline wint_t re_string_wchar_at(const re_string_t *pstr, int idx);
+static int re_string_elem_size_at (const re_string_t *pstr, int idx);
+static inline int re_string_char_size_at (const re_string_t *pstr, int idx);
+static inline wint_t re_string_wchar_at (const re_string_t *pstr, int idx);
 #endif /* RE_ENABLE_I18N */
-static unsigned int re_string_context_at(const re_string_t *input, int idx,
-                                         int eflags, int newline_anchor);
+static unsigned int re_string_context_at (const re_string_t *input, int idx,
+					  int eflags, int newline_anchor);
 #define re_string_peek_byte(pstr, offset) \
   ((pstr)->mbs[(pstr)->cur_idx + offset])
 #define re_string_peek_byte_case(pstr, offset) \
@@ -258,9 +258,9 @@ static unsigned int re_string_context_at(const re_string_t *input, int idx,
 #define re_string_skip_bytes(pstr,idx) ((pstr)->cur_idx += (idx))
 #define re_string_set_index(pstr,idx) ((pstr)->cur_idx = (idx))
 
-#define re_malloc(t,n) ((t*) malloc ((n) * sizeof (t)))
-#define re_realloc(p,t,n) ((t*) realloc (p, (n) * sizeof (t)))
-#define re_free(p) free(p)
+#define re_malloc(t,n) ((t *) malloc ((n) * sizeof (t)))
+#define re_realloc(p,t,n) ((t *) realloc (p, (n) * sizeof (t)))
+#define re_free(p) free (p)
 
 struct bin_tree_t
 {
@@ -306,13 +306,13 @@ typedef struct
 #define CONTEXT_BEGBUF (CONTEXT_NEWLINE << 1)
 #define CONTEXT_ENDBUF (CONTEXT_BEGBUF << 1)
 
-#define IS_WORD_CONTEXT(c) (c & CONTEXT_WORD)
-#define IS_NEWLINE_CONTEXT(c) (c & CONTEXT_NEWLINE)
-#define IS_BEGBUF_CONTEXT(c) (c & CONTEXT_BEGBUF)
-#define IS_ENDBUF_CONTEXT(c) (c & CONTEXT_ENDBUF)
-#define IS_ORDINARY_CONTEXT(c) (c == 0)
+#define IS_WORD_CONTEXT(c) ((c) & CONTEXT_WORD)
+#define IS_NEWLINE_CONTEXT(c) ((c) & CONTEXT_NEWLINE)
+#define IS_BEGBUF_CONTEXT(c) ((c) & CONTEXT_BEGBUF)
+#define IS_ENDBUF_CONTEXT(c) ((c) & CONTEXT_ENDBUF)
+#define IS_ORDINARY_CONTEXT(c) ((c) == 0)
 
-#define IS_WORD_CHAR(ch) (isalnum(ch) || (ch) == '_')
+#define IS_WORD_CHAR(ch) (isalnum (ch) || (ch) == '_')
 #define IS_NEWLINE(ch) ((ch) == NEWLINE_CHAR)
 
 #define NOT_SATISFY_PREV_CONSTRAINT(constraint,context) \
@@ -322,10 +322,10 @@ typedef struct
   || ((constraint & PREV_BEGBUF_CONSTRAINT) && !IS_BEGBUF_CONTEXT (context)))
 
 #define NOT_SATISFY_NEXT_CONSTRAINT(constraint,context) \
- ((((constraint) & NEXT_WORD_CONSTRAINT) && !IS_WORD_CONTEXT(context)) \
-  || (((constraint) & NEXT_NOTWORD_CONSTRAINT) && IS_WORD_CONTEXT(context)) \
-  || (((constraint) & NEXT_NEWLINE_CONSTRAINT) && !IS_NEWLINE_CONTEXT(context)) \
-  || (((constraint) & NEXT_ENDBUF_CONSTRAINT) && !IS_ENDBUF_CONTEXT(context)))
+ ((((constraint) & NEXT_WORD_CONSTRAINT) && !IS_WORD_CONTEXT (context)) \
+  || (((constraint) & NEXT_NOTWORD_CONSTRAINT) && IS_WORD_CONTEXT (context)) \
+  || (((constraint) & NEXT_NEWLINE_CONSTRAINT) && !IS_NEWLINE_CONTEXT (context)) \
+  || (((constraint) & NEXT_ENDBUF_CONSTRAINT) && !IS_ENDBUF_CONTEXT (context)))
 
 struct re_dfastate_t
 {
@@ -404,7 +404,7 @@ static reg_errcode_t re_node_set_alloc (re_node_set *set, int size);
 static reg_errcode_t re_node_set_init_1 (re_node_set *set, int elem);
 static reg_errcode_t re_node_set_init_2 (re_node_set *set, int elem1,
                                          int elem2);
-#define re_node_set_init_empty(set) memset(set,0,sizeof(re_node_set))
+#define re_node_set_init_empty(set) memset (set, '\0', sizeof (re_node_set))
 static reg_errcode_t re_node_set_init_copy (re_node_set *dest,
                                             const re_node_set *src);
 static reg_errcode_t re_node_set_intersect (re_node_set *dest,
@@ -424,11 +424,11 @@ static int re_node_set_compare (const re_node_set *set1,
 static int re_node_set_contains (const re_node_set *set, int elem);
 static void re_node_set_remove_at (re_node_set *set, int idx);
 #define re_node_set_empty(p) ((p)->nelem = 0)
-#define re_node_set_free(set) re_free((set)->elems)
+#define re_node_set_free(set) re_free ((set)->elems)
 static int re_dfa_add_node (re_dfa_t *dfa, re_token_t token, int mode);
-static re_dfastate_t* re_acquire_state (re_dfa_t *dfa,
+static re_dfastate_t *re_acquire_state (re_dfa_t *dfa,
                                         const re_node_set *nodes);
-static re_dfastate_t* re_acquire_state_context (re_dfa_t *dfa,
+static re_dfastate_t *re_acquire_state_context (re_dfa_t *dfa,
                                                 const re_node_set *nodes,
                                                 unsigned int context);
 
@@ -460,7 +460,7 @@ bitset_not (set)
      bitset set;
 {
   int bitset_i;
-  for (bitset_i = 0 ; bitset_i < BITSET_UINTS ; bitset_i++)
+  for (bitset_i = 0; bitset_i < BITSET_UINTS; ++bitset_i)
     set[bitset_i] = ~set[bitset_i];
 }
 
@@ -470,7 +470,7 @@ bitset_merge (dest, src)
      const bitset src;
 {
   int bitset_i;
-  for (bitset_i = 0 ; bitset_i < BITSET_UINTS ; bitset_i++)
+  for (bitset_i = 0; bitset_i < BITSET_UINTS; ++bitset_i)
     dest[bitset_i] |= src[bitset_i];
 }
 
@@ -480,7 +480,7 @@ bitset_not_merge (dest, src)
      const bitset src;
 {
   int i;
-  for (i = 0 ; i < BITSET_UINTS ; i++)
+  for (i = 0; i < BITSET_UINTS; ++i)
     dest[i] |= ~src[i];
 }
 
@@ -494,7 +494,7 @@ re_string_char_size_at (pstr, idx)
   int byte_idx;
   if (MB_CUR_MAX == 1)
     return 1;
-  for (byte_idx = 1 ; idx + byte_idx < pstr->len ; byte_idx++)
+  for (byte_idx = 1; idx + byte_idx < pstr->len; ++byte_idx)
     if (pstr->wcs[idx + byte_idx] != WEOF)
       break;
   return byte_idx;
@@ -506,8 +506,8 @@ re_string_wchar_at (pstr, idx)
      int idx;
 {
   if (MB_CUR_MAX == 1)
-    return (wint_t)pstr->mbs[idx];
-  return (wint_t)pstr->wcs[idx];
+    return (wint_t) pstr->mbs[idx];
+  return (wint_t) pstr->wcs[idx];
 }
 
 static int
@@ -525,13 +525,13 @@ re_string_elem_size_at (pstr, idx)
 
   if (nrules != 0)
     {
-      table = (const int32_t*) _NL_CURRENT (LC_COLLATE, _NL_COLLATE_TABLEMB);
-      extra = (const char*) _NL_CURRENT (LC_COLLATE, _NL_COLLATE_EXTRAMB);
-      indirect = (const int32_t*) _NL_CURRENT (LC_COLLATE,
-                                               _NL_COLLATE_INDIRECTMB);
+      table = (const int32_t *) _NL_CURRENT (LC_COLLATE, _NL_COLLATE_TABLEMB);
+      extra = (const char *) _NL_CURRENT (LC_COLLATE, _NL_COLLATE_EXTRAMB);
+      indirect = (const int32_t *) _NL_CURRENT (LC_COLLATE,
+						_NL_COLLATE_INDIRECTMB);
       p = pstr->mbs + idx;
       tmp = findidx (&p);
-      return p - (const unsigned char *)pstr->mbs - idx;
+      return p - (const unsigned char *) pstr->mbs - idx;
     }
   else
 #endif /* _LIBC */
