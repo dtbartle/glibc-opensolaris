@@ -56,8 +56,6 @@ struct gap
   enum variant var = ((struct iso2022jp_data *) step->data)->var;	      \
   int save_set;								      \
   int *setp = &data->statep->count;
-#define END_LOOP \
-  data->statep->count = set;
 #define EXTRA_LOOP_ARGS		, var, setp
 
 
