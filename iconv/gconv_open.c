@@ -255,6 +255,8 @@ __gconv_open (const char *toset, const char *fromset, __gconv_t *handle,
 			}
 		      break;
 		    }
+
+	      result->__steps[cnt].__data = &result->__data[cnt];
 	    }
 
 	  /* Now handle the last entry.  */
@@ -306,6 +308,8 @@ __gconv_open (const char *toset, const char *fromset, __gconv_t *handle,
 		    }
 		  break;
 		}
+
+	  result->__steps[cnt].__data = &result->__data[cnt];
 	}
 
       if (res != __GCONV_OK)
