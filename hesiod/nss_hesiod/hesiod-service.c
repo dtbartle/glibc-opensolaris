@@ -1,4 +1,4 @@
-/* Copyright (C) 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1997, 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Mark Kettenis <kettenis@phys.uva.nl>, 1997.
 
@@ -17,102 +17,68 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#include <bits/libc-lock.h>
 #include <errno.h>
 #include <hesiod.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <nss.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "nss_hesiod.h"
 
 /* Hesiod uses a format for service entries that differs from the
    traditional format.  We therefore declare our own parser.  */
 
 #define ENTNAME servent
 
-#define ENTDATA servent_data
 struct servent_data {};
 
 #define TRAILING_LIST_MEMBER		s_aliases
 #define TRAILING_LIST_SEPARATOR_P	isspace
 #include <nss/nss_files/files-parse.c>
-#define ISSEMICOLON(c)	((c) ==  ';')
+#define ISSC_OR_SPACE(c)	((c) ==  ';' || isspace (c))
 LINE_PARSER
-("",
- (void) entdata;
- STRING_FIELD (result->s_name, ISSEMICOLON, 1);
- STRING_FIELD (result->s_proto, ISSEMICOLON, 1);
- INT_FIELD (result->s_port, ISSEMICOLON, 10, 0, htons);
+("#",
+ STRING_FIELD (result->s_name, ISSC_OR_SPACE, 1);
+ STRING_FIELD (result->s_proto, ISSC_OR_SPACE, 1);
+ INT_FIELD (result->s_port, ISSC_OR_SPACE, 10, 0, htons);
  )
-
-
-/* Locks the static variables in this file.  */
-__libc_lock_define_initialized (static, lock);
-
-static void *context = NULL;
-
-static enum nss_status
-internal_setservent (void)
-{
-  if (!context)
-    {
-      if (hesiod_init (&context) == -1)
-	return NSS_STATUS_UNAVAIL;
-    }
-
-  return NSS_STATUS_SUCCESS;
-}
 
 enum nss_status
 _nss_hesiod_setservent (void)
 {
-  enum nss_status status;
-
-  __libc_lock_lock (lock);
-
-  status = internal_setservent ();
-
-  __libc_lock_unlock (lock);
-
-  return status;
+  return NSS_STATUS_SUCCESS;
 }
 
 enum nss_status
 _nss_hesiod_endservent (void)
 {
-  __libc_lock_lock (lock);
-
-  if (context)
-    {
-      hesiod_end (context);
-      context = NULL;
-    }
-
-  __libc_lock_unlock (lock);
-
   return NSS_STATUS_SUCCESS;
 }
 
 static enum nss_status
-lookup (const char *name, const char *protocol, struct servent *serv,
-	char *buffer, size_t buflen, int *errnop)
+lookup (const char *name, const char *type, const char *protocol,
+	struct servent *serv, char *buffer, size_t buflen, int *errnop)
 {
-  enum nss_status status;
   struct parser_data *data = (void *) buffer;
   size_t linebuflen;
+  void *context;
   char **list, **item;
   int parse_res;
   int found;
 
-  status = internal_setservent ();
-  if (status != NSS_STATUS_SUCCESS)
-    return status;
+  context = _nss_hesiod_init ();
+  if (context == NULL)
+    return NSS_STATUS_UNAVAIL;
 
-  list = hesiod_resolve (context, name, "service");
+  list = hesiod_resolve (context, name, type);
   if (list == NULL)
-    return errno == ENOENT ? NSS_STATUS_NOTFOUND : NSS_STATUS_UNAVAIL;
+    {
+      hesiod_end (context);
+      return errno == ENOENT ? NSS_STATUS_NOTFOUND : NSS_STATUS_UNAVAIL;
+    }
 
   linebuflen = buffer + buflen - data->linebuffer;
 
@@ -125,6 +91,7 @@ lookup (const char *name, const char *protocol, struct servent *serv,
       if (linebuflen < len)
 	{
 	  hesiod_free_list (context, list);
+	  hesiod_end (context);
 	  *errnop = ERANGE;
 	  return NSS_STATUS_TRYAGAIN;
 	}
@@ -135,17 +102,19 @@ lookup (const char *name, const char *protocol, struct servent *serv,
       if (parse_res == -1)
 	{
 	  hesiod_free_list (context, list);
+	  hesiod_end (context);
 	  return NSS_STATUS_TRYAGAIN;
 	}
 
       if (parse_res > 0)
-	found = protocol == NULL || strcmp (serv->s_proto, protocol) == 0;
+	found = protocol == NULL || strcasecmp (serv->s_proto, protocol) == 0;
 
       ++item;
     }
   while (*item != NULL && !found);
 
   hesiod_free_list (context, list);
+  hesiod_end (context);
 
   return found ? NSS_STATUS_SUCCESS : NSS_STATUS_NOTFOUND;
 }
@@ -155,13 +124,17 @@ _nss_hesiod_getservbyname_r (const char *name, const char *protocol,
 			     struct servent *serv,
 			     char *buffer, size_t buflen, int *errnop)
 {
-  enum nss_status status;
+  return lookup (name, "service", protocol, serv, buffer, buflen, errnop);
+}
 
-  __libc_lock_lock (lock);
+enum nss_status
+_nss_hesiod_getservbyport_r (const int port, const char *protocol,
+			     struct servent *serv,
+			     char *buffer, size_t buflen, int *errnop)
+{
+  char portstr[6];	    /* Port numbers are restricted to 16 bits. */
 
-  status = lookup (name, protocol, serv, buffer, buflen, errnop);
+  snprintf (portstr, sizeof portstr, "%d", ntohs (port));
 
-  __libc_lock_unlock (lock);
-
-  return status;
+  return lookup (portstr, "port", protocol, serv, buffer, buflen, errnop);
 }
