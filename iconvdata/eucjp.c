@@ -230,26 +230,26 @@ gconv (struct gconv_step *step, struct gconv_step_data *data,
 		      /* Try the JIS character sets.  */
 		      size_t found;
 
-		      found = ucs4_to_jisx0201 (ch, &outbuf[outchars], 1);
+		      found = ucs4_to_jisx0201 (ch, &outbuf[outchars]);
 
-		      if (found == 0)
+		      if (found == UNKNOWN_10646_CHAR)
 			{
 			  /* No JIS 0201 character.  */
 			  found = ucs4_to_jisx0208 (ch, &outbuf[outchars],
 						    (data->outbufsize
 						     - outchars));
-			  if (found > 0)
+			  if (found == 0)
+			    {
+			      /* We ran out of space.  */
+			      extra = 2;
+			      break;
+			    }
+			  else if (found != UNKNOWN_10646_CHAR)
 			    {
 			      /* It's a JIS 0208 character, adjust it for
 				 EUC-JP.  */
 			      outbuf[outchars++] += 0x80;
 			      outbuf[outchars] += 0x80;
-			    }
-			  else if (found == 0)
-			    {
-			      /* We ran out of space.  */
-			      extra = 2;
-			      break;
 			    }
 			  else
 			    {
@@ -258,18 +258,18 @@ gconv (struct gconv_step *step, struct gconv_step_data *data,
 							(data->outbufsize
 							 - outchars));
 
-			      if (found > 0)
+			      if (found == 0)
+				{
+				  /* We ran out of space.  */
+				  extra = 2;
+				  break;
+				}
+			      else if (found != UNKNOWN_10646_CHAR)
 				{
 				  /* It's a JIS 0212 character, adjust it for
 				     EUC-JP.  */
 				  outbuf[outchars++] += 0x80;
 				  outbuf[outchars] += 0x80;
-				}
-			      else if (found == 0)
-				{
-				  /* We ran out of space.  */
-				  extra = 2;
-				  break;
 				}
 			      else
 				/* Illegal character.  */
