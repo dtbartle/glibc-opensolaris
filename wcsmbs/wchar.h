@@ -31,7 +31,7 @@
 #ifdef _WCHAR_H
 /* Get FILE definition.  */
 # define __need___FILE
-# ifdef __USE_XOPEN2K
+# ifdef __USE_UNIX98
 #  define __need_FILE
 # endif
 # include <stdio.h>
