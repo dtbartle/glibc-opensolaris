@@ -168,7 +168,7 @@ _dl_load_cache_lookup (const char *name)
 	 - the old format with the new format in it
 	 - only the new format
 	 The following checks if the cache contains any of these formats.  */
-      if (file != NULL && cachesize > sizeof *cache
+      if (file != MAP_FAILED && cachesize > sizeof *cache
 	  && memcmp (file, CACHEMAGIC, sizeof CACHEMAGIC - 1) == 0)
 	{
 	  size_t offset;
