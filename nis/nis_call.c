@@ -32,13 +32,14 @@ static int const MAXTRIES = 3;
 static unsigned long
 inetstr2int (const char *str)
 {
-  char buffer[strlen(str)+3];
-  int i, j;
+  char buffer[strlen (str) + 3];
+  size_t buflen;
+  size_t i, j;
 
-  strcpy (buffer, str);
+  buflen = stpcpy (buffer, str) - buffer;
 
   j = 0;
-  for (i = 0; i < strlen (buffer); ++i)
+  for (i = 0; i < buflen; ++i)
     if (buffer[i] == '.')
       {
 	++j;
@@ -49,16 +50,18 @@ inetstr2int (const char *str)
 	  }
       }
 
-  return inet_addr(buffer);
+  return inet_addr (buffer);
 }
 
 static CLIENT *
 __nis_dobind (const nis_server *server, u_long flags)
 {
   struct sockaddr_in clnt_saddr;
-  int clnt_sock, i;
+  int clnt_sock;
+  size_t i;
   CLIENT *client = NULL;
-  void *out;
+  /* XXX What is this variable for?  */
+  void *out = NULL;
 
   for (i = 0; i < server->ep.ep_len; i++)
     {
@@ -90,13 +93,13 @@ __nis_dobind (const nis_server *server, u_long flags)
 	  {
 	    if (server->ep.ep_val[i].uaddr[i] == '-')
 	      clnt_saddr.sin_addr.s_addr =
-		inetstr2int(server->ep.ep_val[i].uaddr);
+		inetstr2int (server->ep.ep_val[i].uaddr);
 	    else
 	      if (strcmp (server->ep.ep_val[i].proto,"udp") == 0)
 		{
 		  if ((flags & USE_DGRAM) == USE_DGRAM)
 		    clnt_saddr.sin_addr.s_addr =
-		      inetstr2int(server->ep.ep_val[i].uaddr);
+		      inetstr2int (server->ep.ep_val[i].uaddr);
 		  else
 		    continue;
 		}
@@ -107,7 +110,7 @@ __nis_dobind (const nis_server *server, u_long flags)
 		      continue;
 		    else
 		      clnt_saddr.sin_addr.s_addr =
-			inetstr2int(server->ep.ep_val[i].uaddr);
+			inetstr2int (server->ep.ep_val[i].uaddr);
 		  }
 	  }
 	else
@@ -139,19 +142,19 @@ __nis_dobind (const nis_server *server, u_long flags)
 		char netname[MAXNETNAMELEN+1];
 		char *p;
 
-		strcpy(netname,"unix.");
-		strncat(netname,server->name,MAXNETNAMELEN-5);
+		strcpy (netname, "unix.");
+		strncat (netname, server->name,MAXNETNAMELEN-5);
 		netname[MAXNETNAMELEN-5] = '\0';
-		p = strchr(netname,'.');
+		p = strchr (netname, '.');
 		*p = '@';
 		client->cl_auth =
-		  authdes_pk_create(netname, &server->pkey, 300, NULL, NULL);
+		  authdes_pk_create (netname, &server->pkey, 300, NULL, NULL);
 		if (!client->cl_auth)
-		  client->cl_auth = authunix_create_default();
+		  client->cl_auth = authunix_create_default ();
 	      }
 	    else
 #endif
-	      client->cl_auth = authunix_create_default();
+	      client->cl_auth = authunix_create_default ();
 	  }
       return client;
     }
@@ -166,7 +169,7 @@ __do_niscall (const nis_server *serv, int serv_len, u_long prog,
 {
   CLIENT *clnt;
   directory_obj *dir = NULL;
-  nis_server *server;
+  const nis_server *server;
   int try, result, server_len;
 
   if (serv == NULL || serv_len == 0)
@@ -200,7 +203,9 @@ __do_niscall (const nis_server *serv, int serv_len, u_long prog,
 
 	  if (result != RPC_SUCCESS)
 	    {
-	      clnt_perror (clnt, "do_niscall: clnt_call");
+	      /* XXX Grrr.  The cast is needed for now since Sun code does
+		 note know about `const'.  */
+	      clnt_perror (clnt, (char *) "do_niscall: clnt_call");
 	      clnt_destroy (clnt);
 	      result = NIS_RPCERROR;
 	    }

@@ -75,11 +75,11 @@ static const char *nis_errlist[] =
   N_("Master server busy, full dump rescheduled.")
 };
 
-char *
+const char *
 nis_sperrno (const nis_error status)
 {
   if (status >= (sizeof (nis_errlist) / sizeof (nis_errlist[0])))
-    return "?";
+    return "???";
   else
     return gettext (nis_errlist[status]);
 }
@@ -100,7 +100,7 @@ char *
 nis_sperror_r (const nis_error status, const char *label,
 	       char *buffer, size_t buflen)
 {
-  char *cptr;
+  const char *cptr;
 
   cptr = nis_sperrno (status);
 
@@ -110,7 +110,7 @@ nis_sperror_r (const nis_error status, const char *label,
       return NULL;
     }
 
-    sprintf(buffer, "%s: %s", label, cptr);
+    sprintf (buffer, "%s: %s", label, cptr);
 
     return buffer;
 }

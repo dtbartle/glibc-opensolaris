@@ -114,7 +114,7 @@ __nis_expandname (const nis_name name)
 	      tmp = stpcpy (tmp, cp);
 	      --tmp;
 	      if (tmp[- 1] != '.')
-		*tmp++ = '.'
+		*tmp++ = '.';
 	      stpcpy (tmp, local_domain);
 	    }
 	  else

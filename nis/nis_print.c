@@ -207,7 +207,7 @@ nis_print_table (const table_obj *obj)
 	      obj->ta_cols.ta_cols_val[i].tc_name);
       printf (_("\t\tAttributes    : %s\n"),
 	      nis_flags2str (obj->ta_cols.ta_cols_val[i].tc_flags));
-      fputs (_("\t\tAccess Rights : "), stdout;
+      fputs (_("\t\tAccess Rights : "), stdout);
       nis_print_rights (obj->ta_cols.ta_cols_val[i].tc_rights);
       fputc ('\n', stdout);
     }

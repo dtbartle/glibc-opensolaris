@@ -45,7 +45,7 @@ nis_clone_directory (const directory_obj *src, directory_obj *dest)
   res->do_type = src->do_type;
   if (src->do_servers.do_servers_len > 0)
     {
-      int i;
+      size_t i;
 
       res->do_servers.do_servers_len = src->do_servers.do_servers_len;
       if ((res->do_servers.do_servers_val =
@@ -65,7 +65,7 @@ nis_clone_directory (const directory_obj *src, directory_obj *dest)
 	    src->do_servers.do_servers_val[i].ep.ep_len;
 	  if (res->do_servers.do_servers_val[i].ep.ep_len > 0)
 	    {
-	      int j;
+	      size_t j;
 
 	      res->do_servers.do_servers_val[i].ep.ep_val =
 		malloc (src->do_servers.do_servers_val[i].ep.ep_len *
@@ -139,7 +139,7 @@ nis_clone_directory (const directory_obj *src, directory_obj *dest)
 group_obj *
 nis_clone_group (const group_obj *src, group_obj *dest)
 {
-  int i;
+  size_t i;
   group_obj *res = NULL;
 
   if (src == NULL)
@@ -180,7 +180,7 @@ nis_clone_group (const group_obj *src, group_obj *dest)
 table_obj *
 nis_clone_table (const table_obj *src, table_obj *dest)
 {
-  int i;
+  size_t i;
   table_obj *res = NULL;
 
   if (src == NULL)
@@ -240,7 +240,7 @@ nis_clone_table (const table_obj *src, table_obj *dest)
 entry_obj *
 nis_clone_entry (const entry_obj *src, entry_obj *dest)
 {
-  int i;
+  size_t i;
   entry_obj *res = NULL;
 
   if (src == NULL)

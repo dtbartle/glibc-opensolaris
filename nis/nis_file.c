@@ -58,7 +58,9 @@ writeColdStartFile (const directory_obj *obj)
     return FALSE;
 
   xdrstdio_create (&xdrs, out, XDR_ENCODE);
-  if (!xdr_directory_obj (&xdrs, obj))
+  /* XXX The following cast is bad!  Shouldn't the XDR functions take
+     pointers to const objects?  */
+  if (!xdr_directory_obj (&xdrs, (directory_obj *) obj))
     {
       fputs (_("Error while reading /var/nis/NIS_COLD_START!\n"), stdout);
       return FALSE;
@@ -97,7 +99,9 @@ nis_write_obj (const char *name, const nis_object *obj)
     return FALSE;
 
   xdrstdio_create (&xdrs, out, XDR_ENCODE);
-  if (!xdr_nis_object (&xdrs, obj))
+  /* XXX The following cast is bad!  Shouldn't the XDR functions take
+     pointers to const objects?  */
+  if (!xdr_nis_object (&xdrs, (nis_object *) obj))
     return FALSE;
 
   return TRUE;

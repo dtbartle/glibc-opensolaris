@@ -33,9 +33,9 @@ nis_leaf_of (const nis_name name)
 nis_name
 nis_leaf_of_r (const nis_name name, char *buffer, size_t buflen)
 {
-  int i = 0;
+  size_t i = 0;
 
-  memset (buffer, '\0', buflen);
+  buffer[0] = '\0';
 
   while (name[i] != '.' && name[i] != '\0')
     i++;
@@ -75,15 +75,15 @@ nis_name_of_r (const nis_name name, char *buffer, size_t buflen)
   if (strcmp (&name[diff], local_domain) != 0)
     return NULL;
 
-  if (diff >= buflen)
+  if ((size_t) diff >= buflen)
     {
       errno = ERANGE;
       return NULL;
     }
-  memset (buffer, '\0', buflen);
-  strncpy (buffer, name, diff - 1);
+  memcpy (buffer, name, diff - 1);
+  buffer[diff - 1] = '\0';
 
-  if (strlen (buffer) == 0)
+  if (diff - 1 == 0)
     return NULL;
 
   return buffer;
@@ -101,19 +101,22 @@ nis_name
 nis_domain_of_r (const nis_name name, char *buffer, size_t buflen)
 {
   char *cptr;
+  size_t cptr_len;
 
-  cptr = strchr (name, '.');
-  cptr++;
+  cptr = strchr (name, '.');	/* XXX What happens if the NIS name
+				   does not contain a `.'?  */
+  ++cptr;
+  cptr_len = strlen (cptr);
 
-  if (strlen (cptr) == 0)
+  if (cptr_len == 0)
     strcpy (buffer, ".");
-  else if (strlen (cptr) >= buflen)
+  else if (cptr_len >= buflen)
     {
       errno = ERANGE;
       return NULL;
     }
   else
-    strcpy (buffer, cptr);
+    memcpy (buffer, cptr, cptr_len + 1);
 
   return buffer;
 }
@@ -122,7 +125,7 @@ static int
 count_dots (const nis_name str)
 {
   int count = 0;
-  int i;
+  size_t i;
 
   for (i = 0; i < strlen (str); ++i)
     if (str[i] == '.')
@@ -191,7 +194,7 @@ nis_getnames (const nis_name name)
 
 	      getnames[pos] = tmp;
 	      tmp = stpcpy (tmp, name);
-	      *tmp++ = '.'
+	      *tmp++ = '.';
 	      stpcpy (tmp, cptr);
 
 	      ++pos;
@@ -213,9 +216,9 @@ nis_getnames (const nis_name name)
 		return NULL;
 
 	      tmp = stpcpy (tmp, name);
-	      *tmp++ = '.'
+	      *tmp++ = '.';
 	      tmp = stpcpy (tmp, cp);
-	      --tmp
+	      --tmp;
 	      if (tmp[-1] != '.')
 		*tmp++ = '.';
 	      stpcpy (tmp, local_domain);

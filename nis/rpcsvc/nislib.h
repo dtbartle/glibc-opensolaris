@@ -85,7 +85,7 @@ extern nis_name nis_local_host __P ((void));
 /*
 ** nis_error
 */
-extern char *nis_sperrno __P ((__const nis_error));
+extern const char *nis_sperrno __P ((__const nis_error));
 extern void nis_perror __P ((__const nis_error, __const char *));
 extern void nis_lerror __P ((__const nis_error, __const char *));
 extern char *nis_sperror __P ((__const nis_error, __const char *));
