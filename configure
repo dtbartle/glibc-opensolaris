@@ -1273,7 +1273,7 @@ else
 fi
 fi
 
-ARLOCKED="$srcdir/arlocked.sh"
+ARLOCKED="`(cd $srcdir; pwd)`/arlocked.sh"
 
 
 echo $ac_n "checking for signed size_t type""... $ac_c" 1>&6
