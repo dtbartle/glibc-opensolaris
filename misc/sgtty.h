@@ -22,6 +22,10 @@ Cambridge, MA 02139, USA.  */
 
 #include <sys/ioctl.h>
 
+/* On some systems this type is not defined by <ioctl-types.h>;
+   in that case, the functions are just stubs that return ENOSYS.  */
+struct sgttyb;
+
 __BEGIN_DECLS
 
 /* Fill in *PARAMS with terminal parameters associated with FD.  */
