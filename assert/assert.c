@@ -31,6 +31,10 @@ CONST char *__assert_program_name;
    	a.c:10: foobar: Assertion `a == b' failed.
    It then aborts program execution via a call to `abort'.  */
 
+#ifdef FATAL_PREPARE_INCLUDE
+#include FATAL_PREPARE_INCLUDE
+#endif
+
 void
 DEFUN(__assert_fail, (assertion, file, line, function),
       CONST char *assertion AND
