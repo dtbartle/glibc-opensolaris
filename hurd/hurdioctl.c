@@ -1,5 +1,5 @@
 /* ioctl commands which must be done in the C library.
-Copyright (C) 1994 Free Software Foundation, Inc.
+Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -20,21 +20,31 @@ Cambridge, MA 02139, USA.  */
 #include <hurd.h>
 #include <hurd/fd.h>
 #include <sys/ioctl.h>
-#include <gnu-stabs.h>
+#include <hurd/ioctl.h>
 
 
-/* Symbol set of ioctl handler lists.
-   This must be uninitialized for ld to use it for the set.  */
-struct handler_set
-  {
-    size_t n;
-    struct ioctl_handler *v[0];
-  };
-struct handler_set _hurd_ioctl_handler_lists;
 
-/* This definition is here (and initialized!) so that when __ioctl refers
-   to it, we will link in fionread et al (below).  */
-struct handler_set *const _hurd_ioctl_handlers = &_hurd_ioctl_handler_lists;
+/* Symbol set of ioctl handler lists.  If there are user-registered
+   handlers, one of these lists will contain them.  The other lists are
+   handlers built into the library.  */
+symbol_set_define (_hurd_ioctl_handler_lists)
+
+/* Look up REQUEST in the set of handlers.  */
+ioctl_handler_t
+_hurd_lookup_ioctl_handler (int request)
+{
+  void *const *ptr;
+  const struct ioctl_handler *h;
+
+  for (ptr = symbol_set_first_element (_hurd_ioctl_handler_lists);
+       !symbol_set_end_p (_hurd_ioctl_handler_lists, ptr);
+       ++ptr)
+    for (h = *ptr; h != NULL; h = h->next)
+      if (request >= h->first_request && request <= h->last_request)
+	return h->handler;
+
+  return NULL;
+}
 
 #include <fcntl.h>
 
