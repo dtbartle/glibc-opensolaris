@@ -58,6 +58,7 @@ asm ("cat >> crti.s-new <<\\EOF.crti.init");
 GLOBAL void
 _init (void)
 {
+  (void) &_init;		/* Don't optimize out the function! */
   /* End the here document containing the .init prologue code.
      Then fetch the .section directive just written and append that
      to crtn.s-new, followed by the function epilogue.  */
@@ -76,6 +77,7 @@ cat >> crti.s-new <<\\EOF.crti.fini");
 GLOBAL void
 _fini (void)
 {
+  (void) &_fini;		/* Don't optimize out the function! */
   /* End the here document containing the .fini prologue code.
      Then fetch the .section directive just written and append that
      to crtn.s-new, followed by the function epilogue.  */
