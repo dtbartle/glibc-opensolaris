@@ -25,9 +25,11 @@ _dl_fini (void)
   struct link_map *l;
 
   for (l = _dl_loaded; l; l = l->l_next)
-    if (l->l_init_called && l->l_info[DT_FINI])
+    if (l->l_init_called)
       {
-	(*(void (*) (void)) (l->l_addr + l->l_info[DT_FINI]->d_un.d_ptr)) ();
+	if (l->l_info[DT_FINI] &&
+	    !(l->l_name[0] == '\0' && l->l_type == lt_executable))
+	  (*(void (*) (void)) (l->l_addr + l->l_info[DT_FINI]->d_un.d_ptr)) ();
 	/* Make sure nothing happens if we are called twice.  */
 	l->l_init_called = 0;
       }
