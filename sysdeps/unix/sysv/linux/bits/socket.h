@@ -197,7 +197,7 @@ struct cmsghdr
 extern struct cmsghdr *__cmsg_nxthdr __P ((struct msghdr *__mhdr,
 					   struct cmsghdr *__cmsg));
 #ifdef __USE_EXTERN_INLINES
-# ifdef _EXTERN_INLINE
+# ifndef _EXTERN_INLINE
 #  define _EXTERN_INLINE extern __inline
 # endif
 _EXTERN_INLINE struct cmsghdr *
