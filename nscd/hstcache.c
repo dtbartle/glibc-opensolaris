@@ -332,7 +332,7 @@ addhstbyname (struct database *db, int fd, request_header *req,
 	}
       else
 	{
-	  buffer = alloca (buflen);
+	  buffer = (char *) alloca (buflen);
 #if _STACK_GROWS_DOWN
 	  if (buffer + buflen == old_buffer)
 	    buflen = 2 * buflen - 1024;
@@ -409,7 +409,7 @@ addhstbyaddr (struct database *db, int fd, request_header *req,
 	}
       else
 	{
-	  buffer = alloca (buflen);
+	  buffer = (char *) alloca (buflen);
 #if _STACK_GROWS_DOWN
 	  if (buffer + buflen == old_buffer)
 	    buflen = 2 * buflen - 1024;
@@ -487,7 +487,7 @@ addhstbynamev6 (struct database *db, int fd, request_header *req,
 	}
       else
 	{
-	  buffer = alloca (buflen);
+	  buffer = (char *) alloca (buflen);
 #if _STACK_GROWS_DOWN
 	  if (buffer + buflen == old_buffer)
 	    buflen = 2 * buflen - 1024;
@@ -564,7 +564,7 @@ addhstbyaddrv6 (struct database *db, int fd, request_header *req,
 	}
       else
 	{
-	  buffer = alloca (buflen);
+	  buffer = (char *) alloca (buflen);
 #if _STACK_GROWS_DOWN
 	  if (buffer + buflen == old_buffer)
 	    buflen = 2 * buflen - 1024;
