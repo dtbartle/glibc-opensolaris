@@ -69,7 +69,7 @@ DEFUN(sigsuspend, (set), CONST sigset_t *set)
 
   if (pending)
     /* Tell the signal thread to check for pending signals.  */
-    __sig_post (_hurd_msgport, 0, __mach_task_self ());
+    __msg_sig_post (_hurd_msgport, 0, __mach_task_self ());
     
   /* We've been interrupted!  And a good thing, too.
      Otherwise we'd never return.
