@@ -203,13 +203,13 @@ addpwbyname (struct database *db, int fd, request_header *req,
      simply insert it.  It does not matter if it is in there twice.  The
      pruning function only will look at the timestamp.  */
   int buflen = 1024;
-  char *buffer = alloca (buflen);
+  char *buffer = (char *) alloca (buflen);
   struct passwd resultbuf;
   struct passwd *pwd;
   uid_t oldeuid = 0;
   bool use_malloc = false;
 
-  if (debug_level > 0)
+  if (__builtin_expect (debug_level > 0, 0))
     dbg_log (_("Haven't found \"%s\" in password cache!"), (char *) key);
 
   if (secure[pwddb])
@@ -274,7 +274,7 @@ addpwbyuid (struct database *db, int fd, request_header *req,
      simply insert it.  It does not matter if it is in there twice.  The
      pruning function only will look at the timestamp.  */
   int buflen = 256;
-  char *buffer = alloca (buflen);
+  char *buffer = (char *) alloca (buflen);
   struct passwd resultbuf;
   struct passwd *pwd;
   uid_t oldeuid = 0;
@@ -291,7 +291,7 @@ addpwbyuid (struct database *db, int fd, request_header *req,
       return;
     }
 
-  if (debug_level > 0)
+  if (__builtin_expect (debug_level > 0, 0))
     dbg_log (_("Haven't found \"%d\" in password cache!"), uid);
 
   if (secure[pwddb])
