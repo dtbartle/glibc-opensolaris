@@ -1,5 +1,5 @@
 /* Define and initialize `__progname' et. al.
-   Copyright (C) 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1994, 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@
    Boston, MA 02111-1307, USA.  */
 
 #include <string.h>
-#include <errno.h>
 
 char *__progname_full = (char *) "";
 char *__progname = (char *) "";
