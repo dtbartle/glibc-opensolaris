@@ -58,7 +58,7 @@ unsigned int __nptl_nthreads = 1;
 
 /* Table of the key information.  */
 struct pthread_key_struct __pthread_keys[PTHREAD_KEYS_MAX]
-  __attribute__ ((section (".bss")));
+  __attribute__ ((nocommon));
 hidden_def (__pthread_keys)
 
 /* This is for libthread_db only.  */
