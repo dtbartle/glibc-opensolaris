@@ -19,6 +19,7 @@ Cambridge, MA 02139, USA.  */
 #include <ansidecl.h>
 #include <errno.h>
 #include <math.h>
+#include <float.h>
 #include "ieee754.h"
 
 /* Deal with an infinite or NaN result.
@@ -42,13 +43,6 @@ DEFUN(__infnan, (error), int error)
 
     default:
       errno = EDOM;
-      {
-	/* Construct an IEEE NaN.  */
-	union ieee754_double u;
-	u.ieee.exponent = 0x7ff;
-	u.ieee.mantissa0 = 0xfffff;
-	u.ieee.mantissa1 = 0xffffffff;
-	return u.d;
-      }
+      return NAN;
     }
 }
