@@ -1,4 +1,4 @@
-/* Copyright (C) 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
+/* Copyright (C) 1995, 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -18,9 +18,44 @@
 
 #include <sysdep.h>
 
+#include "kernel-features.h"
+
+#define EINVAL	22
+
 	.text
 
 ENTRY (__mmap)
+
+/* I don't think it is worthwhile trzing to use mmap2 whenever it
+   is available.  Only use it when we are sure the syscall exists.  */
+#ifdef __ASSUME_MMAP2_SYSCALL
+
+	/* Save registers.  */
+	pushl %ebp
+	pushl %ebx
+	pushl %esi
+	pushl %edi
+
+	movl $SYS_ify(mmap2), %eax	/* System call number in %eax.  */
+
+	movl 20(%esp), %ebx
+	movl 24(%esp), %ecx
+	movl 28(%esp), %edx
+	movl 32(%esp), %esi
+	movl 36(%esp), %edi
+	movl 40(%esp), %ebp
+	shrl $12, %ebp			/* mmap2 takes the offset in pages.  */
+
+	/* Do the system call trap.  */
+	int $0x80
+
+	/* Restore registers.  */
+	popl %edi
+	popl %esi
+	popl %ebx
+	popl %ebp
+
+#else
 
 	/* Save registers.  */
 	movl %ebx, %edx
@@ -35,6 +70,8 @@ ENTRY (__mmap)
 	/* Restore registers.  */
 	movl %edx, %ebx
 
+#endif
+
 	/* If 0 > %eax > -4096 there was an error.  */
 	cmpl $-4096, %eax
 	ja SYSCALL_ERROR_LABEL
@@ -46,4 +83,3 @@ L(pseudo_end):
 PSEUDO_END (__mmap)
 
 weak_alias (__mmap, mmap)
-weak_alias (__mmap, mmap64)
