@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -164,7 +164,8 @@ extern char *__stdio_gen_tempname __P ((__const char *__dir,
 
 
 /* Print out MESSAGE on the error output and abort.  */
-extern __NORETURN void __libc_fatal __P ((__const char *__message));
+extern void __libc_fatal __P ((__const char *__message))
+     __attribute__ ((__noreturn__));
 
 
 /* The FILE structure.  */
