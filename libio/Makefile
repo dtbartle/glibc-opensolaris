@@ -25,7 +25,7 @@ headers	:= stdio.h libio.h _G_config.h
 
 routines	:=							      \
 	filedoalloc iofclose iofdopen iofflush iofgetpos iofgets iofopen      \
-	iofopncook iofprintf iofputs iofread iofsetpos ioftell		      \
+	iofopncook iofputs iofread iofsetpos ioftell			      \
 	iofwrite iogetdelim iogetline iogets iopadn iopopen ioputs	      \
 	ioseekoff ioseekpos iosetbuffer iosetvbuf iosprintf ioungetc	      \
 	iovsprintf iovsscanf						      \
