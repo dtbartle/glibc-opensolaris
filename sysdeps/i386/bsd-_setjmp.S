@@ -50,5 +50,6 @@ ENTRY (BP_SYM (_setjmp))
 	movl %ebp, (JB_BP*4)(%eax) /* Save caller's frame pointer.  */
 
 	movl $0, JB_SIZE(%eax)	/* No signal mask set.  */
+	xorl %eax, %eax
 	ret
 END (BP_SYM (_setjmp))
