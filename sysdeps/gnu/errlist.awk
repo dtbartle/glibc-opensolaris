@@ -51,7 +51,7 @@ errnoh == 3 && $1 == "@comment" && $2 == "errno" \
       print "#if defined (EWOULDBLOCK) && EWOULDBLOCK != EAGAIN";
     else
       printf "#ifdef %s\n", e;
-    printf "    [%s] = _N(\"%s\"),\n", e, etext;
+    printf "    [%s] = N_(\"%s\"),\n", e, etext;
     print "#endif";
     next;
   }
