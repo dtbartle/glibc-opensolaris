@@ -29,10 +29,12 @@ routines	:=							      \
 	iofwrite iogetdelim iogetline iogets iopadn iopopen ioputs	      \
 	ioseekoff ioseekpos iosetbuffer iosetvbuf iosprintf ioungetc	      \
 	iovsprintf iovsscanf						      \
+	iofgetpos64 iofopen64 iofsetpos64				      \
 									      \
 	clearerr feof ferror fgetc fileno fputc freopen fseek getc getchar    \
 	memstream pclose putc putchar rewind setbuf setlinebuf vasprintf      \
 	iovdprintf vscanf vsnprintf obprintf fcloseall fseeko ftello	      \
+	freopen64 fseeko64 ftello64					      \
 									      \
 	libc_fatal
 
