@@ -5,6 +5,6 @@
 vm_size_t
 __mig_strncpy (char *dest, const char *src, vm_size_t len)
 {
-  return __stpncpy (__dst, __src, __len) - __dst;
+  return __stpncpy (dst, src, len) - dst;
 }
 weak_alias (__mig_strncpy, mig_strncpy)
