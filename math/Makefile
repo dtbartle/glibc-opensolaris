@@ -31,6 +31,7 @@ routines := acos asin atan cos sin tan cosh sinh tanh exp fabs ldexp	\
 	    isinfl isnanl
 tests := # test-math
 install-lib := libm.a
+extra-objs := libm.a
 
 
 include ../Rules
