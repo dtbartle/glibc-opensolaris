@@ -73,14 +73,16 @@ in different ways; some do not allow the exception for certain kinds of
 only restrict the export of software in tangible form, and others impose
 significant additional restrictions.
 
-In particular, the US does not allow export of this software without a
-licence, including via the Internet.  So please do not download it from
-the main FSF FTP site at @code{ftp.gnu.org} if you are outside the US.
-This software was completely developed outside the US.
+The United States has additional rules.  This software would generally
+be exportable under 15 CFR 740.13(e), which permits exports of
+``encryption source code'' which is ``publicly available'' and which is
+``not subject to an express agreement for the payment of a licensing fee or
+royalty for commercial production or sale of any product developed with
+the source code'' to most countries.
 
-The rules in this area are continuously changing.  If any information in
-this manual is out-of-date, please report it using the @code{glibcbug}
-script. @xref{Reporting Bugs}.
+The rules in this area are continuously changing.  If you know of any
+information in this manual that is out-of-date, please report it using
+the @code{glibcbug} script. @xref{Reporting Bugs}.
 
 @node getpass
 @section Reading Passwords
