@@ -1,5 +1,5 @@
 # This file is included several times in a row, once
-# for each element on $(object-suffixes).  $(object-suffixes-left)
+# for each element of $(object-suffixes).  $(object-suffixes-left)
 # is initialized first to $(object-suffixes) so that with each
 # inclusion, we advance $o to the next suffix.
 
