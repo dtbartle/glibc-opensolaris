@@ -937,6 +937,10 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	    *(long long int *) va_arg (ap, void *) = done;		      \
 	  else if (is_long_num)						      \
 	    *(long int *) va_arg (ap, void *) = done;			      \
+	  else if (is_char)						      \
+	    *(char *) va_arg (ap, void *) = done;			      \
+	  else if (is_long_num)						      \
+	    *(long int *) va_arg (ap, void *) = done;			      \
 	  else if (!is_short)						      \
 	    *(int *) va_arg (ap, void *) = done;			      \
 	  else								      \
@@ -947,6 +951,10 @@ vfprintf (FILE *s, const CHAR_T *format, va_list ap)
 	  *(long long int *) args_value[fspec->data_arg].pa_pointer = done;   \
 	else if (is_long_num)						      \
 	  *(long int *) args_value[fspec->data_arg].pa_pointer = done;	      \
+	else if (is_long_num)						      \
+	  *(long int *) args_value[fspec->data_arg].pa_pointer = done;	      \
+	else if (is_char)						      \
+	  *(char *) args_value[fspec->data_arg].pa_pointer = done;	      \
 	else if (!is_short)						      \
 	  *(int *) args_value[fspec->data_arg].pa_pointer = done;	      \
 	else								      \
