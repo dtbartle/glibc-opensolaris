@@ -20,6 +20,7 @@ Cambridge, MA 02139, USA.  */
 #include <stdio.h>
 
 #ifdef USE_IN_LIBIO
+# include <libioP.h>
 # define __vsnprintf _IO_vsnprintf
 #endif
 
