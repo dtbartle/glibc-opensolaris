@@ -118,7 +118,7 @@
      do									      \
        __oldval = (*__memp);						      \
      while (atomic_compare_and_exchange_acq (__memp,			      \
-					     __oldval | __mask, __oldval));  \
+					     __oldval | __mask, __oldval));   \
 									      \
      __oldval & __mask; })
 #endif
