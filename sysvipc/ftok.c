@@ -1,4 +1,4 @@
-/* Copyright (C) 1995 Free Software Foundation, Inc.
+/* Copyright (C) 1995, 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 Contributed by Ulrich Drepper <drepper@gnu.ai.mit.edu>, August 1995.
 
@@ -31,7 +31,7 @@ ftok (pathname, proj_id)
   if (__stat (pathname, &st) < 0)
     return (key_t) -1;
 
-  key = (st.st_ino & 0xffff) | ((st.st_dev & 0xff) << 16) | (id << 24);
+  key = (st.st_ino & 0xffff) | ((st.st_dev & 0xff) << 16) | (proj_id << 24);
 
   return key;
 }
