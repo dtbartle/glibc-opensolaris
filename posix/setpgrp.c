@@ -1,4 +1,4 @@
-/* Copyright (C) 1993, 1995, 1996 Free Software Foundation, Inc.
+/* Copyright (C) 1996 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -16,19 +16,10 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-#include <ansidecl.h>
-#include <errno.h>
 #include <unistd.h>
 
-extern int __pgrpsys __P ((int type, ...));
-
-/* Set the process group ID of the process matching PID to PGID.
-   If PID is zero, the current process's process group ID is set.
-   If PGID is zero, the process ID of the process is used.  */
 int
-DEFUN(__setpgid, (pid, pgid), int pid AND int pgid)
+setpgrp ()
 {
-  return __pgrpsys (5, pid, pgid);
+  return setpgid (0, 0);
 }
-
-weak_alias (__setpgid, setpgid)
