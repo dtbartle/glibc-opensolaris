@@ -67,18 +67,23 @@ __fork (void)
   error_t err;
   thread_t thread_self = __mach_thread_self ();
   struct hurd_sigstate *volatile ss;
+  sigset_t pending;
 
   void unlockss (void)
     {
+      __spin_lock (&ss->lock);
       ss->critical_section = 0;
+      pending = ss->pending & ~ss->blocked;
+      __spin_unlock (&ss->lock);
       /* XXX Copying mutex into child and calling mutex_unlock lossy.  */
-      __mutex_unlock (&ss->lock);
       __mutex_unlock (&_hurd_siglock);
       ss = NULL;		/* Make sure we crash if we use it again.  */
     }
 
   ss = _hurd_self_sigstate ();
+  __spin_lock (&ss->lock);
   ss->critical_section = 1;
+  __spin_unlock (&ss->lock);
   __mutex_lock (&_hurd_siglock);
 
   if (! setjmp (env))
@@ -559,6 +564,9 @@ __fork (void)
      They are locked in both the parent and child tasks.  */
   for (i = 0; i < _hurd_fork_locks.n; ++i)
     __mutex_unlock (_hurd_fork_locks.locks[i]);
+
+  if (pending)
+    __msg_sig_post (_hurd_msgport, 0, __mach_task_self ());
 
   return err ? __hurd_fail (err) : pid;
 }
