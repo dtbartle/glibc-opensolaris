@@ -100,11 +100,15 @@ res_mkquery(op, dname, class, type, data, datalen, newrr_in, buf, buflen)
 		printf(";; res_mkquery(%d, %s, %d, %d)\n",
 		       op, dname, class, type);
 #endif
+	if (!(_res.options & RES_INIT)) {
+		if (res_init() == -1)
+			return (-1);
+	}
 	/*
 	 * Initialize header fields.
 	 */
 	if ((buf == NULL) || (buflen < HFIXEDSZ))
-		return(-1);
+		return (-1);
 	bzero(buf, HFIXEDSZ);
 	hp = (HEADER *) buf;
 	hp->id = htons(++_res.id);
@@ -122,9 +126,10 @@ res_mkquery(op, dname, class, type, data, datalen, newrr_in, buf, buflen)
 	 * perform opcode specific processing
 	 */
 	switch (op) {
-	case QUERY:
+	case QUERY:	/*FALLTHROUGH*/
+	case NS_NOTIFY_OP:
 		if ((buflen -= QFIXEDSZ) < 0)
-			return(-1);
+			return (-1);
 		if ((n = dn_comp(dname, cp, buflen, dnptrs, lastdnptr)) < 0)
 			return (-1);
 		cp += n;
@@ -198,13 +203,13 @@ res_mkquery(op, dname, class, type, data, datalen, newrr_in, buf, buflen)
 			return (-1);
 		cp += n;
 		__putshort(type, cp);
-                cp += INT16SZ;
-                __putshort(class, cp);
-                cp += INT16SZ;
+		cp += INT16SZ;
+		__putshort(class, cp);
+		cp += INT16SZ;
 		__putlong(0, cp);
 		cp += INT32SZ;
 		__putshort(datalen, cp);
-                cp += INT16SZ;
+		cp += INT16SZ;
 		if (datalen) {
 			bcopy(data, cp, datalen);
 			cp += datalen;
@@ -221,21 +226,22 @@ res_mkquery(op, dname, class, type, data, datalen, newrr_in, buf, buflen)
 			return (-1);
 		cp += n;
 		__putshort(newrr->r_type, cp);
-                cp += INT16SZ;
-                __putshort(newrr->r_class, cp);
-                cp += INT16SZ;
+		cp += INT16SZ;
+		__putshort(newrr->r_class, cp);
+		cp += INT16SZ;
 		__putlong(0, cp);
 		cp += INT32SZ;
 		__putshort(newrr->r_size, cp);
-                cp += INT16SZ;
+		cp += INT16SZ;
 		if (newrr->r_size) {
 			bcopy(newrr->r_data, cp, newrr->r_size);
 			cp += newrr->r_size;
 		}
 		hp->ancount = htons(0);
 		break;
-
 #endif /* ALLOW_UPDATES */
+	default:
+		return (-1);
 	}
 	return (cp - buf);
 }

@@ -69,13 +69,13 @@ static char rcsid[] = "$Id$";
 #endif
 
 char	*h_errlist[] = {
-	"Error 0",
+	"Resolver Error 0 (no error)",
 	"Unknown host",				/* 1 HOST_NOT_FOUND */
 	"Host name lookup failure",		/* 2 TRY_AGAIN */
 	"Unknown server error",			/* 3 NO_RECOVERY */
 	"No address associated with name",	/* 4 NO_ADDRESS */
 };
-int	h_nerr = { sizeof(h_errlist)/sizeof(h_errlist[0]) };
+int	h_nerr = { sizeof h_errlist / sizeof h_errlist[0] };
 
 extern int	h_errno;
 
@@ -98,8 +98,7 @@ herror(s)
 		v->iov_len = 2;
 		v++;
 	}
-	v->iov_base = (u_int)h_errno < h_nerr ?
-	    h_errlist[h_errno] : "Unknown error";
+	v->iov_base = hstrerror(h_errno);
 	v->iov_len = strlen(v->iov_base);
 	v++;
 	v->iov_base = "\n";
@@ -111,5 +110,9 @@ char *
 hstrerror(err)
 	int err;
 {
-	return (u_int)err < h_nerr ? h_errlist[err] : "Unknown resolver error";
+	if (err < 0)
+		return ("Resolver internal error");
+	else if (err < h_nerr)
+		return (h_errlist[err]);
+	return ("Unknown resolver error");
 }

@@ -75,6 +75,36 @@ static char rcsid[] = "$Id$";
 # include "../conf/portability.h"
 #endif
 
+/*
+ * Marc Majka		1994/04/16
+ * Allan Nathanson	1994/10/29 (BIND 4.9.3.x)
+ *
+ * NetInfo resolver configuration directory support.
+ *
+ * Allow a NetInfo directory to be created in the hierarchy which
+ * contains the same information as the resolver configuration file.
+ *
+ * - The local domain name is stored as the value of the "domain" property.
+ * - The Internet address(es) of the name server(s) are stored as values
+ *   of the "nameserver" property.
+ * - The name server addresses are stored as values of the "nameserver"
+ *   property.
+ * - The search list for host-name lookup is stored as values of the
+ *   "search" property.
+ * - The sortlist comprised of IP address netmask pairs are stored as
+ *   values of the "sortlist" property. The IP address and optional netmask
+ *   should be seperated by a slash (/) character.
+ * - Internal resolver variables can be set from the value of the "options"
+ *   property.
+ *
+ */
+#if defined(NeXT)
+#  include <netinfo/ni.h>
+#  define NI_PATH_RESCONF "/locations/resolver"
+#  define NI_TIMEOUT 10
+static int netinfo_res_init __P((int *haveenv, int *havesearch));
+#endif
+
 #if defined(USE_OPTIONS_H)
 # include "../conf/options.h"
 #endif
@@ -131,7 +161,7 @@ res_init()
 #endif
 
 	/*
-	 * These four fields used to be statically initialized.  This made
+	 * These three fields used to be statically initialized.  This made
 	 * it hard to use this code in a shared library.  It is necessary,
 	 * now that we're doing dynamic initialization here, that we preserve
 	 * the old semantics: if an application modifies one of these three
@@ -195,14 +225,22 @@ res_init()
 		*pp++ = 0;
 	}
 
+#define	MATCH(line, name) \
+	(!strncmp(line, name, sizeof(name) - 1) && \
+	(line[sizeof(name) - 1] == ' ' || \
+	 line[sizeof(name) - 1] == '\t'))
+
+#ifdef	NeXT
+	if (netinfo_res_init(&haveenv, &havesearch) == 0)
+#endif
 	if ((fp = fopen(_PATH_RESCONF, "r")) != NULL) {
 	    /* read the config file */
 	    while (fgets(buf, sizeof(buf), fp) != NULL) {
 		/* skip comments */
-		if ((*buf == ';') || (*buf == '#'))
+		if (*buf == ';' || *buf == '#')
 			continue;
 		/* read default domain name */
-		if (!strncmp(buf, "domain", sizeof("domain") - 1)) {
+		if (MATCH(buf, "domain")) {
 		    if (haveenv)	/* skip if have from environ */
 			    continue;
 		    cp = buf + sizeof("domain") - 1;
@@ -210,15 +248,14 @@ res_init()
 			    cp++;
 		    if ((*cp == '\0') || (*cp == '\n'))
 			    continue;
-		    (void)strncpy(_res.defdname, cp,
-				  sizeof(_res.defdname) - 1);
+		    strncpy(_res.defdname, cp, sizeof(_res.defdname) - 1);
 		    if ((cp = strpbrk(_res.defdname, " \t\n")) != NULL)
 			    *cp = '\0';
 		    havesearch = 0;
 		    continue;
 		}
 		/* set search list */
-		if (!strncmp(buf, "search", sizeof("search") - 1)) {
+		if (MATCH(buf, "search")) {
 		    if (haveenv)	/* skip if have from environ */
 			    continue;
 		    cp = buf + sizeof("search") - 1;
@@ -226,8 +263,7 @@ res_init()
 			    cp++;
 		    if ((*cp == '\0') || (*cp == '\n'))
 			    continue;
-		    (void)strncpy(_res.defdname, cp,
-				  sizeof(_res.defdname) - 1);
+		    strncpy(_res.defdname, cp, sizeof(_res.defdname) - 1);
 		    if ((cp = strchr(_res.defdname, '\n')) != NULL)
 			    *cp = '\0';
 		    /*
@@ -237,9 +273,7 @@ res_init()
 		    cp = _res.defdname;
 		    pp = _res.dnsrch;
 		    *pp++ = cp;
-		    for (n = 0;
-			 *cp && pp < _res.dnsrch + MAXDNSRCH;
-			 cp++) {
+		    for (n = 0; *cp && pp < _res.dnsrch + MAXDNSRCH; cp++) {
 			    if (*cp == ' ' || *cp == '\t') {
 				    *cp = 0;
 				    n = 1;
@@ -257,9 +291,8 @@ res_init()
 		    continue;
 		}
 		/* read nameservers to query */
-		if (!strncmp(buf, "nameserver", sizeof("nameserver") - 1) &&
-		   nserv < MAXNS) {
-		   struct in_addr a;
+		if (MATCH(buf, "nameserver") && nserv < MAXNS) {
+		    struct in_addr a;
 
 		    cp = buf + sizeof("nameserver") - 1;
 		    while (*cp == ' ' || *cp == '\t')
@@ -274,7 +307,7 @@ res_init()
 		    continue;
 		}
 #ifdef RESOLVSORT
-		if (!strncmp(buf, "sortlist", sizeof("sortlist") -1)) {
+		if (MATCH(buf, "sortlist")) {
 		    struct in_addr a;
 
 		    cp = buf + sizeof("sortlist") - 1;
@@ -285,7 +318,7 @@ res_init()
 			    break;
 			net = cp;
 			while (*cp && *cp != '/' &&
-			    isascii(*cp) && !isspace(*cp))
+			       isascii(*cp) && !isspace(*cp))
 				cp++;
 			n = *cp;
 			*cp = 0;
@@ -315,7 +348,7 @@ res_init()
 		    continue;
 		}
 #endif
-		if (!strncmp(buf, "options", sizeof("options") -1)) {
+		if (MATCH(buf, "options")) {
 		    res_setoptions(buf + sizeof("options") - 1, "conf");
 		    continue;
 		}
@@ -326,13 +359,11 @@ res_init()
 	    _res.nsort = nsort;
 #endif
 	    (void) fclose(fp);
-	} /*if(fopen)*/
-	if (_res.defdname[0] == 0) {
-		if (gethostname(buf, sizeof(_res.defdname) - 1) == 0 &&
-		   (cp = strchr(buf, '.'))) {
-			(void)strcpy(_res.defdname, cp + 1);
-		}
 	}
+	if (_res.defdname[0] == 0 &&
+	    gethostname(buf, sizeof(_res.defdname) - 1) == 0 &&
+	    (cp = strchr(buf, '.')) != NULL)
+		strcpy(_res.defdname, cp + 1);
 
 	/* find components of local domain that might be searched */
 	if (havesearch == 0) {
@@ -342,14 +373,13 @@ res_init()
 
 #ifndef RFC1535
 		dots = 0;
-		for (cp = _res.defdname;  *cp;  cp++)
+		for (cp = _res.defdname; *cp; cp++)
 			dots += (*cp == '.');
 
 		cp = _res.defdname;
 		while (pp < _res.dnsrch + MAXDFLSRCH) {
-			if (dots < LOCALDOMAINPARTS) {
+			if (dots < LOCALDOMAINPARTS)
 				break;
-			}
 			cp = strchr(cp, '.') + 1;    /* we know there is one */
 			*pp++ = cp;
 			dots--;
@@ -358,22 +388,19 @@ res_init()
 #ifdef DEBUG
 		if (_res.options & RES_DEBUG) {
 			printf(";; res_init()... default dnsrch list:\n");
-			for (pp = _res.dnsrch;  *pp;  pp++) {
+			for (pp = _res.dnsrch; *pp; pp++)
 				printf(";;\t%s\n", *pp);
-			}
 			printf(";;\t..END..\n");
 		}
-#endif /*DEBUG*/
-#endif /*!RFC1535*/
+#endif /* DEBUG */
+#endif /* !RFC1535 */
 	}
 
-	if ((cp = getenv("RES_OPTIONS")) != NULL) {
+	if ((cp = getenv("RES_OPTIONS")) != NULL)
 		res_setoptions(cp, "env");
-	}
 	_res.options |= RES_INIT;
 	return (0);
 }
-
 
 static void
 res_setoptions(options, source)
@@ -383,28 +410,26 @@ res_setoptions(options, source)
 	int i;
 
 #ifdef DEBUG
-	if (_res.options & RES_DEBUG) {
+	if (_res.options & RES_DEBUG)
 		printf(";; res_setoptions(\"%s\", \"%s\")...\n",
 		       options, source);
-	}
 #endif
 	while (*cp) {
 		/* skip leading and inner runs of spaces */
 		while (*cp == ' ' || *cp == '\t')
 			cp++;
 		/* search for and process individual options */
-		if (!strncmp(cp, "ndots:", sizeof("ndots:")-1)) {
+		if (!strncmp(cp, "ndots:", sizeof("ndots:") - 1)) {
 			i = atoi(cp + sizeof("ndots:") - 1);
 			if (i <= RES_MAXNDOTS)
 				_res.ndots = i;
 			else
 				_res.ndots = RES_MAXNDOTS;
 #ifdef DEBUG
-			if (_res.options & RES_DEBUG) {
+			if (_res.options & RES_DEBUG)
 				printf(";;\tndots=%d\n", _res.ndots);
-			}
 #endif
-		} else if (!strncmp(cp, "debug", sizeof("debug")-1)) {
+		} else if (!strncmp(cp, "debug", sizeof("debug") - 1)) {
 #ifdef DEBUG
 			if (!(_res.options & RES_DEBUG)) {
 				printf(";; res_setoptions(\"%s\", \"%s\")..\n",
@@ -427,13 +452,158 @@ static u_int32_t
 net_mask(in)		/* XXX - should really use system's version of this */
 	struct in_addr in;
 {
-        register u_int32_t i = ntohl(in.s_addr);
+	register u_int32_t i = ntohl(in.s_addr);
 
-        if (IN_CLASSA(i))
-                return (htonl(IN_CLASSA_NET));
-        else if (IN_CLASSB(i))
-                return (htonl(IN_CLASSB_NET));
-        else
-                return (htonl(IN_CLASSC_NET));
+	if (IN_CLASSA(i))
+		return (htonl(IN_CLASSA_NET));
+	else if (IN_CLASSB(i))
+		return (htonl(IN_CLASSB_NET));
+	return (htonl(IN_CLASSC_NET));
 }
 #endif
+
+#ifdef	NeXT
+static int
+netinfo_res_init(haveenv, havesearch)
+	int *haveenv;
+	int *havesearch;
+{
+    register	int n;
+    void	*domain, *parent;
+    ni_id	dir;
+    ni_status	status;
+    ni_namelist	nl;
+    int		nserv = 0;
+#ifdef RESOLVSORT
+    int		nsort = 0;
+#endif
+
+    status = ni_open(NULL, ".", &domain);
+    if (status == NI_OK) {
+	ni_setreadtimeout(domain, NI_TIMEOUT);
+	ni_setabort(domain, 1);
+
+	/* climb the NetInfo hierarchy to find a resolver directory */
+	while (status == NI_OK) {
+	    status = ni_pathsearch(domain, &dir, NI_PATH_RESCONF);
+	    if (status == NI_OK) {
+	    /* found a resolver directory */
+
+		if (*haveenv == 0) {
+		    /* get the default domain name */
+		    status = ni_lookupprop(domain, &dir, "domain", &nl);
+		    if (status == NI_OK && nl.ni_namelist_len > 0) {
+			(void)strncpy(_res.defdname,
+				      nl.ni_namelist_val[0],
+				      sizeof(_res.defdname) - 1);
+			_res.defdname[sizeof(_res.defdname) - 1] = '\0';
+			ni_namelist_free(&nl);
+			*havesearch = 0;
+		    }
+
+		    /* get search list */
+		    status = ni_lookupprop(domain, &dir, "search", &nl);
+		    if (status == NI_OK && nl.ni_namelist_len > 0) {
+			(void)strncpy(_res.defdname,
+				      nl.ni_namelist_val[0],
+				      sizeof(_res.defdname) - 1);
+			_res.defdname[sizeof(_res.defdname) - 1] = '\0';
+			/* copy  */
+			for (n = 0;
+			     n < nl.ni_namelist_len && n < MAXDNSRCH;
+			     n++) {
+			     /* duplicate up to MAXDNSRCH servers */
+			     char *cp = nl.ni_namelist_val[n];
+			    _res.dnsrch[n] =
+				strcpy((char *)malloc(strlen(cp) + 1), cp);
+			}
+			ni_namelist_free(&nl);
+			*havesearch = 1;
+		    }
+		}
+
+		/* get list of nameservers */
+		status = ni_lookupprop(domain, &dir, "nameserver", &nl);
+		if (status == NI_OK && nl.ni_namelist_len > 0) {
+		    /* copy up to MAXNS servers */
+		    for (n = 0;
+		         n < nl.ni_namelist_len && nserv < MAXNS;
+			 n++) {
+			struct in_addr a;
+
+			if (inet_aton(nl.ni_namelist_val[n], &a)) {
+			    _res.nsaddr_list[nserv].sin_addr = a;
+			    _res.nsaddr_list[nserv].sin_family = AF_INET;
+			    _res.nsaddr_list[nserv].sin_port =
+				htons(NAMESERVER_PORT);
+			    nserv++;
+			}
+		    }
+		    ni_namelist_free(&nl);
+		}
+		
+		if (nserv > 1)
+		    _res.nscount = nserv;
+
+#ifdef RESOLVSORT
+		/* get sort order */
+		status = ni_lookupprop(domain, &dir, "sortlist", &nl);
+		if (status == NI_OK && nl.ni_namelist_len > 0) {
+
+		    /* copy up to MAXRESOLVSORT address/netmask pairs */
+		    for (n = 0;
+		         n < nl.ni_namelist_len && nsort < MAXRESOLVSORT;
+			 n++) {
+			char ch;
+			char *cp;
+			struct in_addr a;
+
+			cp = strchr(nl.ni_namelist_val[n], '/');
+			if (cp != NULL) {
+			    ch = *cp;
+			    *cp = '\0';
+			}
+			
+			if (inet_aton(nl.ni_namelist_val[n], &a)) {
+			    _res.sort_list[nsort].addr = a;
+			    if (*cp && ch == '/') {
+			    	*cp++ = ch;
+			        if (inet_aton(cp, &a)) {
+				    _res.sort_list[nsort].mask = a.s_addr;
+				} else {
+				    _res.sort_list[nsort].mask =
+					net_mask(_res.sort_list[nsort].addr);
+				}
+			    } else {
+				_res.sort_list[nsort].mask =
+				    net_mask(_res.sort_list[nsort].addr);
+			    }
+			    nsort++;
+			}
+		    }
+		    ni_namelist_free(&nl);
+		}
+
+		_res.nsort = nsort;
+#endif
+
+		/* get resolver options */
+		status = ni_lookupprop(domain, &dir, "options", &nl);
+		if (status == NI_OK && nl.ni_namelist_len > 0) {
+		    res_setoptions(nl.ni_namelist_val[0], "conf");
+		    ni_namelist_free(&nl);
+		}
+
+		ni_free(domain);
+		return(1);	/* using DNS configuration from NetInfo */
+	    }
+
+	    status = ni_open(domain, "..", &parent);
+	    ni_free(domain);
+	    if (status == NI_OK)
+		domain = parent;
+	}
+    }
+    return(0);	/* if not using DNS configuration from NetInfo */
+}
+#endif	/* NeXT */

@@ -128,10 +128,10 @@ static int vc = 0;	/* is the socket a virtual ciruit? */
 	int save = errno;
 
 	if (_res.options & RES_DEBUG) {
-		fprintf(file, "res_send: %s ([%s].%d): %s\n",
+		fprintf(file, "res_send: %s ([%s].%u): %s\n",
 			string,
 			inet_ntoa(address.sin_addr),
-			address.sin_port,
+			ntohs(address.sin_port),
 			strerror(error));
 	}
 	errno = save;
@@ -159,6 +159,7 @@ void
 res_send_setqhook(hook)
 	res_send_qhook hook;
 {
+
 	Qhook = hook;
 }
 
@@ -166,11 +167,12 @@ void
 res_send_setrhook(hook)
 	res_send_rhook hook;
 {
+
 	Rhook = hook;
 }
 
 /* int
- * our_server(ina)
+ * res_isourserver(ina)
  *	looks up "ina" in _res.ns_addr_list[]
  * returns:
  *	0  : not found
@@ -178,8 +180,8 @@ res_send_setrhook(hook)
  * author:
  *	paul vixie, 29may94
  */
-static int
-our_server(inp)
+int
+res_isourserver(inp)
 	const struct sockaddr_in *inp;
 {
 	struct sockaddr_in ina;
@@ -202,15 +204,17 @@ our_server(inp)
 }
 
 /* int
- * name_in_query(name, type, class, buf, eom)
+ * res_nameinquery(name, type, class, buf, eom)
  *	look for (name,type,class) in the query section of packet (buf,eom)
  * returns:
  *	-1 : format error
  *	0  : not found
  *	>0 : found
+ * author:
+ *	paul vixie, 29may94
  */
-static int
-name_in_query(name, type, class, buf, eom)
+int
+res_nameinquery(name, type, class, buf, eom)
 	const char *name;
 	register int type, class;
 	const u_char *buf, *eom;
@@ -237,16 +241,18 @@ name_in_query(name, type, class, buf, eom)
 }
 
 /* int
- * queries_match(buf1, eom1, buf2, eom2)
+ * res_queriesmatch(buf1, eom1, buf2, eom2)
  *	is there a 1:1 mapping of (name,type,class)
  *	in (buf1,eom1) and (buf2,eom2)?
  * returns:
  *	-1 : format error
  *	0  : not a 1:1 mapping
  *	>0 : is a 1:1 mapping
+ * author:
+ *	paul vixie, 29may94
  */
-static int
-queries_match(buf1, eom1, buf2, eom2)
+int
+res_queriesmatch(buf1, eom1, buf2, eom2)
 	const u_char *buf1, *eom1;
 	const u_char *buf2, *eom2;
 {
@@ -265,7 +271,7 @@ queries_match(buf1, eom1, buf2, eom2)
 		cp += n;
 		ttype = _getshort(cp);	cp += INT16SZ;
 		tclass = _getshort(cp); cp += INT16SZ;
-		if (!name_in_query(tname, ttype, tclass, buf2, eom2))
+		if (!res_nameinquery(tname, ttype, tclass, buf2, eom2))
 			return (0);
 	}
 	return (1);
@@ -273,28 +279,25 @@ queries_match(buf1, eom1, buf2, eom2)
 
 int
 res_send(buf, buflen, ans, anssiz)
-	const u_char	*buf;
-	int		buflen;
-	u_char		*ans;
-	int		anssiz;
+	const u_char *buf;
+	int buflen;
+	u_char *ans;
+	int anssiz;
 {
-	HEADER		*hp = (HEADER *) buf;
-	HEADER		*anhp = (HEADER *) ans;
-	int		gotsomewhere = 0,
-			connreset = 0,
-			terrno = ETIMEDOUT;
-
-	register int	n;
-	int		try, v_circuit, resplen, ns;
-	u_int		badns;	/* XXX NSMAX can't exceed #/bits in this var */
+	HEADER *hp = (HEADER *) buf;
+	HEADER *anhp = (HEADER *) ans;
+	int gotsomewhere, connreset, terrno, try, v_circuit, resplen, ns;
+	register int n;
+	u_int badns;	/* XXX NSMAX can't exceed #/bits in this var */
 
 	DprintQ((_res.options & RES_DEBUG) || (_res.pfcode & RES_PRF_QUERY),
 		(stdout, ";; res_send()\n"), buf);
-	if (!(_res.options & RES_INIT)) {
-		if (res_init() == -1)
-			return (-1);
-	}
+	if (!(_res.options & RES_INIT) && res_init() == -1)
+		return (-1);
 	v_circuit = (_res.options & RES_USEVC) || buflen > PACKETSZ;
+	gotsomewhere = 0;
+	connreset = 0;
+	terrno = ETIMEDOUT;
 	badns = 0;
 
 	/*
@@ -304,7 +307,7 @@ res_send(buf, buflen, ans, anssiz)
 	    for (ns = 0; ns < _res.nscount; ns++) {
 		struct sockaddr_in *nsap = &_res.nsaddr_list[ns];
     same_ns:
-		if (badns & (1<<ns)) {
+		if (badns & (1 << ns)) {
 			_res_close();
 			goto next_ns;
 		}
@@ -315,12 +318,8 @@ res_send(buf, buflen, ans, anssiz)
 			do {
 				res_sendhookact act;
 
-				act = (*Qhook)(&nsap,
-					       &buf,
-					       &buflen,
-					       ans,
-					       anssiz,
-					       &resplen);
+				act = (*Qhook)(&nsap, &buf, &buflen,
+					       ans, anssiz, &resplen);
 				switch (act) {
 				case res_goahead:
 					done = 1;
@@ -345,13 +344,13 @@ res_send(buf, buflen, ans, anssiz)
 
 		Dprint(_res.options & RES_DEBUG,
 		       (stdout, ";; Querying server (# %d) address = %s\n",
-			ns+1, inet_ntoa(nsap->sin_addr)));
+			ns + 1, inet_ntoa(nsap->sin_addr)));
 
 		if (v_circuit) {
-			int		truncated;
-			struct iovec	iov[2];
-			u_short		len;
-			u_char		*cp;
+			int truncated;
+			struct iovec iov[2];
+			u_short len;
+			u_char *cp;
 
 			/*
 			 * Use virtual circuit;
@@ -369,14 +368,12 @@ res_send(buf, buflen, ans, anssiz)
 					Perror(stderr, "socket(vc)", errno);
 					return (-1);
 				}
-				if (connect(s,
-					    (struct sockaddr *)nsap,
-					    sizeof(struct sockaddr))
-				    < 0) {
+				if (connect(s, (struct sockaddr *)nsap,
+					    sizeof(struct sockaddr)) < 0) {
 					terrno = errno;
 					Aerror(stderr, "connect/vc",
 					       errno, *nsap);
-					badns |= (1<<ns);
+					badns |= (1 << ns);
 					_res_close();
 					goto next_ns;
 				}
@@ -393,7 +390,7 @@ res_send(buf, buflen, ans, anssiz)
 			if (writev(s, iov, 2) != (INT16SZ + buflen)) {
 				terrno = errno;
 				Perror(stderr, "write failed", errno);
-				badns |= (1<<ns);
+				badns |= (1 << ns);
 				_res_close();
 				goto next_ns;
 			}
@@ -439,8 +436,7 @@ res_send(buf, buflen, ans, anssiz)
 				len = resplen;
 			cp = ans;
 			while (len != 0 &&
-			       (n = read(s, (char *)cp, (int)len)) > 0
-			       ) {
+			       (n = read(s, (char *)cp, (int)len)) > 0) {
 				cp += n;
 				len -= n;
 			}
@@ -458,7 +454,7 @@ res_send(buf, buflen, ans, anssiz)
 				anhp->tc = 1;
 				len = resplen - anssiz;
 				while (len != 0) {
-					char junk[512];
+					char junk[PACKETSZ];
 
 					n = (len > sizeof(junk)
 					     ? sizeof(junk)
@@ -473,10 +469,10 @@ res_send(buf, buflen, ans, anssiz)
 			/*
 			 * Use datagrams.
 			 */
-			struct timeval	timeout;
-			fd_set		dsmask;
+			struct timeval timeout;
+			fd_set dsmask;
 			struct sockaddr_in from;
-			int		fromlen;
+			int fromlen;
 
 			if ((s < 0) || vc) {
 				if (vc)
@@ -510,23 +506,21 @@ res_send(buf, buflen, ans, anssiz)
 				 * receive a response from another server.
 				 */
 				if (!connected) {
-					if (connect(s,
-						    (struct sockaddr *)nsap,
+					if (connect(s, (struct sockaddr *)nsap,
 						    sizeof(struct sockaddr)
-						    ) < 0
-					    ) {
+						    ) < 0) {
 						Aerror(stderr,
 						       "connect(dg)",
 						       errno, *nsap);
-						badns |= (1<<ns);
+						badns |= (1 << ns);
 						_res_close();
 						goto next_ns;
 					}
 					connected = 1;
 				}
-				if (send(s, buf, buflen, 0) != buflen) {
+				if (send(s, (char*)buf, buflen, 0) != buflen) {
 					Perror(stderr, "send", errno);
-					badns |= (1<<ns);
+					badns |= (1 << ns);
 					_res_close();
 					goto next_ns;
 				}
@@ -559,12 +553,12 @@ res_send(buf, buflen, ans, anssiz)
 					connected = 0;
 					errno = 0;
 				}
-				if (sendto(s, buf, buflen, 0,
+				if (sendto(s, (char*)buf, buflen, 0,
 					   (struct sockaddr *)nsap,
 					   sizeof(struct sockaddr))
 				    != buflen) {
 					Aerror(stderr, "sendto", errno, *nsap);
-					badns |= (1<<ns);
+					badns |= (1 << ns);
 					_res_close();
 					goto next_ns;
 				}
@@ -594,14 +588,13 @@ res_send(buf, buflen, ans, anssiz)
 				 * timeout
 				 */
 				Dprint(_res.options & RES_DEBUG,
-				       (stdout, ";; timeout\n")
-				       );
+				       (stdout, ";; timeout\n"));
 				gotsomewhere = 1;
 				_res_close();
 				goto next_ns;
 			}
 			fromlen = sizeof(struct sockaddr_in);
-			resplen = recvfrom(s, ans, anssiz, 0,
+			resplen = recvfrom(s, (char*)ans, anssiz, 0,
 					   (struct sockaddr *)&from, &fromlen);
 			if (resplen <= 0) {
 				Perror(stderr, "recvfrom", errno);
@@ -623,7 +616,7 @@ res_send(buf, buflen, ans, anssiz)
 			}
 #if CHECK_SRVR_ADDR
 			if (!(_res.options & RES_INSECURE1) &&
-			    !our_server(&from)) {
+			    !res_isourserver(&from)) {
 				/*
 				 * response from wrong server? ignore it.
 				 * XXX - potential security hazard could
@@ -637,8 +630,8 @@ res_send(buf, buflen, ans, anssiz)
 			}
 #endif
 			if (!(_res.options & RES_INSECURE2) &&
-			    !queries_match(buf, buf + buflen,
-					   ans, ans + anssiz)) {
+			    !res_queriesmatch(buf, buf + buflen,
+					      ans, ans + anssiz)) {
 				/*
 				 * response contains wrong query? ignore it.
 				 * XXX - potential security hazard could
@@ -656,9 +649,11 @@ res_send(buf, buflen, ans, anssiz)
 				DprintQ(_res.options & RES_DEBUG,
 					(stdout, "server rejected query:\n"),
 					ans);
-				badns |= (1<<ns);
+				badns |= (1 << ns);
 				_res_close();
-				goto next_ns;
+				/* don't retry if called from dig */
+				if (!_res.pfcode)
+					goto next_ns;
 			}
 			if (!(_res.options & RES_IGNTC) && anhp->tc) {
 				/*
@@ -666,8 +661,7 @@ res_send(buf, buflen, ans, anssiz)
 				 * use TCP with same server.
 				 */
 				Dprint(_res.options & RES_DEBUG,
-				       (stdout, ";; truncated answer\n")
-				       );
+				       (stdout, ";; truncated answer\n"));
 				v_circuit = 1;
 				_res_close();
 				goto same_ns;
@@ -695,12 +689,8 @@ res_send(buf, buflen, ans, anssiz)
 			do {
 				res_sendhookact act;
 
-				act = (*Rhook)(nsap,
-					       buf,
-					       buflen,
-					       ans,
-					       anssiz,
-					       &resplen);
+				act = (*Rhook)(nsap, buf, buflen,
+					       ans, anssiz, &resplen);
 				switch (act) {
 				case res_goahead:
 				case res_done:
@@ -727,14 +717,13 @@ res_send(buf, buflen, ans, anssiz)
 	   } /*foreach ns*/
 	} /*foreach retry*/
 	_res_close();
-	if (!v_circuit) {
+	if (!v_circuit)
 		if (!gotsomewhere)
 			errno = ECONNREFUSED;	/* no nameservers found */
 		else
 			errno = ETIMEDOUT;	/* no answer obtained */
-	} else {
+	else
 		errno = terrno;
-	}
 	return (-1);
 }
 

@@ -79,8 +79,8 @@ const char *_res_opcodes[] = {
 	"QUERY",
 	"IQUERY",
 	"CQUERYM",
-	"CQUERYU",
-	"4",
+	"CQUERYU",	/* experimental */
+	"NOTIFY",	/* experimental */
 	"5",
 	"6",
 	"7",
@@ -210,7 +210,18 @@ do_rrset(msg, cp, cnt, pflag, file, hs)
 		    ((sflag) && (_res.pfcode & RES_PRF_HEAD1)))
 			fprintf(file, hs);
 		while (--n >= 0) {
-			cp = p_rr(cp, msg, file);
+			if ((!_res.pfcode) || sflag) {
+				cp = p_rr(cp, msg, file);
+			} else {
+				unsigned int dlen;
+				cp += __dn_skipname(cp, cp + MAXCDNAME);
+				cp += INT16SZ;
+				cp += INT16SZ;
+				cp += INT32SZ;
+				dlen = _getshort((u_char*)cp);
+				cp += INT16SZ;
+				cp += dlen;
+			}
 			if ((cp - msg) > PACKETSZ)
 				return (NULL);
 		}
@@ -292,7 +303,7 @@ __fp_nquery(msg, len, file)
 	}
 	putc(';', file);
 	if ((!_res.pfcode) || (_res.pfcode & RES_PRF_HEAD2)) {
-		fprintf(file,"; flags:");
+		fprintf(file, "; flags:");
 		if (hp->qr)
 			fprintf(file, " qr");
 		if (hp->aa)
@@ -321,9 +332,9 @@ __fp_nquery(msg, len, file)
 	 */
 	if (n = ntohs(hp->qdcount)) {
 		if ((!_res.pfcode) || (_res.pfcode & RES_PRF_QUES))
-			fprintf(file,";; QUESTIONS:\n");
+			fprintf(file, ";; QUESTIONS:\n");
 		while (--n >= 0) {
-			fprintf(file,";;\t");
+			fprintf(file, ";;\t");
 			TruncTest(cp);
 			cp = p_cdname(cp, msg, file);
 			ErrorTest(cp);
@@ -468,7 +479,7 @@ __p_rr(cp, msg, file)
 		case C_HS:
 			bcopy(cp, (char *)&inaddr, INADDRSZ);
 			if (dlen == 4) {
-				fprintf(file,"\t%s", inet_ntoa(inaddr));
+				fprintf(file, "\t%s", inet_ntoa(inaddr));
 				cp += dlen;
 			} else if (dlen == 7) {
 				char *address;
@@ -496,55 +507,71 @@ __p_rr(cp, msg, file)
 	case T_NS:
 	case T_PTR:
 		putc('\t', file);
-		cp = p_fqname(cp, msg, file);
+		if ((cp = p_fqname(cp, msg, file)) == NULL)
+			return (NULL);
 		break;
 
 	case T_HINFO:
 	case T_ISDN:
+		cp2 = cp + dlen;
 		if (n = *cp++) {
-			fprintf(file,"\t%.*s", n, cp);
+			fprintf(file, "\t%.*s", n, cp);
 			cp += n;
 		}
-		if (n = *cp++) {
-			fprintf(file,"\t%.*s", n, cp);
+		if ((cp < cp2) && (n = *cp++)) {
+			fprintf(file, "\t%.*s", n, cp);
 			cp += n;
-		}
+		} else if (type == T_HINFO)
+			fprintf(file, "\n;; *** Warning *** OS-type missing");
 		break;
 
 	case T_SOA:
 		putc('\t', file);
-		cp = p_fqname(cp, msg, file);	/* origin */
+		if ((cp = p_fqname(cp, msg, file)) == NULL)
+			return (NULL);
 		putc(' ', file);
-		cp = p_fqname(cp, msg, file);	/* mail addr */
+		if ((cp = p_fqname(cp, msg, file)) == NULL)
+			return (NULL);
 		fputs(" (\n", file);
 		t = _getlong((u_char*)cp);  cp += INT32SZ;
-		fprintf(file,"\t\t\t%lu\t; serial\n", t);
+		fprintf(file, "\t\t\t%lu\t; serial\n", t);
 		t = _getlong((u_char*)cp);  cp += INT32SZ;
-		fprintf(file,"\t\t\t%lu\t; refresh (%s)\n", t, __p_time(t));
+		fprintf(file, "\t\t\t%lu\t; refresh (%s)\n", t, __p_time(t));
 		t = _getlong((u_char*)cp);  cp += INT32SZ;
-		fprintf(file,"\t\t\t%lu\t; retry (%s)\n", t, __p_time(t));
+		fprintf(file, "\t\t\t%lu\t; retry (%s)\n", t, __p_time(t));
 		t = _getlong((u_char*)cp);  cp += INT32SZ;
-		fprintf(file,"\t\t\t%lu\t; expire (%s)\n", t, __p_time(t));
+		fprintf(file, "\t\t\t%lu\t; expire (%s)\n", t, __p_time(t));
 		t = _getlong((u_char*)cp);  cp += INT32SZ;
-		fprintf(file,"\t\t\t%lu )\t; minimum (%s)", t, __p_time(t));
+		fprintf(file, "\t\t\t%lu )\t; minimum (%s)", t, __p_time(t));
 		break;
 
 	case T_MX:
 	case T_AFSDB:
 	case T_RT:
-		fprintf(file,"\t%d ", _getshort((u_char*)cp));
+		fprintf(file, "\t%d ", _getshort((u_char*)cp));
 		cp += INT16SZ;
-		cp = p_fqname(cp, msg, file);
+		if ((cp = p_fqname(cp, msg, file)) == NULL)
+			return (NULL);
 		break;
 
-  	case T_TXT:
+	case T_PX:
+		fprintf(file, "\t%d ", _getshort((u_char*)cp));
+		cp += INT16SZ;
+		if ((cp = p_fqname(cp, msg, file)) == NULL)
+			return (NULL);
+		putc(' ', file);
+		if ((cp = p_fqname(cp, msg, file)) == NULL)
+			return (NULL);
+		break;
+
+	case T_TXT:
 	case T_X25:
 		(void) fputs("\t\"", file);
 		cp2 = cp1 + dlen;
 		while (cp < cp2) {
 			if (n = (unsigned char) *cp++) {
 				for (c = n; c > 0 && cp < cp2; c--)
-					if (*cp == '\n') {
+					if ((*cp == '\n') || (*cp == '"')) {
 					    (void) putc('\\', file);
 					    (void) putc(*cp++, file);
 					} else
@@ -552,19 +579,21 @@ __p_rr(cp, msg, file)
 			}
 		}
 		putc('"', file);
-  		break;
+		break;
 
-  	case T_NSAP:
+	case T_NSAP:
 		(void) fprintf(file, "\t%s", inet_nsap_ntoa(dlen, cp, NULL));
 		cp += dlen;
-  		break;
+		break;
 
 	case T_MINFO:
 	case T_RP:
 		putc('\t', file);
-		cp = p_fqname(cp, msg, file);
+		if ((cp = p_fqname(cp, msg, file)) == NULL)
+			return (NULL);
 		putc(' ', file);
-		cp = p_fqname(cp, msg, file);
+		if ((cp = p_fqname(cp, msg, file)) == NULL)
+			return (NULL);
 		break;
 
 	case T_UINFO:
@@ -576,7 +605,7 @@ __p_rr(cp, msg, file)
 	case T_UID:
 	case T_GID:
 		if (dlen == 4) {
-			fprintf(file,"\t%u", _getlong((u_char*)cp));
+			fprintf(file, "\t%u", _getlong((u_char*)cp));
 			cp += INT32SZ;
 		}
 		break;
@@ -595,7 +624,7 @@ __p_rr(cp, msg, file)
 		while (cp < cp1 + dlen) {
 			c = *cp++;
 			do {
- 				if (c & 0200) {
+				if (c & 0200) {
 					if (lcnt == 0) {
 						fputs("\n\t\t\t", file);
 						lcnt = 5;
@@ -604,7 +633,7 @@ __p_rr(cp, msg, file)
 					putc(' ', file);
 					lcnt--;
 				}
- 				c <<= 1;
+				c <<= 1;
 			} while (++n & 07);
 		}
 		putc(')', file);
@@ -628,7 +657,7 @@ __p_rr(cp, msg, file)
 #endif /* ALLOW_T_UNSPEC */
 
 	default:
-		fprintf(file,"\t?%d?", type);
+		fprintf(file, "\t?%d?", type);
 		cp += dlen;
 	}
 #if 0
@@ -637,7 +666,7 @@ __p_rr(cp, msg, file)
 	putc('\n', file);
 #endif
 	if (cp - cp1 != dlen) {
-		fprintf(file,";; packet size error (found %d, dlen was %d)\n",
+		fprintf(file, ";; packet size error (found %d, dlen was %d)\n",
 			cp - cp1, dlen);
 		cp = NULL;
 	}
@@ -668,12 +697,19 @@ __p_type(type)
 	case T_MINFO:	return "MINFO";
 	case T_MX:	return "MX";
 	case T_TXT:	return "TXT";
-	case T_NSAP:	return "NSAP";
 	case T_RP:	return "RP";
 	case T_AFSDB:	return "AFSDB";
 	case T_X25:	return "X25";
 	case T_ISDN:	return "ISDN";
 	case T_RT:	return "RT";
+	case T_NSAP:	return "NSAP";
+	case T_NSAP_PTR: return "NSAP_PTR";
+	case T_SIG:	return "SIG";
+	case T_KEY:	return "KEY";
+	case T_PX:	return "PX";
+	case T_GPOS:	return "GPOS";
+	case T_AAAA:	return "AAAA";
+	case T_LOC:	return "LOC";
 	case T_AXFR:	return "AXFR";
 	case T_MAILB:	return "MAILB";
 	case T_MAILA:	return "MAILA";
@@ -696,9 +732,9 @@ __p_class(class)
 	int class;
 {
 	switch (class) {
-	case C_IN:	return("IN");
-	case C_HS:	return("HS");
-	case C_ANY:	return("ANY");
+	case C_IN:	return "IN";
+	case C_HS:	return "HS";
+	case C_ANY:	return "ANY";
 	default:	(void)sprintf(nbuf, "%d", class); return (nbuf);
 	}
 }
@@ -723,7 +759,7 @@ __p_option(option)
 	case RES_DNSRCH:	return "dnsrch";
 	case RES_INSECURE1:	return "insecure1";
 	case RES_INSECURE2:	return "insecure2";
-	default:		sprintf(nbuf, "?0x%x?", option); return nbuf;
+	default:		sprintf(nbuf, "?0x%x?", option); return (nbuf);
 	}
 }
 

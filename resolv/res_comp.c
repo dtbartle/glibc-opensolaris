@@ -123,7 +123,7 @@ dn_expand(msg, eomorig, comp_dn, exp_dn, length)
 				}
 				*dn++ = c;
 				if (cp >= eomorig)	/* out of range */
-					return(-1);
+					return (-1);
 			}
 			break;
 
@@ -132,7 +132,7 @@ dn_expand(msg, eomorig, comp_dn, exp_dn, length)
 				len = cp - comp_dn + 1;
 			cp = msg + (((n & 0x3f) << 8) | (*cp & 0xff));
 			if (cp < msg || cp >= eomorig)	/* out of range */
-				return(-1);
+				return (-1);
 			checked += 2;
 			/*
 			 * Check for loops in the compressed name;
@@ -268,12 +268,12 @@ __dn_skipname(comp_dn, eom)
 			cp++;
 			break;
 		default:		/* illegal type */
-			return -1;
+			return (-1);
 		}
 		break;
 	}
 	if (cp > eom)
-		return -1;
+		return (-1);
 	return (cp - comp_dn);
 }
 
@@ -324,11 +324,12 @@ dn_find(exp_dn, msg, dnptrs, lastdnptr)
 					continue;
 				goto next;
 
-			default:	/* illegal type */
-				return (-1);
-
 			case INDIR_MASK:	/* indirection */
 				cp = msg + (((n & 0x3f) << 8) | *cp);
+				break;
+
+			default:	/* illegal type */
+				return (-1);
 			}
 		}
 		if (*dn == '\0')
@@ -355,6 +356,18 @@ _getshort(msgp)
 	GETSHORT(u, msgp);
 	return (u);
 }
+
+#ifdef NeXT
+/*
+ * nExt machines have some funky library conventions, which we must maintain.
+ */
+u_int16_t
+res_getshort(msgp)
+	register const u_char *msgp;
+{
+	return (_getshort(msgp));
+}
+#endif
 
 u_int32_t
 _getlong(msgp)
@@ -415,6 +428,6 @@ putlong(l, msgp)
 dn_skipname(comp_dn, eom)
 	const u_char *comp_dn, *eom;
 {
-	return __dn_skipname(comp_dn, eom);
+	return (__dn_skipname(comp_dn, eom));
 }
 #endif /* Ultrix 4.0 hackery */
