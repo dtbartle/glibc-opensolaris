@@ -24,9 +24,8 @@ ENTRY(__truncl)
 	fldt	4(%esp)
 	subl	$8, %esp
 	fstcw	4(%esp)
-	movl	$600, %eax
+	movl	$0xc00, %edx
 	orl	4(%esp), %edx
-	andl	$0xf7ff, %edx
 	movl	%edx, (%esp)
 	fldcw	(%esp)
 	frndint
