@@ -20,18 +20,22 @@
 #include <sysdep.h>
 
 #include <asm/unistd.h>
-#include <asm/fpu.h>
 
-/*
- * Arguments for __libc_start_main:
- *	out0:	main
- *	out1:	argc
- *	out2:	argv
- *	out3:	init
- *	out4:	fini
- *	out5:	rtld_fini
- *	out6:	stack_end
- */
+/* Arguments for __libc_start_main:
+	out0:	main
+	out1:	argc
+	out2:	argv
+	out3:	init
+	out4:	fini
+	out5:	rtld_fini
+	out6:	stack_end  */
+
+/* XXX: Remove this once a version of the linker scripts (binutils) is
+   widespread enough that provides the default _FPU_STATUS value.  It
+   is safe to remove the OLD_BINUTILS code at any time since, in the
+   worst case, it will lead to an unresolved external reference to
+   _FPU_STATUS; that is, there won't be any silent errors. */
+#define OLD_BINUTILS
 
 	.align 32
 	.global _start
@@ -41,7 +45,7 @@ _start:
 	.prologue
 	{ .mlx
 	  alloc r2 = ar.pfs,0,0,7,0
-	  movl r3 = FPSR_DEFAULT
+	  movl r3 = _FPU_STATUS
 	}
 	{ .mlx
 	  adds out2 = 16, sp	/* get address of argc value */
@@ -54,6 +58,13 @@ _start:
 	  mov r9 = ip
 	  ;;
 	}
+#ifdef OLD_BINUTILS
+	.weak _FPU_STATUS
+	cmp.eq p6, p0 = r0, r3
+	;;
+(p6)	movl r3 = 0x9804c0270033f
+	;;
+#endif
 	{ .mii
 	  mov ar.fpsr = r3
 	  sub gp = r9, gp	/* back-compute gp value */
