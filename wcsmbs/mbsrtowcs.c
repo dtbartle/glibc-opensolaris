@@ -70,10 +70,13 @@ __mbsrtowcs (dst, src, len, ps)
 	}
       while (status == GCONV_FULL_OUTPUT);
 
-      if ((status == GCONV_OK || status == GCONV_EMPTY_INPUT)
-	  && ((wchar_t *) data.outbuf)[-1] == L'\0')
-	/* Don't count the NUL character in.  */
-	--result;
+      if (status == GCONV_OK || status == GCONV_EMPTY_INPUT)
+	{
+	  /* There better should be a NUL wide char at the end.  */
+	  assert (((wchar_t *) data.outbuf)[-1] == L'\0');
+	  /* Don't count the NUL character in.  */
+	  --result;
+	}
     }
   else
     {

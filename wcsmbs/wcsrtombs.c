@@ -72,10 +72,13 @@ __wcsrtombs (dst, src, len, ps)
 	}
       while (status == GCONV_FULL_OUTPUT);
 
-      if ((status == GCONV_OK || status == GCONV_EMPTY_INPUT)
-	  && data.outbuf[-1] == '\0')
-	/* Don't count the NUL character in.  */
-	--result;
+      if (status == GCONV_OK || status == GCONV_EMPTY_INPUT)
+	{
+	  /* There better should be a NUL byte at the end.  */
+	  assert (data.outbuf[-1] == '\0');
+	  /* Don't count the NUL character in.  */
+	  --result;
+	}
     }
   else
     {
