@@ -41,8 +41,8 @@ ftruncate64 (fd, length)
   if (! have_no_ftruncate64)
 #endif
     {
-      int result = INLINE_SYSCALL (ftruncate64, 3, fd, length >> 32,
-				   length & 0xffffffff);
+      int result = INLINE_SYSCALL (ftruncate64, 3, fd, length & 0xffffffff,
+				   length >> 32);
 
 #ifndef __ASSUME_TRUNCATE64_SYSCALL
       if (result != -1 || errno != ENOSYS)
