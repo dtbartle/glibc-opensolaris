@@ -2562,7 +2562,7 @@ if test $static = no && test $shared = yes; then
   linux* | gnu*)
     { echo "configure: error: 
 *** You must compile with support for the static library since the shared
-*** library uses it.  Restart configure without `--disable-static'." 1>&2; exit 1; }
+*** library uses it.  Restart configure without \`--disable-static'." 1>&2; exit 1; }
     ;;
   *)
     ;;
