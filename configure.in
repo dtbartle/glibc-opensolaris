@@ -285,7 +285,7 @@ if (&size == NULL || &wchar == NULL) abort ();],
 AC_MSG_RESULT($libc_cv_friendly_stddef)
 if test $libc_cv_friendly_stddef = yes; then
   config_vars="$config_vars
-stddef.h = # The installed <stddef.h> seems to be libc-friendly."
+override stddef.h = # The installed <stddef.h> seems to be libc-friendly."
 fi
 
 AC_MSG_CHECKING(whether we need to use -P to assemble .S files)
@@ -324,7 +324,7 @@ for dir in $sysnames; do
   fi
 done
 
-AC_LINK_FILES($libc_link_sources, $libc_link_dests)
+AC_LINK_FILES(`echo $libc_link_sources`, `echo $libc_link_dests`)
 
 # If we will use the generic uname implementation, we must figure out what
 # it will say by examining the system, and write the results in config-name.h.
