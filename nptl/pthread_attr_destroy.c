@@ -1,4 +1,4 @@
-/* Copyright (C) 2002 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -28,15 +28,16 @@ int
 __pthread_attr_destroy (attr)
      pthread_attr_t *attr;
 {
+  struct pthread_attr *iattr;
+
+  assert (sizeof (*attr) >= sizeof (struct pthread_attr));
+  iattr = (struct pthread_attr *) attr;
+
   /* Enqueue the attributes to the list of all known variables.  */
   if (DEBUGGING_P)
     {
-      struct pthread_attr *iattr;
       struct pthread_attr *prevp = NULL;
       struct pthread_attr *runp;
-
-      assert (sizeof (*attr) >= sizeof (struct pthread_attr));
-      iattr = (struct pthread_attr *) attr;
 
       lll_lock (__attr_list_lock);
 
@@ -61,6 +62,9 @@ __pthread_attr_destroy (attr)
 	/* Not a valid attribute.  */
 	return EINVAL;
     }
+
+  /* The affinity CPU set might be allocated dynamically.  */
+  free (iattr->cpuset);
 
   return 0;
 }
