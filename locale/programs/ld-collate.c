@@ -65,7 +65,9 @@ struct element_t;
 /* Data type for list of strings.  */
 struct section_list
 {
+  /* Successor in the known_sections list.  */
   struct section_list *def_next;
+  /* Successor in the sections list.  */
   struct section_list *next;
   /* Name of the section.  */
   const char *name;
@@ -667,11 +669,11 @@ insert_weights (struct linereader *ldfile, struct element_t *elem,
   /* Initialize all the fields.  */
   elem->file = ldfile->fname;
   elem->line = ldfile->lineno;
+
   elem->last = collate->cursor;
   elem->next = collate->cursor ? collate->cursor->next : NULL;
   if (collate->cursor != NULL && collate->cursor->next != NULL)
     collate->cursor->next->last = elem;
-  elem->section = collate->current_section;
   if (collate->cursor != NULL)
     collate->cursor->next = elem;
   if (collate->start == NULL)
@@ -679,9 +681,8 @@ insert_weights (struct linereader *ldfile, struct element_t *elem,
       assert (collate->cursor == NULL);
       collate->start = elem;
     }
-  elem->weights = (struct element_list_t *)
-    obstack_alloc (&collate->mempool, nrules * sizeof (struct element_list_t));
-  memset (elem->weights, '\0', nrules * sizeof (struct element_list_t));
+
+  elem->section = collate->current_section;
 
   if (collate->current_section->first == NULL)
     collate->current_section->first = elem;
@@ -689,6 +690,10 @@ insert_weights (struct linereader *ldfile, struct element_t *elem,
     collate->current_section->last = elem;
 
   collate->cursor = elem;
+
+  elem->weights = (struct element_list_t *)
+    obstack_alloc (&collate->mempool, nrules * sizeof (struct element_list_t));
+  memset (elem->weights, '\0', nrules * sizeof (struct element_list_t));
 
   weight_cnt = 0;
 
@@ -846,8 +851,8 @@ insert_weights (struct linereader *ldfile, struct element_t *elem,
 %s: weights must use the same ellipsis symbol as the name"),
 		      "LC_COLLATE");
 
-	  /* The weight for this level has to be ignored.  We use the
-	     null pointer to indicate this.  */
+	  /* The weight for this level will depend on the element
+	     iterating over the range.  Put a placeholder.  */
 	  elem->weights[weight_cnt].w = (struct element_t **)
 	    obstack_alloc (&collate->mempool, sizeof (struct element_t *));
 	  elem->weights[weight_cnt].w[0] = ELEMENT_ELLIPSIS2;
@@ -1440,6 +1445,7 @@ collate_startup (struct linereader *ldfile, struct localedef_t *locale,
 	  collate->col_weight_max = -1;
 	}
       else
+	/* Reuse the copy_locale's data structures.  */
 	collate = locale->categories[LC_COLLATE].collate =
 	  copy_locale->categories[LC_COLLATE].collate;
     }
@@ -2535,9 +2541,18 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
   struct token *now;
   struct token *arg = NULL;
   enum token_t nowtok;
-  int state = 0;
   enum token_t was_ellipsis = tok_none;
   struct localedef_t *copy_locale = NULL;
+  /* Parsing state:
+     0 - start
+     1 - between `order-start' and `order-end'
+     2 - after `order-end'
+     3 - after `reorder-after', waiting for `reorder-end'
+     4 - after `reorder-end'
+     5 - after `reorder-sections-after', waiting for `reorder-sections-end'
+     6 - after `reorder-sections-end'
+  */
+  int state = 0;
 
   /* Get the repertoire we have to use.  */
   if (repertoire_name != NULL)
@@ -2834,9 +2849,10 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 		    }
 		  else if (ellipsis == tok_none)
 		    {
-		      /* The name is already defined.  */
+		      /* A single symbol, no ellipsis.  */
 		      if (check_duplicate (ldfile, collate, charmap,
 					   repertoire, symbol, symbol_len))
+			/* The name is already defined.  */
 			goto col_sym_free;
 
 		      insert_entry (&collate->sym_table, symbol, symbol_len,
@@ -2890,13 +2906,13 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 			  /* Create the name.  */
 			  sprintf (symbuf,
 				   ellipsis == tok_ellipsis2
-				   ? "%.*s%.*lX" : "%.*s%.*lX",
+				   ? "%.*s%.*lX" : "%.*s%.*lu",
 				   (int) prefixlen, symbol,
 				   (int) (symbol_len - prefixlen), from);
 
-			  /* The name is already defined.  */
 			  if (check_duplicate (ldfile, collate, charmap,
 					       repertoire, symbuf, symbol_len))
+			    /* The name is already defined.  */
 			    goto col_sym_free;
 
 			  insert_entry (&collate->sym_table, symbuf,
@@ -3076,6 +3092,8 @@ error while adding equivalent collating symbol"));
 
 		  if (collate->error_section.first == NULL)
 		    {
+		      /* Insert &collate->error_section at the end of
+			 the collate->sections list.  */
 		      if (collate->sections == NULL)
 			collate->sections = &collate->error_section;
 		      else
@@ -3099,6 +3117,8 @@ error while adding equivalent collating symbol"));
 			      "LC_COLLATE", sp->name);
 		  else
 		    {
+		      /* Insert sp in the collate->sections list,
+			 right after collate->current_section.  */
 		      if (collate->current_section == NULL)
 			collate->current_section = sp;
 		      else
@@ -3147,6 +3167,8 @@ error while adding equivalent collating symbol"));
 			  "LC_COLLATE");
 	      else
 		{
+		  /* Insert &collate->unnamed_section at the beginning of
+		     the collate->sections list.  */
 		  collate->unnamed_section.next = collate->sections;
 		  collate->sections = &collate->unnamed_section;
 		}
@@ -3155,7 +3177,7 @@ error while adding equivalent collating symbol"));
 	  /* Now read the direction names.  */
 	  read_directions (ldfile, arg, charmap, repertoire, collate);
 
-	  /* From now be need the strings untranslated.  */
+	  /* From now we need the strings untranslated.  */
 	  ldfile->translate_strings = 0;
 	  break;
 
@@ -3237,7 +3259,7 @@ error while adding equivalent collating symbol"));
 			      (void **) &insp) == 0)
 		/* Yes, the symbol exists.  Simply point the cursor
 		   to it.  */
-		  collate->cursor = insp;
+		collate->cursor = insp;
 	      else
 		{
 		  struct symbol_t *symbp;
@@ -3434,7 +3456,7 @@ error while adding equivalent collating symbol"));
 	      /* We are outside an `order_start' region.  This means
                  we must only accept definitions of values for
                  collation symbols since these are purely abstract
-                 values and don't need dorections associated.  */
+                 values and don't need directions associated.  */
 	      struct element_t *seqp;
 
 	      if (find_entry (&collate->seq_table, symstr, symlen,
@@ -3516,7 +3538,7 @@ error while adding equivalent collating symbol"));
 		  if (seqp->section->first == seqp)
 		    {
 		      if (seqp->section->first == seqp->section->last)
-			/* This setion has no content anymore.  */
+			/* This section has no content anymore.  */
 			seqp->section->first = seqp->section->last = NULL;
 		      else
 			seqp->section->first = seqp->next;
@@ -3637,9 +3659,9 @@ error while adding equivalent collating symbol"));
 			     repertoire, collate, tok_none);
 	  break;
 
-	case tok_ellipsis2:
-	case tok_ellipsis3:
-	case tok_ellipsis4:
+	case tok_ellipsis2: /* symbolic hexadecimal ellipsis */
+	case tok_ellipsis3: /* absolute ellipsis */
+	case tok_ellipsis4: /* symbolic decimal ellipsis */
 	  /* This is the symbolic (decimal or hexadecimal) or absolute
              ellipsis.  */
 	  if (was_ellipsis != tok_none)
