@@ -18,7 +18,6 @@
    Boston, MA 02111-1307, USA.  */
 
 #include <netinet/ether.h>
-#include <netinet/if_ether.h>
 
 
 struct ether_addr *
