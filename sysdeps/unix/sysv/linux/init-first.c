@@ -67,7 +67,7 @@ init (int argc, char **argv, char **envp)
 	 kernel would use a different value.  (In a static program we
 	 don't have this information.)  */
 #ifdef PIC
-      if (!_dl_fpu_control_set || __fpu_control != _dl_fpu_control)
+      if (__fpu_control != _dl_fpu_control)
 #endif
 	__setfpucw (__fpu_control);
     }
