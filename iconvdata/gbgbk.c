@@ -78,6 +78,13 @@
 	    break;							      \
 	  }								      \
 									      \
+	if (NEED_LENGTH_TEST && outend - outptr < 2)			      \
+	  {								      \
+	    /* We ran out of space.  */					      \
+	    result = __GCONV_FULL_OUTPUT;				      \
+	    break;							      \
+	  }								      \
+									      \
 	ch = (ch << 8) | inptr[1];					      \
 									      \
 	/* Now determine whether the character is valid.  */		      \
@@ -122,6 +129,21 @@
 									      \
     if (ch > 0x7f)							      \
       {									      \
+	if (NEED_LENGTH_TEST && inptr + 1 >= inend)			      \
+	  {								      \
+	    /* The second character is not available.  Store		      \
+		 the intermediate result.  */				      \
+	      result = __GCONV_INCOMPLETE_INPUT;			      \
+	      break;							      \
+	  }								      \
+									      \
+	if (NEED_LENGTH_TEST && outend - outptr < 2)			      \
+	  {								      \
+	    /* We ran out of space.  */					      \
+	    result = __GCONV_FULL_OUTPUT;				      \
+	    break;							      \
+	  }								      \
+									      \
 	*outptr++ = ch;							      \
 	ch = *inptr++;							      \
       }									      \
