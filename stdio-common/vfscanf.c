@@ -528,6 +528,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 	      if (width > 0)
 		--width;
 
+	      ADDW (c);
 	      (void) inchar ();
 
 	      if (width != 0 && tolower (c) == 'x')
@@ -542,9 +543,7 @@ __vfscanf (FILE *s, const char *format, va_list argptr)
 		    }
 		}
 	      else if (base == 0)
-		  base = 8;
-	      else
-		  ADDW('0');	/* zero is part of the number */
+		base = 8;
 	    }
 
 	  if (base == 0)
