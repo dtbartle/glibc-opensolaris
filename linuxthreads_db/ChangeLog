@@ -1,3 +1,13 @@
+2000-01-11  Andreas Jaeger  <aj@suse.de>
+
+	* proc_service.h: Correct last arguments of ps_lsetregs and
+	ps_lgetregs.
+
+	* thread_db.h: Fix second argument of td_thr_getgregs and
+	td_thrsetregs.
+	* td_thr_getgregs.c (td_thr_getgregs): Likewise.
+	* td_thr_setgregs.c (td_thr_getgregs): Likewise.
+
 1999-12-02  Ulrich Drepper  <drepper@cygnus.com>
 
 	* proc_service.h: Fix typos in last added declaractions.
