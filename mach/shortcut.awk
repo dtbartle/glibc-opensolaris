@@ -40,5 +40,6 @@ echo == 1 { print $0; }
     print "    err = " rpc " (" arglist ");";
     print "  return err;"
     print "}";
+    print "weak_alias (" call ", " alias ")"
     echo = 1;
   }
