@@ -229,13 +229,12 @@ _dl_lookup_symbol (const char *undef_name, struct link_map *undef_map,
 	   in the global scope which was dynamically loaded.  In this case
 	   we have to prevent the latter from being unloaded unless the
 	   UNDEF_MAP object is also unloaded.  */
-	if (__builtin_expect (current_value.m->l_global, 0)
-	    && (__builtin_expect (current_value.m->l_type, lt_library)
-		== lt_loaded)
+	if (__builtin_expect (current_value.m->l_type == lt_loaded, 0)
+	    && current_value.m->l_global
 	    && undef_map != current_value.m
 	    /* Don't do this for explicit lookups as opposed to implicit
 	       runtime lookups.  */
-	    && __builtin_expect (! explicit, 1)
+	    && ! explicit
 	    /* Add UNDEF_MAP to the dependencies.  */
 	    && add_dependency (undef_map, current_value.m) < 0)
 	  /* Something went wrong.  Perhaps the object we tried to reference
@@ -442,13 +441,12 @@ _dl_lookup_versioned_symbol (const char *undef_name,
 	     in the global scope which was dynamically loaded.  In this case
 	     we have to prevent the latter from being unloaded unless the
 	     UNDEF_MAP object is also unloaded.  */
-	  if (__builtin_expect (current_value.m->l_global, 0)
-	      && (__builtin_expect (current_value.m->l_type, lt_library)
-		  == lt_loaded)
+	  if (__builtin_expect (current_value.m->l_type == lt_loaded, 0)
+	      && current_value.m->l_global
 	      && undef_map != current_value.m
 	      /* Don't do this for explicit lookups as opposed to implicit
 		 runtime lookups.  */
-	      && __builtin_expect (! explicit, 1)
+	      && ! explicit
 	      /* Add UNDEF_MAP to the dependencies.  */
 	      && add_dependency (undef_map, current_value.m) < 0)
 	    /* Something went wrong.  Perhaps the object we tried to reference
