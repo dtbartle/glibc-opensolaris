@@ -54,12 +54,20 @@ void __mpatan2(mp_no *,mp_no *,mp_no *,int);
 
 double __ieee754_atan2(double y,double x) {
 
-  int i,de,ux,dx,uy,dy,p;
+  int i,de,ux,dx,uy,dy;
+#if 0
+  int p;
+#endif
   static const int pr[MM]={6,8,10,20,32};
   double ax,ay,u,du,u9,ua,v,vv,dv,t1,t2,t3,t4,t5,t6,t7,t8,
-         z,zz,z1,z2,cor,s1,ss1,s2,ss2;
+         z,zz,cor,s1,ss1,s2,ss2;
+#if 0
+  double z1,z2;
+#endif
   number num;
+#if 0
   mp_no mperr,mpt1,mpx,mpy,mpz,mpz1,mpz2;
+#endif
 
   static const int ep= 59768832,   /*  57*16**5   */
                    em=-59768832;   /* -57*16**5   */
