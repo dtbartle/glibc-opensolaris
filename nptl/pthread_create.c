@@ -50,7 +50,6 @@ unsigned int __nptl_nthreads = 1;
 
 
 /* Code to allocate and deallocate a stack.  */
-#define DEFINE_DEALLOC
 #include "allocatestack.c"
 
 /* Code to create the thread.  */
