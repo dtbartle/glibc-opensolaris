@@ -1,5 +1,5 @@
 /* Set a thread's general register set.
-   Copyright (C) 1999 Free Software Foundation, Inc.
+   Copyright (C) 1999, 2000 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1999.
 
@@ -22,7 +22,7 @@
 
 
 td_err_e
-td_thr_setgregs (const td_thrhandle_t *th, prgregset_t gregs)
+td_thr_setgregs (const td_thrhandle_t *th, const prgregset_t *gregs)
 {
   struct _pthread_descr_struct pds;
 
