@@ -935,6 +935,11 @@ The port to Linux/m68k (@code{m68k-@var{anything}-linux}) was
 contributed by Andreas Schwab.
 
 @item
+The ports to Linux/ARM (@code{arm-@var{ANYTHING}-linuxaout}) and ARM
+standalone (@code{arm-@var{ANYTHING}-none}), as well as parts of the
+IPv6 support code, were contributed by Philip Blundell.
+
+@item
 Richard Henderson contributed the ELF dynamic linking code and other
 support for the Alpha processor.
 
