@@ -31,8 +31,8 @@
 ENTRY (BP_SYM (_setjmp))
 	/* Set up arguments, we only need to set the second arg.  */
 	xorq %rsi, %rsi
-#ifdef	PIC
-	jmp __GI___sigsetjmp
+#ifdef PIC
+	jmp HIDDEN_JUMPTARGET (__sigsetjmp)
 #else
 	jmp BP_SYM (__sigsetjmp)
 #endif
