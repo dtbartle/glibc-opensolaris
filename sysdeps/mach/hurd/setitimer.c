@@ -84,9 +84,10 @@ timer_thread (void)
 	     _hurd_itimer_port as the reply port just so we will block until
 	     the signal thread has frobnicated things to reload the itimer or
 	     has terminated this thread.  */
-	  __sig_post_request (_hurd_msgport,
-			      _hurd_itimer_port, MACH_MSG_TYPE_MAKE_SEND_ONCE,
-			      SIGALRM, __mach_task_self ());
+	  __msg_sig_post_request (_hurd_msgport,
+				  _hurd_itimer_port,
+				  MACH_MSG_TYPE_MAKE_SEND_ONCE,
+				  SIGALRM, __mach_task_self ());
 	  break;
 
 	case MACH_RCV_INTERRUPTED:
