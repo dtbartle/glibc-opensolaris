@@ -2560,8 +2560,8 @@ fi
 if test $static = no && test $shared = yes; then
   case "$host_os" in
   linux* | gnu*)
-    { echo "configure: error: You must compile with support for the static library since the
-shared library uses it.  Restart configure without this parameter." 1>&2; exit 1; }
+    { echo "configure: error: *** You must compile with support for the static library since the
+*** shared library uses it.  Restart configure without this parameter." 1>&2; exit 1; }
     ;;
   *)
     ;;
