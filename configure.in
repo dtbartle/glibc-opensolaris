@@ -183,12 +183,11 @@ AC_ARG_ENABLE([add-ons],
   [add_ons= add_ons_automatic=no])
 
 dnl Let the user avoid using TLS.  Don't know why but...
-dnl XXX For now we disable support by default.
 AC_ARG_WITH([tls],
             AC_HELP_STRING([--with-tls],
                            [enable support for TLS]),
 	    [usetls=$withval],
-	    [usetls=no])
+	    [usetls=yes])
 
 AC_ARG_WITH([__thread],
             AC_HELP_STRING([--without-__thread],

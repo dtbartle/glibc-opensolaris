@@ -1608,7 +1608,7 @@ if test "${with_tls+set}" = set; then
   withval="$with_tls"
   usetls=$withval
 else
-  usetls=no
+  usetls=yes
 fi;
 
 
