@@ -73,7 +73,6 @@ do_test (int argc, char *argv[])
 {
   struct stat st;
   char buf[1000];
-  int i;
 
   memset (buf, '\0', sizeof (buf));
 
