@@ -20,6 +20,8 @@ Cambridge, MA 02139, USA.  */
 #include <dirent.h>
 #include <dirstream.h>
 
+#undef dirfd
+
 int
 dirfd (dirp)
      DIR *dirp;
