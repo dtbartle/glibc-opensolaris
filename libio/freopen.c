@@ -67,7 +67,7 @@ freopen (filename, mode, fp)
     result->_mode = 0;
   if (fd != -1)
     {
-      close (fd);
+      __close (fd);
       if (filename != NULL)
 	free ((char *) filename);
     }
