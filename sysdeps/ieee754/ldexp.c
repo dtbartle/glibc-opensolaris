@@ -1,4 +1,4 @@
-/* Copyright (C) 1992 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -139,3 +139,7 @@ DEFUN(ldexp, (x, exp),
      we then subtract the DBL_MANT_DIG we added to the exponent.  */
   return ldexp (x * ldexp (1.0, DBL_MANT_DIG), exp - DBL_MANT_DIG);
 }
+
+/* Compatibility names for the same function.  */
+weak_alias (ldexp, __scalb)
+weak_alias (ldexp, scalb)
