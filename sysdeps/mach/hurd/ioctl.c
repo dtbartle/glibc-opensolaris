@@ -66,12 +66,9 @@ DEFUN(__ioctl, (fd, request),
 
   error_t err;
 
-  struct hurd_sigstate *ss;
-  int noctty;
-
   /* Send the RPC already packed up in MSG to IOPORT
      and decode the return value.  */
-  inline error_t send_rpc (io_t ioport)
+  error_t send_rpc (io_t ioport)
     {
       error_t err;
 
@@ -198,49 +195,7 @@ DEFUN(__ioctl, (fd, request),
       figure_reply (_IOT_COUNT2 (type), _IOT_TYPE2 (type));
     }
 
-  /* Note that fd-write.c implements the same SIGTTOU behavior.
-     Any changes here should be done there as well.  */
-
-  /* Don't use the ctty io port if we are blocking or ignoring SIGTTOU.  */
-  ss = _hurd_self_sigstate ();
-  __spin_lock (&ss->lock);
-  noctty = (__sigismember (&ss->blocked, SIGTTOU) ||
-	    ss->actions[SIGTTOU].sa_handler == SIG_IGN);
-  __spin_unlock (&ss->lock);
-
-  err = HURD_DPORT_USE
-    (fd,
-     ({
-       const io_t ioport = (!noctty && ctty != MACH_PORT_NULL) ? ctty : port;
-       do
-	 {
-	   /* The actual hair to send the RPC is in the inline `send_rpc'
-	      function (above), to avoid horrendous indentation.  */
-	   err = send_rpc (ioport);
-	   if (ioport == ctty && err == EBACKGROUND)
-	     {
-	       if (_hurd_orphaned)
-		 /* Our process group is orphaned, so we never generate a
-		    signal; we just fail.  */
-		 err = EIO;
-	       else
-		 {
-		   /* Send a SIGTTOU signal to our process group.  */
-		   err = __USEPORT (CTTYID, _hurd_sig_post (0, SIGTTOU, port));
-		   /* XXX what to do if error here? */
-		   /* At this point we should have just run the handler for
-		      SIGTTOU or resumed after being stopped.  Now this is
-		      still a "system call", so check to see if we should
-		      restart it.  */
-		   __spin_lock (&ss->lock);
-		   if (!(ss->actions[SIGTTOU].sa_flags & SA_RESTART))
-		     err = EINTR;
-		   __spin_unlock (&ss->lock);
-		 }
-	     }
-	 } while (err == EBACKGROUND);
-       err;
-     }));
+  err = HURD_DPORT_USE (fd, _hurd_ctty_output (port, ctty, send_rpc));
 
   t = (mach_msg_type_t *) msg.data;
   switch (err)
