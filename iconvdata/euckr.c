@@ -19,7 +19,7 @@
    Boston, MA 02111-1307, USA.  */
 
 #include <gconv.h>
-#include <inttypes.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
@@ -168,7 +168,7 @@ gconv (struct gconv_step *step, struct gconv_step_data *data,
 
 /* 0xfe(->0x7e : row 94) and 0xc9(->0x59 : row 41) are user-defined areas */
 
-                  else if ( inchar <= 0xa0 || inchar >= 0xfe || inchar == 0xc9)
+                  else if ( inchar <= 0xa0 || inchar > 0xfe || inchar == 0xc9)
                       /* This is illegal.  */
                       ch = L'\0';
 		  else
