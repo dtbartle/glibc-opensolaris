@@ -995,8 +995,8 @@ of this helper program; chances are you did not intend to run this program.\n\
     {
       /* Create a link_map for the executable itself.
 	 This will be what dlopen on "" returns.  */
-      main_map
-	= _dl_new_object ((char *) "", "", lt_executable, NULL, 0, LM_ID_BASE);
+      main_map = _dl_new_object ((char *) "", "", lt_executable, NULL,
+				 __RTLD_OPENEXEC, LM_ID_BASE);
       assert (main_map != NULL);
       assert (main_map == GL(dl_ns)[LM_ID_BASE]._ns_loaded);
       main_map->l_phdr = phdr;
