@@ -190,10 +190,9 @@ __pthread_cond_timedwait:
 	movl	wakeup_seq+4(%ebx), %edx
 
 	cmpl	16(%esp), %edx
-	ja	7f
-	jb	15f
+	jne	7f
 	cmpl	12(%esp), %edi
-	jbe	15f
+	je	15f
 
 7:	cmpl	%ecx, %edx
 	ja	9f
