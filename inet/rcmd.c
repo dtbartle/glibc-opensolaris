@@ -437,6 +437,9 @@ iruserfopen (const char *file, uid_t okuser)
       return NULL;
     }
 
+  /* No threads use this stream.  */
+  __fsetlocking (res, FSETLOCKING_BYCALLER);
+
   return res;
 }
 
