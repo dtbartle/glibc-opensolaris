@@ -3102,6 +3102,9 @@ lrint_test (void)
   TEST_f_l (lrint, -8388600.3L, -8388600);
 
   TEST_f_l (lrint, 1071930.0008, 1071930);
+#ifndef TEST_FLOAT
+  TEST_f_l (lrint, 1073741824.01, 1073741824);
+#endif
 
   END (lrint);
 }
@@ -3317,6 +3320,7 @@ lround_test (void)
   TEST_f_l (lround, -22514.5, -22515);
   TEST_f_l (lround, 1071930.0008, 1071930);
 #ifndef TEST_FLOAT
+  TEST_f_l (lround, 1073741824.01, 1073741824);
   TEST_f_l (lround, 2097152.5, 2097153);
   TEST_f_l (lround, -2097152.5, -2097153);
 #endif
