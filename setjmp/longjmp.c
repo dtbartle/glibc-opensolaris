@@ -24,7 +24,6 @@ Cambridge, MA 02139, USA.  */
 /* Set the signal mask to the one specified in ENV, and jump
    to the position specified in ENV, causing the setjmp
    call there to return VAL, or 1 if VAL is 0.  */
-__NORETURN
 void
 longjmp (const sigjmp_buf env, int val)
 {
