@@ -42,7 +42,7 @@
    It has tests for:
    acos, acosh, asin, asinh, atan, atan2, atanh,
    cbrt, ceil, copysign, cos, cosh, erf, erfc, exp, exp2, expm1,
-   fabs, fdim, floor, fmin, fmax, fmod, fpclassify,
+   fabs, fdim, floor, fma, fmax, fmin, fmod, fpclassify,
    frexp, gamma, hypot,
    ilogb, isfinite, isinf, isnan, isnormal,
    ldexp, lgamma, log, log10, log1p, log2, logb,
@@ -137,7 +137,9 @@
 /* Various constants (we must supply them precalculated for accuracy).  */
 #define M_PI_6  .52359877559829887308L
 
-static int noErrors;
+static int noErrors;   /* number of errors */
+static int noTests;    /* number of tests (without testing exceptions) */
+static int noExcTests; /* number of tests for exception flags */
 
 static int verbose = 3;
 static MATHTYPE minus_zero, plus_zero;
@@ -302,6 +304,7 @@ test_single_exception (const char *test_name,
 static void
 test_not_exception (const char *test_name, short int exception)
 {
+  ++noExcTests;
 #ifdef FE_DIVBYZERO
   if ((exception & DIVIDE_BY_ZERO_EXCEPTION) == 0)
     test_single_exception (test_name, exception,
@@ -321,6 +324,7 @@ test_not_exception (const char *test_name, short int exception)
 static void
 test_exceptions (const char *test_name, short int exception)
 {
+  ++noExcTests;
 #ifdef FE_DIVBYZERO
   test_single_exception (test_name, exception,
                          DIVIDE_BY_ZERO_EXCEPTION, FE_DIVBYZERO,
@@ -364,6 +368,7 @@ check_equal (MATHTYPE computed, MATHTYPE supplied, MATHTYPE eps, MATHTYPE * diff
 static void
 output_result_bool (const char *test_name, int result)
 {
+  ++noTests;
   if (result)
     {
       output_pass_value ();
@@ -384,6 +389,7 @@ static void
 output_isvalue (const char *test_name, int result,
 		MATHTYPE value)
 {
+  ++noTests;
   if (result)
     {
       output_pass_value ();
@@ -404,6 +410,7 @@ static void
 output_isvalue_ext (const char *test_name, int result,
 		    MATHTYPE value, MATHTYPE parameter)
 {
+  ++noTests;
   if (result)
     {
       output_pass_value ();
@@ -429,6 +436,7 @@ output_result (const char *test_name, int result,
 	       MATHTYPE difference,
 	       int print_values, int print_diff)
 {
+  ++noTests;
   if (result)
     {
       output_pass_value ();
@@ -458,6 +466,7 @@ output_result_ext (const char *test_name, int result,
 		   MATHTYPE parameter,
 		   int print_values, int print_diff)
 {
+  ++noTests;
   if (result)
     {
       output_pass_value ();
@@ -605,6 +614,7 @@ check_long (const char *test_name, long int computed, long int expected)
   long int diff = computed - expected;
   int result = diff == 0;
 
+  ++noTests;
   output_new_test (test_name);
   test_exceptions (test_name, NO_EXCEPTION);
 
@@ -637,6 +647,7 @@ check_longlong (const char *test_name, long long int computed,
   long long int diff = computed - expected;
   int result = diff == 0;
 
+  ++noTests;
   output_new_test (test_name);
   test_exceptions (test_name, NO_EXCEPTION);
 
@@ -5261,11 +5272,14 @@ main (int argc, char *argv[])
   identities ();
   inverse_functions ();
 
+  printf ("\nTest suite completed:\n");
+  printf ("  %d test cases plus %d tests for exception flags executed.\n",
+	  noTests, noExcTests);
   if (noErrors)
     {
-      printf ("\n%d errors occured.\n", noErrors);
+      printf ("  %d errors occured.\n", noErrors);
       exit (1);
     }
-  printf ("\n All tests passed successfully.\n");
+  printf ("  All tests passed successfully.\n");
   exit (0);
 }
