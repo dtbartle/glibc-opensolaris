@@ -98,7 +98,8 @@ __nscd_getpw_r (const char *key, request_type type, struct passwd *resultbuf,
   ssize_t nbytes;
 
   if (sock == -1)
-    return 1;
+    /* Returning two signals that contacting the daemon failed.  */
+    return 2;
 
   req.version = NSCD_VERSION;
   req.type = type;
