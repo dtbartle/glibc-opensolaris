@@ -216,7 +216,7 @@ monetary_finish (struct localedef_t *locale, struct charmap_t *charmap)
     {
       if (strlen (monetary->int_curr_symbol) != 4)
 	{
-	  if (!be_quiet)
+	  if (! be_quiet && ! nothing)
 	    error (0, 0, _("\
 %s: value of field `int_curr_symbol' has wrong length"),
 		   "LC_MONETARY");
