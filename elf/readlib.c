@@ -72,7 +72,7 @@ process_file (const char *real_file_name, const char *file_name,
 	      const char *lib, int *flag, char **soname, int is_link)
 {
   FILE *file;
-  struct stat statbuf;
+  struct stat64 statbuf;
   void *file_contents;
   int ret;
 
@@ -93,7 +93,7 @@ process_file (const char *real_file_name, const char *file_name,
       return 1;
     }
 
-  if (fstat (fileno (file), &statbuf) < 0)
+  if (fstat64 (fileno (file), &statbuf) < 0)
     {
       error (0, 0, _("Cannot fstat file %s.\n"), file_name);
       fclose (file);
