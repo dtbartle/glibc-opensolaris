@@ -141,6 +141,11 @@ main (void)
   /* Now a test with an environment variable that's one character long.
      This is to test a special case in the getenv implementation.  */
   strcpy (putenv_val, "X=one character test");
+  if (putenv (putenv_val) != 0)
+    {
+      printf ("putenv #2 failed: %m\n");
+      result = 1;
+    }
 
   valp = getenv ("X");
   if (valp == NULL || strcmp (valp, "one character test") != 0)
