@@ -40,8 +40,8 @@
 #define TO_LOOP			to_iso2022kr_loop
 #define MIN_NEEDED_FROM		1
 #define MAX_NEEDED_FROM		3
-#define MIN_NEEDED_TO		4
-#define MAX_NEEDED_TO		4
+#define MIN_NEEDED_TO		3
+#define MAX_NEEDED_TO		3
 #define PREPARE_LOOP \
   int save_set;								      \
   int set = data->statep->count;					      \
@@ -204,23 +204,27 @@ enum
 									      \
     /* First see whether we can write the character using the currently	      \
        selected character set.  */					      \
-    if (set == ASCII_set || (ch >= 0x01 && (ch < 0x21 || ch == 0x7f)))	      \
+    if (ch < 0x80)							      \
       {									      \
-	/* Please note that the NUL byte is *not* matched if we are not	      \
-	   currently using the ASCII charset.  This is because we must	      \
-	   switch to the initial state whenever a NUL byte is written.  */    \
-	if (ch <= 0x7f)							      \
+	if (set != ASCII_set)						      \
 	  {								      \
-	    *outptr++ = ch;						      \
-	    written = 1;						      \
+	    *outptr++ = SI;						      \
+	    set = ASCII_set;						      \
+	    if (NEED_LENGTH_TEST && outptr == outend)			      \
+	      {								      \
+		result = GCONV_FULL_OUTPUT;				      \
+		break;							      \
+	      }								      \
 	  }								      \
+ 									      \
+	*outptr++ = ch;							      \
+	written = 1;							      \
       }									      \
     else								      \
       {									      \
-	assert (set == KSC5601_set);					      \
+	char buf[2];							      \
 									      \
-	written = ucs4_to_ksc5601 (ch, outptr,				      \
-				   (NEED_LENGTH_TEST ? outend - outptr : 2)); \
+	written = ucs4_to_ksc5601 (ch, buf, 2);				      \
 									      \
 	if (NEED_LENGTH_TEST && written == 0)				      \
 	  {								      \
@@ -229,59 +233,26 @@ enum
 	  }								      \
 	if (written == UNKNOWN_10646_CHAR)				      \
 	  {								      \
-	    /* Either this is an unknown character or we have to switch	      \
-	       the currently selected character set.  The character sets      \
-	       do not code entirely separate parts of ISO 10646 and	      \
-	       therefore there is no single correct result.  If we choose     \
-	       the character set to use wrong we might be end up with	      \
-	       using yet another character set for the next character	      \
-	       though the current and the next could be encoded with one      \
-	       character set.  We leave this kind of optimization for	      \
-	       later and now simply use a fixed order in which we test for    \
-	       availability  */						      \
-									      \
-	    if (ch <= 0x7f)						      \
-	      {								      \
-		/* We must encode using ASCII.  First write out the	      \
-		   escape sequence.  */					      \
-		*outptr++ = SO;						      \
-		set = ASCII_set;					      \
-									      \
-		if (NEED_LENGTH_TEST && outptr == outend)		      \
-		  {							      \
-		    result = GCONV_FULL_OUTPUT;				      \
-		    break;						      \
-		  }							      \
-									      \
-		*outptr++ = ch;						      \
-	      }								      \
-	    else							      \
-	      {								      \
-		char buf[2];						      \
-									      \
-		written = ucs4_to_ksc5601 (ch, buf, 2);			      \
-		if (written != UNKNOWN_10646_CHAR)			      \
-		  {							      \
-		    /* We use KSC 5601.  */				      \
-		    *outptr++ = SI;					      \
-		    set = KSC5601_set;					      \
-									      \
-		    if (NEED_LENGTH_TEST && outptr + 2 > outend)	      \
-		      {							      \
-			result = GCONV_FULL_OUTPUT;			      \
-			break;						      \
-		      }							      \
-									      \
-		    *outptr++ = buf[0];					      \
-		    *outptr++ = buf[1];					      \
-		  }							      \
-		else							      \
-		  {							      \
-		    result = GCONV_ILLEGAL_INPUT;			      \
-		    break;						      \
-		  }							      \
-	      }								      \
+	    /* Illegal character.  */					      \
+	    result = GCONV_ILLEGAL_INPUT;				      \
+	    break;							      \
 	  }								      \
+									      \
+	/* We use KSC 5601.  */						      \
+	if (set != KSC5601_set)						      \
+	  {								      \
+	    *outptr++ = SO;						      \
+	    set = KSC5601_set;						      \
+	  }								      \
+									      \
+	if (NEED_LENGTH_TEST && outptr + 2 > outend)			      \
+	  {								      \
+	    result = GCONV_FULL_OUTPUT;					      \
+	    break;							      \
+	  }								      \
+									      \
+	*outptr++ = buf[0];						      \
+	*outptr++ = buf[1];						      \
       }									      \
 									      \
     /* Now that we wrote the output increment the input pointer.  */	      \
