@@ -2300,7 +2300,7 @@ if eval "test \"\${libc_cv_asm_global_directive+set}\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   libc_cv_asm_global_directive=UNKNOWN
-for ac_globl in .globl .global; do
+for ac_globl in .globl .global .EXPORT; do
   cat > conftest.s <<EOF
 .text
 ${ac_globl} foo
