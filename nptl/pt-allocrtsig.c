@@ -1,4 +1,4 @@
-/* Copyright (C) 2002 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -27,8 +27,9 @@ extern int __libc_current_sigrtmax_private (void);
 extern int __libc_allocate_rtsig_private (int high);
 
 
-/* We reserve __SIGRTMIN for use as the cancelation signal.  This
-   signal is used internally.  */
+/* We reserve __SIGRTMIN for use as the cancellation signal and
+   __SIGRTMIN+1 to andle setuid et.al.  These signals are used
+   internally.  */
 int
 __libc_current_sigrtmin (void)
 {
