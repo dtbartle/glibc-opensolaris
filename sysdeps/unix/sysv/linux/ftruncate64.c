@@ -26,7 +26,10 @@
 #include "kernel-features.h"
 
 #ifdef __NR_ftruncate64
-static int have_no_ftruncate64;
+#ifndef __ASSUME_TRUNCATE64_SYSCALL
+/* The variable is shared between all wrappers around *truncate64 calls.  */
+extern int have_no_truncate64;
+#endif
 
 extern int __syscall_ftruncate64 (int fd, int high_length, int low_length);
 
@@ -38,7 +41,7 @@ ftruncate64 (fd, length)
      off64_t length;
 {
 #ifndef __ASSUME_TRUNCATE64_SYSCALL
-  if (! have_no_ftruncate64)
+  if (! have_no_truncate64)
 #endif
     {
       unsigned int low = length & 0xffffffff;
@@ -55,7 +58,7 @@ ftruncate64 (fd, length)
 
 #ifndef __ASSUME_TRUNCATE64_SYSCALL
       __set_errno (saved_errno);
-      have_no_ftruncate64 = 1;
+      have_no_truncate64 = 1;
 #endif
     }
 
