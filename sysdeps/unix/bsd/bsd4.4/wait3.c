@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -32,3 +32,5 @@ DEFUN(__wait3, (stat_loc, options, usage),
 {
   return __wait4 (WAIT_ANY, stat_loc, options, usage);
 }
+
+weak_alias (__wait3, wait3)
