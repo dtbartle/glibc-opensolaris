@@ -139,6 +139,9 @@ define link-relocatable
 $(CC) -nostdlib -nostartfiles -r -o $@ $^
 endef
 
+$(objpfx)elf-init.oS: $(objpfx)elf-init.o
+	ln -f $< $@
+
 ifndef start-installed-name-rule
 ifeq (yes,$(elf))
 # We link the ELF startfile along with a SHT_NOTE section indicating
