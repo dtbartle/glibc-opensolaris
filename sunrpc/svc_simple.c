@@ -148,7 +148,7 @@ universal (struct svc_req *rqstp, SVCXPRT *transp_l)
     {
       if (svc_sendreply (transp_l, (xdrproc_t)xdr_void, (char *) NULL) == FALSE)
 	{
-	  write (STDERR_FILENO, "xxx\n", 4);
+	  __write (STDERR_FILENO, "xxx\n", 4);
 	  exit (1);
 	}
       return;
