@@ -1322,6 +1322,7 @@ Otherwise, print @var{message} as an error message on the standard error
 stream, and consider word expansion a failure.
 
 @c ??? How does wordexp report such an error?
+@c WRDE_BADVAL is returned.
 
 @item $@{@var{variable}:+@var{replacement}@}
 Substitute @var{replacement}, but only if @var{variable} is defined and
