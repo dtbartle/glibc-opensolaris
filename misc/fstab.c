@@ -165,12 +165,12 @@ fstab_convert (struct fstab_state *state)
   f->fs_file = m->mnt_dir;
   f->fs_vfstype = m->mnt_type;
   f->fs_mntops = m->mnt_opts;
-  f->fs_type = (hasmntopt (m, FSTAB_RW) ? (char *) FSTAB_RW :
-		hasmntopt (m, FSTAB_RQ) ? (char *) FSTAB_RQ :
-		hasmntopt (m, FSTAB_RO) ? (char *) FSTAB_RO :
-		hasmntopt (m, FSTAB_SW) ? (char *) FSTAB_SW :
-		hasmntopt (m, FSTAB_XX) ? (char *) FSTAB_XX :
-		(char *) "??");
+  f->fs_type = (hasmntopt (m, FSTAB_RW) ? FSTAB_RW :
+		hasmntopt (m, FSTAB_RQ) ? FSTAB_RQ :
+		hasmntopt (m, FSTAB_RO) ? FSTAB_RO :
+		hasmntopt (m, FSTAB_SW) ? FSTAB_SW :
+		hasmntopt (m, FSTAB_XX) ? FSTAB_XX :
+		"??");
   f->fs_freq = m->mnt_freq;
   f->fs_passno = m->mnt_passno;
   return f;
