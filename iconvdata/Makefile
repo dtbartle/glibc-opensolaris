@@ -249,8 +249,10 @@ $(objpfx)iconv-rules: Makefile
 	  echo 8bit $(gen-8bit-modules); \
 	  echo 8bit-gap $(gen-8bit-gap-modules); } | \
 	$(AWK) 'NR == 1 { \
-		  for (i = 1; i <= NF; i++) \
+		  for (i = 1; i <= NF; i++) { \
 		    printf "%s-routines := %s\n", $$i, tolower($$i); \
+		    printf "%s-map := gconv.map\n", $$i; \
+		  } \
 		}; \
 		NR > 1 { \
 		  for (i = 2; i <= NF; i++) { \
