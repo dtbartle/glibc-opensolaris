@@ -34,17 +34,17 @@ getipv4sourcefilter (int s, struct in_addr interface, struct in_addr group,
   /* We have to create an struct ip_msfilter object which we can pass
      to the kernel.  */
   socklen_t needed = IP_MSFILTER_SIZE (*numsrc);
-  int use_malloc = __libc_use_alloca (needed);
+  int use_alloca = __libc_use_alloca (needed);
 
   struct ip_msfilter *imsf;
-  if (use_malloc)
+  if (use_alloca)
+    imsf = (struct ip_msfilter *) alloca (needed);
+  else
     {
       imsf = (struct ip_msfilter *) malloc (needed);
       if (imsf == NULL)
 	return -1;
     }
-  else
-    imsf = (struct ip_msfilter *) alloca (needed);
 
   imsf->imsf_multiaddr = group;
   imsf->imsf_interface = interface;
@@ -62,7 +62,7 @@ getipv4sourcefilter (int s, struct in_addr interface, struct in_addr group,
       *numsrc = imsf->imsf_numsrc;
     }
 
-  if (use_malloc)
+  if (! use_alloca)
     {
       int save_errno = errno;
       free (imsf);
