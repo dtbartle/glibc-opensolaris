@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -568,6 +568,11 @@ extern void setusershell __P ((void)); /* Rewind and re-read the file.  */
 /* Prompt with PROMPT and read a string from the terminal without echoing.
    Uses /dev/tty if possible; otherwise stderr and stdin.  */
 extern char *getpass __P ((const char *__prompt));
+
+/* Put the program in the background, and dissociate from the controlling
+   terminal.  If NOCHDIR is zero, do `chdir ("/")'.  If NOCLOSE is zero,
+   redirects stdin, stdout, and stderr to /dev/null.  */
+extern int daemon __P ((int __nochdir, int __noclose));
 
 #endif /* Use BSD.  */
 
