@@ -16,11 +16,13 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+#include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
 
 #include <linux/posix_types.h>
 
+#include <sysdep.h>
 #include <sys/syscall.h>
 #ifdef __NR_getresuid
 
@@ -31,14 +33,18 @@ int
 getresuid (uid_t *ruid, uid_t *euid, uid_t *suid)
 {
   __kernel_uid_t k_ruid, k_euid, k_suid;
+  int result;
 
-  if (__syscall_getresuid (&k_ruid, &k_euid, &k_suid) < 0)
-    return -1;
+  result = INLINE_SYSCALL (getresuid, 3, &k_ruid, &k_euid, &k_suid);
 
-  *ruid = (uid_t) k_ruid;
-  *euid = (uid_t) k_euid;
-  *suid = (uid_t) k_suid;
-  return 0;
+  if (result == 0)
+    {
+      *ruid = (uid_t) k_ruid;
+      *euid = (uid_t) k_euid;
+      *suid = (uid_t) k_suid;
+    }
+
+  return result;
 }
 #else
 # include <sysdeps/generic/getresuid.c>
