@@ -292,7 +292,7 @@ _IO_new_file_fopen (fp, filename, mode, is32not64)
 #ifdef _LIBC
   last_recognized = mode;
 #endif
-  for (i = 1; i < 5; ++i)
+  for (i = 1; i < 6; ++i)
     {
       switch (*++mode)
 	{
