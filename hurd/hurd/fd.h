@@ -53,14 +53,15 @@ extern struct mutex _hurd_dtable_lock; /* Locks those two variables.  */
 #define _EXTERN_INLINE extern __inline
 #endif
 
-/* Returns the descriptor cell for FD, locked.
-   If FD is invalid or unused, return NULL.  */
+/* Returns the descriptor cell for FD.  If FD is invalid or unused, return
+   NULL.  The cell is unlocked; when ready to use it, lock it and check for
+   it being unused.  */
 
 _EXTERN_INLINE struct hurd_fd *
 _hurd_fd_get (int fd)
 {
   struct hurd_fd *descriptor;
-  HURD_CRITICAL_BEGIN;
+
   __mutex_lock (&_hurd_dtable_lock);
   if (fd < 0 || fd >= _hurd_dtablesize)
     descriptor = NULL;
@@ -74,49 +75,58 @@ _hurd_fd_get (int fd)
 	{
 	  __spin_lock (&cell->port.lock);
 	  if (cell->port.port == MACH_PORT_NULL)
-	    {
-	      /* The descriptor at this index has no port in it.
-		 This happens if it existed before but was closed.  */
-	      __spin_unlock (&cell->port.lock);
-	      descriptor = NULL;
-	    }
+	    /* The descriptor at this index has no port in it.
+	       This happens if it existed before but was closed.  */
+	    descriptor = NULL;
 	  else
 	    descriptor = cell;
+	  __spin_unlock (&cell->port.lock);
 	}
     }
   __mutex_unlock (&_hurd_dtable_lock);
-  HURD_CRITICAL_END;
+
   return descriptor;
 }
 
 
 /* Evaluate EXPR with the variable `descriptor' bound to a pointer to the
-   locked file descriptor structure for FD.  EXPR should unlock the
-   descriptor when it is finished.  */
+   file descriptor structure for FD.   */
 
 #define	HURD_FD_USE(fd, expr)						      \
-  ({ struct hurd_fd *const descriptor = _hurd_fd_get (fd);		      \
+  ({ struct hurd_fd *descriptor = _hurd_fd_get (fd);			      \
      descriptor == NULL ? EBADF : (expr); })
 
-/* Evaluate EXPR with the variable `port' bound to the port to FD,
-   and `ctty' bound to the ctty port.  */
+/* Evaluate EXPR with the variable `port' bound to the port to FD, and
+   `ctty' bound to the ctty port.  */
 
 #define HURD_DPORT_USE(fd, expr) \
   HURD_FD_USE ((fd), HURD_FD_PORT_USE (descriptor, (expr)))
 
-/* Likewise, but FD is a pointer to the locked file descriptor structure.
-   It is unlocked on return.  */
+/* Likewise, but FD is a pointer to the file descriptor structure.  */
 
 #define	HURD_FD_PORT_USE(fd, expr)					      \
   ({ error_t __result;							      \
      struct hurd_fd *const __d = (fd);					      \
      struct hurd_userlink __ulink, __ctty_ulink;			      \
-     io_t port = _hurd_port_locked_get (&__d->port, &__ulink);		      \
-     io_t ctty = _hurd_port_locked_get (&__d->ctty, &__ctty_ulink);	      \
-     __result = (expr);							      \
-     _hurd_port_free (&__d->port, &__ulink, port);			      \
-     if (ctty != MACH_PORT_NULL)					      \
-       _hurd_port_free (&__d->ctty, &__ctty_ulink, ctty);		      \
+     io_t port, ctty;							      \
+     void *crit = _hurd_critical_section_lock ();			      \
+     __spin_lock (&__d->port.lock);					      \
+     if (__d->port.port == MACH_PORT_NULL)				      \
+       {								      \
+	 __spin_unlock (&__d->port.lock);				      \
+	 _hurd_critical_section_unlock (crit);				      \
+	 __result = EBADF;						      \
+       }								      \
+     else								      \
+       {								      \
+	 ctty = _hurd_port_get (&__d->ctty, &__ctty_ulink);		      \
+	 port = _hurd_port_locked_get (&__d->port, &__ulink);		      \
+	 _hurd_critical_section_unlock (crit);				      \
+	 __result = (expr);						      \
+	 _hurd_port_free (&__d->port, &__ulink, port);			      \
+	 if (ctty != MACH_PORT_NULL)					      \
+	   _hurd_port_free (&__d->ctty, &__ctty_ulink, ctty);		      \
+       }								      \
      __result; })
 
 #include <errno.h>
@@ -190,8 +200,7 @@ extern struct hurd_fd *_hurd_alloc_fd (int *fd_ptr, int first_fd);
 
 extern struct hurd_fd *_hurd_new_fd (io_t port, io_t ctty);
 
-/* Close a file descriptor, making it available for future reallocation.
-   FD should be locked, and is unlocked on return.  */
+/* Close a file descriptor, making it available for future reallocation.  */
 
 extern error_t _hurd_fd_close (struct hurd_fd *fd);
 
@@ -201,6 +210,7 @@ extern error_t _hurd_fd_close (struct hurd_fd *fd);
 extern error_t _hurd_fd_read (struct hurd_fd *fd, void *buf, size_t *nbytes);
 extern error_t _hurd_fd_write (struct hurd_fd *fd,
 			       const void *buf, size_t *nbytes);
+
 
 /* Call *RPC on PORT and/or CTTY; if a call on CTTY returns EBACKGROUND,
    generate SIGTTIN/SIGTTOU or EIO as appropriate.  */
