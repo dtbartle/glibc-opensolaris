@@ -40,7 +40,8 @@ __sysconf (int name)
       {
 	struct timespec ts;
 	INTERNAL_SYSCALL_DECL (err);
-	int r = INTERNAL_SYSCALL (clock_getres, err, 2, CLOCK_MONOTONIC, &ts);
+	int r;
+	r = INTERNAL_SYSCALL (clock_getres, err, 2, CLOCK_MONOTONIC, &ts);
 	return INTERNAL_SYSCALL_ERROR_P (r, err) ? 0 : 1;
       }
 #endif
