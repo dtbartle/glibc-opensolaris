@@ -23,18 +23,12 @@ through a @dfn{one-way function}, a function which makes it difficult to
 work out what its input was by looking at its output, before storing in
 the file.
 
-The GNU C library already provides a one-way function based on MD5.  The
-@code{crypt} add-on provides additional compatibility with the standard
-UNIX one-way function based on the Data Encryption Standard.
+The GNU C library already provides a one-way function based on MD5 and
+for compatibility with Unix systems the standard one-way function based
+on the Data Encryption Standard.
 
 It also provides support for Secure RPC, and some library functions that
 can be used to perform normal DES encryption.
-
-The add-on is not included in the main distribution of the GNU C library
-because some governments, most notably those of France, Russia,
-and the US, have very restrictive rules governing the distribution and
-use of encryption software.  The first section below tries to describe some
-of those rules.
 
 @menu
 * Legal Problems::              This software can get you locked up, or worse.
@@ -53,8 +47,8 @@ may help you when you try to find out what the laws of your country are.
 
 Some countries require that you have a licence to use, posess, or import
 cryptography.  These countries are believed to include Byelorussia,
-Burma, France, India, Indonesia, Israel, Kazakhstan, Pakistan, Russia,
-and Saudi Arabia.
+Burma, India, Indonesia, Israel, Kazakhstan, Pakistan, Russia, and Saudi
+Arabia.
 
 Some countries restrict the transmission of encrypted messages by radio;
 some telecommunications carriers restrict the transmission of encrypted
