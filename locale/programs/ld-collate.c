@@ -291,6 +291,7 @@ make_seclist_elem (struct locale_collate_t *collate, const char *string,
   newp->next = next;
   newp->name = string;
   newp->first = NULL;
+  newp->last = NULL;
 
   return newp;
 }
@@ -336,6 +337,10 @@ new_element (struct locale_collate_t *collate, const char *mbs, size_t mbslen,
   newp->used_in_level = 0;
   newp->is_character = is_character;
 
+  /* Will be assigned later.  XXX  */
+  newp->mbseqorder = 0;
+  newp->wcseqorder = 0;
+
   /* Will be allocated later.  */
   newp->weights = NULL;
 
@@ -349,6 +354,9 @@ new_element (struct locale_collate_t *collate, const char *mbs, size_t mbslen,
 
   newp->mbnext = NULL;
   newp->mblast = NULL;
+
+  newp->wcnext = NULL;
+  newp->wclast = NULL;
 
   return newp;
 }
@@ -619,9 +627,8 @@ find_element (struct linereader *ldfile, struct locale_collate_t *collate,
 	  /* It's also no collation element.  So it is a character
 	     element defined later.  */
 	  result = new_element (collate, NULL, 0, NULL, str, len, 1);
-	  if (result != NULL)
-	    /* Insert it into the sequence table.  */
-	    insert_entry (&collate->seq_table, str, len, result);
+	  /* Insert it into the sequence table.  */
+	  insert_entry (&collate->seq_table, str, len, result);
 	}
     }
 
@@ -988,8 +995,7 @@ insert_value (struct linereader *ldfile, const char *symstr, size_t symlen,
     }
 
   /* Test whether this element is not already in the list.  */
-  if (elem->next != NULL || (collate->cursor != NULL
-			     && elem->next == collate->cursor))
+  if (elem->next != NULL || elem == collate->cursor)
     {
       lr_error (ldfile, _("order for `%.*s' already defined at %s:%Zu"),
 		(int) symlen, symstr, elem->file, elem->line);
@@ -3021,8 +3027,8 @@ error while adding equivalent collating symbol"));
 		}
 
 	      runp = (struct section_list *) xcalloc (1, sizeof (*runp));
-	      name = strncpy (xmalloc (arg->val.str.lenmb + 1),
-			      arg->val.str.startmb, arg->val.str.lenmb);
+	      name = (char *) xmalloc (arg->val.str.lenmb + 1);
+	      memcpy (name, arg->val.str.startmb, arg->val.str.lenmb);
 	      name[arg->val.str.lenmb] = '\0';
 	      runp->name = name;
 
@@ -3616,8 +3622,7 @@ error while adding equivalent collating symbol"));
 
 	  /* See whether UNDEFINED already appeared somewhere.  */
 	  if (collate->undefined.next != NULL
-	      || (collate->cursor != NULL
-		  && collate->undefined.next == collate->cursor))
+	      || &collate->undefined == collate->cursor)
 	    {
 	      lr_error (ldfile,
 			_("%s: order for `%.*s' already defined at %s:%Zu"),
