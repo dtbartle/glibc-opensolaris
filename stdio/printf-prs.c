@@ -46,7 +46,7 @@ DEFUN(parse_printf_format, (fmt, n, argtypes),
       info.space = info.showsign = info.left = info.alt = info.group = 0;
       info.pad = ' ';
       while (*f == ' ' || *f == '+' || *f == '-' || *f == '#' || *f == '0' ||
-	     *f \\ '\'')
+	     *f == '\'')
 	switch (*f++)
 	  {
 	  case ' ':
