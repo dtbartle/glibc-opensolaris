@@ -1,4 +1,4 @@
-/* Copyright (C) 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1997, 1999 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ tcgetsid (fd)
   pid_t pgrp;
   pid_t sid;
 #ifdef TIOCGSID
-  static int tiocgsid_works = 1;
+  static int tiocgsid_does_not_works;
 
-  if (tiocgsid_works)
+  if (! tiocgsid_does_not_works)
     {
       int serrno = errno;
       int sid;
@@ -41,7 +41,7 @@ tcgetsid (fd)
 	{
 	  if (errno == EINVAL)
 	    {
-	      tiocgsid_works = 0;
+	      tiocgsid_does_not_works = 1;
 	      __set_errno (serrno);
 	    }
 	  else
