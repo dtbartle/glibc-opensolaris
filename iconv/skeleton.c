@@ -344,7 +344,8 @@ FUNCTION_NAME (struct __gconv_step *step, struct __gconv_step_data *data,
       /* If the function is used to implement the mb*towc*() or wc*tomb*()
 	 functions we must test whether any bytes from the last call are
 	 stored in the `state' object.  */
-      if (((MAX_NEEDED_FROM > 1 && FROM_DIRECTION)
+      if (((MAX_NEEDED_FROM > 1 && MAX_NEEDED_TO > 1)
+	   || (MAX_NEEDED_FROM > 1 && FROM_DIRECTION)
 	   || (MAX_NEEDED_TO > 1 && !FROM_DIRECTION))
 	  && consume_incomplete && (data->__statep->__count & 7) != 0)
 	{
@@ -545,7 +546,8 @@ FUNCTION_NAME (struct __gconv_step *step, struct __gconv_step_data *data,
       /* If we are supposed to consume all character store now all of the
 	 remaining characters in the `state' object.  */
 #if MAX_NEEDED_FROM > 1 || MAX_NEEDED_TO > 1
-      if (((MAX_NEEDED_FROM > 1 && FROM_DIRECTION)
+      if (((MAX_NEEDED_FROM > 1 && MAX_NEEDED_TO > 1)
+	   || (MAX_NEEDED_FROM > 1 && FROM_DIRECTION)
 	   || (MAX_NEEDED_TO > 1 && !FROM_DIRECTION))
 	  && __builtin_expect (consume_incomplete, 0)
 	  && status == __GCONV_INCOMPLETE_INPUT)
