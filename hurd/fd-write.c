@@ -1,5 +1,5 @@
 /* _hurd_fd_write -- write to a file descriptor; handles job control et al.
-   Copyright (C) 1993, 1994, 1995, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1993,94,95,97,99 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -23,14 +23,15 @@
 #include <hurd/fd.h>
 
 error_t
-_hurd_fd_write (struct hurd_fd *fd, const void *buf, size_t *nbytes)
+_hurd_fd_write (struct hurd_fd *fd,
+		const void *buf, size_t *nbytes, off_t offset)
 {
   error_t err;
   mach_msg_type_number_t wrote;
 
   error_t writefd (io_t port)
     {
-      return __io_write (port, buf, *nbytes, -1, &wrote);
+      return __io_write (port, buf, *nbytes, offset, &wrote);
     }
 
   err = HURD_FD_PORT_USE (fd, _hurd_ctty_output (port, ctty, writefd));
