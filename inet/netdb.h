@@ -153,6 +153,9 @@ void		setservent __P((int));
 __END_DECLS
 
 /* This is nec'y to make this include file properly replace the sun version. */
+#ifdef __GNU_LIBRARY__
+#include <rpc/netdb.h>
+#else
 #ifdef sun
 struct rpcent {
 	char	*r_name;	/* name of server for this rpc program */
@@ -160,6 +163,7 @@ struct rpcent {
 	int	r_number;	/* rpc program number */
 };
 struct rpcent	*getrpcbyname(), *getrpcbynumber(), *getrpcent();
-#endif
+#endif /* sun */
+#endif /* __GNU_LIBRARY__ */
 
 #endif /* !_NETDB_H_ */
