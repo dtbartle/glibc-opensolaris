@@ -1545,6 +1545,27 @@ any arbitrary file and changes are high that with some bogus input
 (such as a binary file) the program will crash.
 @end deftypefun
 
+@comment time.h
+@comment GNU
+@deftypefun int getdate_r (const char *@var{string}, struct tm *@var{tp})
+The @code{getdate_r} function is the reentrant counterpart of
+@code{getdate}.  It does not use the global variable @code{getdate_err}
+to signal the error but instead the return value now is this error code.
+The same error codes as described in the @code{getdate_err}
+documentation above are used.
+
+@code{getdate_err} also does not store the broken-down time in a static
+variable.  Instead it takes an second argument which must be a pointer
+to a variable of type @code{struct tm} where the broken-down can be
+stored.
+
+This function is not defined in the Unix standard.  Nevertheless it is
+available on some other Unix systems as well.
+
+As for @code{getdate} the warning for using this function in
+SUID-programs applied to @code{getdate_r} as well.
+@end deftypefun
+
 @node TZ Variable
 @subsection Specifying the Time Zone with @code{TZ}
 
