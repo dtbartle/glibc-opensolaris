@@ -147,6 +147,32 @@ typedef uintmax_t uatomic_max_t;
     __val;								      \
   })
 
+#define __arch_atomic_increment_val_32(mem) \
+  ({									      \
+    __typeof (*(mem)) __val;						      \
+    __asm __volatile ("1:	lwarx	%0,0,%2\n"			      \
+		      "		addi	%0,%0,1\n"			      \
+		      "		stwcx.	%0,0,%2\n"			      \
+		      "		bne-	1b"				      \
+		      : "=&r" (__val), "=m" (*mem)			      \
+		      : "b" (mem), "m" (*mem)				      \
+		      : "cr0", "memory");				      \
+    __val;								      \
+  })
+
+#define __arch_atomic_decrement_val_32(mem) \
+  ({									      \
+    __typeof (*(mem)) __val;						      \
+    __asm __volatile ("1:	lwarx	%0,0,%2\n"			      \
+		      "		subi	%0,%0,1\n"			      \
+		      "		stwcx.	%0,0,%2\n"			      \
+		      "		bne-	1b"				      \
+		      : "=&b" (__val), "=m" (*mem)			      \
+		      : "b" (mem), "m" (*mem)				      \
+		      : "cr0", "memory");				      \
+    __val;								      \
+  })
+
 #define __arch_atomic_decrement_if_positive_32(mem) \
   ({ int __val, __tmp;							      \
      __asm __volatile ("1:	lwarx	%0,0,%3\n"			      \
@@ -217,6 +243,30 @@ typedef uintmax_t uatomic_max_t;
       __result = __arch_atomic_exchange_and_add_32 (mem, value);	      \
     else if (sizeof (*mem) == 8)					      \
       __result = __arch_atomic_exchange_and_add_64 (mem, value);	      \
+    else 								      \
+       abort ();							      \
+    __result;								      \
+  })
+
+#define atomic_increment_val(mem) \
+  ({									      \
+    __typeof (*(mem)) __result;						      \
+    if (sizeof (*(mem)) == 4)						      \
+      __result = __arch_atomic_increment_val_32 (mem);			      \
+    else if (sizeof (*(mem)) == 8)					      \
+      __result = __arch_atomic_increment_val_64 (mem);			      \
+    else 								      \
+       abort ();							      \
+    __result;								      \
+  })
+
+#define atomic_decrement_val(mem) \
+  ({									      \
+    __typeof (*(mem)) __result;						      \
+    if (sizeof (*(mem)) == 4)						      \
+      __result = __arch_atomic_decrement_val_32 (mem);			      \
+    else if (sizeof (*(mem)) == 8)					      \
+      __result = __arch_atomic_decrement_val_64 (mem);			      \
     else 								      \
        abort ();							      \
     __result;								      \
