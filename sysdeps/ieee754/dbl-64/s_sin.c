@@ -60,8 +60,8 @@ static const double
           cs4 = -4.16666666666664434524222570944589E-02,
           cs6 =  1.38888874007937613028114285595617E-03;
 
-void dubsin(double x, double dx, double w[]);
-void docos(double x, double dx, double w[]);
+void __dubsin(double x, double dx, double w[]);
+void __docos(double x, double dx, double w[]);
 double __mpsin(double x, double dx);
 double __mpcos(double x, double dx);
 double __mpsin1(double x);
@@ -594,7 +594,7 @@ static const double th2_36 = 206158430208.0;   /*    1.5*2**37   */
  cor = (r-res)+t;
  if (res == res + 1.0007*cor) return res;
  else {
-   dubsin(ABS(x),0,w);
+   __dubsin(ABS(x),0,w);
    if (w[0] == w[0]+1.000000001*w[1]) return (x>0)?w[0]:-w[0];
    else return (x>0)?__mpsin(x,0):-__mpsin(-x,0);
  }
@@ -631,7 +631,7 @@ static double slow1(double x) {
   cor=(y-res)+cor;
   if (res == res+1.0005*cor) return (x>0)?res:-res;
   else {
-    dubsin(ABS(x),0,w);
+    __dubsin(ABS(x),0,w);
     if (w[0] == w[0]+1.000000005*w[1]) return (x>0)?w[0]:-w[0];
     else return (x>0)?__mpsin(x,0):-__mpsin(-x,0);
   }
@@ -679,7 +679,7 @@ static double slow2(double x) {
     y=ABS(x)-hp0.x;
     y1=y-hp1.x;
     y2=(y-y1)-hp1.x;
-    docos(y1,y2,w);
+    __docos(y1,y2,w);
     if (w[0] == w[0]+1.000000005*w[1]) return (x>0)?w[0]:-w[0];
     else return (x>0)?__mpsin(x,0):-__mpsin(-x,0);
   }
@@ -709,7 +709,7 @@ static double sloww(double x,double dx, double orig) {
   cor = (cor>0)? 1.0005*cor+ABS(orig)*3.1e-30 : 1.0005*cor-ABS(orig)*3.1e-30;
   if (res == res + cor) return res;
   else {
-    (x>0)? dubsin(x,dx,w) : dubsin(-x,-dx,w);
+    (x>0)? __dubsin(x,dx,w) : __dubsin(-x,-dx,w);
     cor = (w[1]>0)? 1.000000001*w[1] + ABS(orig)*1.1e-30 : 1.000000001*w[1] - ABS(orig)*1.1e-30;
     if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
     else {
@@ -725,7 +725,7 @@ static double sloww(double x,double dx, double orig) {
       a = t - y;
       da = ((t-a)-y)+da;
       if (n&2) {a=-a; da=-da;}
-      (a>0)? dubsin(a,da,w) : dubsin(-a,-da,w);
+      (a>0)? __dubsin(a,da,w) : __dubsin(-a,-da,w);
       cor = (w[1]>0)? 1.000000001*w[1] + ABS(orig)*1.1e-40 : 1.000000001*w[1] - ABS(orig)*1.1e-40;
       if (w[0] == w[0]+cor) return (a>0)?w[0]:-w[0];
       else return __mpsin1(orig);
@@ -768,7 +768,7 @@ static double sloww1(double x, double dx, double orig) {
   cor = (cor>0)? 1.0005*cor+3.1e-30*ABS(orig) : 1.0005*cor-3.1e-30*ABS(orig);
   if (res == res + cor) return (x>0)?res:-res;
   else {
-    dubsin(ABS(x),dx,w);
+    __dubsin(ABS(x),dx,w);
     cor = (w[1]>0)? 1.000000005*w[1]+1.1e-30*ABS(orig) : 1.000000005*w[1]-1.1e-30*ABS(orig);
     if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
   else  return __mpsin1(orig);
@@ -811,7 +811,7 @@ static double sloww2(double x, double dx, double orig, int n) {
   cor = (cor>0)? 1.0005*cor+3.1e-30*ABS(orig) : 1.0005*cor-3.1e-30*ABS(orig);
   if (res == res + cor) return (n&2)?-res:res;
   else {
-   docos(ABS(x),dx,w);
+   __docos(ABS(x),dx,w);
    cor = (w[1]>0)? 1.000000005*w[1]+1.1e-30*ABS(orig) : 1.000000005*w[1]-1.1e-30*ABS(orig);
    if (w[0] == w[0]+cor) return (n&2)?-w[0]:w[0];
    else  return __mpsin1(orig);
@@ -844,7 +844,7 @@ static double bsloww(double x,double dx, double orig,int n) {
   cor = (cor>0)? 1.0005*cor+1.1e-24 : 1.0005*cor-1.1e-24;
   if (res == res + cor) return res;
   else {
-    (x>0)? dubsin(x,dx,w) : dubsin(-x,-dx,w);
+    (x>0)? __dubsin(x,dx,w) : __dubsin(-x,-dx,w);
     cor = (w[1]>0)? 1.000000001*w[1] + 1.1e-24 : 1.000000001*w[1] - 1.1e-24;
     if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
     else return (n&1)?__mpcos1(orig):__mpsin1(orig);
@@ -887,7 +887,7 @@ mynumber u;
  cor = (cor>0)? 1.0005*cor+1.1e-24 : 1.0005*cor-1.1e-24;
  if (res == res + cor) return (x>0)?res:-res;
  else {
-   dubsin(ABS(x),dx,w);
+   __dubsin(ABS(x),dx,w);
    cor = (w[1]>0)? 1.000000005*w[1]+1.1e-24: 1.000000005*w[1]-1.1e-24;
    if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
    else  return (n&1)?__mpcos1(orig):__mpsin1(orig);
@@ -931,7 +931,7 @@ mynumber u;
  cor = (cor>0)? 1.0005*cor+1.1e-24 : 1.0005*cor-1.1e-24;
  if (res == res + cor) return (n&2)?-res:res;
  else {
-   docos(ABS(x),dx,w);
+   __docos(ABS(x),dx,w);
    cor = (w[1]>0)? 1.000000005*w[1]+1.1e-24 : 1.000000005*w[1]-1.1e-24;
    if (w[0] == w[0]+cor) return (n&2)?-w[0]:w[0];
    else  return (n&1)?__mpsin1(orig):__mpcos1(orig);
@@ -972,7 +972,7 @@ static double cslow2(double x) {
     return res;
   else {
     y=ABS(x);
-    docos(y,0,w);
+    __docos(y,0,w);
     if (w[0] == w[0]+1.000000005*w[1]) return w[0];
     else return __mpcos(x,0);
   }
@@ -1004,7 +1004,7 @@ static double csloww(double x,double dx, double orig) {
   cor = (cor>0)? 1.0005*cor+ABS(orig)*3.1e-30 : 1.0005*cor-ABS(orig)*3.1e-30;
   if (res == res + cor) return res;
   else {
-    (x>0)? dubsin(x,dx,w) : dubsin(-x,-dx,w);
+    (x>0)? __dubsin(x,dx,w) : __dubsin(-x,-dx,w);
     cor = (w[1]>0)? 1.000000001*w[1] + ABS(orig)*1.1e-30 : 1.000000001*w[1] - ABS(orig)*1.1e-30;
     if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
     else {
@@ -1020,7 +1020,7 @@ static double csloww(double x,double dx, double orig) {
       a = t - y;
       da = ((t-a)-y)+da;
       if (n==1) {a=-a; da=-da;}
-      (a>0)? dubsin(a,da,w) : dubsin(-a,-da,w);
+      (a>0)? __dubsin(a,da,w) : __dubsin(-a,-da,w);
       cor = (w[1]>0)? 1.000000001*w[1] + ABS(orig)*1.1e-40 : 1.000000001*w[1] - ABS(orig)*1.1e-40;
       if (w[0] == w[0]+cor) return (a>0)?w[0]:-w[0];
       else return __mpcos1(orig);
@@ -1064,7 +1064,7 @@ static double csloww1(double x, double dx, double orig) {
   cor = (cor>0)? 1.0005*cor+3.1e-30*ABS(orig) : 1.0005*cor-3.1e-30*ABS(orig);
   if (res == res + cor) return (x>0)?res:-res;
   else {
-    dubsin(ABS(x),dx,w);
+    __dubsin(ABS(x),dx,w);
     cor = (w[1]>0)? 1.000000005*w[1]+1.1e-30*ABS(orig) : 1.000000005*w[1]-1.1e-30*ABS(orig);
     if (w[0] == w[0]+cor) return (x>0)?w[0]:-w[0];
     else  return __mpcos1(orig);
@@ -1109,7 +1109,7 @@ static double csloww2(double x, double dx, double orig, int n) {
   cor = (cor>0)? 1.0005*cor+3.1e-30*ABS(orig) : 1.0005*cor-3.1e-30*ABS(orig);
   if (res == res + cor) return (n)?-res:res;
   else {
-    docos(ABS(x),dx,w);
+    __docos(ABS(x),dx,w);
     cor = (w[1]>0)? 1.000000005*w[1]+1.1e-30*ABS(orig) : 1.000000005*w[1]-1.1e-30*ABS(orig);
     if (w[0] == w[0]+cor) return (n)?-w[0]:w[0];
     else  return __mpcos1(orig);
