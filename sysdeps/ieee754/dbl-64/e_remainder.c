@@ -103,8 +103,8 @@ double __ieee754_remainder(double x, double y)
   else {
     if (kx<0x7ff00000&&ky<0x7ff00000&&(ky>0||t.i[LOW_HALF]!=0)) {
       y=ABS(y)*t128.x;
-      z=uremainder(x,y)*t128.x;
-      z=uremainder(z,y)*tm128.x;
+      z=__ieee754_remainder(x,y)*t128.x;
+      z=__ieee754_remainder(z,y)*tm128.x;
       return z;
     }
     else { /* if x is too big */
