@@ -894,7 +894,7 @@ standardized in @w{ISO C 9x} while @code{gamma} is not.
 @deftypefun double tgamma (double @var{x})
 @deftypefunx float tgammaf (float @var{x})
 @deftypefunx {long double} tgammal (long double @var{x})
-@code{tgamma} computes the gamma function of @var{x}.  The gamma
+@code{tgamma} applied the gamma function to @var{x}.  The gamma
 function is defined as
 @tex
 $$\Gamma(x) = \int_0^\infty t^{x-1} e^{-t} \hbox{d}t$$
