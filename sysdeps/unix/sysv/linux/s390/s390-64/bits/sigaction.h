@@ -40,14 +40,14 @@ struct sigaction
     __sighandler_t sa_handler;
 #endif
 
-    /* Additional set of signals to be blocked.	 */
-    __sigset_t sa_mask;
-
     /* Special flags.  */
     unsigned long int sa_flags;
 
     /* Restore handler.  */
     void (*sa_restorer) (void);
+
+    /* Additional set of signals to be blocked.	 */
+    __sigset_t sa_mask;
   };
 
 /* Bits in `sa_flags'.	*/
