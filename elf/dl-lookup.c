@@ -299,12 +299,11 @@ _dl_lookup_symbol_skip (const char *undef_name,
 
   /* Search the relevant loaded objects for a definition.  */
   scope = symbol_scope;
-  for (i = 0; (*scope)->r_duplist[i] != skip_map; ++i)
-    assert (i < (*scope)->r_nduplist);
+  for (i = 0; (*scope)->r_list[i] != skip_map; ++i)
+    assert (i < (*scope)->r_nlist);
 
-  if (i >= (*scope)->r_nlist
-	 || ! do_lookup (undef_name, hash, *ref, &current_value, *scope, i,
-			 skip_map, 0, 0))
+  if (! do_lookup (undef_name, hash, *ref, &current_value, *scope, i,
+		   skip_map, 0, 0))
     while (*++scope)
       if (do_lookup (undef_name, hash, *ref, &current_value, *scope, 0,
 		     skip_map, 0, 0))
@@ -502,12 +501,11 @@ _dl_lookup_versioned_symbol_skip (const char *undef_name,
 
   /* Search the relevant loaded objects for a definition.  */
   scope = symbol_scope;
-  for (i = 0; (*scope)->r_duplist[i] != skip_map; ++i)
-    assert (i < (*scope)->r_nduplist);
+  for (i = 0; (*scope)->r_list[i] != skip_map; ++i)
+    assert (i < (*scope)->r_nlist);
 
-  if (i >= (*scope)->r_nlist
-      || ! do_lookup_versioned (undef_name, hash, *ref, &current_value,
-				*scope, i, version, skip_map, 0, 0))
+  if (! do_lookup_versioned (undef_name, hash, *ref, &current_value,
+			     *scope, i, version, skip_map, 0, 0))
     while (*++scope)
       if (do_lookup_versioned (undef_name, hash, *ref, &current_value, *scope,
 			       0, version, skip_map, 0, 0))
