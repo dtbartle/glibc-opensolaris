@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
 The GNU C Library is free software; you can redistribute it and/or
@@ -72,3 +72,5 @@ DEFUN(__setuid, (uid), uid_t uid)
   __mach_port_deallocate (__mach_task_self (), newauth);
   return err;
 }
+
+weak_alias (__setuid, setuid)
