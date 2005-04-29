@@ -94,7 +94,10 @@ nis_removemember (const_nis_name member, const_nis_name group)
 	 (i.e., we overwrite the input pointer).  */
       nis_name *newp = realloc (newmem, k * sizeof (char*));
       if (newp == NULL)
-	return NIS_NOMEMORY;
+	{
+	  free (newmem);
+	  return NIS_NOMEMORY;
+	}
       newmem = newp;
 
       NIS_RES_OBJECT (res)->GR_data.gr_members.gr_members_val = newmem;
