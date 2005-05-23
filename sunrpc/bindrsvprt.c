@@ -43,7 +43,6 @@
 int
 bindresvport (int sd, struct sockaddr_in *sin)
 {
-  int res;
   static short port;
   struct sockaddr_in myaddr;
   int i;
@@ -70,8 +69,9 @@ bindresvport (int sd, struct sockaddr_in *sin)
     {
       port = (__getpid () % NPORTS) + STARTPORT;
     }
-  res = -1;
-  __set_errno (EADDRINUSE);
+
+  /* Initialize to make gcc happy.  */
+  int res = -1;
 
   int nports = ENDPORT - startport + 1;
  again:
