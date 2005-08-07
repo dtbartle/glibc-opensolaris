@@ -1,5 +1,5 @@
 /* Cache memory handling.
-   Copyright (C) 2004 Free Software Foundation, Inc.
+   Copyright (C) 2004, 2005 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2004.
 
@@ -194,7 +194,7 @@ gc (struct database_dyn *db)
       highref -= BLOCK_ALIGN;
     }
 
-  /* No we can iterate over the MARK array and find bits which are not
+  /* Now we can iterate over the MARK array and find bits which are not
      set.  These represent memory which can be recovered.  */
   size_t byte = 0;
   /* Find the first gap.  */
