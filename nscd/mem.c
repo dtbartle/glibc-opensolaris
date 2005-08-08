@@ -34,12 +34,6 @@
 #include "nscd.h"
 
 
-/* Maximum alignment requirement we will encounter.  */
-#define BLOCK_ALIGN_LOG 3
-#define BLOCK_ALIGN (1 << BLOCK_ALIGN_LOG)
-#define BLOCK_ALIGN_M1 (BLOCK_ALIGN - 1)
-
-
 static int
 sort_he (const void *p1, const void *p2)
 {
