@@ -1459,7 +1459,7 @@ fd_ready (int fd)
 	{
 	  /* We got another thread.  */
 	  ++nthreads;
-	  /* The new thread might new a kick.  */
+	  /* The new thread might need a kick.  */
 	  do_signal = true;
 	}
 
