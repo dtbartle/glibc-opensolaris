@@ -157,7 +157,7 @@
 # endif
 #else
 # ifndef FROM_DIRECTION
-#  error "FROM_DIRECTION must be provided if direction objects are not used"
+#  error "FROM_DIRECTION must be provided if non-default init is used"
 # endif
 #endif
 
