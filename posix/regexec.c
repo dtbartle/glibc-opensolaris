@@ -2133,7 +2133,10 @@ sift_states_bkref (mctx, sctx, str_idx, candidates)
       enabled_idx = first_idx;
       do
 	{
-	  int subexp_len, to_idx, dst_node;
+	  int subexp_len;
+	  int to_idx;
+	  int dst_node;
+	  int ret;
 	  re_dfastate_t *cur_state;
 
 	  if (entry->node != node)
@@ -2159,8 +2162,8 @@ sift_states_bkref (mctx, sctx, str_idx, candidates)
 	    }
 	  local_sctx.last_node = node;
 	  local_sctx.last_str_idx = str_idx;
-	  err = re_node_set_insert (&local_sctx.limits, enabled_idx);
-	  if (BE (err < 0, 0))
+	  ret = re_node_set_insert (&local_sctx.limits, enabled_idx);
+	  if (BE (ret < 0, 0))
 	    {
 	      err = REG_ESPACE;
 	      goto free_return;
