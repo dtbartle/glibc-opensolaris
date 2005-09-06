@@ -35,7 +35,7 @@ static re_dfastate_t *create_cd_newstate (re_dfa_t *dfa,
 					  const re_node_set *nodes,
 					  unsigned int context,
 					  unsigned int hash) internal_function;
-static unsigned int inline calc_state_hash (const re_node_set *nodes,
+static inline unsigned int calc_state_hash (const re_node_set *nodes,
 					    unsigned int context) internal_function;
 
 /* Functions for string operation.  */
@@ -1379,7 +1379,7 @@ re_dfa_add_node (dfa, token)
   return dfa->nodes_len++;
 }
 
-static unsigned int inline
+static inline unsigned int
 calc_state_hash (nodes, context)
      const re_node_set *nodes;
      unsigned int context;
