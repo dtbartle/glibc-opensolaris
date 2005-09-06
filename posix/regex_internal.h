@@ -699,10 +699,12 @@ static void re_node_set_remove_at (re_node_set *set, int idx) internal_function;
 #define re_node_set_empty(p) ((p)->nelem = 0)
 #define re_node_set_free(set) re_free ((set)->elems)
 static int re_dfa_add_node (re_dfa_t *dfa, re_token_t token) internal_function;
-static re_dfastate_t *re_acquire_state (reg_errcode_t *err, re_dfa_t *dfa,
-					const re_node_set *nodes) internal_function;
+static re_dfastate_t *re_acquire_state (reg_errcode_t *err, const
+					re_dfa_t *dfa,
+					const re_node_set *nodes)
+  internal_function;
 static re_dfastate_t *re_acquire_state_context (reg_errcode_t *err,
-						re_dfa_t *dfa,
+						const re_dfa_t *dfa,
 						const re_node_set *nodes,
 						unsigned int context) internal_function;
 static void free_state (re_dfastate_t *state) internal_function;
