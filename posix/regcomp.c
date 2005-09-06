@@ -19,11 +19,11 @@
    02111-1307 USA.  */
 
 static reg_errcode_t re_compile_internal (regex_t *preg, const char * pattern,
-					  int length, reg_syntax_t syntax);
+					  size_t length, reg_syntax_t syntax);
 static void re_compile_fastmap_iter (regex_t *bufp,
 				     const re_dfastate_t *init_state,
 				     char *fastmap);
-static reg_errcode_t init_dfa (re_dfa_t *dfa, int pat_len);
+static reg_errcode_t init_dfa (re_dfa_t *dfa, size_t pat_len);
 static void init_word_char (re_dfa_t *dfa);
 #ifdef RE_ENABLE_I18N
 static void free_charset (re_charset_t *cset);
@@ -740,7 +740,7 @@ static reg_errcode_t
 re_compile_internal (preg, pattern, length, syntax)
      regex_t *preg;
      const char * pattern;
-     int length;
+     size_t length;
      reg_syntax_t syntax;
 {
   reg_errcode_t err = REG_NOERROR;
@@ -781,6 +781,7 @@ re_compile_internal (preg, pattern, length, syntax)
       return err;
     }
 #ifdef DEBUG
+  /* Note: length+1 will not overflow since it is checked in init_dfa.  */
   dfa->re_str = re_malloc (char, length + 1);
   strncpy (dfa->re_str, pattern, length + 1);
 #endif
@@ -840,7 +841,7 @@ re_compile_internal (preg, pattern, length, syntax)
 static reg_errcode_t
 init_dfa (dfa, pat_len)
      re_dfa_t *dfa;
-     int pat_len;
+     size_t pat_len;
 {
   unsigned int table_size;
 #ifndef _LIBC
@@ -851,6 +852,10 @@ init_dfa (dfa, pat_len)
 
   /* Force allocation of str_tree_storage the first time.  */
   dfa->str_tree_storage_idx = BIN_TREE_STORAGE_SIZE;
+
+  /* Avoid overflows.  */
+  if (pat_len == SIZE_MAX)
+    return REG_ESPACE;
 
   dfa->nodes_alloc = pat_len + 1;
   dfa->nodes = re_malloc (re_token_t, dfa->nodes_alloc);
