@@ -1,5 +1,5 @@
 /* Extended regular expression matching and search library.
-   Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+   Copyright (C) 2002, 2003, 2005 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Isamu Hasegawa <isamu@yamato.ibm.com>.
 
@@ -20,6 +20,11 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+/* Make sure noone compiles this code with a C++ compiler.  */
+#ifdef __cplusplus
+# error "This is C code, use a C compiler"
 #endif
 
 #ifdef _AIX
