@@ -625,8 +625,8 @@ struct re_fail_stack_t
 struct re_dfa_t
 {
   re_token_t *nodes;
-  int nodes_alloc;
-  int nodes_len;
+  size_t nodes_alloc;
+  size_t nodes_len;
   int *nexts;
   int *org_indices;
   re_node_set *edests;
