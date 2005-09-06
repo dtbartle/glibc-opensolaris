@@ -1345,12 +1345,16 @@ re_dfa_add_node (dfa, token)
   int type = token.type;
   if (BE (dfa->nodes_len >= dfa->nodes_alloc, 0))
     {
-      int new_nodes_alloc = dfa->nodes_alloc * 2;
+      size_t new_nodes_alloc = dfa->nodes_alloc * 2;
       int *new_nexts, *new_indices;
       re_node_set *new_edests, *new_eclosures;
+      re_token_t *new_nodes;
 
-      re_token_t *new_nodes = re_realloc (dfa->nodes, re_token_t,
-					  new_nodes_alloc);
+      /* Avoid overflows.  */
+      if (BE (new_nodes_alloc < dfa->nodes_alloc, 0))
+	return -1;
+
+      new_nodes = re_realloc (dfa->nodes, re_token_t, new_nodes_alloc);
       if (BE (new_nodes == NULL, 0))
 	return -1;
       dfa->nodes = new_nodes;
