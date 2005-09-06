@@ -1949,8 +1949,9 @@ check_dst_limits_calc_pos_1 (mctx, boundaries, subexp_idx, from_node, bkref_idx)
 		  if (ent->node != node)
 		    continue;
 
-		  if (subexp_idx <= 8 * sizeof (ent->eps_reachable_subexps_map)
-		      && !(ent->eps_reachable_subexps_map & (1 << subexp_idx)))
+		  if (subexp_idx
+		      < CHAR_BIT * sizeof ent->eps_reachable_subexps_map
+		      && !(ent->eps_reachable_subexps_map & (1u << subexp_idx)))
 		    continue;
 
 		  /* Recurse trying to reach the OP_OPEN_SUBEXP and
@@ -1976,7 +1977,9 @@ check_dst_limits_calc_pos_1 (mctx, boundaries, subexp_idx, from_node, bkref_idx)
 		  if (cpos == 0 && (boundaries & 2))
 		    return 0;
 
-		  ent->eps_reachable_subexps_map &= ~(1 << subexp_idx);
+		  if (subexp_idx
+		      < CHAR_BIT * sizeof ent->eps_reachable_subexps_map)
+		    ent->eps_reachable_subexps_map &= ~(1u << subexp_idx);
 	        }
 	      while (ent++->more);
 	    }
@@ -2443,8 +2446,8 @@ check_subexp_matching_top (mctx, cur_nodes, str_idx)
     {
       int node = cur_nodes->elems[node_idx];
       if (dfa->nodes[node].type == OP_OPEN_SUBEXP
-	  && dfa->nodes[node].opr.idx < (8 * sizeof (dfa->used_bkref_map))
-	  && dfa->used_bkref_map & (1 << dfa->nodes[node].opr.idx))
+	  && dfa->nodes[node].opr.idx < CHAR_BIT * sizeof dfa->used_bkref_map
+	  && dfa->used_bkref_map & (1u << dfa->nodes[node].opr.idx))
 	{
 	  err = match_ctx_add_subtop (mctx, node, str_idx);
 	  if (BE (err != REG_NOERROR, 0))
@@ -2557,7 +2560,8 @@ transit_state_mb (mctx, pstate)
 	  if (BE (err != REG_NOERROR, 0))
 	    return err;
 	}
-      context = re_string_context_at (&mctx->input, dest_idx - 1, mctx->eflags);
+      context = re_string_context_at (&mctx->input, dest_idx - 1,
+				      mctx->eflags);
       mctx->state_log[dest_idx]
 	= re_acquire_state_context (&err, dfa, &dest_nodes, context);
       if (dest_state != NULL)
@@ -2696,7 +2700,8 @@ get_subexp (mctx, bkref_node, bkref_str_idx)
   int cache_idx = search_cur_bkref_entry (mctx, bkref_str_idx);
   if (cache_idx != -1)
     {
-      const struct re_backref_cache_entry *entry = mctx->bkref_ents + cache_idx;
+      const struct re_backref_cache_entry *entry
+	= mctx->bkref_ents + cache_idx;
       do
         if (entry->node == bkref_node)
 	  return REG_NOERROR; /* We already checked it.  */
@@ -2743,7 +2748,8 @@ get_subexp (mctx, bkref_node, bkref_str_idx)
 		  buf = (const char *) re_string_get_buffer (&mctx->input);
 		}
 	      if (memcmp (buf + bkref_str_off, buf + sl_str, sl_str_diff) != 0)
-		break; /* We don't need to search this sub expression any more.  */
+		/* We don't need to search this sub expression any more.  */
+		break;
 	    }
 	  bkref_str_off += sl_str_diff;
 	  sl_str += sl_str_diff;
@@ -2794,7 +2800,8 @@ get_subexp (mctx, bkref_node, bkref_str_idx)
 	    continue;
 	  /* Does this state have a ')' of the sub expression?  */
 	  nodes = &mctx->state_log[sl_str]->nodes;
-	  cls_node = find_subexp_node (dfa, nodes, subexp_num, OP_CLOSE_SUBEXP);
+	  cls_node = find_subexp_node (dfa, nodes, subexp_num,
+				       OP_CLOSE_SUBEXP);
 	  if (cls_node == -1)
 	    continue; /* No.  */
 	  if (sub_top->path == NULL)
@@ -2807,7 +2814,8 @@ get_subexp (mctx, bkref_node, bkref_str_idx)
 	  /* Can the OP_OPEN_SUBEXP node arrive the OP_CLOSE_SUBEXP node
 	     in the current context?  */
 	  err = check_arrival (mctx, sub_top->path, sub_top->node,
-			       sub_top->str_idx, cls_node, sl_str, OP_CLOSE_SUBEXP);
+			       sub_top->str_idx, cls_node, sl_str,
+			       OP_CLOSE_SUBEXP);
 	  if (err == REG_NOMATCH)
 	      continue;
 	  if (BE (err != REG_NOERROR, 0))
@@ -2841,7 +2849,8 @@ get_subexp_sub (mctx, sub_top, sub_last, bkref_node, bkref_str)
   int to_idx;
   /* Can the subexpression arrive the back reference?  */
   err = check_arrival (mctx, &sub_last->path, sub_last->node,
-		       sub_last->str_idx, bkref_node, bkref_str, OP_OPEN_SUBEXP);
+		       sub_last->str_idx, bkref_node, bkref_str,
+		       OP_OPEN_SUBEXP);
   if (err != REG_NOERROR)
     return err;
   err = match_ctx_add_entry (mctx, bkref_node, bkref_str, sub_top->str_idx,
