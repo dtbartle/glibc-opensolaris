@@ -51,7 +51,7 @@ static reg_errcode_t duplicate_node_closure (re_dfa_t *dfa, int top_org_node,
 					     int top_clone_node, int root_node,
 					     unsigned int constraint);
 static int duplicate_node (re_dfa_t *dfa, int org_idx, unsigned int constraint);
-static int search_duplicated_node (re_dfa_t *dfa, int org_node,
+static int search_duplicated_node (const re_dfa_t *dfa, int org_node,
 				   unsigned int constraint);
 static reg_errcode_t calc_eclosure (re_dfa_t *dfa);
 static reg_errcode_t calc_eclosure_iter (re_node_set *new_set, re_dfa_t *dfa,
@@ -1579,7 +1579,7 @@ duplicate_node_closure (dfa, top_org_node, top_clone_node, root_node,
 
 static int
 search_duplicated_node (dfa, org_node, constraint)
-     re_dfa_t *dfa;
+     const re_dfa_t *dfa;
      int org_node;
      unsigned int constraint;
 {
