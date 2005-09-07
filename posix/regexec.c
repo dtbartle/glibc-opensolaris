@@ -1959,7 +1959,7 @@ check_dst_limits_calc_pos_1 (mctx, boundaries, subexp_idx, from_node, bkref_idx)
      int boundaries, subexp_idx, from_node, bkref_idx;
 {
   const re_dfa_t *const dfa = mctx->dfa;
-  re_node_set *eclosures = dfa->eclosures + from_node;
+  const re_node_set *eclosures = dfa->eclosures + from_node;
   int node_idx;
 
   /* Else, we are on the boundary: examine the nodes on the epsilon
