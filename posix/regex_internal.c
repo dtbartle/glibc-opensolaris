@@ -739,15 +739,15 @@ re_string_reconstruct (pstr, idx, eflags)
     }
   else
 #endif /* RE_ENABLE_I18N */
-  if (BE (pstr->mbs_allocated, 0))
-    {
-      if (pstr->icase)
-	build_upper_buffer (pstr);
-      else if (pstr->trans != NULL)
-	re_string_translate_buffer (pstr);
-    }
-  else
-    pstr->valid_len = pstr->len;
+    if (BE (pstr->mbs_allocated, 0))
+      {
+	if (pstr->icase)
+	  build_upper_buffer (pstr);
+	else if (pstr->trans != NULL)
+	  re_string_translate_buffer (pstr);
+      }
+    else
+      pstr->valid_len = pstr->len;
 
   pstr->cur_idx = 0;
   return REG_NOERROR;
@@ -1407,8 +1407,8 @@ calc_state_hash (nodes, context)
 
 static re_dfastate_t*
 re_acquire_state (err, dfa, nodes)
-     const reg_errcode_t *err;
-     re_dfa_t *dfa;
+     reg_errcode_t *err;
+     const re_dfa_t *dfa;
      const re_node_set *nodes;
 {
   unsigned int hash;
@@ -1452,8 +1452,8 @@ re_acquire_state (err, dfa, nodes)
 
 static re_dfastate_t*
 re_acquire_state_context (err, dfa, nodes, context)
-     const reg_errcode_t *err;
-     re_dfa_t *dfa;
+     reg_errcode_t *err;
+     const re_dfa_t *dfa;
      const re_node_set *nodes;
      unsigned int context;
 {
