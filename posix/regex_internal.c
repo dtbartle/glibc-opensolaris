@@ -26,12 +26,13 @@ static void re_string_construct_common (const char *str, int len,
 static int re_string_skip_chars (re_string_t *pstr, int new_raw_idx,
 				 wint_t *last_wc) internal_function;
 #endif /* RE_ENABLE_I18N */
-static reg_errcode_t register_state (re_dfa_t *dfa, re_dfastate_t *newstate,
+static reg_errcode_t register_state (const re_dfa_t *dfa,
+				     re_dfastate_t *newstate,
 				     unsigned int hash) internal_function;
-static re_dfastate_t *create_ci_newstate (re_dfa_t *dfa,
+static re_dfastate_t *create_ci_newstate (const re_dfa_t *dfa,
 					  const re_node_set *nodes,
 					  unsigned int hash) internal_function;
-static re_dfastate_t *create_cd_newstate (re_dfa_t *dfa,
+static re_dfastate_t *create_cd_newstate (const re_dfa_t *dfa,
 					  const re_node_set *nodes,
 					  unsigned int context,
 					  unsigned int hash) internal_function;
@@ -1406,7 +1407,7 @@ calc_state_hash (nodes, context)
 
 static re_dfastate_t*
 re_acquire_state (err, dfa, nodes)
-     reg_errcode_t *err;
+     const reg_errcode_t *err;
      re_dfa_t *dfa;
      const re_node_set *nodes;
 {
@@ -1451,7 +1452,7 @@ re_acquire_state (err, dfa, nodes)
 
 static re_dfastate_t*
 re_acquire_state_context (err, dfa, nodes, context)
-     reg_errcode_t *err;
+     const reg_errcode_t *err;
      re_dfa_t *dfa;
      const re_node_set *nodes;
      unsigned int context;
@@ -1490,7 +1491,7 @@ re_acquire_state_context (err, dfa, nodes, context)
 
 static reg_errcode_t
 register_state (dfa, newstate, hash)
-     re_dfa_t *dfa;
+     const re_dfa_t *dfa;
      re_dfastate_t *newstate;
      unsigned int hash;
 {
@@ -1529,7 +1530,7 @@ register_state (dfa, newstate, hash)
 
 static re_dfastate_t *
 create_ci_newstate (dfa, nodes, hash)
-     re_dfa_t *dfa;
+     const re_dfa_t *dfa;
      const re_node_set *nodes;
      unsigned int hash;
 {
@@ -1580,7 +1581,7 @@ create_ci_newstate (dfa, nodes, hash)
 
 static re_dfastate_t *
 create_cd_newstate (dfa, nodes, context, hash)
-     re_dfa_t *dfa;
+     const re_dfa_t *dfa;
      const re_node_set *nodes;
      unsigned int context, hash;
 {
