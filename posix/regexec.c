@@ -25,7 +25,7 @@ static void match_ctx_free (re_match_context_t *cache) internal_function;
 static reg_errcode_t match_ctx_add_entry (re_match_context_t *cache, int node,
 					  int str_idx, int from, int to)
      internal_function;
-static int search_cur_bkref_entry (re_match_context_t *mctx, int str_idx)
+static int search_cur_bkref_entry (const re_match_context_t *mctx, int str_idx)
      internal_function;
 static reg_errcode_t match_ctx_add_subtop (re_match_context_t *mctx, int node,
 					   int str_idx) internal_function;
@@ -104,13 +104,14 @@ static reg_errcode_t add_epsilon_src_nodes (re_dfa_t *dfa,
 static reg_errcode_t sub_epsilon_src_nodes (re_dfa_t *dfa, int node,
 					    re_node_set *dest_nodes,
 					    const re_node_set *and_nodes) internal_function;
-static int check_dst_limits (re_match_context_t *mctx, re_node_set *limits,
+static int check_dst_limits (const re_match_context_t *mctx,
+			     re_node_set *limits,
 			     int dst_node, int dst_idx, int src_node,
 			     int src_idx) internal_function;
-static int check_dst_limits_calc_pos_1 (re_match_context_t *mctx,
+static int check_dst_limits_calc_pos_1 (const re_match_context_t *mctx,
 					int boundaries, int subexp_idx,
 					int from_node, int bkref_idx) internal_function;
-static int check_dst_limits_calc_pos (re_match_context_t *mctx,
+static int check_dst_limits_calc_pos (const re_match_context_t *mctx,
 				      int limit, int subexp_idx,
 				      int node, int str_idx,
 				      int bkref_idx) internal_function;
@@ -185,7 +186,7 @@ static unsigned int find_collation_sequence_value (const unsigned char *mbs,
 						   size_t name_len) internal_function;
 # endif /* _LIBC */
 #endif /* RE_ENABLE_I18N */
-static int group_nodes_into_DFAstates (re_dfa_t *dfa,
+static int group_nodes_into_DFAstates (const re_dfa_t *dfa,
 				       const re_dfastate_t *state,
 				       re_node_set *states_node,
 				       bitset *states_ch) internal_function;
@@ -1887,7 +1888,7 @@ sub_epsilon_src_nodes (dfa, node, dest_nodes, candidates)
 
 static int
 check_dst_limits (mctx, limits, dst_node, dst_idx, src_node, src_idx)
-     re_match_context_t *mctx;
+     const re_match_context_t *mctx;
      re_node_set *limits;
      int dst_node, dst_idx, src_node, src_idx;
 {
@@ -1924,7 +1925,7 @@ check_dst_limits (mctx, limits, dst_node, dst_idx, src_node, src_idx)
 
 static int
 check_dst_limits_calc_pos_1 (mctx, boundaries, subexp_idx, from_node, bkref_idx)
-     re_match_context_t *mctx;
+     const re_match_context_t *mctx;
      int boundaries, subexp_idx, from_node, bkref_idx;
 {
   re_dfa_t *const dfa = mctx->dfa;
@@ -2005,7 +2006,7 @@ check_dst_limits_calc_pos_1 (mctx, boundaries, subexp_idx, from_node, bkref_idx)
 
 static int
 check_dst_limits_calc_pos (mctx, limit, subexp_idx, from_node, str_idx, bkref_idx)
-     re_match_context_t *mctx;
+     const re_match_context_t *mctx;
      int limit, subexp_idx, from_node, str_idx, bkref_idx;
 {
   struct re_backref_cache_entry *lim = mctx->bkref_ents + limit;
@@ -3548,10 +3549,10 @@ out_free:
 
 static int
 group_nodes_into_DFAstates (dfa, state, dests_node, dests_ch)
-    re_dfa_t *dfa;
-    const re_dfastate_t *state;
-    re_node_set *dests_node;
-    bitset *dests_ch;
+     const re_dfa_t *dfa;
+     const re_dfastate_t *state;
+     re_node_set *dests_node;
+     bitset *dests_ch;
 {
   reg_errcode_t err;
   int result;
@@ -4274,7 +4275,7 @@ match_ctx_add_entry (mctx, node, str_idx, from, to)
 
 static int
 search_cur_bkref_entry (mctx, str_idx)
-     re_match_context_t *mctx;
+     const re_match_context_t *mctx;
      int str_idx;
 {
   int left, right, mid, last;
