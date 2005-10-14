@@ -1,6 +1,6 @@
 /* Offsets and other constants needed in the *context() function
    implementation for Linux/x86-64.
-   Copyright (C) 2002 Free Software Foundation, Inc.
+   Copyright (C) 2002, 2005 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 #define oRAX		144
 #define oRCX		152
 #define oRIP		168
-#define oFPREGS		208
-#define oSIGMASK	280
-#define oFPREGSMEM	408
-#define oMXCSR		432
+#define oFPREGS		224
+#define oSIGMASK	296
+#define oFPREGSMEM	424
+#define oMXCSR		448
