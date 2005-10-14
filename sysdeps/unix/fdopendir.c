@@ -38,5 +38,5 @@ fdopendir (int fd)
       return NULL;
     }
 
-  return __alloc_dir (fd, &statbuf);
+  return __alloc_dir (fd, false, &statbuf);
 }
