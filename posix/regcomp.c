@@ -3488,13 +3488,18 @@ build_charclass (RE_TRANSLATE_TYPE trans, bitset_t sbcset,
 
 #define BUILD_CHARCLASS_LOOP(ctype_func)	\
   do {						\
-    if (BE (trans != NULL, 0))				\
-      for (i = 0; i < SBC_MAX; ++i)		\
-  	if (ctype_func (i))			\
-	  bitset_set (sbcset, trans[i]);	\
+    if (BE (trans != NULL, 0))			\
+      {						\
+	for (i = 0; i < SBC_MAX; ++i)		\
+  	  if (ctype_func (i))			\
+	    bitset_set (sbcset, trans[i]);	\
+      }						\
     else					\
-  	if (ctype_func (i))			\
-	  bitset_set (sbcset, i);		\
+      {						\
+	for (i = 0; i < SBC_MAX; ++i)		\
+  	  if (ctype_func (i))			\
+	    bitset_set (sbcset, i);		\
+      }						\
   } while (0)
 
   if (strcmp (name, "alnum") == 0)
