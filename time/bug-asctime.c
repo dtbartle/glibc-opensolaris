@@ -19,6 +19,7 @@ do_test (void)
       result = 1;
     }
   char buf[1000];
+  errno = 0;
   s = asctime_r (tp, buf);
   if (s != NULL || errno != EOVERFLOW)
     {
