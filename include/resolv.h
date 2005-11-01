@@ -50,6 +50,7 @@ extern void __res_iclose(res_state statp, bool free_addr);
 libc_hidden_proto (__res_ninit)
 libc_hidden_proto (__res_maybe_init)
 libc_hidden_proto (__res_nclose)
+libc_hidden_proto (__res_iclose)
 libc_hidden_proto (__res_randomid)
 libc_hidden_proto (__res_state)
 
