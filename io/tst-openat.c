@@ -84,6 +84,12 @@ do_test (void)
   int fd = openat (dir_fd, "some-file", O_CREAT|O_RDWR|O_EXCL, 0666);
   if (fd == -1)
     {
+      if (errno == ENOSYS)
+	{
+	  puts ("*at functions not supported");
+	  return 0;
+	}
+
       puts ("file creation failed");
       return 1;
     }
