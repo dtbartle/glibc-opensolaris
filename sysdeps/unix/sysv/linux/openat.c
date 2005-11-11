@@ -29,6 +29,30 @@
 #ifndef OPENAT
 # define OPENAT openat
 # define MORE_OFLAGS 0
+
+
+void
+attribute_hidden
+__atfct_seterrno (int errval, int fd, const char *buf)
+{
+  if (buf != NULL && errval == ENOTDIR)
+    {
+      /* This can mean either the file descriptor is invalid or
+	 /proc is not mounted.  */
+      struct stat64 st;
+      if (__fxstat64 (_STAT_VER, fd, &st) != 0)
+	/* errno is already set correctly.  */
+	return;
+
+      /* If /proc is not mounted there is nothing we can do.  */
+      if (S_ISDIR (st.st_mode)
+	  && (__xstat64 (_STAT_VER, "/proc/self/fd", &st) != 0
+	      || !S_ISDIR (st.st_mode)))
+	errval = ENOSYS;
+    }
+
+  __set_errno (errval);
+}
 #endif
 
 /* Open FILE with access OFLAG.  Interpret relative paths relative to
@@ -42,7 +66,7 @@ OPENAT (fd, file, oflag)
 {
   char *buf = NULL;
 
-  if (file[0] != '/')
+  if (fd != AT_FDCWD && file[0] != '/')
     {
       size_t filelen = strlen (file);
       static const char procfd[] = "/proc/self/fd/%d/%s";
@@ -85,26 +109,9 @@ OPENAT (fd, file, oflag)
 
   if (__builtin_expect (INTERNAL_SYSCALL_ERROR_P (res, err), 0))
     {
-      int errval = INTERNAL_SYSCALL_ERRNO (res, err);
-      if (buf != NULL && errval == ENOTDIR)
-	{
-	  /* This can mean either the file desriptor is invalid or
-	     /proc is not mounted.  */
-	  struct stat64 st;
-	  if (__fxstat64 (_STAT_VER, fd, &st) != 0)
-	    /* errno is already set correctly.  */
-	    goto out;
-
-	  /* If /proc is not mounted there is nothing we can do.  */
-	  if (S_ISDIR (st.st_mode)
-	      && (__xstat64 (_STAT_VER, "/proc/self/fd", &st) != 0
-		  || !S_ISDIR (st.st_mode)))
-	    errval = ENOSYS;
-	}
-
-      __set_errno (errval);
+      __atfct_seterrno (INTERNAL_SYSCALL_ERRNO (res, err), fd, buf);
+      res = -1;
     }
 
- out:
   return res;
 }
