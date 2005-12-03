@@ -31,20 +31,20 @@
 __libc_lock_define_initialized (static, lock)
 
 static nis_result *result;
-static nis_name tablename_val;
-static size_t tablename_len;
+nis_name pwd_tablename_val attribute_hidden;
+size_t pwd_tablename_len attribute_hidden;
 
-static enum nss_status
-_nss_create_tablename (int *errnop)
+enum nss_status
+_nss_pwd_create_tablename (int *errnop)
 {
-  if (tablename_val == NULL)
+  if (pwd_tablename_val == NULL)
     {
       const char *local_dir = nis_local_directory ();
       size_t local_dir_len = strlen (local_dir);
       static const char prefix[] = "passwd.org_dir.";
 
       char *p = malloc (sizeof (prefix) + local_dir_len);
-      if (tablename_val == NULL)
+      if (pwd_tablename_val == NULL)
 	{
 	  *errnop = errno;
 	  return NSS_STATUS_TRYAGAIN;
@@ -52,11 +52,11 @@ _nss_create_tablename (int *errnop)
 
       memcpy (__stpcpy (p, prefix), local_dir, local_dir_len + 1);
 
-      tablename_len = sizeof (prefix) - 1 + local_dir_len;
+      pwd_tablename_len = sizeof (prefix) - 1 + local_dir_len;
 
       atomic_write_barrier ();
 
-      tablename_val = p;
+      pwd_tablename_val = p;
     }
 
   return NSS_STATUS_SUCCESS;
@@ -76,10 +76,10 @@ _nss_nisplus_setpwent (int stayopen)
       result = NULL;
     }
 
-  if (tablename_val == NULL)
+  if (pwd_tablename_val == NULL)
     {
       int err;
-      status = _nss_create_tablename (&err);
+      status = _nss_pwd_create_tablename (&err);
     }
 
   __libc_lock_unlock (lock);
@@ -117,22 +117,22 @@ internal_nisplus_getpwent_r (struct passwd *pw, char *buffer, size_t buflen,
       if (result == NULL)
 	{
 	  saved_res = NULL;
-          if (tablename_val == NULL)
+          if (pwd_tablename_val == NULL)
 	    {
-	      enum nss_status status = _nss_create_tablename (errnop);
+	      enum nss_status status = _nss_pwd_create_tablename (errnop);
 
 	      if (status != NSS_STATUS_SUCCESS)
 		return status;
 	    }
 
-	  result = nis_first_entry (tablename_val);
+	  result = nis_first_entry (pwd_tablename_val);
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    return niserr2nss (result->status);
 	}
       else
 	{
 	  saved_res = result;
-	  result = nis_next_entry (tablename_val, &result->cookie);
+	  result = nis_next_entry (pwd_tablename_val, &result->cookie);
 	  if (niserr2nss (result->status) != NSS_STATUS_SUCCESS)
 	    {
 	      nis_freeresult (saved_res);
@@ -179,11 +179,11 @@ _nss_nisplus_getpwnam_r (const char *name, struct passwd *pw,
 {
   int parse_res;
 
-  if (tablename_val == NULL)
+  if (pwd_tablename_val == NULL)
     {
       __libc_lock_lock (lock);
 
-      enum nss_status status = _nss_create_tablename (errnop);
+      enum nss_status status = _nss_pwd_create_tablename (errnop);
 
       __libc_lock_unlock (lock);
 
@@ -198,10 +198,10 @@ _nss_nisplus_getpwnam_r (const char *name, struct passwd *pw,
     }
 
   nis_result *result;
-  char buf[strlen (name) + 9 + tablename_len];
+  char buf[strlen (name) + 9 + pwd_tablename_len];
   int olderr = errno;
 
-  snprintf (buf, sizeof (buf), "[name=%s],%s", name, tablename_val);
+  snprintf (buf, sizeof (buf), "[name=%s],%s", name, pwd_tablename_val);
 
   result = nis_list (buf, FOLLOW_PATH | FOLLOW_LINKS, NULL, NULL);
 
@@ -246,11 +246,11 @@ enum nss_status
 _nss_nisplus_getpwuid_r (const uid_t uid, struct passwd *pw,
 			 char *buffer, size_t buflen, int *errnop)
 {
-  if (tablename_val == NULL)
+  if (pwd_tablename_val == NULL)
     {
       __libc_lock_lock (lock);
 
-      enum nss_status status = _nss_create_tablename (errnop);
+      enum nss_status status = _nss_pwd_create_tablename (errnop);
 
       __libc_lock_unlock (lock);
 
@@ -260,11 +260,11 @@ _nss_nisplus_getpwuid_r (const uid_t uid, struct passwd *pw,
 
   int parse_res;
   nis_result *result;
-  char buf[8 + 3 * sizeof (unsigned long int) + tablename_len];
+  char buf[8 + 3 * sizeof (unsigned long int) + pwd_tablename_len];
   int olderr = errno;
 
   snprintf (buf, sizeof (buf), "[uid=%lu],%s",
-	    (unsigned long int) uid, tablename_val);
+	    (unsigned long int) uid, pwd_tablename_val);
 
   result = nis_list (buf, FOLLOW_PATH | FOLLOW_LINKS, NULL, NULL);
 
