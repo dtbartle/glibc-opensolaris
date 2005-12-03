@@ -35,7 +35,7 @@ __libc_lock_define_initialized (static, lock);
 static nis_result *result;
 static unsigned long next_entry;
 static nis_name tablename_val;
-static u_long tablename_len;
+static size_t tablename_len;
 
 static enum nss_status
 _nss_create_tablename (int *errnop)
