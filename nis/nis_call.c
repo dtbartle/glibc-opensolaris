@@ -584,7 +584,6 @@ __do_niscall (const_nis_name name, u_long prog, xdrproc_t xargs,
 	  if (__nisbind_next (&bptr) != NIS_SUCCESS)
 	    {
 	      nis_free_directory (dir);
-	      __nisbind_destroy (&bptr);
 	      return NIS_NAMEUNREACHABLE;
 	    }
 	}
