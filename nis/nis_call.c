@@ -1,4 +1,4 @@
-/* Copyright (C) 1997, 1998, 2001, 2004 Free Software Foundation, Inc.
+/* Copyright (C) 1997, 1998, 2001, 2004, 2005 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -179,7 +179,6 @@ __nisbind_connect (dir_binding *dbp)
 	}
       else
 	dbp->clnt->cl_auth = authunix_create_default ();
-      dbp->use_auth = TRUE;
     }
 
   return NIS_SUCCESS;
