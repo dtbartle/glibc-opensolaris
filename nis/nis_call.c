@@ -214,10 +214,7 @@ __nisbind_create (dir_binding *dbp, const nis_server *serv_val,
 
   dbp->class = -1;
   if (__nis_findfastest (dbp) < 1)
-    {
-      __nisbind_destroy (dbp);
-      return NIS_NAMEUNREACHABLE;
-    }
+    return NIS_NAMEUNREACHABLE;
 
   return NIS_SUCCESS;
 }
