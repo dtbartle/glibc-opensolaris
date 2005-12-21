@@ -39,10 +39,12 @@
 
 /* XXX I know the assembler generates a warning about incorrect section
    attributes. But without the attribute here the compiler places the
-   constants in the .data section.  */
-static const volatile double TWO1023 __attribute__ ((section (".rodata.cst8")))
+   constants in the .data section.  Ideally the constant is placed in
+   .rodata.cst8 so that it can be merged, but gcc sucks, it ICEs when
+   we try to force this section on it.  --drepper  */
+static const volatile double TWO1023 __attribute__ ((section (".rodata")))
   = 8.988465674311579539e+307;
-static const volatile double TWOM1000 __attribute__ ((section(".rodata.cst8")))
+static const volatile double TWOM1000 __attribute__ ((section (".rodata")))
   = 9.3326361850321887899e-302;
 
 double
