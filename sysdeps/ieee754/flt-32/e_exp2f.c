@@ -38,9 +38,9 @@
 
 #include "t_exp2f.h"
 
-static const volatile float TWOM100 __attribute__ ((section (".rodata")))
+static const volatile float TWOM100 __attribute__ ((section (".rodata.cst4")))
   = 7.88860905e-31;
-static const volatile float TWO127 __attribute__ ((section (".rodata")))
+static const volatile float TWO127 __attribute__ ((section (".rodata.cst4")))
   = 1.7014118346e+38;
 
 float
