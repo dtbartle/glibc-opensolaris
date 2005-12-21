@@ -38,9 +38,14 @@
 
 #include "t_exp2f.h"
 
-static const volatile float TWOM100 __attribute__ ((section (".rodata.cst4")))
+/* XXX I know the assembler generates a warning about incorrect section
+   attributes. But without the attribute here the compiler places the
+   constants in the .data section.  Ideally the constant is placed in
+   .rodata.cst4 so that it can be merged, but gcc sucks, it ICEs when
+   we try to force this section on it.  --drepper  */
+static const volatile float TWOM100 __attribute__ ((section (".rodata")))
   = 7.88860905e-31;
-static const volatile float TWO127 __attribute__ ((section (".rodata.cst4")))
+static const volatile float TWO127 __attribute__ ((section (".rodata")))
   = 1.7014118346e+38;
 
 float
