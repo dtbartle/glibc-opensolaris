@@ -1,5 +1,5 @@
 /* Single-precision floating point e^x.
-   Copyright (C) 1997, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1997, 1998, 2005 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Geoffrey Keating <geoffk@ozemail.com.au>
 
@@ -60,8 +60,10 @@
 extern const float __exp_deltatable[178];
 extern const double __exp_atable[355] /* __attribute__((mode(DF))) */;
 
-static const volatile float TWOM100 = 7.88860905e-31;
-static const volatile float TWO127 = 1.7014118346e+38;
+static const volatile float TWOM100 __attribute__ ((section (".rodata")))
+  = 7.88860905e-31;
+static const volatile float TWO127 __attribute__ ((section (".rodata")))
+  = 1.7014118346e+38;
 
 float
 __ieee754_expf (float x)
