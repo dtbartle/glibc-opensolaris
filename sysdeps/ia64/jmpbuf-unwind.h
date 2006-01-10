@@ -1,4 +1,4 @@
-/* Copyright (C) 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2003, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Jakub Jelinek <jakub@redhat.com>, 2003.
 
@@ -20,28 +20,20 @@
 #include <setjmp.h>
 #include <stdint.h>
 #include <unwind.h>
-#include <sysdep.h>
-
-/* Test if longjmp to JMPBUF would unwind the frame
-   containing a local variable at ADDRESS.  */
-#define _JMPBUF_UNWINDS(jmpbuf, address, demangle) \
-  ((void *) (address) < (void *) demangle ((jmpbuf)[JB_SP]))
 
 #define _JMPBUF_CFA_UNWINDS_ADJ(_jmpbuf, _context, _adj) \
-  _JMPBUF_UNWINDS_ADJ (_jmpbuf, (void *) _Unwind_GetCFA (_context), _adj)
-
-static inline uintptr_t __attribute__ ((unused))
-_jmpbuf_sp (__jmp_buf regs)
-{
-  uintptr_t sp = regs[JB_SP];
-#ifdef PTR_DEMANGLE
-  PTR_DEMANGLE (sp);
-#endif
-  return sp;
-}
+  ({ uintptr_t _cfa = (uintptr_t) _Unwind_GetCFA (_context) - (_adj);	\
+     (_cfa < (uintptr_t)(((long *)(_jmpbuf))[0]) - (_adj)		\
+      || (_cfa == (uintptr_t)(((long *)(_jmpbuf))[0]) - (_adj)		\
+	  && (uintptr_t) _Unwind_GetBSP (_context) - (_adj)		\
+	     >= (uintptr_t)(((long *)(_jmpbuf))[17]) - (_adj)));	\
+  })
 
 #define _JMPBUF_UNWINDS_ADJ(_jmpbuf, _address, _adj) \
-  ((uintptr_t) (_address) - (_adj) < _jmpbuf_sp (_jmpbuf) - (_adj))
+  ((uintptr_t)(_address) - (_adj) < (uintptr_t)(((long *)_jmpbuf)[0]) - (_adj))
 
-/* We use the normal longjmp for unwinding.  */
-#define __libc_unwind_longjmp(buf, val) __libc_longjmp (buf, val)
+/* We use a longjmp() which can cross from the alternate signal-stack
+   to the normal stack.  */
+extern void __libc_unwind_longjmp (sigjmp_buf env, int val)
+          __attribute__ ((noreturn));
+hidden_proto (__libc_unwind_longjmp)
