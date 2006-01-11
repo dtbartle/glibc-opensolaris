@@ -832,7 +832,7 @@ $(objpfx)check-localplt.out: $(objpfx)check-localplt $(common-objpfx)libc.so \
 			     $(common-objpfx)math/libm.so $(check-data)
 	$(objpfx)check-localplt $(common-objpfx)libc.so \
 				$(common-objpfx)math/libm.so | LC_ALL=C sort |\
-	  diff -u $(check-data) -
+	  diff -u $(check-data) - > $@
 endif
 endif
 
