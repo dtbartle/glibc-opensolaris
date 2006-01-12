@@ -106,11 +106,6 @@ _IO_mem_sync (fp)
      _IO_FILE* fp;
 {
   struct _IO_FILE_memstream *mp = (struct _IO_FILE_memstream *) fp;
-  int res;
-
-  res = _IO_default_sync (fp);
-  if (res < 0)
-    return res;
 
   if (fp->_IO_write_ptr == fp->_IO_write_end)
     {
