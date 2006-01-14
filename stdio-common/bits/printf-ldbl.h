@@ -1,5 +1,5 @@
-/* Copyright (C) 1991, 1995, 1997, 1998, 2004, 2006
-   Free Software Foundation, Inc.
+/* -mlong-double-64 compatibility mode for <printf.h> functions.
+   Copyright (C) 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,24 +17,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <libioP.h>
-#define __vsnprintf(s, l, f, a) _IO_vsnprintf (s, l, f, a)
+#ifndef _PRINTF_H
+# error "Never include <bits/printf-ldbl.h> directly; use <printf.h> instead."
+#endif
 
-/* Write formatted output into S, according to the format
-   string FORMAT, writing no more than MAXLEN characters.  */
-/* VARARGS3 */
-int
-__snprintf (char *s, size_t maxlen, const char *format, ...)
-{
-  va_list arg;
-  int done;
-
-  va_start (arg, format);
-  done = __vsnprintf (s, maxlen, format, arg);
-  va_end (arg);
-
-  return done;
-}
-ldbl_weak_alias (__snprintf, snprintf)
+__LDBL_REDIR_DECL (printf_size)
