@@ -1,9 +1,7 @@
-/* Software floating-point emulation.
-   Return sqrtl(a)
-   Copyright (C) 1997, 1999, 2006 Free Software Foundation, Inc.
+/* Float absolute value, sparc32 version.
+   Copyright (C) 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Richard Henderson (rth@cygnus.com) and
-		  Jakub Jelinek (jj@ultra.linux.cz).
+   Contributed by Jakub Jelinek <jakub@redhat.com>, 2006.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -20,20 +18,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include "soft-fp.h"
-#include "quad.h"
+#include <sysdep.h>
 
-long double _Q_sqrt(const long double a)
-{
-  FP_DECL_EX;
-  FP_DECL_Q(A); FP_DECL_Q(C);
-  long double c;
-
-  FP_INIT_ROUNDMODE;
-  FP_UNPACK_Q(A, a);
-  FP_SQRT_Q(C, A);
-  FP_PACK_Q(c, C);
-  FP_HANDLE_EXCEPTIONS;
-  return c;
-}
-strong_alias (_Q_sqrt, __ieee754_sqrtl);
+ENTRY (__fabsf)
+	st	%o0, [%sp+64]
+	ld	[%sp+64], %f0
+	retl
+	 fabss	%f0, %f0
+END (__fabsf)
+weak_alias (__fabsf, fabsf)

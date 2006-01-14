@@ -1,6 +1,6 @@
 /* Software floating-point emulation.
-   Return (long double)a
-   Copyright (C) 1997,1999 Free Software Foundation, Inc.
+   Return (long double)(a)
+   Copyright (C) 1997, 1999, 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Richard Henderson (rth@cygnus.com) and
 		  Jakub Jelinek (jj@ultra.linux.cz).
@@ -23,12 +23,12 @@
 #include "soft-fp.h"
 #include "quad.h"
 
-long double _Q_xtoq(const long long a)
+long double _Q_ulltoq(const unsigned long long a)
 {
   FP_DECL_EX;
   FP_DECL_Q(C);
   long double c;
-  long long b = a;
+  unsigned long long b = a;
 
   FP_FROM_INT_Q(C, b, 64, long long);
   FP_PACK_Q(c, C);
