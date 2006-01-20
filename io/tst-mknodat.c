@@ -90,7 +90,7 @@ do_test (void)
 	  return 0;
 	}
 
-      puts ("char dev creation failed");
+      puts ("socket creation failed");
       return 1;
     }
 
