@@ -175,7 +175,7 @@ do_test (void)
 
   if (fstatat64 (-1, "some-file", &st1, 0) != -1)
     {
-      puts ("fstatatat using invalud descriptor worked");
+      puts ("fstatatat using invalid descriptor worked");
       return 1;
     }
   if (errno != EBADF)
