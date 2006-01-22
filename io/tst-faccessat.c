@@ -156,7 +156,7 @@ error for faccessat using descriptor for normal file not ENOTDIR ");
     }
 
   /* Create a file descriptor which is closed again right away.  */
-  int dir_fd2 = dup (fd);
+  int dir_fd2 = dup (dir_fd);
   if (dir_fd2 == -1)
     {
       puts ("dup failed");
