@@ -162,7 +162,7 @@ do_test (void)
 
   if (fstatat64 (dir_fd2, "some-file", &st1, 0) != -1)
     {
-      puts ("fstatatat using closed descriptor worked");
+      puts ("fstatat64 using closed descriptor worked");
       return 1;
     }
   if (errno != EBADF)
@@ -175,7 +175,7 @@ do_test (void)
 
   if (fstatat64 (-1, "some-file", &st1, 0) != -1)
     {
-      puts ("fstatatat using invalid descriptor worked");
+      puts ("fstatat64 using invalid descriptor worked");
       return 1;
     }
   if (errno != EBADF)
