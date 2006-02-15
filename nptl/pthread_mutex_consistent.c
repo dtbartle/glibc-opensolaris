@@ -1,4 +1,4 @@
-/* Copyright (C) 2005 Free Software Foundation, Inc.
+/* Copyright (C) 2005, 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2005.
 
@@ -27,10 +27,10 @@ pthread_mutex_consistent_np (mutex)
 {
   /* Test whether this is a robust mutex with a dead owner.  */
   if ((mutex->__data.__kind & PTHREAD_MUTEX_ROBUST_PRIVATE_NP) == 0
-      || mutex->__data.__owner != -THREAD_GETMEM (THREAD_SELF, tid))
+      || mutex->__data.__owner != PTHREAD_MUTEX_INCONSISTENT)
     return EINVAL;
 
-  mutex->__data.__owner = -mutex->__data.__owner;
+  mutex->__data.__owner = THREAD_GETMEM (THREAD_SELF, tid);
 
   return 0;
 }
