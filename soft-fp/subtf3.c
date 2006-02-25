@@ -23,11 +23,11 @@
 #include "soft-fp.h"
 #include "quad.h"
 
-long double __subtf3(long double a, long double b)
+TFtype __subtf3(TFtype a, TFtype b)
 {
   FP_DECL_EX;
   FP_DECL_Q(A); FP_DECL_Q(B); FP_DECL_Q(R);
-  long double r;
+  TFtype r;
 
   FP_INIT_ROUNDMODE;
   FP_UNPACK_SEMIRAW_Q(A, a);

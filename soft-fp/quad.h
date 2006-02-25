@@ -51,11 +51,13 @@
 #define _FP_OVERFLOW_Q		\
 	((_FP_W_TYPE)1 << (_FP_WFRACBITS_Q % _FP_W_TYPE_SIZE))
 
+typedef float TFtype __attribute__((mode(TF)));
+
 #if _FP_W_TYPE_SIZE < 64
 
 union _FP_UNION_Q
 {
-   long double flt;
+   TFtype flt;
    struct 
    {
 #if __BYTE_ORDER == __BIG_ENDIAN
@@ -159,7 +161,7 @@ union _FP_UNION_Q
 #else   /* not _FP_W_TYPE_SIZE < 64 */
 union _FP_UNION_Q
 {
-  long double flt /* __attribute__((mode(TF))) */ ;
+  TFtype flt /* __attribute__((mode(TF))) */ ;
   struct {
     _FP_W_TYPE a, b;
   } longs;

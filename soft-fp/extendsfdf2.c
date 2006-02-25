@@ -24,12 +24,12 @@
 #include "single.h"
 #include "double.h"
 
-double __extendsfdf2(float a)
+DFtype __extendsfdf2(SFtype a)
 {
   FP_DECL_EX;
   FP_DECL_S(A);
   FP_DECL_D(R);
-  double r;
+  DFtype r;
 
   FP_INIT_ROUNDMODE;
   FP_UNPACK_RAW_S(A, a);

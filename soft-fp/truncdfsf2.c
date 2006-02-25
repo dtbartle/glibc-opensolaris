@@ -24,12 +24,12 @@
 #include "single.h"
 #include "double.h"
 
-float __truncdfsf2(double a)
+SFtype __truncdfsf2(DFtype a)
 {
   FP_DECL_EX;
   FP_DECL_D(A);
   FP_DECL_S(R);
-  float r;
+  SFtype r;
 
   FP_INIT_ROUNDMODE;
   FP_UNPACK_SEMIRAW_D(A, a);

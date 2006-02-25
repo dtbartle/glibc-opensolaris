@@ -23,14 +23,14 @@
 #include "soft-fp.h"
 #include "single.h"
 
-UDItype __fixunssfdi(float a)
+UDItype __fixunssfdi(SFtype a)
 {
   FP_DECL_EX;
   FP_DECL_S(A);
   UDItype r;
 
   FP_UNPACK_RAW_S(A, a);
-  FP_TO_INT_S(r, A, 64, 0);
+  FP_TO_INT_S(r, A, DI_BITS, 0);
   FP_HANDLE_EXCEPTIONS;
 
   return r;

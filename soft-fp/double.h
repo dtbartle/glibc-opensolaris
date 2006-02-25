@@ -51,11 +51,13 @@
 #define _FP_OVERFLOW_D		\
 	((_FP_W_TYPE)1 << _FP_WFRACBITS_D % _FP_W_TYPE_SIZE)
 
+typedef float DFtype __attribute__((mode(DF)));
+
 #if _FP_W_TYPE_SIZE < 64
 
 union _FP_UNION_D
 {
-  double flt;
+  DFtype flt;
   struct {
 #if __BYTE_ORDER == __BIG_ENDIAN
     unsigned sign  : 1;
@@ -154,7 +156,7 @@ union _FP_UNION_D
 
 union _FP_UNION_D
 {
-  double flt;
+  DFtype flt;
   struct {
 #if __BYTE_ORDER == __BIG_ENDIAN
     unsigned sign : 1;

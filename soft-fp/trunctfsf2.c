@@ -24,12 +24,12 @@
 #include "single.h"
 #include "quad.h"
 
-float __trunctfsf2(long double a)
+SFtype __trunctfsf2(TFtype a)
 {
   FP_DECL_EX;
   FP_DECL_Q(A);
   FP_DECL_S(R);
-  float r;
+  SFtype r;
 
   FP_INIT_ROUNDMODE;
   FP_UNPACK_SEMIRAW_Q(A, a);

@@ -30,7 +30,7 @@ long double _q_itoq(const int a)
   int b = a;
   long double c;
 
-  FP_FROM_INT_Q(C, b, 32, int);
+  FP_FROM_INT_Q(C, b, 32, unsigned int);
   FP_PACK_RAW_Q(c, C);
   FP_CLEAR_EXCEPTIONS;
   FP_HANDLE_EXCEPTIONS;

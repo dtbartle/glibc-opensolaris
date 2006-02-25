@@ -23,13 +23,13 @@
 #include "soft-fp.h"
 #include "quad.h"
 
-long double __floatditf(DItype i)
+TFtype __floatditf(DItype i)
 {
   FP_DECL_EX;
   FP_DECL_Q(A);
-  long double a;
+  TFtype a;
 
-  FP_FROM_INT_Q(A, i, 64, long long);
+  FP_FROM_INT_Q(A, i, DI_BITS, UDItype);
   FP_PACK_RAW_Q(a, A);
   FP_HANDLE_EXCEPTIONS;
 

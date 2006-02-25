@@ -23,14 +23,14 @@
 #include "soft-fp.h"
 #include "double.h"
 
-USItype __fixunsdfsi(double a)
+USItype __fixunsdfsi(DFtype a)
 {
   FP_DECL_EX;
   FP_DECL_D(A);
   USItype r;
 
   FP_UNPACK_RAW_D(A, a);
-  FP_TO_INT_D(r, A, 32, 0);
+  FP_TO_INT_D(r, A, SI_BITS, 0);
   FP_HANDLE_EXCEPTIONS;
 
   return r;

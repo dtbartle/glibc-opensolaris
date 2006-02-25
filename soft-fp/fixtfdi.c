@@ -23,14 +23,14 @@
 #include "soft-fp.h"
 #include "quad.h"
 
-DItype __fixtfdi(long double a)
+DItype __fixtfdi(TFtype a)
 {
   FP_DECL_EX;
   FP_DECL_Q(A);
   UDItype r;
 
   FP_UNPACK_RAW_Q(A, a);
-  FP_TO_INT_Q(r, A, 64, 1);
+  FP_TO_INT_Q(r, A, DI_BITS, 1);
   FP_HANDLE_EXCEPTIONS;
 
   return r;

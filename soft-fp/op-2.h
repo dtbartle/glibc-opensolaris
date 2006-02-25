@@ -29,79 +29,74 @@
 #define _FP_FRAC_LOW_2(X)	(X##_f0)
 #define _FP_FRAC_WORD_2(X,w)	(X##_f##w)
 
-#define _FP_FRAC_SLL_2(X,N)						\
-  do {									\
-    if ((N) < _FP_W_TYPE_SIZE)						\
-      {									\
-	if (__builtin_constant_p(N) && (N) == 1) 			\
-	  {								\
-	    X##_f1 = X##_f1 + X##_f1 + (((_FP_WS_TYPE)(X##_f0)) < 0);	\
-	    X##_f0 += X##_f0;						\
-	  }								\
-	else								\
-	  {								\
-	    X##_f1 = X##_f1 << (N) | X##_f0 >> (_FP_W_TYPE_SIZE - (N));	\
-	    X##_f0 <<= (N);						\
-	  }								\
-      }									\
-    else								\
-      {									\
-	X##_f1 = X##_f0 << ((N) - _FP_W_TYPE_SIZE);			\
-	X##_f0 = 0;							\
-      }									\
-  } while (0)
+#define _FP_FRAC_SLL_2(X,N)						    \
+(void)(((N) < _FP_W_TYPE_SIZE)						    \
+       ? ({								    \
+	    if (__builtin_constant_p(N) && (N) == 1)			    \
+	      {								    \
+		X##_f1 = X##_f1 + X##_f1 + (((_FP_WS_TYPE)(X##_f0)) < 0);   \
+		X##_f0 += X##_f0;					    \
+	      }								    \
+	    else							    \
+	      {								    \
+		X##_f1 = X##_f1 << (N) | X##_f0 >> (_FP_W_TYPE_SIZE - (N)); \
+		X##_f0 <<= (N);						    \
+	      }								    \
+	    0;								    \
+	  })								    \
+       : ({								    \
+	    X##_f1 = X##_f0 << ((N) - _FP_W_TYPE_SIZE);			    \
+	    X##_f0 = 0;							    \
+	  }))
+
 
 #define _FP_FRAC_SRL_2(X,N)						\
-  do {									\
-    if ((N) < _FP_W_TYPE_SIZE)						\
-      {									\
-	X##_f0 = X##_f0 >> (N) | X##_f1 << (_FP_W_TYPE_SIZE - (N));	\
-	X##_f1 >>= (N);							\
-      }									\
-    else								\
-      {									\
-	X##_f0 = X##_f1 >> ((N) - _FP_W_TYPE_SIZE);			\
-	X##_f1 = 0;							\
-      }									\
-  } while (0)
+(void)(((N) < _FP_W_TYPE_SIZE)						\
+       ? ({								\
+	    X##_f0 = X##_f0 >> (N) | X##_f1 << (_FP_W_TYPE_SIZE - (N));	\
+	    X##_f1 >>= (N);						\
+	  })								\
+       : ({								\
+	    X##_f0 = X##_f1 >> ((N) - _FP_W_TYPE_SIZE);			\
+	    X##_f1 = 0;							\
+	  }))
 
 /* Right shift with sticky-lsb.  */
-#define _FP_FRAC_SRST_2(X,S, N,sz)					\
-  do {									\
-    if ((N) < _FP_W_TYPE_SIZE)						\
-      {									\
-	S = (__builtin_constant_p(N) && (N) == 1			\
-	     ? X##_f0 & 1						\
-	     : (X##_f0 << (_FP_W_TYPE_SIZE - (N))) != 0);		\
-	X##_f0 = (X##_f1 << (_FP_W_TYPE_SIZE - (N)) | X##_f0 >> (N));	\
-	X##_f1 >>= (N);							\
-      }									\
-    else								\
-      {									\
-	S = (((X##_f1 << (2*_FP_W_TYPE_SIZE - (N))) | X##_f0) != 0);	\
-	X##_f0 = (X##_f1 >> ((N) - _FP_W_TYPE_SIZE));			\
-	X##_f1 = 0;							\
-      }									\
-  } while (0)
+#define _FP_FRAC_SRST_2(X,S, N,sz)					  \
+(void)(((N) < _FP_W_TYPE_SIZE)						  \
+       ? ({								  \
+	    S = (__builtin_constant_p(N) && (N) == 1			  \
+		 ? X##_f0 & 1						  \
+		 : (X##_f0 << (_FP_W_TYPE_SIZE - (N))) != 0);		  \
+	    X##_f0 = (X##_f1 << (_FP_W_TYPE_SIZE - (N)) | X##_f0 >> (N)); \
+	    X##_f1 >>= (N);						  \
+	  })								  \
+       : ({								  \
+	    S = ((((N) == _FP_W_TYPE_SIZE				  \
+		   ? 0							  \
+		   : (X##_f1 << (2*_FP_W_TYPE_SIZE - (N))))		  \
+		  | X##_f0) != 0);					  \
+	    X##_f0 = (X##_f1 >> ((N) - _FP_W_TYPE_SIZE));		  \
+	    X##_f1 = 0;							  \
+	  }))
 
-#define _FP_FRAC_SRS_2(X,N,sz)						\
-  do {									\
-    if ((N) < _FP_W_TYPE_SIZE)						\
-      {									\
-	X##_f0 = (X##_f1 << (_FP_W_TYPE_SIZE - (N)) | X##_f0 >> (N) |	\
-		  (__builtin_constant_p(N) && (N) == 1			\
-		   ? X##_f0 & 1						\
-		   : (X##_f0 << (_FP_W_TYPE_SIZE - (N))) != 0));	\
-	X##_f1 >>= (N);							\
-      }									\
-    else								\
-      {									\
-	X##_f0 = (X##_f1 >> ((N) - _FP_W_TYPE_SIZE) |			\
-		  (((X##_f1 << (2*_FP_W_TYPE_SIZE - (N))) |		\
-		    X##_f0) != 0));					\
-	X##_f1 = 0;							\
-      }									\
-  } while (0)
+#define _FP_FRAC_SRS_2(X,N,sz)						  \
+(void)(((N) < _FP_W_TYPE_SIZE)						  \
+       ? ({								  \
+	    X##_f0 = (X##_f1 << (_FP_W_TYPE_SIZE - (N)) | X##_f0 >> (N) | \
+		      (__builtin_constant_p(N) && (N) == 1		  \
+		       ? X##_f0 & 1					  \
+		       : (X##_f0 << (_FP_W_TYPE_SIZE - (N))) != 0));	  \
+	    X##_f1 >>= (N);						  \
+	  })								  \
+       : ({								  \
+	    X##_f0 = (X##_f1 >> ((N) - _FP_W_TYPE_SIZE) |		  \
+		      ((((N) == _FP_W_TYPE_SIZE				  \
+			 ? 0						  \
+			 : (X##_f1 << (2*_FP_W_TYPE_SIZE - (N))))	  \
+			| X##_f0) != 0));				  \
+	    X##_f1 = 0;							  \
+	  }))
 
 #define _FP_FRAC_ADDI_2(X,I)	\
   __FP_FRAC_ADDI_2(X##_f1, X##_f0, I)
@@ -133,9 +128,9 @@
 #define _FP_FRAC_CLEAR_OVERP_2(fs,X)	(_FP_FRAC_HIGH_##fs(X) &= ~_FP_OVERFLOW_##fs)
 #define _FP_FRAC_EQ_2(X, Y)	(X##_f1 == Y##_f1 && X##_f0 == Y##_f0)
 #define _FP_FRAC_GT_2(X, Y)	\
-  (X##_f1 > Y##_f1 || X##_f1 == Y##_f1 && X##_f0 > Y##_f0)
+  (X##_f1 > Y##_f1 || (X##_f1 == Y##_f1 && X##_f0 > Y##_f0))
 #define _FP_FRAC_GE_2(X, Y)	\
-  (X##_f1 > Y##_f1 || X##_f1 == Y##_f1 && X##_f0 >= Y##_f0)
+  (X##_f1 > Y##_f1 || (X##_f1 == Y##_f1 && X##_f0 >= Y##_f0))
 
 #define _FP_ZEROFRAC_2		0, 0
 #define _FP_MINFRAC_2		0, 1
@@ -588,16 +583,13 @@
  */
 
 #define _FP_FRAC_ASSEMBLE_2(r, X, rsize)	\
-  do {						\
-    if (rsize <= _FP_W_TYPE_SIZE)		\
-      r = X##_f0;				\
-    else					\
-      {						\
-	r = X##_f1;				\
-	r <<= _FP_W_TYPE_SIZE;			\
-	r += X##_f0;				\
-      }						\
-  } while (0)
+(void)((rsize <= _FP_W_TYPE_SIZE)		\
+       ? ({ r = X##_f0; })			\
+       : ({					\
+	    r = X##_f1;				\
+	    r <<= _FP_W_TYPE_SIZE;		\
+	    r += X##_f0;			\
+	  }))
 
 #define _FP_FRAC_DISASSEMBLE_2(X, r, rsize)				\
   do {									\

@@ -87,13 +87,12 @@
     _up = _FP_W_TYPE_SIZE - _down;			\
     for (_s = _i = 0; _i < _skip; ++_i)			\
       _s |= X##_f[_i];					\
-    _s |= X##_f[_i] << _up;				\
-/* s is now != 0 if we want to set the LSbit */		\
     if (!_down)						\
       for (_i = 0; _i <= 3-_skip; ++_i)			\
 	X##_f[_i] = X##_f[_i+_skip];			\
     else						\
       {							\
+	_s |= X##_f[_i] << _up;				\
 	for (_i = 0; _i < 3-_skip; ++_i)		\
 	  X##_f[_i] = X##_f[_i+_skip] >> _down		\
 		      | X##_f[_i+_skip+1] << _up;	\
@@ -518,7 +517,7 @@
 #ifndef __FP_FRAC_ADD_3
 #define __FP_FRAC_ADD_3(r2,r1,r0,x2,x1,x0,y2,y1,y0)		\
   do {								\
-    int _c1, _c2;							\
+    _FP_W_TYPE _c1, _c2;					\
     r0 = x0 + y0;						\
     _c1 = r0 < x0;						\
     r1 = x1 + y1;						\
@@ -532,7 +531,7 @@
 #ifndef __FP_FRAC_ADD_4
 #define __FP_FRAC_ADD_4(r3,r2,r1,r0,x3,x2,x1,x0,y3,y2,y1,y0)	\
   do {								\
-    int _c1, _c2, _c3;						\
+    _FP_W_TYPE _c1, _c2, _c3;					\
     r0 = x0 + y0;						\
     _c1 = r0 < x0;						\
     r1 = x1 + y1;						\
@@ -550,7 +549,7 @@
 #ifndef __FP_FRAC_SUB_3
 #define __FP_FRAC_SUB_3(r2,r1,r0,x2,x1,x0,y2,y1,y0)		\
   do {								\
-    int _c1, _c2;							\
+    _FP_W_TYPE _c1, _c2;					\
     r0 = x0 - y0;						\
     _c1 = r0 > x0;						\
     r1 = x1 - y1;						\
@@ -564,7 +563,7 @@
 #ifndef __FP_FRAC_SUB_4
 #define __FP_FRAC_SUB_4(r3,r2,r1,r0,x3,x2,x1,x0,y3,y2,y1,y0)	\
   do {								\
-    int _c1, _c2, _c3;						\
+    _FP_W_TYPE _c1, _c2, _c3;					\
     r0 = x0 - y0;						\
     _c1 = r0 > x0;						\
     r1 = x1 - y1;						\

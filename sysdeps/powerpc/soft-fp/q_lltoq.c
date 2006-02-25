@@ -30,7 +30,7 @@ long double _q_lltoq(const long long a)
   long double c;
   long long b = a;
 
-  FP_FROM_INT_Q(C, b, 64, long long);
+  FP_FROM_INT_Q(C, b, 64, unsigned long long);
   FP_PACK_RAW_Q(c, C);
   FP_CLEAR_EXCEPTIONS;
   FP_HANDLE_EXCEPTIONS;

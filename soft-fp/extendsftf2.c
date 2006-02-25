@@ -24,12 +24,12 @@
 #include "single.h"
 #include "quad.h"
 
-long double __extendsftf2(float a)
+TFtype __extendsftf2(SFtype a)
 {
   FP_DECL_EX;
   FP_DECL_S(A);
   FP_DECL_Q(R);
-  long double r;
+  TFtype r;
 
   FP_INIT_ROUNDMODE;
   FP_UNPACK_RAW_S(A, a);

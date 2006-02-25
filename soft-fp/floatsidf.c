@@ -23,13 +23,13 @@
 #include "soft-fp.h"
 #include "double.h"
 
-double __floatsidf(SItype i)
+DFtype __floatsidf(SItype i)
 {
   FP_DECL_EX;
   FP_DECL_D(A);
-  double a;
+  DFtype a;
 
-  FP_FROM_INT_D(A, i, 32, int);
+  FP_FROM_INT_D(A, i, SI_BITS, USItype);
   FP_PACK_RAW_D(a, A);
   FP_HANDLE_EXCEPTIONS;
 

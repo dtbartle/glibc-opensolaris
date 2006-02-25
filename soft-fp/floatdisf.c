@@ -23,13 +23,13 @@
 #include "soft-fp.h"
 #include "single.h"
 
-float __floatdisf(DItype i)
+SFtype __floatdisf(DItype i)
 {
   FP_DECL_EX;
   FP_DECL_S(A);
-  float a;
+  SFtype a;
 
-  FP_FROM_INT_S(A, i, 64, long long);
+  FP_FROM_INT_S(A, i, DI_BITS, UDItype);
   FP_PACK_RAW_S(a, A);
   FP_HANDLE_EXCEPTIONS;
 

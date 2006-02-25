@@ -48,11 +48,13 @@
 #define _FP_OVERFLOW_E		\
 	((_FP_W_TYPE)1 << (_FP_WFRACBITS_E % _FP_W_TYPE_SIZE))
 
+typedef float XFtype __attribute__((mode(XF)));
+
 #if _FP_W_TYPE_SIZE < 64
 
 union _FP_UNION_E
 {
-   long double flt;
+   XFtype flt;
    struct 
    {
 #if __BYTE_ORDER == __BIG_ENDIAN
@@ -263,7 +265,7 @@ union _FP_UNION_E
 #else   /* not _FP_W_TYPE_SIZE < 64 */
 union _FP_UNION_E
 {
-  long double flt /* __attribute__((mode(TF))) */ ;
+  XFtype flt;
   struct {
 #if __BYTE_ORDER == __BIG_ENDIAN
     unsigned long pad : (_FP_W_TYPE_SIZE - 1 - _FP_EXPBITS_E);

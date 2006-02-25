@@ -23,11 +23,11 @@
 #include "soft-fp.h"
 #include "double.h"
 
-double __adddf3(double a, double b)
+DFtype __adddf3(DFtype a, DFtype b)
 {
   FP_DECL_EX;
   FP_DECL_D(A); FP_DECL_D(B); FP_DECL_D(R);
-  double r;
+  DFtype r;
 
   FP_INIT_ROUNDMODE;
   FP_UNPACK_SEMIRAW_D(A, a);

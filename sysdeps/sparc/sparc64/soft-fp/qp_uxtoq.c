@@ -29,7 +29,7 @@ void _Qp_uxtoq(long double *c, const unsigned long a)
   FP_DECL_Q(C);
   unsigned long b = a;
 
-  FP_FROM_INT_Q(C, b, 64, long);
+  FP_FROM_INT_Q(C, b, 64, unsigned long);
   FP_PACK_RAW_QP(c, C);
   QP_NO_EXCEPTIONS;
 }

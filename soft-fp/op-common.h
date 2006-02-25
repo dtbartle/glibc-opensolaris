@@ -21,8 +21,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#define _FP_DECL(wc, X)			\
-  _FP_I_TYPE X##_c, X##_s, X##_e;	\
+#define _FP_DECL(wc, X)						\
+  _FP_I_TYPE X##_c __attribute__((unused)), X##_s, X##_e;	\
   _FP_FRAC_DECL_##wc(X)
 
 /*
@@ -898,20 +898,20 @@ do {							\
 
 /* Simplification for strict equality.  */
 
-#define _FP_CMP_EQ(fs, wc, ret, X, Y)					  \
-  do {									  \
-    /* NANs are unordered */						  \
-    if ((X##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc(X))		  \
-	|| (Y##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc(Y)))	  \
-      {									  \
-	ret = 1;							  \
-      }									  \
-    else								  \
-      {									  \
-	ret = !(X##_e == Y##_e						  \
-		&& _FP_FRAC_EQ_##wc(X, Y)				  \
-		&& (X##_s == Y##_s || !X##_e && _FP_FRAC_ZEROP_##wc(X))); \
-      }									  \
+#define _FP_CMP_EQ(fs, wc, ret, X, Y)					    \
+  do {									    \
+    /* NANs are unordered */						    \
+    if ((X##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc(X))		    \
+	|| (Y##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc(Y)))	    \
+      {									    \
+	ret = 1;							    \
+      }									    \
+    else								    \
+      {									    \
+	ret = !(X##_e == Y##_e						    \
+		&& _FP_FRAC_EQ_##wc(X, Y)				    \
+		&& (X##_s == Y##_s || (!X##_e && _FP_FRAC_ZEROP_##wc(X)))); \
+      }									    \
   } while (0)
 
 /* Version to test unordered.  */
@@ -1027,9 +1027,11 @@ do {									\
 	  /* Possibly converting to most negative integer; check the	\
 	     mantissa.  */						\
 	  int inexact = 0;						\
-	  if (_FP_FRACBITS_##fs > rsize)				\
-	    _FP_FRAC_SRST_##wc(X, inexact, _FP_FRACBITS_##fs - rsize,	\
-			       _FP_FRACBITS_##fs);			\
+	  (void)((_FP_FRACBITS_##fs > rsize)				\
+		 ? ({ _FP_FRAC_SRST_##wc(X, inexact,			\
+					 _FP_FRACBITS_##fs - rsize,	\
+					 _FP_FRACBITS_##fs); 0; })	\
+		 : 0);							\
 	  if (!_FP_FRAC_ZEROP_##wc(X))					\
 	    FP_SET_EXCEPTION(FP_EX_INVALID);				\
 	  else if (inexact)						\
@@ -1062,76 +1064,76 @@ do {									\
     }									\
 } while (0)
 
-/* Convert integer to fp.  Output is raw.  RTYPE is signed even if
-   input is unsigned.  */
-#define _FP_FROM_INT(fs, wc, X, r, rsize, rtype)			 \
-  do {									 \
-    if (r)								 \
-      {									 \
-	unsigned rtype ur_;						 \
-									 \
-	if ((X##_s = (r < 0)))						 \
-	  r = -(unsigned rtype)r;					 \
-									 \
-	ur_ = (unsigned rtype) r;					 \
-	if (rsize <= _FP_W_TYPE_SIZE)					 \
-	  {								 \
-	    int lz_;							 \
-	    __FP_CLZ(lz_, (_FP_W_TYPE)ur_);				 \
-	    X##_e = _FP_EXPBIAS_##fs + _FP_W_TYPE_SIZE - 1 - lz_;	 \
-	  }								 \
-	else if (rsize <= 2 * _FP_W_TYPE_SIZE)				 \
-	  {								 \
-	    int lz_;							 \
-	    __FP_CLZ_2(lz_, (_FP_W_TYPE)(ur_ >> _FP_W_TYPE_SIZE),	 \
-		       (_FP_W_TYPE)ur_);				 \
-	    X##_e = _FP_EXPBIAS_##fs + 2 * _FP_W_TYPE_SIZE - 1 - lz_;	 \
-	  }								 \
-	else								 \
-	  abort();							 \
-									 \
-	if (rsize - 1 + _FP_EXPBIAS_##fs >= _FP_EXPMAX_##fs		 \
-	    && X##_e >= _FP_EXPMAX_##fs)				 \
-	  {								 \
-	    /* Exponent too big; overflow to infinity.  (May also	 \
-	       happen after rounding below.)  */			 \
-	    _FP_OVERFLOW_SEMIRAW(fs, wc, X);				 \
-	    goto pack_semiraw;						 \
-	  }								 \
-									 \
-	if (rsize <= _FP_FRACBITS_##fs					 \
-	    || X##_e < _FP_EXPBIAS_##fs + _FP_FRACBITS_##fs)		 \
-	  {								 \
-	    /* Exactly representable; shift left.  */			 \
-	    _FP_FRAC_DISASSEMBLE_##wc(X, ur_, rsize);			 \
-	    _FP_FRAC_SLL_##wc(X, (_FP_EXPBIAS_##fs			 \
-				  + _FP_FRACBITS_##fs - 1 - X##_e));	 \
-	  }								 \
-	else								 \
-	  {								 \
-	    /* More bits in integer than in floating type; need to	 \
-	       round.  */						 \
-	    if (_FP_EXPBIAS_##fs + _FP_WFRACBITS_##fs - 1 < X##_e)	 \
-	      ur_ = ((ur_ >> (X##_e - _FP_EXPBIAS_##fs			 \
-			      - _FP_WFRACBITS_##fs + 1))		 \
-		     | ((ur_ << (rsize - (X##_e - _FP_EXPBIAS_##fs	 \
-					  - _FP_WFRACBITS_##fs + 1)))	 \
-			!= 0));						 \
-	    _FP_FRAC_DISASSEMBLE_##wc(X, ur_, rsize);			 \
-	    if ((_FP_EXPBIAS_##fs + _FP_WFRACBITS_##fs - 1 - X##_e) > 0) \
-	      _FP_FRAC_SLL_##wc(X, (_FP_EXPBIAS_##fs			 \
-				    + _FP_WFRACBITS_##fs - 1 - X##_e));	 \
-	    _FP_FRAC_HIGH_##fs(X) &= ~(_FP_W_TYPE)_FP_IMPLBIT_SH_##fs;	 \
-	  pack_semiraw:							 \
-	    _FP_PACK_SEMIRAW(fs, wc, X);				 \
-	  }								 \
-      }									 \
-    else								 \
-      {									 \
-	X##_s = 0;							 \
-	X##_e = 0;							 \
-	_FP_FRAC_SET_##wc(X, _FP_ZEROFRAC_##wc);			 \
-      }									 \
+/* Convert integer to fp.  Output is raw.  RTYPE is unsigned even if
+   input is signed.  */
+#define _FP_FROM_INT(fs, wc, X, r, rsize, rtype)			     \
+  do {									     \
+    if (r)								     \
+      {									     \
+	rtype ur_;							     \
+									     \
+	if ((X##_s = (r < 0)))						     \
+	  r = -(rtype)r;						     \
+									     \
+	ur_ = (rtype) r;						     \
+	(void)((rsize <= _FP_W_TYPE_SIZE)				     \
+	       ? ({							     \
+		    int lz_;						     \
+		    __FP_CLZ(lz_, (_FP_W_TYPE)ur_);			     \
+		    X##_e = _FP_EXPBIAS_##fs + _FP_W_TYPE_SIZE - 1 - lz_;    \
+		  })							     \
+	       : ((rsize <= 2 * _FP_W_TYPE_SIZE)			     \
+		  ? ({							     \
+		       int lz_;						     \
+		       __FP_CLZ_2(lz_, (_FP_W_TYPE)(ur_ >> _FP_W_TYPE_SIZE), \
+				  (_FP_W_TYPE)ur_);			     \
+		       X##_e = (_FP_EXPBIAS_##fs + 2 * _FP_W_TYPE_SIZE - 1   \
+				- lz_);					     \
+		     })							     \
+		  : (abort(), 0)));					     \
+									     \
+	if (rsize - 1 + _FP_EXPBIAS_##fs >= _FP_EXPMAX_##fs		     \
+	    && X##_e >= _FP_EXPMAX_##fs)				     \
+	  {								     \
+	    /* Exponent too big; overflow to infinity.  (May also	     \
+	       happen after rounding below.)  */			     \
+	    _FP_OVERFLOW_SEMIRAW(fs, wc, X);				     \
+	    goto pack_semiraw;						     \
+	  }								     \
+									     \
+	if (rsize <= _FP_FRACBITS_##fs					     \
+	    || X##_e < _FP_EXPBIAS_##fs + _FP_FRACBITS_##fs)		     \
+	  {								     \
+	    /* Exactly representable; shift left.  */			     \
+	    _FP_FRAC_DISASSEMBLE_##wc(X, ur_, rsize);			     \
+	    _FP_FRAC_SLL_##wc(X, (_FP_EXPBIAS_##fs			     \
+				  + _FP_FRACBITS_##fs - 1 - X##_e));	     \
+	  }								     \
+	else								     \
+	  {								     \
+	    /* More bits in integer than in floating type; need to	     \
+	       round.  */						     \
+	    if (_FP_EXPBIAS_##fs + _FP_WFRACBITS_##fs - 1 < X##_e)	     \
+	      ur_ = ((ur_ >> (X##_e - _FP_EXPBIAS_##fs			     \
+			      - _FP_WFRACBITS_##fs + 1))		     \
+		     | ((ur_ << (rsize - (X##_e - _FP_EXPBIAS_##fs	     \
+					  - _FP_WFRACBITS_##fs + 1)))	     \
+			!= 0));						     \
+	    _FP_FRAC_DISASSEMBLE_##wc(X, ur_, rsize);			     \
+	    if ((_FP_EXPBIAS_##fs + _FP_WFRACBITS_##fs - 1 - X##_e) > 0)     \
+	      _FP_FRAC_SLL_##wc(X, (_FP_EXPBIAS_##fs			     \
+				    + _FP_WFRACBITS_##fs - 1 - X##_e));	     \
+	    _FP_FRAC_HIGH_##fs(X) &= ~(_FP_W_TYPE)_FP_IMPLBIT_SH_##fs;	     \
+	  pack_semiraw:							     \
+	    _FP_PACK_SEMIRAW(fs, wc, X);				     \
+	  }								     \
+      }									     \
+    else								     \
+      {									     \
+	X##_s = 0;							     \
+	X##_e = 0;							     \
+	_FP_FRAC_SET_##wc(X, _FP_ZEROFRAC_##wc);			     \
+      }									     \
   } while (0)
 
 
