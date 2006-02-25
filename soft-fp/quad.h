@@ -1,6 +1,6 @@
 /* Software floating-point emulation.
    Definitions for IEEE Quad Precision.
-   Copyright (C) 1997,1998,1999 Free Software Foundation, Inc.
+   Copyright (C) 1997,1998,1999,2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Richard Henderson (rth@cygnus.com),
 		  Jakub Jelinek (jj@ultra.linux.cz),
@@ -42,8 +42,12 @@
 
 #define _FP_QNANBIT_Q		\
 	((_FP_W_TYPE)1 << (_FP_FRACBITS_Q-2) % _FP_W_TYPE_SIZE)
+#define _FP_QNANBIT_SH_Q		\
+	((_FP_W_TYPE)1 << (_FP_FRACBITS_Q-2+_FP_WORKBITS) % _FP_W_TYPE_SIZE)
 #define _FP_IMPLBIT_Q		\
 	((_FP_W_TYPE)1 << (_FP_FRACBITS_Q-1) % _FP_W_TYPE_SIZE)
+#define _FP_IMPLBIT_SH_Q		\
+	((_FP_W_TYPE)1 << (_FP_FRACBITS_Q-1+_FP_WORKBITS) % _FP_W_TYPE_SIZE)
 #define _FP_OVERFLOW_Q		\
 	((_FP_W_TYPE)1 << (_FP_WFRACBITS_Q % _FP_W_TYPE_SIZE))
 
@@ -95,6 +99,18 @@ union _FP_UNION_Q
     _FP_UNPACK_CANONICAL(Q,4,X);	\
   } while (0)
 
+#define FP_UNPACK_SEMIRAW_Q(X,val)	\
+  do {					\
+    _FP_UNPACK_RAW_4(Q,X,val);		\
+    _FP_UNPACK_SEMIRAW(Q,4,X);		\
+  } while (0)
+
+#define FP_UNPACK_SEMIRAW_QP(X,val)	\
+  do {					\
+    _FP_UNPACK_RAW_4_P(Q,X,val);	\
+    _FP_UNPACK_SEMIRAW(Q,4,X);		\
+  } while (0)
+
 #define FP_PACK_Q(val,X)		\
   do {					\
     _FP_PACK_CANONICAL(Q,4,X);		\
@@ -104,6 +120,19 @@ union _FP_UNION_Q
 #define FP_PACK_QP(val,X)		\
   do {					\
     _FP_PACK_CANONICAL(Q,4,X);		\
+    if (!FP_INHIBIT_RESULTS)		\
+      _FP_PACK_RAW_4_P(Q,val,X);	\
+  } while (0)
+
+#define FP_PACK_SEMIRAW_Q(val,X)	\
+  do {					\
+    _FP_PACK_SEMIRAW(Q,4,X);		\
+    _FP_PACK_RAW_4(Q,val,X);		\
+  } while (0)
+
+#define FP_PACK_SEMIRAW_QP(val,X)	\
+  do {					\
+    _FP_PACK_SEMIRAW(Q,4,X);		\
     if (!FP_INHIBIT_RESULTS)		\
       _FP_PACK_RAW_4_P(Q,val,X);	\
   } while (0)
@@ -171,6 +200,18 @@ union _FP_UNION_Q
     _FP_UNPACK_CANONICAL(Q,2,X);	\
   } while (0)
 
+#define FP_UNPACK_SEMIRAW_Q(X,val)	\
+  do {					\
+    _FP_UNPACK_RAW_2(Q,X,val);		\
+    _FP_UNPACK_SEMIRAW(Q,2,X);		\
+  } while (0)
+
+#define FP_UNPACK_SEMIRAW_QP(X,val)	\
+  do {					\
+    _FP_UNPACK_RAW_2_P(Q,X,val);	\
+    _FP_UNPACK_SEMIRAW(Q,2,X);		\
+  } while (0)
+
 #define FP_PACK_Q(val,X)		\
   do {					\
     _FP_PACK_CANONICAL(Q,2,X);		\
@@ -180,6 +221,19 @@ union _FP_UNION_Q
 #define FP_PACK_QP(val,X)		\
   do {					\
     _FP_PACK_CANONICAL(Q,2,X);		\
+    if (!FP_INHIBIT_RESULTS)		\
+      _FP_PACK_RAW_2_P(Q,val,X);	\
+  } while (0)
+
+#define FP_PACK_SEMIRAW_Q(val,X)	\
+  do {					\
+    _FP_PACK_SEMIRAW(Q,2,X);		\
+    _FP_PACK_RAW_2(Q,val,X);		\
+  } while (0)
+
+#define FP_PACK_SEMIRAW_QP(val,X)	\
+  do {					\
+    _FP_PACK_SEMIRAW(Q,2,X);		\
     if (!FP_INHIBIT_RESULTS)		\
       _FP_PACK_RAW_2_P(Q,val,X);	\
   } while (0)

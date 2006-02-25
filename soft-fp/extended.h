@@ -1,6 +1,6 @@
 /* Software floating-point emulation.
    Definitions for IEEE Extended Precision.
-   Copyright (C) 1999 Free Software Foundation, Inc.
+   Copyright (C) 1999,2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Jakub Jelinek (jj@ultra.linux.cz).
 
@@ -39,8 +39,12 @@
 
 #define _FP_QNANBIT_E		\
 	((_FP_W_TYPE)1 << (_FP_FRACBITS_E-2) % _FP_W_TYPE_SIZE)
+#define _FP_QNANBIT_SH_E		\
+	((_FP_W_TYPE)1 << (_FP_FRACBITS_E-2+_FP_WORKBITS) % _FP_W_TYPE_SIZE)
 #define _FP_IMPLBIT_E		\
 	((_FP_W_TYPE)1 << (_FP_FRACBITS_E-1) % _FP_W_TYPE_SIZE)
+#define _FP_IMPLBIT_SH_E		\
+	((_FP_W_TYPE)1 << (_FP_FRACBITS_E-1+_FP_WORKBITS) % _FP_W_TYPE_SIZE)
 #define _FP_OVERFLOW_E		\
 	((_FP_W_TYPE)1 << (_FP_WFRACBITS_E % _FP_W_TYPE_SIZE))
 
@@ -143,8 +147,20 @@ union _FP_UNION_E
 
 #define FP_UNPACK_EP(X,val)		\
   do {					\
-    FP_UNPACK_RAW_2_P(X,val);		\
+    FP_UNPACK_RAW_EP(X,val);		\
     _FP_UNPACK_CANONICAL(E,4,X);	\
+  } while (0)
+
+#define FP_UNPACK_SEMIRAW_E(X,val)	\
+  do {					\
+    _FP_UNPACK_RAW_E(X,val);		\
+    _FP_UNPACK_SEMIRAW(E,4,X);		\
+  } while (0)
+
+#define FP_UNPACK_SEMIRAW_EP(X,val)	\
+  do {					\
+    _FP_UNPACK_RAW_EP(X,val);		\
+    _FP_UNPACK_SEMIRAW(E,4,X);		\
   } while (0)
 
 #define FP_PACK_E(val,X)		\
@@ -157,6 +173,18 @@ union _FP_UNION_E
   do {					\
     _FP_PACK_CANONICAL(E,4,X);		\
     FP_PACK_RAW_EP(val,X);		\
+  } while (0)
+
+#define FP_PACK_SEMIRAW_E(val,X)	\
+  do {					\
+    _FP_PACK_SEMIRAW(E,4,X);		\
+    _FP_PACK_RAW_E(val,X);		\
+  } while (0)
+
+#define FP_PACK_SEMIRAW_EP(val,X)	\
+  do {					\
+    _FP_PACK_SEMIRAW(E,4,X);		\
+    _FP_PACK_RAW_EP(val,X);		\
   } while (0)
 
 #define FP_ISSIGNAN_E(X)	_FP_ISSIGNAN(E,4,X)
@@ -324,6 +352,18 @@ union _FP_UNION_E
     _FP_UNPACK_CANONICAL(E,2,X);	\
   } while (0)
 
+#define FP_UNPACK_SEMIRAW_E(X,val)	\
+  do {					\
+    _FP_UNPACK_RAW_E(X,val);		\
+    _FP_UNPACK_SEMIRAW(E,2,X);		\
+  } while (0)
+
+#define FP_UNPACK_SEMIRAW_EP(X,val)	\
+  do {					\
+    _FP_UNPACK_RAW_EP(X,val);		\
+    _FP_UNPACK_SEMIRAW(E,2,X);		\
+  } while (0)
+
 #define FP_PACK_E(val,X)		\
   do {					\
     _FP_PACK_CANONICAL(E,2,X);		\
@@ -334,6 +374,18 @@ union _FP_UNION_E
   do {					\
     _FP_PACK_CANONICAL(E,2,X);		\
     FP_PACK_RAW_EP(val,X);		\
+  } while (0)
+
+#define FP_PACK_SEMIRAW_E(val,X)	\
+  do {					\
+    _FP_PACK_SEMIRAW(E,2,X);		\
+    _FP_PACK_RAW_E(val,X);		\
+  } while (0)
+
+#define FP_PACK_SEMIRAW_EP(val,X)	\
+  do {					\
+    _FP_PACK_SEMIRAW(E,2,X);		\
+    _FP_PACK_RAW_EP(val,X);		\
   } while (0)
 
 #define FP_ISSIGNAN_E(X)	_FP_ISSIGNAN(E,2,X)

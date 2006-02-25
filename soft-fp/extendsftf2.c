@@ -1,6 +1,6 @@
 /* Software floating-point emulation.
    Return a converted to IEEE quad
-   Copyright (C) 1997,1999 Free Software Foundation, Inc.
+   Copyright (C) 1997,1999,2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Richard Henderson (rth@cygnus.com) and
 		  Jakub Jelinek (jj@ultra.linux.cz).
@@ -32,13 +32,13 @@ long double __extendsftf2(float a)
   long double r;
 
   FP_INIT_ROUNDMODE;
-  FP_UNPACK_S(A, a);
+  FP_UNPACK_RAW_S(A, a);
 #if (2 * _FP_W_TYPE_SIZE) < _FP_FRACBITS_Q
-  FP_CONV(Q,S,4,1,R,A);
+  FP_EXTEND(Q,S,4,1,R,A);
 #else
-  FP_CONV(Q,S,2,1,R,A);
+  FP_EXTEND(Q,S,2,1,R,A);
 #endif
-  FP_PACK_Q(r, R);
+  FP_PACK_RAW_Q(r, R);
   FP_HANDLE_EXCEPTIONS;
 
   return r;

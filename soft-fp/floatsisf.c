@@ -1,6 +1,6 @@
 /* Software floating-point emulation.
    Convert a 32bit signed integer to IEEE single
-   Copyright (C) 1997,1999 Free Software Foundation, Inc.
+   Copyright (C) 1997,1999,2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Richard Henderson (rth@cygnus.com) and
 		  Jakub Jelinek (jj@ultra.linux.cz).
@@ -30,7 +30,7 @@ float __floatsisf(SItype i)
   float a;
 
   FP_FROM_INT_S(A, i, 32, int);
-  FP_PACK_S(a, A);
+  FP_PACK_RAW_S(a, A);
   FP_HANDLE_EXCEPTIONS;
 
   return a;

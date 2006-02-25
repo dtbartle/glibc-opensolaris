@@ -31,7 +31,7 @@ __floatunsidf(USItype i)
   double a;
 
   FP_FROM_INT_D(A, i, 32, int);
-  FP_PACK_D(a, A);
+  FP_PACK_RAW_D(a, A);
   FP_HANDLE_EXCEPTIONS;
 
   return a;

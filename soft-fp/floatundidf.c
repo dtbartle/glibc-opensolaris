@@ -31,7 +31,7 @@ __floatundidf(UDItype i)
   double a;
 
   FP_FROM_INT_D(A, i, 64, long long);
-  FP_PACK_D(a, A);
+  FP_PACK_RAW_D(a, A);
   FP_HANDLE_EXCEPTIONS;
 
   return a;

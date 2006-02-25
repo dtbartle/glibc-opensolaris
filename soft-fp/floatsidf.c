@@ -1,6 +1,6 @@
 /* Software floating-point emulation.
    Convert a 32bit signed integer to IEEE double
-   Copyright (C) 1997,1999 Free Software Foundation, Inc.
+   Copyright (C) 1997,1999,2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Richard Henderson (rth@cygnus.com) and
 		  Jakub Jelinek (jj@ultra.linux.cz).
@@ -30,7 +30,7 @@ double __floatsidf(SItype i)
   double a;
 
   FP_FROM_INT_D(A, i, 32, int);
-  FP_PACK_D(a, A);
+  FP_PACK_RAW_D(a, A);
   FP_HANDLE_EXCEPTIONS;
 
   return a;
