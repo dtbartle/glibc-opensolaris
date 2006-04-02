@@ -233,7 +233,10 @@ struct msghdr
 struct cmsghdr
   {
     size_t cmsg_len;		/* Length of data in cmsg_data plus length
-				   of cmsghdr structure.  */
+				   of cmsghdr structure.
+				   !! The type should be socklen_t but the
+				   definition of the kernel is incompatible
+				   with this.  */
     int cmsg_level;		/* Originating protocol.  */
     int cmsg_type;		/* Protocol specific type.  */
 #if (!defined __STRICT_ANSI__ && __GNUC__ >= 2) || __STDC_VERSION__ >= 199901L
