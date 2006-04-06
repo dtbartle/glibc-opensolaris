@@ -46,7 +46,7 @@ nis_creategroup (const_nis_name group, unsigned int flags)
       else
 	return NIS_BADNAME;
 
-      obj = calloc (sizeof (nis_object));
+      obj = calloc (1, sizeof (nis_object));
       if (__builtin_expect (obj == NULL, 0))
 	return NIS_NOMEMORY;
 
