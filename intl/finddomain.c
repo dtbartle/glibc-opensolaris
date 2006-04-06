@@ -1,5 +1,5 @@
 /* Handle list of needed message catalogs
-   Copyright (C) 1995-1999, 2000, 2001, 2002, 2004
+   Copyright (C) 1995-1999, 2000, 2001, 2002, 2004, 2006
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Written by Ulrich Drepper <drepper@gnu.org>, 1995.
@@ -110,7 +110,7 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
 	    break;
 	}
 
-      return cnt >= 0 ? retval : NULL;
+      return retval;
       /* NOTREACHED */
     }
 
