@@ -73,6 +73,7 @@ _nss_nis_getpublickey (const char *netname, char *pkey, int *errnop)
 	*p = 0;
       strncpy (pkey, result, HEXKEYBYTES + 1);
       pkey[HEXKEYBYTES] = '\0';
+      free (result);
     }
   return NSS_STATUS_SUCCESS;
 }
