@@ -41,7 +41,15 @@ __create_ib_request (const_nis_name name, unsigned int flags)
 
   /* Not of "[key=value,key=value,...],foo.." format? */
   if (cptr[0] != '[')
-    return (ibreq->ibr_name = strdup (cptr)) == NULL ? NULL : ibreq;
+    {
+      ibreq->ibr_name = strdup (cptr);
+      if (ibreq->ibr_name == NULL)
+	{
+	  free (ibreq);
+	  return NULL;
+	}
+      return ibreq;
+    }
 
   /* "[key=value,...],foo" format */
   ibreq->ibr_name = strchr (cptr, ']');
