@@ -485,7 +485,7 @@ svcudp_enablecache (SVCXPRT *transp, u_long size)
   uc->uc_entries = ALLOC (cache_ptr, size * SPARSENESS);
   if (uc->uc_entries == NULL)
     {
-      mem_free (uc);
+      mem_free (uc, sizeof (struct udp_cache));
       CACHE_PERROR (_("enablecache: could not allocate cache data"));
       return 0;
     }
@@ -493,8 +493,8 @@ svcudp_enablecache (SVCXPRT *transp, u_long size)
   uc->uc_fifo = ALLOC (cache_ptr, size);
   if (uc->uc_fifo == NULL)
     {
-      mem_free (uc->uc_entries);
-      mem_free (uc);
+      mem_free (uc->uc_entries, size * SPARSENESS);
+      mem_free (uc, sizeof (struct udp_cache));
       CACHE_PERROR (_("enablecache: could not allocate cache fifo"));
       return 0;
     }
