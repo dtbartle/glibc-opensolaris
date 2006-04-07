@@ -531,7 +531,7 @@ generate_guard (const char *pathname)
 
   filename = strrchr (pathname, '/');	/* find last component */
   filename = ((filename == NULL) ? pathname : filename + 1);
-  guard = strdup (filename);
+  guard = extendfile (filename, "_H_RPCGEN");
   /* convert to upper case */
   tmp = guard;
   while (*tmp)
@@ -541,7 +541,6 @@ generate_guard (const char *pathname)
       tmp++;
     }
 
-  guard = extendfile (guard, "_H_RPCGEN");
   return guard;
 }
 
