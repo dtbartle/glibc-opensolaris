@@ -1,4 +1,4 @@
-/* Copyright (c) 1997, 1998, 2005 Free Software Foundation, Inc.
+/* Copyright (c) 1997, 1998, 2005, 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1997.
 
@@ -49,18 +49,22 @@ nis_clone_result (const nis_result *src, nis_result *dest)
   else
     res = dest;
 
-  xdrmem_create(&xdrs, addr, size, XDR_ENCODE);
+  xdrmem_create (&xdrs, addr, size, XDR_ENCODE);
   if (!_xdr_nis_result (&xdrs, (nis_result *)src))
     {
       xdr_destroy (&xdrs);
+      if (res != dest)
+	free (res);
       free (addr);
       return NULL;
     }
   xdr_destroy (&xdrs);
-  xdrmem_create(&xdrs, addr, size, XDR_DECODE);
-  if (!_xdr_nis_result(&xdrs, res))
+  xdrmem_create (&xdrs, addr, size, XDR_DECODE);
+  if (!_xdr_nis_result (&xdrs, res))
     {
       xdr_destroy (&xdrs);
+      if (res != dest)
+	free (res);
       free (addr);
       return NULL;
     }
