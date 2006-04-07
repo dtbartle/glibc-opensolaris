@@ -119,20 +119,7 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
      done.  */
   alias_value = _nl_expand_alias (locale);
   if (alias_value != NULL)
-    {
-#if defined _LIBC || defined HAVE_STRDUP
-      locale = strdup (alias_value);
-      if (locale == NULL)
-	return NULL;
-#else
-      size_t len = strlen (alias_value) + 1;
-      locale = (char *) malloc (len);
-      if (locale == NULL)
-	return NULL;
-
-      memcpy (locale, alias_value, len);
-#endif
-    }
+    locale = strdupa (alias_value);
 
   /* Now we determine the single parts of the locale name.  First
      look for the language.  Termination symbols are `_' and `@' if
@@ -168,10 +155,6 @@ _nl_find_domain (dirname, locale, domainname, domainbinding)
 	    break;
 	}
     }
-
-  /* The room for an alias was dynamically allocated.  Free it now.  */
-  if (alias_value != NULL)
-    free (locale);
 
   /* The space for normalized_codeset is dynamically allocated.  Free it.  */
   if (mask & XPG_NORM_CODESET)
