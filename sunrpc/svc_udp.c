@@ -548,6 +548,7 @@ cache_set (SVCXPRT *xprt, u_long replylen)
       newbuf = mem_alloc (su->su_iosz);
       if (newbuf == NULL)
 	{
+	  mem_free (victim, sizeof (struct cache_node));
 	  CACHE_PERROR (_("cache_set: could not allocate new rpc_buffer"));
 	  return;
 	}
