@@ -326,13 +326,14 @@ _nss_nisplus_getntohost_r (const struct ether_addr *addr, struct etherent *eth,
 
   int parse_res = _nss_nisplus_parse_etherent (result, eth, buffer,
 					       buflen, errnop);
+
+  /* We do not need the lookup result anymore.  */
+  nis_freeresult (result);
+
   if (__builtin_expect (parse_res < 1, 0))
     {
       if (parse_res == -1)
-	{
-	  nis_freeresult (result);
-	  return NSS_STATUS_TRYAGAIN;
-	}
+	return NSS_STATUS_TRYAGAIN;
 
       return NSS_STATUS_NOTFOUND;
     }
