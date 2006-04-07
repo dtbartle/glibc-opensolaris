@@ -661,6 +661,7 @@ h_output (const char *infile, const char *define, int extend,
     }
 
   fprintf (fout, "\n#endif /* !_%s */\n", guard);
+  free (guard);
   close_input ();
   close_output (outfilename);
 }
