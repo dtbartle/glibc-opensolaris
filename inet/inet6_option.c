@@ -308,7 +308,7 @@ inet6_option_find (cmsg, tptrp, type)
   const uint8_t *endp = CMSG_DATA (cmsg) + (ip6e->ip6e_len + 1) * 8;
 
   const uint8_t *next;
-  if (tptrp == NULL)
+  if (*tptrp == NULL)
     /* This is the first call, return the first option if there is one.  */
     next = (const uint8_t *) (ip6e + 1);
   else
