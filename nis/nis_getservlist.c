@@ -72,6 +72,8 @@ nis_getservlist (const_nis_name dir)
 		  free (serv[i]);
 		}
 
+	      free (serv);
+
 	      return NULL;
 	    }
 
