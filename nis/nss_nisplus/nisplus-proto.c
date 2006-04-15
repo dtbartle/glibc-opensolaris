@@ -78,6 +78,9 @@ _nss_nisplus_parse_protoent (nis_result *result, struct protoent *proto,
 
   proto->p_proto = atoi (NISENTRYVAL (0, 2, result));
 
+  /* XXX Rewrite at some point to allocate the array first and then
+     copy the strings.  It wasteful to first concatenate the strings
+     to just split them again later.  */
   char *line = first_unused;
   for (i = 0; i < result->objects.objects_len; ++i)
     {
