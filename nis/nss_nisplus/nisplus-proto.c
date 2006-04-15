@@ -82,7 +82,7 @@ _nss_nisplus_parse_protoent (nis_result *result, struct protoent *proto,
      copy the strings.  It wasteful to first concatenate the strings
      to just split them again later.  */
   char *line = first_unused;
-  for (i = 0; i < result->objects.objects_len; ++i)
+  for (i = 0; i < NIS_RES_NUMOBJ (result); ++i)
     {
       if (strcmp (NISENTRYVAL (i, 1, result), proto->p_name) != 0)
         {
