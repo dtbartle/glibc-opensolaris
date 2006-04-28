@@ -225,7 +225,8 @@ internal_nis_setservent (void)
   status = yperr2nss (yp_all (domainname, "services.byname", &ypcb));
 
   /* Mark the last buffer as full.  */
-  intern.next->size = intern.offset;
+  if (intern->next != NULL)
+    intern.next->size = intern.offset;
 
   intern.next = intern.start;
 
