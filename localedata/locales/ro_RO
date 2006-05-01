@@ -372,4 +372,6 @@ country_car "<U0052><U004F>"
 % language names are not capitalized in Romanian ( roma>na( )
 lang_name "<U0072><U006F><U006D><U00E2><U006E><U0103>"
 lang_ab "<U0072><U006F>"
+lang_term "<U0072><U006F><U006E>"
+lang_lib "<U0072><U0075><U006D>"
 END LC_ADDRESS
