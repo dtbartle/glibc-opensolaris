@@ -837,9 +837,15 @@ execute_cfa_program (const unsigned char *insn_ptr,
 	case DW_CFA_restore_state:
 	  {
 	    struct frame_state_reg_info *old_rs = fs->regs.prev;
-	    fs->regs = *old_rs;
-	    old_rs->prev = unused_rs;
-	    unused_rs = old_rs;
+
+	    if (rs == NULL)
+	      __libc_fatal ("invalid DWARF unwind data");
+	    else
+	      {
+		fs->regs = *old_rs;
+		old_rs->prev = unused_rs;
+		unused_rs = old_rs;
+	      }
 	  }
 	  break;
 
