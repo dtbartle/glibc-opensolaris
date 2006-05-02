@@ -839,7 +839,7 @@ execute_cfa_program (const unsigned char *insn_ptr,
 	  {
 	    struct frame_state_reg_info *old_rs = fs->regs.prev;
 #ifdef _LIBC
-	    if (rs == NULL)
+	    if (old_rs == NULL)
 	      __libc_fatal ("invalid DWARF unwind data");
 	    else
 #endif
