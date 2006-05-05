@@ -180,23 +180,22 @@ nis_list (const_nis_name name, unsigned int flags,
   char *tableptr;
   char *tablepath = NULL;
   int first_try = 0; /* Do we try the old binding at first ? */
-  int errcode;
 
   if (res == NULL)
     return NULL;
 
   if (name == NULL)
     {
-      errcode = NIS_BADNAME;
+      status = NIS_BADNAME;
     err_out:
       memset (res, '\0', sizeof (nis_result));
-      NIS_RES_STATUS (res) = NIS_BADNAME;
+      NIS_RES_STATUS (res) = status;
       return res;
     }
 
   if ((ibreq = __create_ib_request (name, flags)) == NULL)
     {
-      errcode = NIS_BADNAME;
+      status = NIS_BADNAME;
       goto err_out;
     }
 
@@ -209,7 +208,7 @@ nis_list (const_nis_name name, unsigned int flags,
       if (names == NULL)
 	{
 	  nis_free_request (ibreq);
-	  errcode = NIS_BADNAME;
+	  status = NIS_BADNAME;
 	  goto err_out;
 	}
       ibreq->ibr_name = strdup (names[name_nr]);
@@ -217,7 +216,7 @@ nis_list (const_nis_name name, unsigned int flags,
 	{
 	  nis_freenames (names);
 	  nis_free_request (ibreq);
-	  errcode = NIS_NOMEMORY;
+	  status = NIS_NOMEMORY;
 	  goto err_out;
 	}
     }
