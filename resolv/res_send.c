@@ -267,8 +267,8 @@ res_nameinquery(const char *name, int type, int class,
 		cp += n;
 		if (cp + 2 * INT16SZ > eom)
 			return (-1);
-		ttype = ns_get16(cp); cp += INT16SZ;
-		tclass = ns_get16(cp); cp += INT16SZ;
+		NS_GET16(ttype, cp);
+		NS_GET16(tclass, cp);
 		if (ttype == type && tclass == class &&
 		    ns_samename(tname, name) == 1)
 			return (1);
@@ -318,8 +318,8 @@ res_queriesmatch(const u_char *buf1, const u_char *eom1,
 		cp += n;
 		if (cp + 2 * INT16SZ > eom1)
 			return (-1);
-		ttype = ns_get16(cp);	cp += INT16SZ;
-		tclass = ns_get16(cp); cp += INT16SZ;
+		NS_GET16(ttype, cp);
+		NS_GET16(tclass, cp);
 		if (!res_nameinquery(tname, ttype, tclass, buf2, eom2))
 			return (0);
 	}
