@@ -292,9 +292,6 @@ int
 res_queriesmatch(const u_char *buf1, const u_char *eom1,
 		 const u_char *buf2, const u_char *eom2)
 {
-	const u_char *cp = buf1 + HFIXEDSZ;
-	int qdcount = ntohs(((HEADER*)buf1)->qdcount);
-
 	if (buf1 + HFIXEDSZ > eom1 || buf2 + HFIXEDSZ > eom2)
 		return (-1);
 
@@ -306,8 +303,16 @@ res_queriesmatch(const u_char *buf1, const u_char *eom1,
 	    (((HEADER *)buf2)->opcode == ns_o_update))
 		return (1);
 
-	if (qdcount != ntohs(((HEADER*)buf2)->qdcount))
+	/* Note that we initially do not convert QDCOUNT to the host byte
+	   order.  We can compare it with the second buffers QDCOUNT
+	   value without doing this.  */
+	int qdcount = ((HEADER*)buf1)->qdcount;
+	if (qdcount != ((HEADER*)buf2)->qdcount)
 		return (0);
+
+	qdcount = htons (qdcount);
+	const u_char *cp = buf1 + HFIXEDSZ;
+
 	while (qdcount-- > 0) {
 		char tname[MAXDNAME+1];
 		int n, ttype, tclass;
