@@ -143,7 +143,7 @@ static struct uparams uparams = {
 /* A particular uparam, and what the user name is.  */
 struct uparam_name
 {
-  const char *name;		/* User name.  */
+  const char name[14];		/* User name.  */
   bool is_bool;			/* Whether it's `boolean'.  */
   uint8_t uparams_offs;		/* Location of the (int) field in UPARAMS.  */
 };
@@ -159,9 +159,9 @@ static const struct uparam_name uparam_names[] =
   { "opt-doc-col",    false, offsetof (struct uparams, opt_doc_col) },
   { "header-col",     false, offsetof (struct uparams, header_col) },
   { "usage-indent",   false, offsetof (struct uparams, usage_indent) },
-  { "rmargin",        false, offsetof (struct uparams, rmargin) },
-  { 0 }
+  { "rmargin",        false, offsetof (struct uparams, rmargin) }
 };
+#define nuparam_names (sizeof (uparam_names) / sizeof (uparam_names[0]))
 
 /* Read user options from the environment, and fill in UPARAMS appropiately.  */
 static void
@@ -217,7 +217,9 @@ fill_in_uparams (const struct argp_state *state)
 		SKIPWS (arg);
 	      }
 
-	    for (un = uparam_names; un->name; un++)
+	    un = uparam_names;
+	    size_t u;
+	    for (u = 0; u < nuparam_names; ++un, ++u)
 	      if (strlen (un->name) == var_len
 		  && strncmp (var, un->name, var_len) == 0)
 		{
@@ -230,7 +232,7 @@ fill_in_uparams (const struct argp_state *state)
 		    *(int *)((char *)&uparams + un->uparams_offs) = val;
 		  break;
 		}
-	    if (! un->name)
+	    if (u == nuparam_names)
 	      __argp_failure (state, 0, 0,
 			      dgettext (state->root_argp->argp_domain, "\
 %.*s: Unknown ARGP_HELP_FMT parameter"),
