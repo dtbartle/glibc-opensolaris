@@ -224,7 +224,7 @@ __nss_configure_lookup (const char *dbname, const char *service_line)
 	}
     }
 
-  if (cnt == sizeof databases)
+  if (cnt == ndatabases)
     {
       __set_errno (EINVAL);
       return -1;
