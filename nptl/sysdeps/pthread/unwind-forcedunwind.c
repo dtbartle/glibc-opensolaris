@@ -22,13 +22,13 @@
 #include <unwind.h>
 #include <pthreadP.h>
 
-static void (*volatile libgcc_s_resume) (struct _Unwind_Exception *exc);
-static _Unwind_Reason_Code (*volatile libgcc_s_personality)
+static void (*libgcc_s_resume) (struct _Unwind_Exception *exc);
+static _Unwind_Reason_Code (*libgcc_s_personality)
   (int, _Unwind_Action, _Unwind_Exception_Class, struct _Unwind_Exception *,
    struct _Unwind_Context *);
-static _Unwind_Reason_Code (*volatile libgcc_s_forcedunwind)
+static _Unwind_Reason_Code (*libgcc_s_forcedunwind)
   (struct _Unwind_Exception *, _Unwind_Stop_Fn, void *);
-static _Unwind_Word (*volatile libgcc_s_getcfa) (struct _Unwind_Context *);
+static _Unwind_Word (*libgcc_s_getcfa) (struct _Unwind_Context *);
 
 void
 pthread_cancel_init (void)
