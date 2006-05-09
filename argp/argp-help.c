@@ -128,16 +128,13 @@ struct uparams
   int header_col;
   int usage_indent;
   int rmargin;
-
-  int valid;			/* True when the values in here are valid.  */
 };
 
 /* This is a global variable, as user options are only ever read once.  */
 static struct uparams uparams = {
   DUP_ARGS, DUP_ARGS_NOTE,
   SHORT_OPT_COL, LONG_OPT_COL, DOC_OPT_COL, OPT_DOC_COL, HEADER_COL,
-  USAGE_INDENT, RMARGIN,
-  0
+  USAGE_INDENT, RMARGIN
 };
 
 /* A particular uparam, and what the user name is.  */
@@ -1551,8 +1548,7 @@ _help (const struct argp *argp, const struct argp_state *state, FILE *stream,
   __flockfile (stream);
 #endif
 
-  if (! uparams.valid)
-    fill_in_uparams (state);
+  fill_in_uparams (state);
 
   fs = __argp_make_fmtstream (stream, 0, uparams.rmargin, 0);
   if (! fs)
