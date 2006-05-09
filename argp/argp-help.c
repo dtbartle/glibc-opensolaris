@@ -222,7 +222,9 @@ fill_in_uparams (const struct argp_state *state)
 		{
 		  if (unspec && !un->is_bool)
 		    __argp_failure (state, 0, 0,
-				    dgettext (state->root_argp->argp_domain, "\
+				    dgettext (state == NULL ? NULL
+					      : state->root_argp->argp_domain,
+					      "\
 %.*s: ARGP_HELP_FMT parameter requires a value"),
 				    (int) var_len, var);
 		  else
@@ -231,7 +233,8 @@ fill_in_uparams (const struct argp_state *state)
 		}
 	    if (u == nuparam_names)
 	      __argp_failure (state, 0, 0,
-			      dgettext (state->root_argp->argp_domain, "\
+			      dgettext (state == NULL ? NULL
+					: state->root_argp->argp_domain, "\
 %.*s: Unknown ARGP_HELP_FMT parameter"),
 			      (int) var_len, var);
 
@@ -242,7 +245,8 @@ fill_in_uparams (const struct argp_state *state)
 	else if (*var)
 	  {
 	    __argp_failure (state, 0, 0,
-			    dgettext (state->root_argp->argp_domain,
+			    dgettext (state == NULL ? NULL
+				      : state->root_argp->argp_domain,
 				      "Garbage in ARGP_HELP_FMT: %s"), var);
 	    break;
 	  }
