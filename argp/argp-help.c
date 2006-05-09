@@ -144,22 +144,22 @@ static struct uparams uparams = {
 struct uparam_name
 {
   const char *name;		/* User name.  */
-  int is_bool;			/* Whether it's `boolean'.  */
-  size_t uparams_offs;		/* Location of the (int) field in UPARAMS.  */
+  bool is_bool;			/* Whether it's `boolean'.  */
+  uint8_t uparams_offs;		/* Location of the (int) field in UPARAMS.  */
 };
 
 /* The name-field mappings we know about.  */
 static const struct uparam_name uparam_names[] =
 {
-  { "dup-args",       1, offsetof (struct uparams, dup_args) },
-  { "dup-args-note",  1, offsetof (struct uparams, dup_args_note) },
-  { "short-opt-col",  0, offsetof (struct uparams, short_opt_col) },
-  { "long-opt-col",   0, offsetof (struct uparams, long_opt_col) },
-  { "doc-opt-col",    0, offsetof (struct uparams, doc_opt_col) },
-  { "opt-doc-col",    0, offsetof (struct uparams, opt_doc_col) },
-  { "header-col",     0, offsetof (struct uparams, header_col) },
-  { "usage-indent",   0, offsetof (struct uparams, usage_indent) },
-  { "rmargin",        0, offsetof (struct uparams, rmargin) },
+  { "dup-args",       true, offsetof (struct uparams, dup_args) },
+  { "dup-args-note",  true, offsetof (struct uparams, dup_args_note) },
+  { "short-opt-col",  false, offsetof (struct uparams, short_opt_col) },
+  { "long-opt-col",   false, offsetof (struct uparams, long_opt_col) },
+  { "doc-opt-col",    false, offsetof (struct uparams, doc_opt_col) },
+  { "opt-doc-col",    false, offsetof (struct uparams, opt_doc_col) },
+  { "header-col",     false, offsetof (struct uparams, header_col) },
+  { "usage-indent",   false, offsetof (struct uparams, usage_indent) },
+  { "rmargin",        false, offsetof (struct uparams, rmargin) },
   { 0 }
 };
 
