@@ -1,5 +1,5 @@
 /* Hierarchial argument parsing help output
-   Copyright (C) 1995-2003, 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 1995-2003, 2004, 2005, 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Written by Miles Bader <miles@gnu.ai.mit.edu>.
 
@@ -1129,19 +1129,13 @@ hol_entry_help (struct hol_entry *entry, const struct argp_state *state,
   else
     /* A real long option.  */
     {
-      int first_long_opt = 1;
-
       __argp_fmtstream_set_wmargin (stream, uparams.long_opt_col);
       for (opt = real, num = entry->num; num > 0; opt++, num--)
 	if (opt->name && ovisible (opt))
 	  {
 	    comma (uparams.long_opt_col, &pest);
 	    __argp_fmtstream_printf (stream, "--%s", opt->name);
-	    if (first_long_opt || uparams.dup_args)
-	      arg (real, "=%s", "[=%s]", state->root_argp->argp_domain,
-		   stream);
-	    else if (real->arg)
-	      hhstate->suppressed_dup_arg = 1;
+	    arg (real, "=%s", "[=%s]", state->root_argp->argp_domain, stream);
 	  }
     }
 
