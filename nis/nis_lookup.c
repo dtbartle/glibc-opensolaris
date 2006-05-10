@@ -158,6 +158,8 @@ nis_lookup (const_nis_name name, const unsigned int flags)
 		      {
 			__nisbind_destroy (&bptr);
 			nis_free_directory (dir);
+			/* Otherwise __nisfind_server will not do anything.  */
+			dir = NULL;
 
 			if (__nisfind_server (req.ns_name, &dir)
 			    != NIS_SUCCESS)
