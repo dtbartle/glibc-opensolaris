@@ -133,6 +133,7 @@ xdr_ypresp_val (XDR *xdrs, ypresp_val *objp)
     return FALSE;
   return xdr_valdat (xdrs, &objp->val);
 }
+libnsl_hidden_def (xdr_ypresp_val)
 
 bool_t
 xdr_ypresp_key_val (XDR *xdrs, ypresp_key_val *objp)
