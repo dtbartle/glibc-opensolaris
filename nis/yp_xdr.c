@@ -206,6 +206,7 @@ xdr_ypresp_maplist (XDR *xdrs, ypresp_maplist *objp)
   return xdr_pointer (xdrs, (char **) &objp->maps, sizeof (ypmaplist),
 		      (xdrproc_t) xdr_ypmaplist);
 }
+libnsl_hidden_def (xdr_ypresp_maplist)
 
 bool_t
 xdr_yppush_status (XDR *xdrs, yppush_status *objp)
