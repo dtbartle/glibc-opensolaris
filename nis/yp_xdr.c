@@ -161,6 +161,7 @@ xdr_ypresp_order (XDR *xdrs, ypresp_order *objp)
     return FALSE;
   return xdr_u_int (xdrs, &objp->ordernum);
 }
+libnsl_hidden_def (xdr_ypresp_order)
 
 bool_t
 xdr_ypresp_all (XDR *xdrs, ypresp_all *objp)
