@@ -103,6 +103,7 @@ xdr_ypreq_key (XDR *xdrs, ypreq_key *objp)
     return FALSE;
   return xdr_keydat (xdrs, &objp->key);
 }
+libnsl_hidden_def (xdr_ypreq_key)
 
 bool_t
 xdr_ypreq_nokey (XDR *xdrs, ypreq_nokey *objp)
