@@ -111,6 +111,7 @@ xdr_ypreq_nokey (XDR *xdrs, ypreq_nokey *objp)
     return FALSE;
   return xdr_mapname (xdrs, &objp->map);
 }
+libnsl_hidden_def (xdr_ypreq_nokey)
 
 bool_t
 xdr_ypreq_xfr (XDR *xdrs, ypreq_xfr *objp)
