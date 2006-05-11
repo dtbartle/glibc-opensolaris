@@ -17,5 +17,6 @@ libnsl_hidden_proto (xdr_ypbind_binding)
 libnsl_hidden_proto (xdr_ypreq_nokey)
 libnsl_hidden_proto (xdr_ypmaplist)
 libnsl_hidden_proto (xdr_ypreq_key)
+libnsl_hidden_proto (xdr_ypresp_val)
 
 #endif
