@@ -194,6 +194,7 @@ xdr_ypmaplist (XDR *xdrs, ypmaplist *objp)
   return xdr_pointer (xdrs, (char **) &objp->next, sizeof (ypmaplist),
 		      (xdrproc_t) xdr_ypmaplist);
 }
+libnsl_hidden_def (xdr_ypmaplist)
 
 bool_t
 xdr_ypresp_maplist (XDR *xdrs, ypresp_maplist *objp)
