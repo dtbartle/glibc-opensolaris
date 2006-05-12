@@ -153,6 +153,7 @@ xdr_ypresp_master (XDR *xdrs, ypresp_master *objp)
     return FALSE;
   return xdr_peername (xdrs, &objp->peer);
 }
+libnsl_hidden_def (xdr_ypresp_master)
 
 bool_t
 xdr_ypresp_order (XDR *xdrs, ypresp_order *objp)
