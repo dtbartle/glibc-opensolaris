@@ -442,3 +442,4 @@ xdr_cback_data (XDR *xdrs, cback_data *objp)
 		    &objp->entries.entries_len, ~0,
 		    sizeof (obj_p), (xdrproc_t) xdr_obj_p);
 }
+libnsl_hidden_def (xdr_cback_data)
