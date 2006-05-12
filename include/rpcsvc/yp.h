@@ -21,5 +21,6 @@ libnsl_hidden_proto (xdr_ypresp_val)
 libnsl_hidden_proto (xdr_ypresp_maplist)
 libnsl_hidden_proto (xdr_ypresp_order)
 libnsl_hidden_proto (xdr_ypbind_resp)
+libnsl_hidden_proto (xdr_ypresp_master)
 
 #endif
