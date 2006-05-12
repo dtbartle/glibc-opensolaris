@@ -254,6 +254,7 @@ xdr_ypbind_resp (XDR *xdrs, ypbind_resp *objp)
     }
   return FALSE;
 }
+libnsl_hidden_def (xdr_ypbind_resp)
 
 bool_t
 xdr_ypbind_setdom (XDR *xdrs, ypbind_setdom *objp)
