@@ -275,7 +275,6 @@ __nis_create_callback (int (*callback) (const_nis_name, const nis_object *,
   int sock = RPC_ANYSOCK;
   struct sockaddr_in sin;
   socklen_t len = sizeof (struct sockaddr_in);
-  char addr[NIS_MAXNAMELEN + 1];
   unsigned short port;
 
   cb = (struct nis_cb *) calloc (1,
@@ -349,9 +348,11 @@ __nis_create_callback (int (*callback) (const_nis_name, const nis_object *,
     }
   port = ntohs (sin.sin_port);
   get_myaddress (&sin);
-  snprintf (addr, sizeof (addr), "%s.%d.%d", inet_ntoa (sin.sin_addr),
-	    (port & 0xFF00) >> 8, port & 0x00FF);
-  cb->serv->ep.ep_val[0].uaddr = strdup (addr);
+
+  if (asprintf (&cb->serv->ep.ep_val[0].uaddr, "%s.%d.%d",
+		inet_ntoa (sin.sin_addr), (port & 0xFF00) >> 8, port & 0x00FF)
+      < 0)
+    goto failed;
 
   return cb;
 
