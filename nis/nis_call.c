@@ -451,19 +451,23 @@ rec_dirsearch (const_nis_name name, directory_obj *dir, nis_error *status)
 	    __free_fdresult (fd_res);
 	    return dir;
 	  }
-	obj = calloc(1, sizeof(directory_obj));
-	xdrmem_create(&xdrs, fd_res->dir_data.dir_data_val,
-		      fd_res->dir_data.dir_data_len, XDR_DECODE);
-	_xdr_directory_obj(&xdrs, obj);
-	xdr_destroy(&xdrs);
-	__free_fdresult (fd_res);
-	if (obj != NULL)
+	obj = calloc (1, sizeof(directory_obj));
+	if (obj == NULL)
 	  {
-	    /* We have found a NIS+ server serving ndomain, now
-	       let us search for "name" */
+	    __free_fdresult (fd_res);
 	    nis_free_directory (dir);
-	    return rec_dirsearch (name, obj, status);
+	    *status = NIS_NOMEMORY;
+	    return NULL;
 	  }
+	xdrmem_create (&xdrs, fd_res->dir_data.dir_data_val,
+		       fd_res->dir_data.dir_data_len, XDR_DECODE);
+	_xdr_directory_obj (&xdrs, obj);
+	xdr_destroy (&xdrs);
+	__free_fdresult (fd_res);
+	/* We have found a NIS+ server serving ndomain, now
+	   let us search for "name" */
+	nis_free_directory (dir);
+	return rec_dirsearch (name, obj, status);
       }
       break;
     case BAD_NAME:
