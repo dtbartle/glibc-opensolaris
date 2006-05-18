@@ -381,11 +381,11 @@ rec_dirsearch (const_nis_name name, directory_obj *dir, nis_error *status)
 	    __free_fdresult (fd_res);
 	    return dir;
 	  }
+	nis_free_directory (dir);
 	obj = calloc (1, sizeof (directory_obj));
 	if (obj == NULL)
 	  {
 	    __free_fdresult (fd_res);
-	    nis_free_directory (dir);
 	    *status = NIS_NOMEMORY;
 	    return NULL;
 	  }
@@ -397,7 +397,6 @@ rec_dirsearch (const_nis_name name, directory_obj *dir, nis_error *status)
 
 	/* We have found a NIS+ server serving ndomain, now
 	   let us search for "name" */
-	nis_free_directory (dir);
 	return rec_dirsearch (name, obj, status);
       }
       break;
@@ -451,11 +450,11 @@ rec_dirsearch (const_nis_name name, directory_obj *dir, nis_error *status)
 	    __free_fdresult (fd_res);
 	    return dir;
 	  }
+	nis_free_directory (dir);
 	obj = calloc (1, sizeof(directory_obj));
 	if (obj == NULL)
 	  {
 	    __free_fdresult (fd_res);
-	    nis_free_directory (dir);
 	    *status = NIS_NOMEMORY;
 	    return NULL;
 	  }
@@ -466,7 +465,6 @@ rec_dirsearch (const_nis_name name, directory_obj *dir, nis_error *status)
 	__free_fdresult (fd_res);
 	/* We have found a NIS+ server serving ndomain, now
 	   let us search for "name" */
-	nis_free_directory (dir);
 	return rec_dirsearch (name, obj, status);
       }
       break;
