@@ -1,4 +1,4 @@
-/* Copyright (C) 1997, 1998, 1999, 2000, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 1997,1998,1999,2000,2005,2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Thorsten Kukuk <kukuk@suse.de>, 1997.
 
@@ -278,12 +278,11 @@ __nis_create_callback (int (*callback) (const_nis_name, const nis_object *,
   char addr[NIS_MAXNAMELEN + 1];
   unsigned short port;
 
-  cb = (struct nis_cb *) calloc (1, sizeof (struct nis_cb));
+  cb = (struct nis_cb *) calloc (1,
+				 sizeof (struct nis_cb) + sizeof (nis_server));
   if (__builtin_expect (cb == NULL, 0))
     goto failed;
-  cb->serv = (nis_server *) calloc (1, sizeof (nis_server));
-  if (__builtin_expect (cb->serv == NULL, 0))
-    goto failed;
+  cb->serv = (nis_server *) (cb + 1);
   cb->serv->name = strdup (nis_local_principal ());
   if (__builtin_expect (cb->serv->name == NULL, 0))
     goto failed;
@@ -334,7 +333,6 @@ __nis_create_callback (int (*callback) (const_nis_name, const nis_object *,
       xprt_unregister (cb->xprt);
       svc_destroy (cb->xprt);
       xdr_free ((xdrproc_t) _xdr_nis_server, (char *) cb->serv);
-      free (cb->serv);
       free (cb);
       syslog (LOG_ERR, "NIS+: failed to register callback dispatcher");
       return NULL;
@@ -345,7 +343,6 @@ __nis_create_callback (int (*callback) (const_nis_name, const nis_object *,
       xprt_unregister (cb->xprt);
       svc_destroy (cb->xprt);
       xdr_free ((xdrproc_t) _xdr_nis_server, (char *) cb->serv);
-      free (cb->serv);
       free (cb);
       syslog (LOG_ERR, "NIS+: failed to read local socket info");
       return NULL;
@@ -362,10 +359,7 @@ __nis_create_callback (int (*callback) (const_nis_name, const nis_object *,
   if (cb)
     {
       if (cb->serv)
-	{
-	  xdr_free ((xdrproc_t) _xdr_nis_server, (char *) cb->serv);
-	  free (cb->serv);
-	}
+	xdr_free ((xdrproc_t) _xdr_nis_server, (char *) cb->serv);
       free (cb);
     }
   syslog (LOG_ERR, "NIS+: out of memory allocating callback");
@@ -379,7 +373,6 @@ __nis_destroy_callback (struct nis_cb *cb)
   svc_destroy (cb->xprt);
   close (cb->sock);
   xdr_free ((xdrproc_t) _xdr_nis_server, (char *) cb->serv);
-  free (cb->serv);
   free (cb);
 
   return NIS_SUCCESS;
