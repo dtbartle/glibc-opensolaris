@@ -223,7 +223,7 @@ inet6_option_alloc (cmsg, datalen, multx, plusy)
      int multx;
      int plusy;
 {
-  return option_alloc (cmdg, datalen, multx, plusy);
+  return option_alloc (cmsg, datalen, multx, plusy);
 }
 
 
