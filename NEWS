@@ -23,7 +23,7 @@ Version 2.5
   site might have problems with default behavior.
   Implemented by Ulrich Drepper.
 
-* Iterating over entire database in NIS and NIS+ can be slow.  With the
+* Iterating over entire database in NIS can be slow.  With the
   SETENT_BATCH_READ option in /etc/default/nss a system admin can decide
   to trade time for memory.  The entire database will be read at once.
   Implemented by Ulrich Drepper.
