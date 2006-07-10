@@ -13,7 +13,7 @@ Version 2.5
 * Allow system admin to configure getaddrinfo with the /etc/gai.conf file.
   Implemented by Ulrich Drepper.
 
-* New Linux interfaces: splice, tee, sync_file_range, vmsplace.
+* New Linux interfaces: splice, tee, sync_file_range, vmsplice.
 
 * New iconv module for MIK.  Contributed by Alexander Shopov.
 
