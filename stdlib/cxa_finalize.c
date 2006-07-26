@@ -38,17 +38,19 @@ __cxa_finalize (void *d)
       for (f = &funcs->fns[funcs->idx - 1]; f >= &funcs->fns[0]; --f)
 	{
 	  void (*cxafn) (void *arg, int status);
+	  void *cxaarg;
 
 	  if ((d == NULL || d == f->func.cxa.dso_handle)
 	      /* We don't want to run this cleanup more than once.  */
 	      && (cxafn = f->func.cxa.fn,
+		  cxaarg = f->func.cxa.arg,
 		  ! atomic_compare_and_exchange_bool_acq (&f->flavor, ef_free,
 							  ef_cxa)))
 	    {
 #ifdef PTR_DEMANGLE
 	      PTR_DEMANGLE (cxafn);
 #endif
-	      cxafn (f->func.cxa.arg, 0);
+	      cxafn (cxaarg, 0);
 	    }
 	}
     }
