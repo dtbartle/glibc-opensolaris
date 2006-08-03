@@ -402,8 +402,8 @@ __printf_fphex (FILE *fp,
 		  leading = '1';
 		  if (expnegative)
 		    {
-		      exponent += 4;
-		      if (exponent >= 0)
+		      exponent -= 4;
+		      if (exponent <= 0)
 			expnegative = 0;
 		    }
 		  else
