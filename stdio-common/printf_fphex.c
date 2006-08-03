@@ -1,5 +1,5 @@
 /* Print floating point number in hexadecimal notation according to ISO C99.
-   Copyright (C) 1997-2002,2004 Free Software Foundation, Inc.
+   Copyright (C) 1997-2002,2004,2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
@@ -399,7 +399,7 @@ __printf_fphex (FILE *fp,
 		++leading;
 	      else
 		{
-		  leading = 1;
+		  leading = '1';
 		  if (expnegative)
 		    {
 		      exponent += 4;
