@@ -167,8 +167,6 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
       const ElfW(Addr) *bitmask = map->l_gnu_bitmask;
       if (__builtin_expect (bitmask != NULL, 1))
 	{
-	  /* No symbol found so far.  */
-	  symidx = SHN_UNDEF;
 	  ElfW(Addr) bitmask_word
 	    = bitmask[(new_hash / __ELF_NATIVE_CLASS)
 		      & map->l_gnu_bitmask_idxbits];
@@ -197,6 +195,8 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
 		  while ((*hasharr++ & 1u) == 0);
 		}
 	    }
+	  /* No symbol found.  */
+	  symidx = SHN_UNDEF;
 	}
       else
 	{
