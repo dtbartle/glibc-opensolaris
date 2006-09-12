@@ -42,6 +42,11 @@ tf (void *arg)
       }
   while (arg == NULL);
   pthread_cleanup_pop (0);
+  if (pthread_mutex_unlock (&m) != 0)
+    {
+      printf ("%s: mutex_unlock failed\n", __func__);
+      exit (1);
+    }
   return NULL;
 }
 
