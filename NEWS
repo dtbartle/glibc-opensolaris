@@ -21,7 +21,7 @@ Version 2.5
 * For sites with broken group and/or passwd database, the auto-propagate
   option of nscd can prevent creating ID lookup entries from the results
   of a name lookup and vice versa.   This usually is no problem but some
-  site might have problems with default behavior.
+  site might have problems with the default behavior.
   Implemented by Ulrich Drepper.
 
 * Iterating over entire database in NIS can be slow.  With the
