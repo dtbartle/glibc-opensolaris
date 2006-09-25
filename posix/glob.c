@@ -1096,9 +1096,8 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
       size_t count;
       char *name[64];
     };
-  struct globnames init_names = { .next = NULL,
-				  .count = (sizeof (init_names.name)
-					    / sizeof (init_names.name[0])) };
+#define INITIAL_COUNT sizeof (init_names.name) / sizeof (init_names.name[0])
+  struct globnames init_names;
   struct globnames *names = &init_names;
   struct globnames *names_alloca = &init_names;
   size_t nfound = 0;
@@ -1106,6 +1105,9 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
   size_t cur = 0;
   int meta;
   int save;
+
+  init_names.next = NULL;
+  init_names.count = INITIAL_COUNT;
 
   meta = __glob_pattern_p (pattern, !(flags & GLOB_NOESCAPE));
   if (meta == 0 && (flags & (GLOB_NOCHECK|GLOB_NOMAGIC)))
@@ -1228,8 +1230,9 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
 			    {
 			      struct globnames *newnames;
 			      size_t count = names->count * 2;
-			      size_t size = sizeof (struct globnames)
-					    + (count - 16) * sizeof (char *);
+			      size_t size = (sizeof (struct globnames)
+					     + ((count - INITIAL_COUNT)
+						* sizeof (char *)));
 			      allocasize += size;
 			      if (__libc_use_alloca (allocasize))
 				newnames = names_alloca = __alloca (size);
