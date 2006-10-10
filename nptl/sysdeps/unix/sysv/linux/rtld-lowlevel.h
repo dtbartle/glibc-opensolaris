@@ -34,6 +34,18 @@
 #define __RTLD_MRLOCK_TRIES 5
 
 
+typedef int __rtld_mrlock_t;
+
+
+#define __rtld_mrlock_define(CLASS,NAME) \
+  CLASS __rtld_mrlock_t NAME;
+
+
+#define _RTLD_MRLOCK_INITIALIZER 0
+#define __rtld_mrlock_initialize(NAME) \
+  (void) ((NAME) = 0
+
+
 #define __rtld_mrlock_lock(lock) \
   do {									      \
     __label__ out;							      \
@@ -117,5 +129,23 @@
     if (__builtin_expect ((oldval & __RTLD_MRLOCK_RWAIT) != 0, 0))	      \
       lll_futex_wake (&(lock), 0x7fffffff);				      \
   } while (0)
+
+
+/* Function to wait for variable become zero.  Used in ld.so for
+   reference counters.  */
+#define __rtld_waitzero(word) \
+  do {									      \
+    while (1)								      \
+      {									      \
+	int val = word;							      \
+	if (val == 0)							      \
+	  break;							      \
+	lll_futex_wait (&(word), val);					      \
+      }									      \
+  } while (0)
+
+
+#define __rtld_notify(word) \
+  lll_futex_wake (&(word), 1)
 
 #endif
