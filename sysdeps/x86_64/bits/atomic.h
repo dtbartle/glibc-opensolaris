@@ -81,8 +81,8 @@ typedef uintmax_t uatomic_max_t;
   ({ __typeof (*mem) ret;						      \
      __asm __volatile (LOCK_PREFIX "cmpxchgq %q2, %1"			      \
 		       : "=a" (ret), "=m" (*mem)			      \
-		       : "r" ((long) (newval)), "m" (*mem),		      \
-			 "0" ((long) (oldval)));			      \
+		       : "r" ((long int) (newval)), "m" (*mem),		      \
+			 "0" ((long int) (oldval)));			      \
      ret; })
 
 
@@ -121,12 +121,13 @@ typedef uintmax_t uatomic_max_t;
 
 #define __arch_c_compare_and_exchange_val_64_acq(mem, newval, oldval) \
   ({ __typeof (*mem) ret;						      \
-    __asm __volatile ("cmpl $0, %%fs:%P5\n\t"				      \
-		      "je 0f\n\t"					      \
-		      "lock\n"						      \
+     __asm __volatile ("cmpl $0, %%fs:%P5\n\t"				      \
+		       "je 0f\n\t"					      \
+		       "lock\n"						      \
 		       "0:\tcmpxchgq %q2, %1"				      \
 		       : "=a" (ret), "=m" (*mem)			      \
-		       : "q" (newval), "m" (*mem), "0" (oldval),	      \
+		       : "q" ((long int) (newval)), "m" (*mem),		      \
+			 "0" ((long int)oldval),			      \
 			 "i" (offsetof (tcbhead_t, multiple_threads)));	      \
      ret; })
 
