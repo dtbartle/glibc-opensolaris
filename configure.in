@@ -1451,7 +1451,7 @@ EOF
       esac
     fi
   fi])
-  if test $libc_cv_z_relro = no; then
+  if test "$libc_cv_z_relro" = no; then
     AC_MSG_ERROR(linker with -z relro support required)
   fi
 
