@@ -5,7 +5,7 @@ static int
 do_test (void)
 {
   int status = 0;
-  const char *s = "0x";
+  const char s[] = "0x";
   char *ep;
   double r = strtod (s, &ep);
   if (r != 0)
