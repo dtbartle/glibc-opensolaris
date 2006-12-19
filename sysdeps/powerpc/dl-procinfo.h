@@ -90,12 +90,18 @@ _dl_string_platform (const char *str)
 	case '5':
 	  ret = _DL_FIRST_PLATFORM + PPC_PLATFORM_POWER5;
 	  if (str[1] == '+')
-	    ret = _DL_FIRST_PLATFORM + PPC_PLATFORM_POWER5_PLUS, ++str;
+	    {
+	      ret = _DL_FIRST_PLATFORM + PPC_PLATFORM_POWER5_PLUS;
+	      ++str;
+	    }
 	  break;
 	case '6':
 	  ret = _DL_FIRST_PLATFORM + PPC_PLATFORM_POWER6;
 	  if (str[1] == 'x')
-	    ret = _DL_FIRST_PLATFORM + PPC_PLATFORM_POWER6X, ++str;
+	    {
+	      ret = _DL_FIRST_PLATFORM + PPC_PLATFORM_POWER6X;
+	      ++str;
+	    }
 	  break;
 	default:
 	  return -1;
