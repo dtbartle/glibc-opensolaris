@@ -98,7 +98,9 @@ int _dl_starting_up = 1;
 hp_timing_t _dl_cpuclock_offset;
 #endif
 
+#ifdef USE_TLS
 void (*_dl_init_static_tls) (struct link_map *) = &_dl_nothread_init_static_tls;
+#endif
 
 size_t _dl_pagesize;
 
