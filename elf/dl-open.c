@@ -31,7 +31,6 @@
 #include <ldsodefs.h>
 #include <bp-sym.h>
 #include <caller.h>
-#include <sysdep-cancel.h>
 
 #include <dl-dst.h>
 
@@ -164,7 +163,9 @@ dl_open_worker (void *a)
   struct link_map *new, *l;
   int lazy;
   unsigned int i;
+#ifdef USE_TLS
   bool any_tls = false;
+#endif
   struct link_map *call_map = NULL;
 
   /* Check whether _dl_open() has been called from a valid DSO.  */
@@ -378,8 +379,6 @@ dl_open_worker (void *a)
 
 	  while (*runp != NULL)
 	    {
-	      if (*runp == &new->l_searchlist)
-		break;
 	      ++cnt;
 	      ++runp;
 	    }
@@ -392,53 +391,37 @@ dl_open_worker (void *a)
 	    {
 	      /* The 'r_scope' array is too small.  Allocate a new one
 		 dynamically.  */
-	      size_t new_size;
 	      struct r_scope_elem **newp;
+	      size_t new_size = imap->l_scope_max * 2;
 
-#define SCOPE_ELEMS(imap) \
-  (sizeof (imap->l_scope_mem) / sizeof (imap->l_scope_mem[0]))
-
-	      if (imap->l_scope != imap->l_scope_mem
-		  && imap->l_scope_max < SCOPE_ELEMS (imap))
+	      if (imap->l_scope == imap->l_scope_mem)
 		{
-		  new_size = SCOPE_ELEMS (imap);
-		  newp = imap->l_scope_mem;
-		}
-	      else
-		{
-		  new_size = imap->l_scope_max * 2;
 		  newp = (struct r_scope_elem **)
 		    malloc (new_size * sizeof (struct r_scope_elem *));
 		  if (newp == NULL)
 		    _dl_signal_error (ENOMEM, "dlopen", NULL,
 				      N_("cannot create scope list"));
+		  imap->l_scope = memcpy (newp, imap->l_scope,
+					  cnt * sizeof (imap->l_scope[0]));
 		}
-
-	      memcpy (newp, imap->l_scope, cnt * sizeof (imap->l_scope[0]));
-	      struct r_scope_elem **old = imap->l_scope;
-
-	      if (RTLD_SINGLE_THREAD_P)
-		imap->l_scope = newp;
 	      else
 		{
-		  __rtld_mrlock_change (imap->l_scope_lock);
+		  newp = (struct r_scope_elem **)
+		    realloc (imap->l_scope,
+			     new_size * sizeof (struct r_scope_elem *));
+		  if (newp == NULL)
+		    _dl_signal_error (ENOMEM, "dlopen", NULL,
+				      N_("cannot create scope list"));
 		  imap->l_scope = newp;
-		  __rtld_mrlock_done (imap->l_scope_lock);
 		}
-
-	      if (old != imap->l_scope_mem)
-		free (old);
 
 	      imap->l_scope_max = new_size;
 	    }
 
-	  /* First terminate the extended list.  Otherwise a thread
-	     might use the new last element and then use the garbage
-	     at offset IDX+1.  */
-	  imap->l_scope[cnt + 1] = NULL;
-	  atomic_write_barrier ();
-	  imap->l_scope[cnt] = &new->l_searchlist;
+	  imap->l_scope[cnt++] = &new->l_searchlist;
+	  imap->l_scope[cnt] = NULL;
 	}
+#if USE_TLS
       /* Only add TLS memory if this object is loaded now and
 	 therefore is not yet initialized.  */
       else if (! imap->l_init_called
@@ -453,11 +436,11 @@ dl_open_worker (void *a)
 	  if (imap->l_need_tls_init)
 	    {
 	      imap->l_need_tls_init = 0;
-#ifdef SHARED
+# ifdef SHARED
 	      /* Update the slot information data for at least the
 		 generation of the DSO we are allocating data for.  */
 	      _dl_update_slotinfo (imap->l_tls_modid);
-#endif
+# endif
 
 	      GL(dl_init_static_tls) (imap);
 	      assert (imap->l_need_tls_init == 0);
@@ -466,12 +449,15 @@ dl_open_worker (void *a)
 	  /* We have to bump the generation counter.  */
 	  any_tls = true;
 	}
+#endif
     }
 
+#if USE_TLS
   /* Bump the generation number if necessary.  */
   if (any_tls && __builtin_expect (++GL(dl_tls_generation) == 0, 0))
     _dl_fatal_printf (N_("\
 TLS generation counter wrapped!  Please report this."));
+#endif
 
   /* Run the initializer functions of new objects.  */
   _dl_init (new, args->argc, args->argv, args->env);
@@ -568,6 +554,7 @@ no more namespaces available for dlmopen()"));
 	 state if relocation failed, for example.  */
       if (args.map)
 	{
+#ifdef USE_TLS
 	  /* Maybe some of the modules which were loaded use TLS.
 	     Since it will be removed in the following _dl_close call
 	     we have to mark the dtv array as having gaps to fill the
@@ -577,6 +564,7 @@ no more namespaces available for dlmopen()"));
 	     up.  */
 	  if ((mode & __RTLD_AUDIT) == 0)
 	    GL(dl_tls_dtv_gaps) = true;
+#endif
 
 	  _dl_close_worker (args.map);
 	}
