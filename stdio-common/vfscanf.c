@@ -1977,7 +1977,7 @@ _IO_vfscanf_internal (_IO_FILE *s, const char *format, _IO_va_list argptr,
 				      got_dot = 1;
 				    }
 				  else if (n == 10 && (flags & GROUP) != 0
-					   && thousands != NULL && ! got_dot)
+					   && ! got_dot)
 				    {
 				      /* Add all the characters.  */
 				      for (cmpp = thousands; *cmpp != '\0';
