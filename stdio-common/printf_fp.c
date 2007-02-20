@@ -1123,15 +1123,14 @@ ___printf_fp (FILE *fp,
 	  else
 	    thousands_sep_len = strlen (thousands_sep);
 
-	  if (buffer_malloced)
+	  if (__builtin_expect (buffer_malloced, 0))
 	    {
 	      buffer = (char *) malloc (2 + chars_needed + decimal_len
 					+ ngroups * thousands_sep_len);
 	      if (buffer == NULL)
 		{
 		  /* Signal an error to the caller.  */
-		  if (buffer_malloced)
-		    free (wbuffer);
+		  free (wbuffer);
 		  return -1;
 		}
 	    }
@@ -1165,7 +1164,7 @@ ___printf_fp (FILE *fp,
       PRINT (tmpptr, wstartp, wide ? wcp - wstartp : cp - tmpptr);
 
       /* Free the memory if necessary.  */
-      if (buffer_malloced)
+      if (__builtin_expect (buffer_malloced, 0))
 	{
 	  free (buffer);
 	  free (wbuffer);
