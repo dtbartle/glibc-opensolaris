@@ -61,6 +61,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <nscd/nscd-client.h>
 #include <nscd/nscd_proto.h>
 
+#ifdef HAVE_NETLINK_ROUTE
+# include <kernel-features.h>
+#endif
+
 #ifdef HAVE_LIBIDN
 extern int __idna_to_ascii_lz (const char *input, char **output, int flags);
 extern int __idna_to_unicode_lzlz (const char *input, char **output,
@@ -1851,6 +1855,16 @@ gaiconf_reload (void)
 }
 
 
+#if HAVE_NETLINK_ROUTE
+# if __ASSUME_NETLINK_SUPPORT == 0
+/* Defined in ifaddrs.c.  */
+extern int __no_netlink_support attribute_hidden;
+# else
+#  define __no_netlink_support 0
+# endif
+#endif
+
+
 int
 getaddrinfo (const char *name, const char *service,
 	     const struct addrinfo *hints, struct addrinfo **pai)
@@ -1886,20 +1900,74 @@ getaddrinfo (const char *name, const char *service,
     return EAI_BADFLAGS;
 
   struct in6addrinfo *in6ai = NULL;
-  size_t in6ailen;
+  size_t in6ailen = 0;
   bool seen_ipv4 = false;
   bool seen_ipv6 = false;
+#ifdef HAVE_NETLINK_ROUTE
+  int sockfd = -1;
+  pid_t nl_pid;
+#endif
   /* We might need information about what kind of interfaces are available.
      But even if AI_ADDRCONFIG is not used, if the user requested IPv6
      addresses we have to know whether an address is deprecated or
      temporary.  */
   if ((hints->ai_flags & AI_ADDRCONFIG) || hints->ai_family == PF_UNSPEC
       || hints->ai_family == PF_INET6)
-    /* Determine whether we have IPv4 or IPv6 interfaces or both.  We
-       cannot cache the results since new interfaces could be added at
-       any time.  */
-    __check_pf (&seen_ipv4, &seen_ipv6, &in6ai, &in6ailen);
+    {
+      /* Determine whether we have IPv4 or IPv6 interfaces or both.  We
+	 cannot cache the results since new interfaces could be added at
+	 any time.  */
+      __check_pf (&seen_ipv4, &seen_ipv6, &in6ai, &in6ailen);
+#ifdef HAVE_NETLINK_ROUTE
+      if (! __no_netlink_support)
+	{
+	  sockfd = __socket (PF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 
+	  struct sockaddr_nl nladdr;
+	  memset (&nladdr, '\0', sizeof (nladdr));
+	  nladdr.nl_family = AF_NETLINK;
+
+	  socklen_t addr_len = sizeof (nladdr);
+
+	  if (sockfd >= 0
+	      && __bind (fd, (struct sockaddr *) &nladdr, sizeof (nladdr)) == 0
+	      && __getsockname (sockfd, (struct sockaddr *) &nladdr,
+				&addr_len) == 0
+	      && make_request (sockfd, nladdr.nl_pid, &seen_ipv4, &seen_ipv6,
+			       in6ai, in6ailen) == 0)
+	    {
+	      /* It worked.  */
+	      nl_pid = nladdr.nl_pid;
+	      goto got_netlink_socket;
+	    }
+
+	  if (sockfd >= 0)
+	    close_not_cancel_no_status (sockfd);
+
+#if __ASSUME_NETLINK_SUPPORT == 0
+	  /* Remember that there is no netlink support.  */
+	  if (errno != EMFILE && errno != ENFILE)
+	    __no_netlink_support = 1;
+#else
+	  else
+	    {
+	      if (errno != EMFILE && errno != ENFILE)
+		sockfd = -2;
+
+	      /* We cannot determine what interfaces are available.  Be
+		 pessimistic.  */
+	      seen_ipv4 = true;
+	      seen_ipv6 = true;
+	      return;
+	    }
+#endif
+	}
+#endif
+    }
+
+#ifdef HAVE_NETLINK_ROUTE
+ got_netlink_socket:
+#endif
   if (hints->ai_flags & AI_ADDRCONFIG)
     {
       /* Now make a decision on what we return, if anything.  */
@@ -1951,58 +2019,6 @@ getaddrinfo (const char *name, const char *service,
     end = NULL;
 
   unsigned int naddrs = 0;
-#if 0
-  /* If we would support more protocols than just IPv4 and IPv6 we
-     would iterate over a table with appropriate callback functions.
-     Since we currently only handle IPv4 and IPv6 this is not
-     necessary.  */
-  const struct gaih *g = gaih;
-  const struct gaih *pg = NULL;
-  int j = 0;
-  while (g->gaih)
-    {
-      if (hints->ai_family == g->family || hints->ai_family == AF_UNSPEC)
-	{
-	  j++;
-	  if (pg == NULL || pg->gaih != g->gaih)
-	    {
-	      pg = g;
-	      i = g->gaih (name, pservice, hints, end, &naddrs);
-	      if (i != 0)
-		{
-		  /* EAI_NODATA is a more specific result as it says that
-		     we found a result but it is not usable.  */
-		  if (last_i != (GAIH_OKIFUNSPEC | -EAI_NODATA))
-		    last_i = i;
-
-		  if (hints->ai_family == AF_UNSPEC && (i & GAIH_OKIFUNSPEC))
-		    {
-		      ++g;
-		      continue;
-		    }
-
-		  freeaddrinfo (p);
-		  free (in6ai);
-
-		  return -(i & GAIH_EAI);
-		}
-	      if (end)
-		while (*end)
-		  {
-		    end = &((*end)->ai_next);
-		    ++nresults;
-		  }
-	    }
-	}
-      ++g;
-    }
-
-  if (j == 0)
-    {
-      free (in6ai);
-      return EAI_FAMILY;
-    }
-#else
   if (hints->ai_family == AF_UNSPEC || hints->ai_family == AF_INET
       || hints->ai_family == AF_INET6)
     {
@@ -2026,7 +2042,6 @@ getaddrinfo (const char *name, const char *service,
       free (in6ai);
       return EAI_FAMILY;
     }
-#endif
 
   if (naddrs > 1)
     {
