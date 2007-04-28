@@ -26,9 +26,9 @@ sched_getcpu (void)
 #ifdef __NR_getcpu
   unsigned int cpu;
   INTERNAL_SYSCALL_DECL (err);
-  int r = INTERNAL_SYSCALL (getcpu, err, &cpu, NULL, NULL);
+  int r = INTERNAL_SYSCALL (getcpu, err, 3, &cpu, NULL, NULL);
 
-  return (INTERNAL_SYSCALL_ERROR (r, err)
+  return (INTERNAL_SYSCALL_ERROR_P (r, err)
 	  ? INTERNAL_SYSCALL_ERRNO (r, err) : cpu);
 #else
   __set_errno (ENOSYS);
