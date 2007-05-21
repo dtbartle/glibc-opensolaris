@@ -17,10 +17,11 @@
    02111-1307 USA.  */
 
 #include <sysdep.h>
+#define _ERRNO_H
+#include <bits/errno.h>
 #define _SIGNAL_H
 #include <bits/signum.h>
 
-#define ENOSYS 38
 
 	.text
 ENTRY (epoll_pwait)
