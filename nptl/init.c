@@ -284,7 +284,7 @@ __pthread_initialize_minimal_internal (void)
     res = INTERNAL_SYSCALL (futex, err, 3, &word,
 			    FUTEX_WAKE | FUTEX_PRIVATE_FLAG, 1);
     if (!INTERNAL_SYSCALL_ERROR_P (res, err))
-      pd->header.private_futex = FUTEX_PRIVATE_FLAG;
+      THREAD_SETMEM (pd, header.private_futex, FUTEX_PRIVATE_FLAG);
   }
 #endif
 
