@@ -276,7 +276,7 @@ __pthread_initialize_minimal_internal (void)
 #endif
     set_robust_list_not_avail ();
 
-#ifdef THREAD_SET_PRIVATE_FUTEX
+#ifndef __ASSUME_PRIVATE_FUTEX
   /* Private futexes are always used (at least internally) so that
      doing the test once this early is beneficial.  */
   {
