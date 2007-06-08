@@ -21,12 +21,16 @@
 
 
 int
-__sched_cpucount (size_t setsize, cpu_set_t *setp)
+__sched_cpucount (size_t setsize, const cpu_set_t *setp)
 {
   int s = 0;
-  for (unsigned int j = 0; j < setsize / sizeof (__cpu_mask); ++j)
+  const __cpu_mask *p = setp->__bits;
+  const __cpu_mask *end = &setp->__bits[setsize / sizeof (__cpu_mask)];
+
+  while (p < end)
     {
-      __cpu_mask l = setp->__bits[j];
+      __cpu_mask l = *p++;
+
 #ifdef POPCNT
       s += POPCNT (l);
 #else
