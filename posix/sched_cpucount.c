@@ -27,12 +27,12 @@ __sched_cpucount (size_t setsize, cpu_set_t *setp)
   for (unsigned int j = 0; j < setsize / sizeof (__cpu_mask); ++j)
     {
       __cpu_mask l = setp->__bits[j];
-      if (l == 0)
-	continue;
-
 #ifdef POPCNT
       s += POPCNT (l);
 #else
+      if (l == 0)
+	continue;
+
 # if LONG_BIT > 32
       l = (l & 0x5555555555555555ul) + ((l >> 1) & 0x5555555555555555ul);
       l = (l & 0x3333333333333333ul) + ((l >> 2) & 0x3333333333333333ul);
