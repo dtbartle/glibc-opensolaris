@@ -77,12 +77,14 @@ __pthread_rwlock_wrlock:
 	mov	r8, r4
 	add	#WRITERS_WAKEUP, r4
 #if __ASSUME_PRIVATE_FUTEX
-	mov.b	@(PSHARED,r8), r5
+	mov	#PSHARED, r0
+	mov.b	@(r0,r8), r5
 	mov	#(FUTEX_PRIVATE_FLAG|FUTEX_WAIT), r0
 	xor	r0, r5
 	extu.b	r5, r5
 #else
-	mov.b	@(PSHARED,r8), r5
+	mov	#PSHARED, r0
+	mov.b	@(r0,r8), r5
 	extu.b	r5, r5
 # if FUTEX_WAIT != 0
 	mov	#FUTEX_WAIT, r0

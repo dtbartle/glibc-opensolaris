@@ -90,12 +90,14 @@ __pthread_rwlock_unlock:
 
 8:
 #if __ASSUME_PRIVATE_FUTEX
-	mov.b	@(PSHARED,r8), r5
+	mov	#PSHARED, r0
+	mov.b	@(r0,r8), r5
 	mov	#(FUTEX_PRIVATE_FLAG|FUTEX_WAKE), r0
 	xor	r0, r5
 	extu.b	r5, r5
 #else
-	mov.b	@(PSHARED,r8), r5
+	mov	#PSHARED, r0
+	mov.b	@(r0,r8), r5
 	extu.b	r5, r5
 	mov	#FUTEX_WAKE, r0
 	or	r0, r5

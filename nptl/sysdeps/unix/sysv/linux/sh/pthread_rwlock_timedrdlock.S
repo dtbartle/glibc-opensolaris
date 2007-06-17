@@ -61,7 +61,8 @@ pthread_rwlock_timedrdlock:
 	mov.l	@(WRITERS_QUEUED,r8), r0
 	tst	r0, r0
 	bt	5f
-	mov.b	@(FLAGS,r8), r0
+	mov	#FLAGS, r0
+	mov.b	@(r0,r8), r0
 	tst	r0, r0
 	bt	5f
 3:
@@ -120,12 +121,14 @@ pthread_rwlock_timedrdlock:
 	/* Futex call.  */
 	mov	r15, r7
 #if __ASSUME_PRIVATE_FUTEX
-	mov.b	@(PSHARED,r8), r5
+	mov	#PSHARED, r0
+	mov.b	@(r0,r8), r5
 	mov	#(FUTEX_PRIVATE_FLAG|FUTEX_WAIT), r0
 	xor	r0, r5
 	extu.b	r5, r5
 #else
-	mov.b	@(PSHARED,r8), r5
+	mov	#PSHARED, r0
+	mov.b	@(r0,r8), r5
 	extu.b	r5, r5
 # if FUTEX_WAIT != 0
 	mov	#FUTEX_WAIT, r0
