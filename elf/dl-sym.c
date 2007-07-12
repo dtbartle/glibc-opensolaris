@@ -26,10 +26,12 @@
 #include <ldsodefs.h>
 #include <dl-hash.h>
 #include <sysdep-cancel.h>
-#include <dl-tls.h>
+#ifdef USE_TLS
+# include <dl-tls.h>
+#endif
 
 
-#ifdef SHARED
+#if defined USE_TLS && defined SHARED
 /* Systems which do not have tls_index also probably have to define
    DONT_USE_TLS_INDEX.  */
 
@@ -126,7 +128,7 @@ do_sym (void *handle, const char *name, void *who,
 	  args.name = name;
 	  args.map = match;
 	  args.vers = vers;
-	  args.flags = flags | DL_LOOKUP_ADD_DEPENDENCY;
+	  args.flags = flags | DL_LOOKUP_ADD_DEPENDENCY | DL_LOOKUP_SCOPE_LOCK;
 	  args.refp = &ref;
 
 	  const char *objname;
@@ -182,7 +184,7 @@ RTLD_NEXT used in code not dynamically loaded"));
     {
       void *value;
 
-#ifdef SHARED
+#if defined USE_TLS && defined SHARED
       if (ELFW(ST_TYPE) (ref->st_info) == STT_TLS)
 	/* The found symbol is a thread-local storage variable.
 	   Return the address for to the current thread.  */

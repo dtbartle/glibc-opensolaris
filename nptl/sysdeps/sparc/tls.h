@@ -60,6 +60,9 @@ typedef struct
 # error "TLS support is required."
 #endif
 
+/* Signal that TLS support is available.  */
+#define USE_TLS	1
+
 #ifndef __ASSEMBLER__
 /* Get system call information.  */
 # include <sysdep.h>
@@ -140,6 +143,29 @@ register struct pthread *__thread_self __asm__("%g7");
   THREAD_SETMEM (THREAD_SELF, header.pointer_guard, value)
 # define THREAD_COPY_POINTER_GUARD(descr) \
   ((descr)->header.pointer_guard = THREAD_GET_POINTER_GUARD ())
+
+/* Get and set the global scope generation counter in struct pthread.  */
+#define THREAD_GSCOPE_FLAG_UNUSED 0
+#define THREAD_GSCOPE_FLAG_USED   1
+#define THREAD_GSCOPE_FLAG_WAIT   2
+#define THREAD_GSCOPE_RESET_FLAG() \
+  do									     \
+    { int __res								     \
+	= atomic_exchange_rel (&THREAD_SELF->header.gscope_flag,	     \
+			       THREAD_GSCOPE_FLAG_UNUSED);		     \
+      if (__res == THREAD_GSCOPE_FLAG_WAIT)				     \
+	lll_futex_wake (&THREAD_SELF->header.gscope_flag, 1);		     \
+    }									     \
+  while (0)
+#define THREAD_GSCOPE_SET_FLAG() \
+  do									     \
+    {									     \
+      THREAD_SELF->header.gscope_flag = THREAD_GSCOPE_FLAG_USED;	     \
+      atomic_write_barrier ();						     \
+    }									     \
+  while (0)
+#define THREAD_GSCOPE_WAIT() \
+  GL(dl_wait_lookup_done) ()
 
 #endif /* !ASSEMBLER */
 
