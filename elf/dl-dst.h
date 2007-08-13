@@ -76,8 +76,3 @@
     }									      \
   else
 #endif
-
-#ifndef IS_IN_rtld
-# define _dl_get_origin GLRO(dl_get_origin)
-# define _dl_dst_substitute GLRO(dl_dst_substitute)
-#endif
