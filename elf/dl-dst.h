@@ -29,9 +29,6 @@
       __cnt = _dl_dst_count (__sf, is_path);			      \
 									      \
     __cnt; })
-#ifndef IS_IN_rtld
-# define _dl_dst_count GLRO(dl_dst_count)
-#endif
 
 
 /* Guess from the number of DSTs the length of the result string.  */
