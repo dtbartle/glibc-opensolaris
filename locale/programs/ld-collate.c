@@ -2660,7 +2660,6 @@ collate_read (struct linereader *ldfile, struct localedef_t *result,
 
   if (nowtok == tok_copy)
     {
-      state = 2;
       now = lr_token (ldfile, charmap, result, NULL, verbose);
       if (now->tok != tok_string)
 	{
