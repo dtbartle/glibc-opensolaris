@@ -31,7 +31,7 @@ system, and telling the system the program is done.
 
 A program starts another program with the @code{exec} family of system calls.
 This chapter looks at program startup from the execee's point of view.  To
-see the event from the execor's point of view, @xref{Executing a File}.
+see the event from the execor's point of view, see @ref{Executing a File}.
 
 @menu
 * Program Arguments::           Parsing your program's command-line arguments.
