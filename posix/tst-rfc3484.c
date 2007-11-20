@@ -85,6 +85,7 @@ do_test (void)
 {
   labels = default_labels;
   precedence = default_precedence;
+  scopes= default_scopes;
 
   struct sockaddr_in so;
   so.sin_family = AF_INET;
