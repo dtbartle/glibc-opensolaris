@@ -1,4 +1,4 @@
-/* Copyright (C) 2003, 2004, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
 	.align	5
 __new_sem_post:
 	mov	#1, r3
-	XADD (r3, @(VALUE,r4), r2)
+	XADD (r3, @(VALUE,r4), r2, r5)
 	mov.l	@(NWAITERS,r4), r2
 	tst	r2, r2
 	bt	2f
