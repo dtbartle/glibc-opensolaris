@@ -1,5 +1,5 @@
 /* High precision, low overhead timing functions.  powerpc64 version.
-   Copyright (C) 2005 Free Software Foundation, Inc.
+   Copyright (C) 2005, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
@@ -85,7 +85,11 @@ typedef unsigned long long int hp_timing_t;
    running in this moment.  This could be changed by using a barrier like
    'lwsync' right before the `mftb' instruciton.  But we are not interested
    in accurate clock cycles here so we don't do this.  */
+#ifdef _ARCH_PWR4
+#define HP_TIMING_NOW(Var)	__asm__ __volatile__ ("mfspr %0,268" : "=r" (Var))
+#else
 #define HP_TIMING_NOW(Var)	__asm__ __volatile__ ("mftb %0" : "=r" (Var))
+#endif
 
 /* Use two 'mftb' instructions in a row to find out how long it takes.
    On current POWER4, POWER5, and 970 processors mftb take ~10 cycles.  */
