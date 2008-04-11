@@ -1627,7 +1627,7 @@ else
 fi
 rm -f conftest*])
 if test $libc_cv_fno_toplevel_reorder = yes; then
-  fno_unit_at_a_time=-fno-toplevel-reorder -fno-section-anchors
+  fno_unit_at_a_time="-fno-toplevel-reorder -fno-section-anchors"
 else
   fno_unit_at_a_time=-fno-unit-at-a-time
 fi
