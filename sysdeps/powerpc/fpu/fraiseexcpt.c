@@ -1,5 +1,5 @@
 /* Raise given exceptions.
-   Copyright (C) 1997,99,2000,01,02 Free Software Foundation, Inc.
+   Copyright (C) 1997,1999-2002, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ __feraiseexcept (int excepts)
       /* For some reason, some PowerPC chips (the 601, in particular)
 	 don't have FE_INVALID_SOFTWARE implemented.  Detect this
 	 case and raise FE_INVALID_SNAN instead.  */
-      && !fetestexcept (FE_INVALID))
+      && (u.l[1] & excepts))
     set_fpscr_bit (FPSCR_VXSNAN);
 
   /* Success.  */
