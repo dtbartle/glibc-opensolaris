@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-2001, 2003, 2004, 2006, 2007
+/* Copyright (C) 1991-2001, 2003, 2004, 2006, 2007, 2008
    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -83,6 +83,8 @@ enum
 #define IPPROTO_COMP		IPPROTO_COMP
     IPPROTO_SCTP = 132,	   /* Stream Control Transmission Protocol.  */
 #define IPPROTO_SCTP		IPPROTO_SCTP
+    IPPROTO_UDPLITE = 136, /* UDP-Lite protocol.  */
+#define IPPROTO_UDPLITE		IPPROTO_UDPLITE
     IPPROTO_RAW = 255,	   /* Raw IP packets.  */
 #define IPPROTO_RAW		IPPROTO_RAW
     IPPROTO_MAX
