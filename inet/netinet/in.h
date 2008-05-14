@@ -53,6 +53,8 @@ enum
 #define IPPROTO_IDP		IPPROTO_IDP
     IPPROTO_TP = 29,	   /* SO Transport Protocol Class 4.  */
 #define IPPROTO_TP		IPPROTO_TP
+    IPPROTO_DCCP = 33,	   /* Datagram Congestion Control Protocol.  */
+#define IPPROTO_DCCP		IPPROTO_DCCP
     IPPROTO_IPV6 = 41,     /* IPv6 header.  */
 #define IPPROTO_IPV6		IPPROTO_IPV6
     IPPROTO_ROUTING = 43,  /* IPv6 routing header.  */
