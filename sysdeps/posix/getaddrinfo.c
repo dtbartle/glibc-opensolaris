@@ -684,6 +684,9 @@ gaih_inet (const char *name, const struct gaih_service *service,
 					     "dns [!UNAVAIL=return] files",
 					     &nip);
 
+	  /* Initialize configurations.  */
+	  if (__builtin_expect (!_res_hconf.initialized, 0))
+	    _res_hconf_init ();
 	  if (__res_maybe_init (&_res, 0) == -1)
 	    no_more = 1;
 
@@ -2087,10 +2090,6 @@ getaddrinfo (const char *name, const char *service,
 
   if ((hints->ai_flags & AI_CANONNAME) && name == NULL)
     return EAI_BADFLAGS;
-
-  /* Initialize configurations.  */
-  if (__builtin_expect (!_res_hconf.initialized, 0))
-    _res_hconf_init ();
 
   struct in6addrinfo *in6ai = NULL;
   size_t in6ailen = 0;
