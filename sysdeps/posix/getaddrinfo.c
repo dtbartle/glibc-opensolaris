@@ -883,9 +883,6 @@ gaih_inet (const char *name, const struct gaih_service *service,
 	}
     }
 
-  if (pai == NULL)
-    return 0;
-
   {
     struct gaih_servtuple *st2;
     struct gaih_addrtuple *at2 = at;
@@ -2149,11 +2146,7 @@ getaddrinfo (const char *name, const char *service,
   else
     pservice = NULL;
 
-  struct addrinfo **end;
-  if (pai)
-    end = &p;
-  else
-    end = NULL;
+  struct addrinfo **end = &p;
 
   unsigned int naddrs = 0;
   if (hints->ai_family == AF_UNSPEC || hints->ai_family == AF_INET
@@ -2167,12 +2160,11 @@ getaddrinfo (const char *name, const char *service,
 
 	  return -(last_i & GAIH_EAI);
 	}
-      if (end)
-	while (*end)
-	  {
-	    end = &((*end)->ai_next);
-	    ++nresults;
-	  }
+      while (*end)
+	{
+	  end = &((*end)->ai_next);
+	  ++nresults;
+	}
     }
   else
     {
@@ -2367,9 +2359,6 @@ getaddrinfo (const char *name, const char *service,
       *pai = p;
       return 0;
     }
-
-  if (pai == NULL && last_i == 0)
-    return 0;
 
   return last_i ? -(last_i & GAIH_EAI) : EAI_NONAME;
 }
