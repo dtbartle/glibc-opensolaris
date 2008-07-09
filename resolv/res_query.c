@@ -155,14 +155,14 @@ __libc_res_nquery(res_state statp,
 		nquery1 = n;
 		/* Align the buffer.  */
 		int npad = ((nquery1 + __alignof__ (HEADER) - 1)
-			    & ~(__alignof__ (HEADER)));
+			    & ~(__alignof__ (HEADER))) - nquery1;
 		if (n > bufsize - npad)
 		  {
 		    n = -1;
 		    goto unspec_nomem;
 		  }
-		query2 = buf + npad;
 		int nused = n + npad;
+		query2 = buf + nused;
 		n = res_nmkquery(statp, QUERY, name, class, T_AAAA, NULL, 0,
 				 NULL, query2, bufsize - nused);
 		if (n > 0
