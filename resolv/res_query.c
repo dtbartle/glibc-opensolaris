@@ -155,7 +155,7 @@ __libc_res_nquery(res_state statp,
 		nquery1 = n;
 		/* Align the buffer.  */
 		int npad = ((nquery1 + __alignof__ (HEADER) - 1)
-			    & ~(__alignof__ (HEADER))) - nquery1;
+			    & ~(__alignof__ (HEADER) - 1)) - nquery1;
 		if (n > bufsize - npad)
 		  {
 		    n = -1;
