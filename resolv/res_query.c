@@ -204,8 +204,10 @@ __libc_res_nquery(res_state statp,
 		if ((statp->options & RES_USE_EDNS0) != 0
 		    && ((oflags ^ statp->_flags) & RES_F_EDNS0ERR) != 0) {
 			statp->_flags |= RES_F_EDNS0ERR;
+#ifdef DEBUG
 			if (statp->options & RES_DEBUG)
 				printf(";; res_nquery: retry without EDNS0\n");
+#endif
                         goto again;
 		}
 #ifdef DEBUG
