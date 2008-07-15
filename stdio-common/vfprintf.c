@@ -2082,9 +2082,9 @@ _IO_helper_overflow (_IO_FILE *s, int c)
 				      used);
       if (written == 0 || written == WEOF)
 	return WEOF;
-      wmemmove (s->_wide_data->_IO_write_base,
-		s->_wide_data->_IO_write_base + written,
-		used - written);
+      __wmemmove (s->_wide_data->_IO_write_base,
+		  s->_wide_data->_IO_write_base + written,
+		  used - written);
       s->_wide_data->_IO_write_ptr -= written;
     }
 #else
