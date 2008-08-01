@@ -23,7 +23,7 @@ Version 2.9
 * New implementation of memmem, strstr, and strcasestr which is O(n).
   Implemented by Eric Blake.
 
-* New Linux interfaces: inotify_init1, paccept, dup3, epoll_create2, pipe2
+* New Linux interfaces: inotify_init1, paccept, dup3, epoll_create1, pipe2
 
 * Implement "e" option for popen to open file descriptor with the
   close-on-exec flag set
