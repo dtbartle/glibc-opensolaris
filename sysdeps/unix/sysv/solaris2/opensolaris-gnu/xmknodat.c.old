@@ -1,0 +1,14 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#define AT_FUNC_NAME    __xmknodat
+#define AT_FUNC_FUNC    __xmknod
+#define AT_FUNC_PRE_FILE_PARAM_DECLS    int vers,
+#define AT_FUNC_POST_FILE_PARAM_DECLS   , mode_t mode, dev_t *dev
+#define AT_FUNC_PRE_FILE_ARGS           vers,
+#define AT_FUNC_POST_FILE_ARGS          , mode, dev
+#include "at-func.c"
+
+libc_hidden_def (__xmknodat)

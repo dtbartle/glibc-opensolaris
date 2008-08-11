@@ -1,0 +1,7 @@
+#include <unistd.h>
+
+#define AT_FUNC_NAME    mkdirat
+#define AT_FUNC_FUNC    mkdir
+#define AT_FUNC_POST_FILE_PARAM_DECLS   , mode_t mode
+#define AT_FUNC_POST_FILE_ARGS          , mode
+#include "at-func.c"

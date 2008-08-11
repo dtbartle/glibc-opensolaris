@@ -1,0 +1,1 @@
+#define PTHREAD_SIGBASE 230

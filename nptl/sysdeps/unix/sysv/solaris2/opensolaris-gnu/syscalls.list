@@ -1,0 +1,34 @@
+# File name Caller Syscall name Args Strong name Weak names
+
+#
+# implement these in helper files
+#
+
+sys_lwp_self            - lwp_self              Ei:     __syscall_lwp_self
+sys_lwp_create          - lwp_create            Vi:pip  __syscall_lwp_create
+sys_lwp_wait            - lwp_wait              Vi:ip   __syscall_lwp_wait
+sys_lwp_exit            - lwp_exit              Ei:     __syscall_lwp_exit
+sys_lwp_suspend         - lwp_suspend           Vi:i    __syscall_lwp_suspend
+sys_lwp_continue        - lwp_continue          Vi:i    __syscall_lwp_continue
+sys_lwp_kill            - lwp_kill              Vi:ii   __syscall_lwp_kill
+
+sys_lwp_park            - lwp_park:lwp_park     Vi:pi   __syscall_lwp_park
+sys_lwp_unpark          - lwp_park:lwp_unpark   Vi:pi   __syscall_lwp_unpark
+sys_lwp_unpark_all      - lwp_park:lwp_unpark_all Vi:pi __syscall_lwp_unpark_all
+sys_lwp_unpark_cancel   - lwp_park:lwp_unpark   Vi:i    __syscall_lwp_unpark_cancel
+sys_lwp_info            - lwp_info              i:p     __syscall_lwp_info
+sys_lwp_detach          - lwp_detach            i:i     __syscall_lwp_detach
+
+sys_lwp_mutex_wakeup    - lwp_mutex_wakeup      Vi:pi   __syscall_lwp_mutex_wakeup
+sys_lwp_mutex_timedlock - lwp_mutex_timedlock   Vi:pi   __syscall_lwp_mutex_timedlock
+sys_lwp_mutex_unlock    - lwp_mutex_unlock      Vi:p    __syscall_lwp_mutex_unlock
+sys_lwp_mutex_trylock   - lwp_mutex_trylock     Vi:p    __syscall_lwp_mutex_trylock
+sys_lwp_mutex_register  - lwp_mutex_register    Vi:p    __syscall_lwp_mutex_register
+
+sys_lwp_cond_wait       - lwp_cond_wait         Vi:pppi __syscall_lwp_cond_wait
+sys_lwp_cond_signal     - lwp_cond_signal       Vi:p    __syscall_lwp_cond_signal
+sys_lwp_cond_broadcast  - lwp_cond_broadcast    Vi:p    __syscall_lwp_cond_broadcast
+
+sys_lwp_sema_post       - lwp_sema_post         i:p     __syscall_lwp_sema_post
+sys_lwp_sema_trywait    - lwp_sema_trywait      i:p     __syscall_lwp_sema_trywait
+sys_lwp_sema_timedwait  - lwp_sema_timedwait    i:ppi   __syscall_lwp_sema_timedwait

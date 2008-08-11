@@ -1,0 +1,29 @@
+libc {
+  GLIBC_2.7 {
+    __errno_location;
+    __register_atfork;
+    gethrtime; strlcat; strlcpy; getnetmaskbyaddr;
+    mount; umount; umount2;
+
+    # g
+    getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv; getvmusage;
+
+    # m
+    memcntl; meminfo;
+
+    # n
+    ntp_adjtime; ntp_gettime;
+
+    # p
+    priocntl; priocntlset;
+
+    # s
+    setpflags; setppriv;
+
+    # u
+    ucred_get; ucred_free; ucred_geteuid; ucred_getruid; ucred_getsuid;
+    ucred_getegid; ucred_getrgid; ucred_getsgid; ucred_getgroups;
+    ucred_getprivset; ucred_getpid; ucred_getprojid; ucred_getzoneid;
+    ucred_getpflags; ucred_getlabel; ucred_size; uadmin;
+  }
+}

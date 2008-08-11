@@ -1,0 +1,57 @@
+/* Copyright (C) 2008 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, write to the Free
+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+   02111-1307 USA.  */
+
+#include <inline-syscall.h>
+#include <unistd.h>
+#include <signal.h>
+#include <errno.h>
+#include <assert.h>
+#include <bits/libc-lock.h>
+
+DECLARE_INLINE_SYSCALL (int, chdir, const char *path);
+
+#ifndef IS_IN_rtld
+__libc_lock_define (extern, cwd_lock);
+#endif
+
+int
+__chdir (file_name)
+     const char *file_name;
+{
+#ifndef IS_IN_rtld
+  /* block all signals and lock cwd */
+  sigset_t fillset, oldset;
+  if (sigfillset (&fillset) != 0)
+    return -1;
+  if (sigprocmask (SIG_SETMASK, &fillset, &oldset) != 0)
+    return -1;
+  __libc_lock_lock (cwd_lock);
+#endif
+
+    int result = INLINE_SYSCALL (chdir, 1, file_name);
+
+#ifndef IS_IN_rtld
+  /* unlock cwd and restore signals */
+  __libc_lock_unlock (cwd_lock);
+  assert (sigprocmask (SIG_SETMASK, &oldset, NULL) == 0);
+#endif
+
+    return result;
+}
+weak_alias (__chdir, chdir)

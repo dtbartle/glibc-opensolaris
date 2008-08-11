@@ -1,0 +1,7 @@
+#include <unistd.h>
+
+#define AT_FUNC_NAME    unlinkat
+#define AT_FUNC_FUNC    unlink
+#define AT_FUNC_POST_FILE_PARAM_DECLS   , int flags
+#define AT_FUNC_POST_FILE_ARGS          , flags
+#include "at-func.c"

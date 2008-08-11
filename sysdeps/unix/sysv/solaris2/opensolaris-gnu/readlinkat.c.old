@@ -1,0 +1,7 @@
+#include <unistd.h>
+
+#define AT_FUNC_NAME    readlinkat
+#define AT_FUNC_FUNC    readlink
+#define AT_FUNC_POST_FILE_PARAM_DECLS   , char *buf, size_t bufsiz
+#define AT_FUNC_POST_FILE_ARGS          , buf, bufsiz
+#include "at-func.c"

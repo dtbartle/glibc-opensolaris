@@ -1,0 +1,160 @@
+# File name Caller Syscall name Args Strong name Weak names
+
+#
+# these implement libc functions directly
+#
+
+acl                 - acl                   i:siip      acl
+clock_getres        - clock_getres          i:ip        clock_getres
+#clock_gettime       - clock_gettime         i:ip        clock_gettime
+clock_settime       - clock_settime         i:ip        clock_settime
+faccessat           - fsat:accessat         i:isi       faccessat
+facl                - facl                  i:iiip      facl
+fchownat            - fsat:fchownat         i:isiii     fchownat
+fpathconf           - fpathconf             i:ii        __fpathcon          fpathconf
+fstatvfs            - fstatvfs              i:ip        __fstatvfs          fstatvfs
+fstatvfs64          - fstatvfs64            i:ip        __fstatvfs64        fstatvfs64
+futimesat           - fsat:futimesat        i:isi       futimesat
+getcpuid            - getcpuid              i:          getcpuid
+getpflags           - privsys:getpflags     i:i         getpflags
+getmsg              - getmsg                i:ppp       getmsg
+getpmsg             - getpmsg               i:pppp      getpmsg
+getpagesizes        - getpagesizes:getpagesizes2  i:pi  __getpagesizes      getpagesizes getpagesizes2
+getpgid             - pgrpsys:getpgid       i:i         __getpgid           getpgid
+getpgrp             - pgrpsys:getpgrp       i:          __getpgrp           getpgrp
+getrlimit64         - getrlimit64           i:ip        getrlimit64
+getsid              - pgrpsys:getsid        i:i         __getsid            getsid
+getvmusage          - rusagesys:getvmusage  i:iipp      getvmusage
+gtty                - gtty                  i:ip        gtty
+issetugid           - privsys:issetugid     Ei:         issetugid
+lchown              - lchown                i:sii       __lchown            lchown
+lseek64             - llseek                Ci:iii      __libc_lseek64      __llseek llseek __lseek64 lseek64
+memcntl             - memcntl               i:piiiii    memcntl
+mincore             - mincore               i:anV       mincore
+mmap64              - mmap64                i:piiiii    __mmap64            mmap64
+mount               - mount                 i:ppippipi  __mount             mount
+msgctl              - msgsys:msgctl         i:iip       msgctl
+msgget              - msgsys:msgget         i:ii        msgget
+msgrcv              - msgsys:msgrcv         i:ipiii     msgrcv
+msgsnd              - msgsys:msgsnd         i:ipii      msgsnd
+nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __nanosleep nanosleep
+ntp_adjtime         - ntp_adjtime           i:p         __adjtimex          adjtimex ntp_adjtime __adjtimex_internal
+ntp_gettime         - ntp_gettime           i:p         ntp_gettime
+pathconf            - pathconf              i:pi        __pathconf          pathconf
+p_online            - p_online              i:ii        p_online
+pread               - pread                 i:iPii      __libc_pread        __pread pread
+pread64             - pread64               i:iPii      __libc_pread64      __pread64 pread64
+processor_bind      - processor_bind        i:iiip      processor_bind
+processor_info      - processor_info        i:ip        processor_info
+pwrite              - pwrite                i:iPii      __libc_pwrite       __pwrite pwrite
+pwrite64            - pwrite64              i:iPii      __libc_pwrite64     __pwrite64 pwrite64
+renameat            - fsat:renameat         i:isis      renameat
+resolvepath         - resolvepath           i:spi       resolvepath
+semctl              - semsys:semctl         i:iiiv      semctl
+semget              - semsys:semget         i:iii       semget
+semop               - semsys:semop          i:ipi       semop
+semtimedop          - semsys:semtimedop     i:ipip      semtimedop
+setcontext          - context:setcontext    i:p         __setcontext        setcontext
+setpgid             - pgrpsys:setpgid       i:ii        __setpgid           setpgid
+setpgrp             - pgrpsys:setpgrp       i:          __setpgrp           setpgrp
+setpflags           - privsys:setpflags     i:ii        setpflags
+setrlimit64         - setrlimit64           i:ip        setrlimit64
+setsid              - pgrpsys:setsid        i:          __setsid            setsid
+shmat               - shmsys:shmat          p:ipi       shmat
+shmctl              - shmsys:shmctl         i:iip       shmctl
+shmdt               - shmsys:shmdt          i:p         shmdt
+shmget              - shmsys:shmget         i:iii       shmget
+sigaltstack         - sigaltstack           i:PP        __sigaltstack       sigaltstack
+sigfillset          - sigpending:sigfillset i:P         __sigfillset        sigfillset
+sigpending          - sigpending:sigpending i:p         sigpending
+sigsuspend          - sigsuspend            Ci:p        __sigsuspend        sigsuspend
+sockconfig          - sockconfig            i:iiis      _sockconfig         sockconfig
+statvfs             - statvfs               i:sp        __statvfs           statvfs
+statvfs64           - statvfs64             i:sp        __statvfs64         statvfs64
+stty                - stty                  i:ip        stty
+systeminfo          - systeminfo            i:ipi       sysinfo
+uadmin              - uadmin                i:iii       __uadmin            uadmin
+umount2             - umount2               i:si        umount2
+unlinkat            - fsat:unlinkat         i:isi       unlinkat
+vhangup             - vhangup               i:          vhangup
+waitid              - waitid                i:iipi      __waitid            waitid
+xmknod              - xmknod                i:isii      __xmknod            _xmknod
+
+#
+# implement these in helper files
+#
+
+sys_accept          - accept                Ci:iBN      __syscall_accept
+sys_bind            - bind                  i:ipii      __syscall_bind
+sys_brk             - brk                   i:p         __syscall_brk
+sys_chdir           - chdir                 i:s         __syscall_chdir
+sys_clock_gettime   - clock_gettime         i:ip        __syscall_clock_gettime
+sys_close           - close                 i:i         __syscall_close
+sys_close_nc_ns     - close                 Vi:i        __syscall_close_nc_ns
+sys_connect         - connect               Ci:ipi      __syscall_connect
+sys_fchdir          - fchdir                i:i         __syscall_fchdir
+sys_fcntl           - fcntl                 i:iiF       __syscall_fcntl
+sys_fdsync          - fdsync                Ci:ii       __syscall_fdsync
+sys_forkx           - forksys:forkx         i:i         __syscall_forkx
+sys_fstat           - fstat                 i:ip        __syscall_fstat
+sys_fstat64         - fstat64               i:ip        __syscall_fstat64
+sys_fstatat         - fsat:fstatat          i:ispi      __syscall_fstatat
+sys_fstatat64       - fsat:fstatat64        i:ispi      __syscall_fstatat64
+sys_getcontext      - context:getcontext    i:p         __syscall_getcontext
+sys_getcwd          - getcwd                i:pi        __syscall_getcwd
+sys_getdents        - getdents              i:ipi       __syscall_getdents
+sys_getdents64      - getdents64            i:ipi       __syscall_getdents64
+sys_getloadavg      - getloadavg            i:pi        __syscall_getloadavg
+sys_getpeername     - getpeername           i:ibNi      __syscall_getpeername
+sys_getpeerucred    - ucredsys:getpeerucred i:ip        __syscall_getpeerucred
+sys_getsockname     - getsockname           i:ibNi      __syscall_getsockname
+sys_getsockopt      - getsockopt            i:iiiBNi    __syscall_getsockopt
+sys_syslabeling     - labelsys              i:          __syscall_syslabeling
+sys_listen          - listen                i:iii       __syscall_listen
+sys_lstat           - lstat                 i:sp        __syscall_lstat
+sys_lstat64         - lstat64               i:sp        __syscall_lstat64
+sys_lwp_private     - lwp_private           i:iii       __syscall_lwp_private
+sys_lwp_sigmask     - lwp_sigmask           i:iii       __syscall_lwp_sigmask
+sys_meminfo         - meminfosys:meminfo    i:ip        __syscall_meminfo
+sys_nanosleep       - nanosleep             i:pP        __syscall_nanosleep
+sys_open            - open                  i:siv       __syscall_open
+sys_open64          - open64                i:pii       __syscall_open64
+sys_openat          - fsat:openat           i:isiv      __syscall_openat
+sys_openat64        - fsat:openat64         i:isiv      __syscall_openat64
+sys_pause           - pause                 i:          __syscall_pause
+sys_pipe            - pipe                  i:          __syscall_pipe
+sys_pollsys         - pollsys               i:pipp      __syscall_pollsys
+sys_priocntlsys     - priocntlsys           i:ipiv      __syscall_priocntlsys
+sys_privsys         - privsys               i:iipii     __syscall_privsys
+sys_putmsg          - putmsg                i:ippi      __syscall_putmsg
+sys_putpmsg         - putpmsg               i:ippii     __syscall_putpmsg
+sys_read            - read                  i:ibn       __syscall_read
+sys_recvmsg         - recvmsg               Ci:ipi      __syscall_recvmsg
+sys_rusagesys       - rusagesys             i:ip        __syscall_rusagesys
+sys_send            - send                  Ci:ibni     __syscall_send
+sys_sendfilev       - sendfilev:sendfilev   i:ipip      __syscall_sendfilev
+sys_sendfilev64     - sendfilev:sendfilev64 i:ipip      __syscall_sendfilev64
+sys_sendmsg         - sendmsg               Ci:ipi      __syscall_sendmsg
+sys_sendto          - sendto                Ci:ibnibn   __syscall_sendto
+sys_setsockopt      - setsockopt            i:iiibn     __syscall_setsockopt
+sys_shutdown        - shutdown              i:iii       __syscall_shutdown
+sys_sigaction       - sigaction             i:iPP       __syscall_sigaction
+sys_sigqueue        - sigqueue              i:iiPii     __syscall_sigqueue
+sys_sigtimedwait    - sigtimedwait          Ci:pPP      __syscall_sigtimedwait
+sys_so_socket       - so_socket             i:iiipi     __syscall_so_socket
+sys_so_socketpair   - so_socketpair         i:p         __syscall_so_socketpair
+sys_stat            - stat                  i:sp        __syscall_stat
+sys_stat64          - stat64                i:sp        __syscall_stat64
+sys_stime           - stime                 i:i         __syscall_stime
+sys_sysconfig       - sysconfig             i:i         __syscall_sysconfig
+sys_time            - time                  i:          __syscall_time
+sys_ucred_get       - ucredsys:ucred_get    i:ip        __syscall_ucred_get
+sys_uname           - uname                 i:p         __syscall_uname
+sys_utimes          - utimes                i:sp        __syscall_utimes
+sys_utssys          - utssys                i:piiP      __syscall_utssys
+sys_write           - write                 i:ibn       __syscall_write
+sys_writev          - writev                i:ipi       __syscall_writev
+sys_writev_nc_ns    - writev                Vi:ipi      __syscall_writev_nc_ns
+sys_yield           - yield                 i:          __syscall_yield
+#sys_door
+#sys_zone
