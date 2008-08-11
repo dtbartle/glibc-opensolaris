@@ -851,7 +851,9 @@ send_dg(res_state statp,
 		 * the absence of a nameserver without timing out.
 		 */
 		if (connect(EXT(statp).nssocks[ns], (struct sockaddr *)nsap,
-			    sizeof *nsap) < 0) {
+               nsap->sin6_family == AF_INET
+               ? sizeof (struct sockaddr_in)
+               : sizeof (struct sockaddr_in6)) < 0) {
 			Aerror(statp, stderr, "connect(dg)", errno,
 			       (struct sockaddr *) nsap);
 			__res_iclose(statp, false);

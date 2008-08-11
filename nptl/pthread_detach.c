@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <atomic.h>
 
 
@@ -26,7 +26,11 @@ int
 pthread_detach (th)
      pthread_t th;
 {
+#ifndef PTHREAD_T_IS_TID
   struct pthread *pd = (struct pthread *) th;
+#else
+  struct pthread *pd = __find_in_stack_list (th);
+#endif
 
   /* Make sure the descriptor is valid.  */
   if (INVALID_NOT_TERMINATED_TD_P (pd))

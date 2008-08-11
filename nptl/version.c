@@ -19,6 +19,7 @@
 
 #include <unistd.h>
 #include <sysdep.h>
+#include <pthreadP.h>
 
 
 static const char banner[] =

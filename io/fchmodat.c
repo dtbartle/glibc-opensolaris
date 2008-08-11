@@ -45,6 +45,6 @@ fchmodat (fd, file, mode, flag)
   __set_errno (ENOSYS);
   return -1;
 }
-stub_warning (fchownat)
+stub_warning (fchmodat)
 
 #include <stub-tag.h>

@@ -1,4 +1,5 @@
-/* Copyright (C) 2002,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
+/* Copyright (C) 2002,2003,2004,2005,2006,2007,2008
+    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -21,7 +22,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <hp-timing.h>
 #include <ldsodefs.h>
 #include <atomic.h>
@@ -58,8 +59,13 @@ unsigned int __nptl_nthreads = 1;
 
 struct pthread *
 internal_function
+#ifndef PTHREAD_T_IS_TID
 __find_in_stack_list (pd)
      struct pthread *pd;
+#else
+__find_in_stack_list (tid)
+     pthread_t tid;
+#endif
 {
   list_t *entry;
   struct pthread *result = NULL;
@@ -71,7 +77,11 @@ __find_in_stack_list (pd)
       struct pthread *curp;
 
       curp = list_entry (entry, struct pthread, list);
+#ifndef PTHREAD_T_IS_TID
       if (curp == pd)
+#else
+      if (curp->tid == tid)
+#endif
 	{
 	  result = curp;
 	  break;
@@ -84,7 +94,11 @@ __find_in_stack_list (pd)
 	struct pthread *curp;
 
 	curp = list_entry (entry, struct pthread, list);
+#ifndef PTHREAD_T_IS_TID
 	if (curp == pd)
+#else
+	if (curp->tid == tid)
+#endif
 	  {
 	    result = curp;
 	    break;
@@ -202,10 +216,12 @@ __free_tcb (struct pthread *pd)
 					     TERMINATED_BIT) == 0, 1))
     {
       /* Remove the descriptor from the list.  */
+#ifndef PTHREAD_T_IS_TID
       if (DEBUGGING_P && __find_in_stack_list (pd) == NULL)
 	/* Something is really wrong.  The descriptor for a still
 	   running thread is gone.  */
 	abort ();
+#endif
 
       /* Free TPP data.  */
       if (__builtin_expect (pd->tpp != NULL, 0))
@@ -239,6 +255,7 @@ start_thread (void *arg)
   /* Initialize resolver state pointer.  */
   __resp = &pd->res;
 
+#ifndef NO_ROBUST_LIST_SUPPORT
 #ifdef __NR_set_robust_list
 # ifndef __ASSUME_SET_ROBUST_LIST
   if (__set_robust_list_avail >= 0)
@@ -250,6 +267,7 @@ start_thread (void *arg)
       INTERNAL_SYSCALL (set_robust_list, err, 2, &pd->robust_head,
 			sizeof (struct robust_list_head));
     }
+#endif
 #endif
 
   /* If the parent was running cancellation handlers while creating
@@ -346,6 +364,7 @@ start_thread (void *arg)
      the breakpoint reports TD_THR_RUN state rather than TD_THR_ZOMBIE.  */
   atomic_bit_set (&pd->cancelhandling, EXITING_BIT);
 
+#ifndef NO_ROBUST_LIST_SUPPORT
 #ifndef __ASSUME_SET_ROBUST_LIST
   /* If this thread has any robust mutexes locked, handle them now.  */
 # if __WORDSIZE == 64
@@ -376,11 +395,13 @@ start_thread (void *arg)
       while (robust != (void *) &pd->robust_head);
     }
 #endif
+#endif
 
   /* If the thread is detached free the TCB.  */
   if (IS_DETACHED (pd))
     /* Free the TCB.  */
     __free_tcb (pd);
+#ifndef NO_SETXID_SUPPORT
   else if (__builtin_expect (pd->cancelhandling & SETXID_BITMASK, 0))
     {
       /* Some other thread might call any of the setXid functions and expect
@@ -392,6 +413,7 @@ start_thread (void *arg)
       /* Reset the value so that the stack can be reused.  */
       pd->setxid_futex = 0;
     }
+#endif
 
   /* We cannot call '_exit' here.  '_exit' will terminate the process.
 
@@ -487,6 +509,7 @@ __pthread_create_2_1 (newthread, attr, start_routine, arg)
   THREAD_COPY_POINTER_GUARD (pd);
 #endif
 
+#if 0 // TODO
   /* Determine scheduling parameters for the thread.  */
   if (attr != NULL
       && __builtin_expect ((iattr->flags & ATTR_FLAG_NOTINHERITSCHED) != 0, 0)
@@ -524,9 +547,7 @@ __pthread_create_2_1 (newthread, attr, start_routine, arg)
 	  goto errout;
 	}
     }
-
-  /* Pass the descriptor to the caller.  */
-  *newthread = (pthread_t) pd;
+#endif
 
   /* Remember whether the thread is detached or not.  In case of an
      error we have to free the stacks of non-detached stillborn
@@ -545,6 +566,14 @@ __pthread_create_2_1 (newthread, attr, start_routine, arg)
 	}
       return err;
     }
+
+#ifndef PTHREAD_T_IS_TID
+  /* Pass the descriptor to the caller.  */
+  *newthread = (pthread_t) pd;
+#else
+  /* Pass the tid to the caller.  */
+  *newthread = (pthread_t) pd->tid;
+#endif
 
   return 0;
 }

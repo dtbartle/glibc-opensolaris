@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2005, 2006, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include <atomic.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 
 static void
@@ -40,7 +40,11 @@ pthread_join (threadid, thread_return)
      pthread_t threadid;
      void **thread_return;
 {
+#ifndef PTHREAD_T_IS_TID
   struct pthread *pd = (struct pthread *) threadid;
+#else
+  struct pthread *pd = __find_in_stack_list (threadid);
+#endif
 
   /* Make sure the descriptor is valid.  */
   if (INVALID_NOT_TERMINATED_TD_P (pd))

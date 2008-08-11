@@ -8,3 +8,4 @@ cris-.*-linux.*		libpthread=0		GLIBC_2.2
 x86_64-.*-linux.*	libpthread=0		GLIBC_2.2.5
 powerpc64-.*-linux.*	libpthread=0		GLIBC_2.3
 .*-.*-linux.*		libpthread=0
+.*-opensolaris-gnu.*	libpthread=0		GLIBC_2.7

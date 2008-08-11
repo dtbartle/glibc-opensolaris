@@ -1,5 +1,5 @@
 #ifndef _SYS_WAIT_H
-#include <posix/sys/wait.h>
+#include_next <sys/wait.h>
 
 /* Now define the internal interfaces.  */
 extern __pid_t __waitpid (__pid_t __pid, int *__stat_loc,

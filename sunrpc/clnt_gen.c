@@ -37,6 +37,9 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
+/* make sure 'sun' is not defined */
+#include "../conf/portability.h"
+
 /*
  * Generic client creation: takes (hostname, program-number, protocol) and
  * returns client handle. Default options are set, which the user can

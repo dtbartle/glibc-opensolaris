@@ -543,7 +543,11 @@ fail:
 
   while (dir.stream != NULL && (d = __readdir64 (dir.stream)) != NULL)
     {
+#ifdef _DIRENT_HAVE_D_TYPE
       result = process_entry (data, &dir, d->d_name, NAMLEN (d), d->d_type);
+#else
+      result = process_entry (data, &dir, d->d_name, NAMLEN (d), DT_UNKNOWN);
+#endif
       if (result != 0)
 	break;
     }

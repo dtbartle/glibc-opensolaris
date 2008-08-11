@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -21,13 +21,17 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 #include <shlib-compat.h>
 
 
 struct pthread_attr *__attr_list;
+#ifndef lll_define_initialized
 int __attr_list_lock = LLL_LOCK_INITIALIZER;
+#else
+lll_define_initialized (, __attr_list_lock);
+#endif
 
 
 int

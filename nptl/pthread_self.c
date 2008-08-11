@@ -17,13 +17,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <tls.h>
 
 
 pthread_t
 __pthread_self (void)
 {
+#ifndef PTHREAD_T_IS_TID
   return (pthread_t) THREAD_SELF;
+#else
+  return THREAD_GETMEM (THREAD_SELF, tid);
+#endif
 }
 strong_alias (__pthread_self, pthread_self)

@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2005, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include <atomic.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 
 int
@@ -30,10 +30,18 @@ pthread_tryjoin_np (threadid, thread_return)
      void **thread_return;
 {
   struct pthread *self;
+#ifndef PTHREAD_T_IS_TID
   struct pthread *pd = (struct pthread *) threadid;
+#else
+  struct pthread *pd = __find_in_stack_list (threadid);
+#endif
 
   /* Make sure the descriptor is valid.  */
+#ifndef PTHREAD_T_IS_TID
   if (DEBUGGING_P && __find_in_stack_list (pd) == NULL)
+#else
+  if ((pd) == NULL)
+#endif
     /* Not a valid thread handle.  */
     return ESRCH;
 
@@ -54,7 +62,11 @@ pthread_tryjoin_np (threadid, thread_return)
     return EDEADLK;
 
   /* Return right away if the thread hasn't terminated yet.  */
+#ifndef lll_tryjoin
   if (pd->tid != 0)
+#else
+  if (lll_tryjoin (pd->tid) != 0)
+#endif
     return EBUSY;
 
   /* Wait for the thread to finish.  If it is already locked something

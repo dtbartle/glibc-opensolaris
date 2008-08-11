@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -19,7 +19,7 @@
 
 #include <errno.h>
 #include <signal.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include "atomic.h"
 #include <sysdep.h>
 #include <kernel-features.h>
@@ -29,7 +29,11 @@ int
 pthread_cancel (th)
      pthread_t th;
 {
+#ifndef PTHREAD_T_IS_TID
   volatile struct pthread *pd = (volatile struct pthread *) th;
+#else
+  volatile struct pthread *pd = __find_in_stack_list (th);
+#endif
 
   /* Make sure the descriptor is valid.  */
   if (INVALID_TD_P (pd))

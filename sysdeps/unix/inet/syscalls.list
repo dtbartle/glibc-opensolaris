@@ -9,7 +9,7 @@ getpeername	-	getpeername	i:ibN	__getpeername	getpeername
 getsockname	-	getsockname	i:ibN	__getsockname	getsockname
 getsockopt	-	getsockopt	i:iiiBN	getsockopt
 listen		-	listen		i:ii	__listen	listen
-recv		-	recv		Ci:ibni	__libc_recv	recv
+recv		-	recv		Ci:ibni	__libc_recv	__recv	recv
 recvfrom	-	recvfrom	Ci:ibniBN	__libc_recvfrom __recvfrom recvfrom
 recvmsg		-	recvmsg		Ci:ipi	__libc_recvmsg	__recvmsg recvmsg
 send		-	send		Ci:ibni	__libc_send	__send send 

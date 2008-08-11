@@ -8,6 +8,7 @@ libc_add_on_canonical=nptl
 if test $add_ons_automatic = yes; then
   case "$config_os" in
   *linux*) ;;
+  *opensolaris*-gnu*) ;;
   *) libc_add_on= ;;
   esac
 fi

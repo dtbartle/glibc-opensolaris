@@ -1,4 +1,5 @@
-/* Copyright (C) 2002,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
+/* Copyright (C) 2002,2003,2004,2005,2006,2007,2008
+    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -164,7 +165,11 @@ hidden_proto (__stack_user)
 
 /* Attribute handling.  */
 extern struct pthread_attr *__attr_list attribute_hidden;
+#ifndef lll_define
 extern int __attr_list_lock attribute_hidden;
+#else
+lll_define (extern, __attr_list_lock attribute_hidden);
+#endif
 
 /* First available RT signal.  */
 extern int __current_sigrtmin attribute_hidden;
@@ -207,8 +212,14 @@ extern int __pthread_debug attribute_hidden;
 /* Simplified test.  This will not catch all invalid descriptors but
    is better than nothing.  And if the test triggers the thread
    descriptor is guaranteed to be invalid.  */
-# define INVALID_TD_P(pd) __builtin_expect ((pd)->tid <= 0, 0)
-# define INVALID_NOT_TERMINATED_TD_P(pd) __builtin_expect ((pd)->tid < 0, 0)
+# ifndef PTHREAD_T_IS_TID
+#  define INVALID_TD_P(pd) __builtin_expect ((pd)->tid <= 0, 0)
+#  define INVALID_NOT_TERMINATED_TD_P(pd) __builtin_expect ((pd)->tid < 0, 0)
+# else
+/* XXX: these macros evaluate pd twice */
+#  define INVALID_TD_P(pd) __builtin_expect (!(pd) || (pd)->tid <= 0, 0)
+#  define INVALID_NOT_TERMINATED_TD_P(pd) __builtin_expect (!(pd) || (pd)->tid < 0, 0)
+# endif
 #endif
 
 
@@ -304,7 +315,9 @@ __do_cancel (void)
 #endif
 
 /* The signal used for asynchronous cancelation.  */
-#define SIGCANCEL	__SIGRTMIN
+#ifndef SIGCANCEL
+# define SIGCANCEL	__SIGRTMIN
+#endif
 
 
 /* Signal needed for the kernel-supported POSIX timer implementation.
@@ -314,7 +327,9 @@ __do_cancel (void)
 
 
 /* Signal used to implement the setuid et.al. functions.  */
+#ifndef NO_SETXID_SUPPORT
 #define SIGSETXID	(__SIGRTMIN + 1)
+#endif
 
 /* Used to communicate with signal handler.  */
 extern struct xid_command *__xidcmd attribute_hidden;
@@ -323,8 +338,13 @@ extern struct xid_command *__xidcmd attribute_hidden;
 /* Internal prototypes.  */
 
 /* Thread list handling.  */
+#ifndef PTHREAD_T_IS_TID
 extern struct pthread *__find_in_stack_list (struct pthread *pd)
      attribute_hidden internal_function;
+#else
+extern struct pthread *__find_in_stack_list (pthread_t tid)
+     attribute_hidden internal_function;
+#endif
 
 /* Deallocate a thread's stack after optionally making sure the thread
    descriptor is still valid.  */

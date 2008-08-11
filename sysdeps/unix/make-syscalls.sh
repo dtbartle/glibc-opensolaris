@@ -73,13 +73,24 @@ while read file srcfile caller syscall args strong weak; do
   case x"$syscall" in
   x-) callnum=_ ;;
   *)
+  set `echo $syscall | sed -e 's/^\(.*\):\(.*\)/\1 \2/'`
+  syscall=$1; subcall=$2
   # Figure out if $syscall is defined with a number in syscall.h.
-  callnum=-
+  callnum=-; subcallnum=
   eval `{ echo "#include <sysdep.h>";
 	echo "callnum=SYS_ify ($syscall)"; } |
 	  $asm_CPP -D__OPTIMIZE__ - |
 	  sed -n -e "/^callnum=.*$syscall/d" \
 		 -e "/^\(callnum=\)[ 	]*\(.*\)/s//\1'\2'/p"`
+    if test ! -z "$subcall" ; then
+      # Figure out if $subcall is defined with a number in syscall.h.
+        subcallnum=
+      eval `{ echo "#include <sysdep.h>";
+      echo "subcallnum=SYS_ify (SUB_$subcall)"; } |
+        $asm_CPP -D__OPTIMIZE__ - |
+        sed -n -e "/^subcallnum=.*$subcall/d" \
+          -e "/^\(subcallnum=\)[  ]*\(.*\)/s//\1'\2'/p"`
+    fi
   ;;
   esac
 
@@ -109,7 +120,7 @@ while read file srcfile caller syscall args strong weak; do
   # Make sure only the first syscall rule is used, if multiple dirs
   # define the same syscall.
   echo ''
-  echo "#### CALL=$file NUMBER=$callnum ARGS=$args SOURCE=$srcfile"
+  echo "#### CALL=$file NUMBER=$callnum SUBNUMBER=$subcallnum ARGS=$args SOURCE=$srcfile"
 
  case x$srcfile"$callnum" in
  x--)
@@ -159,10 +170,15 @@ shared-only-routines += $file
 	(echo '/* Dummy module requested by syscalls.list */'; \\"
   ;;
   x*)
+  case x"$subcallnum" in
+    x) pseudo_line="PSEUDO$noerrno ($strong, $syscall, $nargs)";;
+    *) pseudo_line="PSEUDO_SUBCALL$noerrno ($strong, $syscall, $subcall, `expr $nargs + 1`)";;
+    esac
+
   echo "\
 	\$(make-target-directory)
 	(echo '#include <sysdep$cancellable.h>'; \\
-	 echo 'PSEUDO$noerrno ($strong, $syscall, $nargs)'; \\
+	 echo '$pseudo_line'; \\
 	 echo '	ret$noerrno'; \\
 	 echo 'PSEUDO_END$noerrno($strong)'; \\
 	 echo 'libc_hidden_def ($strong)'; \\"

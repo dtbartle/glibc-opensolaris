@@ -1,4 +1,5 @@
-/* Copyright (C) 2002,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
+/* Copyright (C) 2002,2003,2004,2005,2006,2007,2008
+    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -40,6 +41,7 @@
 size_t __static_tls_size;
 size_t __static_tls_align_m1;
 
+#ifndef NO_ROBUST_LIST_SUPPORT
 #ifndef __ASSUME_SET_ROBUST_LIST
 /* Negative if we do not have the system call and we can use it.  */
 int __set_robust_list_avail;
@@ -47,6 +49,7 @@ int __set_robust_list_avail;
   __set_robust_list_avail = -1
 #else
 # define set_robust_list_not_avail() do { } while (0)
+#endif
 #endif
 
 /* Version of the library, used in libthread_db to detect mismatches.  */
@@ -116,7 +119,9 @@ static const struct pthread_functions pthread_functions =
     .ptr_nthreads = &__nptl_nthreads,
     .ptr___pthread_unwind = &__pthread_unwind,
     .ptr__nptl_deallocate_tsd = __nptl_deallocate_tsd,
+#ifndef NO_SETXID_SUPPORT
     .ptr__nptl_setxid = __nptl_setxid,
+#endif
     /* For now only the stack cache needs to be freed.  */
     .ptr_freeres = __free_stack_cache
   };
@@ -130,6 +135,7 @@ static const struct pthread_functions pthread_functions =
 static void
 sigcancel_handler (int sig, siginfo_t *si, void *ctx)
 {
+write (2, "FOO 20\n", 7);
 #ifdef __ASSUME_CORRECT_SI_PID
   /* Determine the process ID.  It might be negative if the thread is
      in the middle of a fork() call.  */
@@ -142,6 +148,7 @@ sigcancel_handler (int sig, siginfo_t *si, void *ctx)
      other signals and send a signal from another process.  This is not
      correct and might even be a security problem.  Try to catch as
      many incorrect invocations as possible.  */
+write (2, "FOO 21\n", 7);
   if (sig != SIGCANCEL
 #ifdef __ASSUME_CORRECT_SI_PID
       /* Kernels before 2.5.75 stored the thread ID and not the process
@@ -149,11 +156,15 @@ sigcancel_handler (int sig, siginfo_t *si, void *ctx)
       || si->si_pid != pid
 #endif
       || si->si_code != SI_TKILL)
+{
+write (2, "FOO 22\n", 7);
     return;
+}
 
   struct pthread *self = THREAD_SELF;
 
   int oldval = THREAD_GETMEM (self, cancelhandling);
+write (2, "FOO 23\n", 7);
   while (1)
     {
       /* We are canceled now.  When canceled by another thread this flag
@@ -165,6 +176,7 @@ sigcancel_handler (int sig, siginfo_t *si, void *ctx)
 	/* Already canceled or exiting.  */
 	break;
 
+write (2, "FOO 24\n", 7);
       int curval = THREAD_ATOMIC_CMPXCHG_VAL (self, cancelhandling, newval,
 					      oldval);
       if (curval == oldval)
@@ -173,18 +185,24 @@ sigcancel_handler (int sig, siginfo_t *si, void *ctx)
 	  THREAD_SETMEM (self, result, PTHREAD_CANCELED);
 
 	  /* Make sure asynchronous cancellation is still enabled.  */
-	  if ((newval & CANCELTYPE_BITMASK) != 0)
+	  if ((newval & CANCELTYPE_BITMASK) != 0) {
 	    /* Run the registered destructors and terminate the thread.  */
+write (2, "FOO 25\n", 7);
 	    __do_cancel ();
+write (2, "FOO 26\n", 7);
+      }
 
 	  break;
 	}
+write (2, "FOO 27\n", 7);
 
       oldval = curval;
     }
+write (2, "FOO 28\n", 7);
 }
 
 
+#ifndef NO_SETXID_SUPPORT
 struct xid_command *__xidcmd attribute_hidden;
 
 /* For asynchronous cancellation we use a signal.  This is the handler.  */
@@ -228,6 +246,7 @@ sighandler_setxid (int sig, siginfo_t *si, void *ctx)
   self->setxid_futex = 1;
   lll_futex_wake (&self->setxid_futex, 1, LLL_PRIVATE);
 }
+#endif /* NO_SETXID_SUPPORT */
 
 
 /* When using __thread for this, we do it in libc so as not
@@ -256,15 +275,25 @@ __pthread_initialize_minimal_internal (void)
   /* Minimal initialization of the thread descriptor.  */
   struct pthread *pd = THREAD_SELF;
   INTERNAL_SYSCALL_DECL (err);
-  pd->pid = pd->tid = INTERNAL_SYSCALL (set_tid_address, err, 1, &pd->tid);
+  pd->tid = INTERNAL_SYSCALL (set_tid_address, err, 1, &pd->tid);
+#ifndef PTHREAD_T_IS_TID
+  pd->pid = pd->tid;
+#else
+  pd->pid = getpid();
+#endif
   THREAD_SETMEM (pd, specific[0], &pd->specific_1stblock[0]);
   THREAD_SETMEM (pd, user_stack, true);
+#ifndef lll_init
   if (LLL_LOCK_INITIALIZER != 0)
     THREAD_SETMEM (pd, lock, LLL_LOCK_INITIALIZER);
+#else
+  lll_init (pd->lock);
+#endif
 #if HP_TIMING_AVAIL
   THREAD_SETMEM (pd, cpuclock_offset, GL(dl_cpuclock_offset));
 #endif
 
+#ifndef NO_ROBUST_LIST_SUPPORT
   /* Initialize the robust mutex data.  */
 #ifdef __PTHREAD_MUTEX_HAVE_PREV
   pd->robust_prev = &pd->robust_head;
@@ -279,7 +308,9 @@ __pthread_initialize_minimal_internal (void)
   if (INTERNAL_SYSCALL_ERROR_P (res, err))
 #endif
     set_robust_list_not_avail ();
+#endif
 
+#ifndef NO_FUTEX_SUPPORT
 #ifndef __ASSUME_PRIVATE_FUTEX
   /* Private futexes are always used (at least internally) so that
      doing the test once this early is beneficial.  */
@@ -290,6 +321,7 @@ __pthread_initialize_minimal_internal (void)
     if (!INTERNAL_SYSCALL_ERROR_P (word, err))
       THREAD_SETMEM (pd, header.private_futex, FUTEX_PRIVATE_FLAG);
   }
+#endif
 #endif
 
   /* Set initial thread's stack block from 0 up to __libc_stack_end.
@@ -315,17 +347,21 @@ __pthread_initialize_minimal_internal (void)
 
   (void) __libc_sigaction (SIGCANCEL, &sa, NULL);
 
+#ifndef NO_SETXID_SUPPORT
   /* Install the handle to change the threads' uid/gid.  */
   sa.sa_sigaction = sighandler_setxid;
   sa.sa_flags = SA_SIGINFO | SA_RESTART;
 
   (void) __libc_sigaction (SIGSETXID, &sa, NULL);
+#endif
 
   /* The parent process might have left the signals blocked.  Just in
      case, unblock it.  We reuse the signal mask in the sigaction
      structure.  It is already cleared.  */
   __sigaddset (&sa.sa_mask, SIGCANCEL);
+#ifndef NO_SETXID_SUPPORT
   __sigaddset (&sa.sa_mask, SIGSETXID);
+#endif
   (void) INTERNAL_SYSCALL (rt_sigprocmask, err, 4, SIG_UNBLOCK, &sa.sa_mask,
 			   NULL, _NSIG / 8);
 
@@ -344,7 +380,7 @@ __pthread_initialize_minimal_internal (void)
   /* Determine the default allowed stack size.  This is the size used
      in case the user does not specify one.  */
   struct rlimit limit;
-  if (getrlimit (RLIMIT_STACK, &limit) != 0
+   if (getrlimit (RLIMIT_STACK, &limit) != 0
       || limit.rlim_cur == RLIM_INFINITY)
     /* The system limit is not usable.  Use an architecture-specific
        default.  */
@@ -374,10 +410,16 @@ __pthread_initialize_minimal_internal (void)
      keep the lock count from the ld.so implementation.  */
   GL(dl_rtld_lock_recursive) = (void *) INTUSE (__pthread_mutex_lock);
   GL(dl_rtld_unlock_recursive) = (void *) INTUSE (__pthread_mutex_unlock);
+#ifndef __rtld_lock_recursive_reinitialize
   unsigned int rtld_lock_count = GL(dl_load_lock).mutex.__data.__count;
   GL(dl_load_lock).mutex.__data.__count = 0;
-  while (rtld_lock_count-- > 0)
-    INTUSE (__pthread_mutex_lock) (&GL(dl_load_lock).mutex);
+#else
+  unsigned int rtld_lock_count =
+      __rtld_lock_recursive_reinitialize (GL(dl_load_lock));
+#endif
+  while (rtld_lock_count-- > 0) {
+    int errval = INTUSE (__pthread_mutex_lock) (&GL(dl_load_lock).mutex);
+}
 
   GL(dl_make_stack_executable_hook) = &__make_stacks_executable;
 #endif

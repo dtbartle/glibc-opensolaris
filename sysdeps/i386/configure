@@ -1,8 +1,8 @@
 # This file is generated from configure.in by Autoconf.  DO NOT EDIT!
  # Local configure fragment for sysdeps/i386.
 
-echo "$as_me:$LINENO: checking if -g produces usable source locations for assembler-with-cpp" >&5
-echo $ECHO_N "checking if -g produces usable source locations for assembler-with-cpp... $ECHO_C" >&6
+{ echo "$as_me:$LINENO: checking if -g produces usable source locations for assembler-with-cpp" >&5
+echo $ECHO_N "checking if -g produces usable source locations for assembler-with-cpp... $ECHO_C" >&6; }
 if test "${libc_cv_cpp_asm_debuginfo+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
@@ -44,8 +44,8 @@ else
 fi
 rm -f conftest*
 fi
-echo "$as_me:$LINENO: result: $libc_cv_cpp_asm_debuginfo" >&5
-echo "${ECHO_T}$libc_cv_cpp_asm_debuginfo" >&6
+{ echo "$as_me:$LINENO: result: $libc_cv_cpp_asm_debuginfo" >&5
+echo "${ECHO_T}$libc_cv_cpp_asm_debuginfo" >&6; }
 if test $libc_cv_cpp_asm_debuginfo = yes; then
   cat >>confdefs.h <<\_ACEOF
 #define HAVE_CPP_ASM_DEBUGINFO 1

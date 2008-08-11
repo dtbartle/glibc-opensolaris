@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2005 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2005, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -20,7 +20,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <atomic.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 
 static void
@@ -37,7 +37,11 @@ pthread_timedjoin_np (threadid, thread_return, abstime)
      const struct timespec *abstime;
 {
   struct pthread *self;
+#ifndef PTHREAD_T_IS_TID
   struct pthread *pd = (struct pthread *) threadid;
+#else
+  struct pthread *pd = __find_in_stack_list_by_tid (thread);
+#endif
   int result;
 
   /* Make sure the descriptor is valid.  */
