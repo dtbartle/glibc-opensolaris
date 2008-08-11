@@ -1,0 +1,83 @@
+scheduling:
+
+  The OpenSolaris kernel allows for loadable schedule classes. A scheduling
+  class has an id (pc_cid), associated name (pc_clname), and class-specific
+  scheduling information. As new schedulers are loaded, they are incrementally
+  assigned new id's.
+
+  Since id's are assigned dynamically, there is no way to statically associate
+  a class id with a posix scheduler (i.e. SCHED_*). The only exception is
+  SCHED_SYS, which is guaranteed to have cid == 0.
+
+threads:
+
+  The sun libpthread/libthread implementation assumes a 1:1 mapping between
+  pthread_t/thread_t and lwpid_t, while NPTL maps thread descriptors to
+  pthread_t. This behaviour was added to NPTL and maybe enabled by defining
+  PTHREAD_T_IS_TID.
+
+mutex:
+
+  Recursive locks are represented by an 8-byte counter defined by the
+  mutex_rcount macro. The maximum number of recursive waiters is
+  UCHAR_MAX (255).
+
+  Various fields are defined in a 64-bit field. 32 of the bits are used to
+  hold the owner pid. 8-bits each are used for holding the lock byte, the
+  number of waiters, and the number of spinners. Solaris defines some macros
+  for accessing these (architecture dependent of course):
+
+    mutex_lockword (32-bits): This is used if only the lock bit needs to
+      touched.
+
+    mutex_lockword64 (64-bits): This is used if you need to atomically swap
+      both the lock bytes and the owner pid. Note that where the pid portion
+      is located is dependent on byte ordering.
+
+    mutex_lockbyte (8-bits): This is the actual lock byte. It is set to 1 when
+      the lock is locked, and 0 when unlocked.
+
+    mutex_waiters (8-bits): This is set to 1 when there is another thread
+      waiting and 0 when there are no other waiters.
+
+    mutex_spinners (8-bits): This byte is apparently unused. We reuse it (as
+      mutex_cond_waiters) to mark a mutex that has been unlocked by cond_wait
+      (hence it will be reacquired later).
+
+    mutex_ownerpid (32-bits):
+
+  The mutex_owner field is a 64-bit field that stores a pointer to the owning
+  thread descriptor. It is not checked in the kernel and is only cleared by
+  the kernel during cleanup.
+
+  The kernel does not handle recursive or error-checking mutexes.
+
+  The kernel does not set mutex_lockbyte for mutexes with the
+  LOCK_PRIO_INHERIT bit set.
+
+semaphore:
+
+condition variable:
+
+  The cond_waiters_kernel byte is set to 1 if there are waiters on the
+  condition variable and 0 otherwise. The cond_waiters_user byte is not
+  used by the kernel.
+
+  The only clock types supported are CLOCK_REALTIME and CLOCK_HIGHRES.
+
+reader-writer lock:
+
+  The kernel only supports shared/process reader-writer locks; the private
+  rwlock implementation must be completely implemented in libc. For the shared
+  case, readercv and writercv are used to track the owner (thread and process).
+  The sun docs also state that the sun implementation favours writers over
+  readers[0].
+
+  There is no apparent advantage in using the rwlock syscalls since any
+  private implementation that used the embedded mutex and cv's would also work
+  correctly in the shared case.
+
+  Three additional fields are included for tracking the owner (thread and
+  process) of a reader-writer lock.
+
+[0] http://docs.sun.com/app/docs/doc/819-2243/rwlock-init-3c?a=view
