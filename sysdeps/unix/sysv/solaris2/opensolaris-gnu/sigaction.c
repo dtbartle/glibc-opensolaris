@@ -121,9 +121,9 @@ void __sighandler (int sig, siginfo_t *sip, void *uvp)
   /* Block all signals and lock.  */
   sigset_t fillset, oldset;
   if (sigfillset (&fillset) != 0)
-    return -1;
+    return;
   if (sigprocmask (SIG_SETMASK, &fillset, &oldset) != 0)
-    return -1;
+    return;
   __libc_lock_lock (signal_lock);
 
   void (*handler)(int, siginfo_t *, void *) = sighandlers[sig];
