@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <fork.h>
 #include <atomic.h>
+#include <pthreadP.h>
 
 
 void
@@ -104,7 +105,10 @@ __unregister_atfork (dso_handle)
       atomic_decrement (&deleted->handler->refcntr);
       unsigned int val;
       while ((val = deleted->handler->refcntr) != 0)
+        ; // TODO
+#if 0 // TODO
 	lll_futex_wait (&deleted->handler->refcntr, val, LLL_PRIVATE);
+#endif
 
       deleted = deleted->next;
     }

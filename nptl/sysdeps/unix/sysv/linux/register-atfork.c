@@ -21,10 +21,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fork.h>
+#include <pthreadP.h>
 
 
 /* Lock to protect allocation and deallocation of fork handlers.  */
+#ifndef lll_define_initialized
 int __fork_lock = LLL_LOCK_INITIALIZER;
+#else
+lll_define_initialized (, __fork_lock);
+#endif
 
 
 /* Number of pre-allocated handler entries.  */
