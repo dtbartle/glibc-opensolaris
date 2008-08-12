@@ -4,20 +4,23 @@
 #include <stddef.h>
 #include <inline-syscall.h>
 
+/* XXX: lll_define is used by desr.h so we can't use bits/libc-lock.h */
 #define lll_define(class, futex) \
-    class pthread_mutex_t futex
+    class pthread_mutex_t futex;
+
+#include <bits/libc-lock.h>
 
 #define lll_define_initialized(class, futex) \
-    class pthread_mutex_t futex = PTHREAD_MUTEX_INITIALIZER
+    __libc_lock_define_initialized (class, futex)
 
 #define lll_init(futex) \
-    pthread_mutex_init (&(futex), NULL)
+    __libc_lock_init (futex)
 
 #define lll_lock(futex, private) \
-    pthread_mutex_lock (&(futex))
+    __libc_lock_lock (futex)
 
 #define lll_unlock(futex, private) \
-    pthread_mutex_unlock (&(futex))
+    __libc_lock_unlock (futex)
 
 DECLARE_INLINE_SYSCALL (int, lwp_wait, pthread_t tid, pthread_t *departed);
 
