@@ -118,7 +118,6 @@ void
 __cleanup_fct_attribute __attribute ((noreturn))
 __pthread_unwind (__pthread_unwind_buf_t *buf)
 {
-write (2, "FOO 1\n", 6);
   struct pthread_unwind_buf *ibuf = (struct pthread_unwind_buf *) buf;
   struct pthread *self = THREAD_SELF;
 
@@ -156,7 +155,6 @@ write (2, "FOO 1\n", 6);
     }
 
   /* We simply jump to the registered setjmp buffer.  */
-write (2, "FOO 7\n", 6);
   __libc_unwind_longjmp ((struct __jmp_buf_tag *) ibuf->cancel_jmp_buf, 1);
 #endif
   /* NOTREACHED */

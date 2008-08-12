@@ -135,7 +135,6 @@ static const struct pthread_functions pthread_functions =
 static void
 sigcancel_handler (int sig, siginfo_t *si, void *ctx)
 {
-write (2, "FOO 20\n", 7);
 #ifdef __ASSUME_CORRECT_SI_PID
   /* Determine the process ID.  It might be negative if the thread is
      in the middle of a fork() call.  */
@@ -148,7 +147,6 @@ write (2, "FOO 20\n", 7);
      other signals and send a signal from another process.  This is not
      correct and might even be a security problem.  Try to catch as
      many incorrect invocations as possible.  */
-write (2, "FOO 21\n", 7);
   if (sig != SIGCANCEL
 #ifdef __ASSUME_CORRECT_SI_PID
       /* Kernels before 2.5.75 stored the thread ID and not the process
@@ -157,14 +155,12 @@ write (2, "FOO 21\n", 7);
 #endif
       || si->si_code != SI_TKILL)
 {
-write (2, "FOO 22\n", 7);
     return;
 }
 
   struct pthread *self = THREAD_SELF;
 
   int oldval = THREAD_GETMEM (self, cancelhandling);
-write (2, "FOO 23\n", 7);
   while (1)
     {
       /* We are canceled now.  When canceled by another thread this flag
@@ -176,7 +172,6 @@ write (2, "FOO 23\n", 7);
 	/* Already canceled or exiting.  */
 	break;
 
-write (2, "FOO 24\n", 7);
       int curval = THREAD_ATOMIC_CMPXCHG_VAL (self, cancelhandling, newval,
 					      oldval);
       if (curval == oldval)
@@ -187,18 +182,14 @@ write (2, "FOO 24\n", 7);
 	  /* Make sure asynchronous cancellation is still enabled.  */
 	  if ((newval & CANCELTYPE_BITMASK) != 0) {
 	    /* Run the registered destructors and terminate the thread.  */
-write (2, "FOO 25\n", 7);
 	    __do_cancel ();
-write (2, "FOO 26\n", 7);
       }
 
 	  break;
 	}
-write (2, "FOO 27\n", 7);
 
       oldval = curval;
     }
-write (2, "FOO 28\n", 7);
 }
 
 
