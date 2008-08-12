@@ -23,7 +23,8 @@
 #else
 
 #include_next <sigaction.c>
-#include <pthreadP.h>
+#include <bits/libc-lock.h>
+#include <fork.h>
 
 static void sigaction_atfork_prepare (void)
 {
@@ -40,10 +41,10 @@ static void sigaction_atfork_child (void)
   __libc_lock_unlock (signal_lock);
 }
 
-int sigaction_atfork (void)
+void sigaction_atfork (void)
 {
-  return __pthread_atfork (sigaction_atfork_prepare,
-      sigaction_atfork_parent, sigaction_atfork_child);
+  __register_atfork (sigaction_atfork_prepare, sigaction_atfork_parent,
+      sigaction_atfork_child, NULL);
 }
 
 #endif /* _NPTL_SIGACTION */

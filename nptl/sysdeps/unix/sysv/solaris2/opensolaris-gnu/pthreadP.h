@@ -21,7 +21,7 @@
 #define _OPENSOLARIS_PTHREADP_H
 
 /* Register atfork handlers to protect signal_lock.  */
-extern int sigaction_atfork (void);
+extern void sigaction_atfork (void);
 #define PLATFORM_PTHREAD_INIT \
     sigaction_atfork ();
 
