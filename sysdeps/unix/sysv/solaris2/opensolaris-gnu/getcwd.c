@@ -34,12 +34,6 @@
 
 DECLARE_INLINE_SYSCALL (int, getcwd, char *buf, size_t buflen);
 
-#if 0
-#ifndef IS_IN_rtld
-__libc_lock_define_initialized (, cwd_lock);
-#endif
-#endif
-
 #ifndef MAX
 # define MAX(a, b) ((a) < (b) ? (b) : (a))
 #endif
@@ -79,32 +73,12 @@ __getcwd (char *buf, size_t size)
 #endif
     path = buf;
 
-#if 0
-#ifndef IS_IN_rtld
-    /* block all signals and lock cwd */
-    sigset_t fillset, oldset;
-    if(sigfillset(&fillset) != 0)
-        return -1;
-    if(sigprocmask(SIG_SETMASK, &fillset, &oldset) != 0)
-        return -1;
-    __libc_lock_lock(cwd_lock);
-#endif
-#endif
-
     if (INLINE_SYSCALL (getcwd, 2, CHECK_STRING (path), alloc_size) == -1)
     {
         if (buf == NULL && path != NULL)
             free(path);
         path = NULL;
     }
-
-#if 0
-#ifndef IS_IN_rtld
-    /* unlock cwd and restore signals */
-    __libc_lock_unlock (cwd_lock);
-    assert (sigprocmask (SIG_SETMASK, &oldset, NULL) == 0);
-#endif
-#endif
 
     return path;
 }

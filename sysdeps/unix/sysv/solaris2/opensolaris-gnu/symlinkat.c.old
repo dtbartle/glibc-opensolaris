@@ -1,7 +1,0 @@
-#include <unistd.h>
-
-#define AT_FUNC_NAME    symlinkat
-#define AT_FUNC_FUNC    symlink
-#define AT_FUNC_PRE_FILE_PARAM_DECLS    const char *oldpath,
-#define AT_FUNC_PRE_FILE_ARGS           oldpath,
-#include "at-func.c"
