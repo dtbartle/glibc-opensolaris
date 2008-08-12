@@ -428,6 +428,10 @@ __pthread_initialize_minimal_internal (void)
 
   /* Determine whether the machine is SMP or not.  */
   __is_smp = is_smp_system ();
+
+#ifdef PLATFORM_PTHREAD_INIT
+PLATFORM_PTHREAD_INIT
+#endif
 }
 strong_alias (__pthread_initialize_minimal_internal,
 	      __pthread_initialize_minimal)

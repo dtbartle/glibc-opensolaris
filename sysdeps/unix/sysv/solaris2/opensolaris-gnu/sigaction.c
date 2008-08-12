@@ -29,18 +29,14 @@
 #include <stdio.h>
 
 static void (*sighandlers[_NSIG])(int, struct siginfo *, void *) = {0};
-static sigset_t sigmasks[_NSIG] = {0};
-__libc_lock_define_initialized (static, signal_lock);
+__libc_lock_define_initialized (, signal_lock);
 
 /* Solaris expects the ucontext_t to be switched back at the end
   of signal processing; one cannot simply return from the
   sighandler. As well, Solaris always calls the 3-param version
-  of the handler (i.e. sa_sigaction). */
+  of the handler (i.e. sa_sigaction).  */
 
-/* XXX: There is a slight race here. Another thread may call pthread_sigmask
-   while sigaction pokes signals.  */
-
-/* defined in sighandler.c */
+/* Defined in sighandler.c.  */
 extern void __sighandler(int, siginfo_t *, void *);
 
 DECLARE_INLINE_SYSCALL (int, sigaction, int signum,
@@ -66,38 +62,32 @@ __libc_sigaction (sig, act, oact)
       return -1;
     }
 
-  /* block all signals */
+  /* Block all signals and lock. */
   sigset_t fillset, oldset;
   if (sigfillset (&fillset) != 0)
     return -1;
   if (sigprocmask (SIG_SETMASK, &fillset, &oldset) != 0)
     return -1;
-
   __libc_lock_lock (signal_lock);
 
   void (*old_sigaction)(int, siginfo_t *, void *) = sighandlers[sig];
-  sigset_t old_sigmask = sigmasks[sig];
   if (act)
     {
       struct sigaction _act = *act;
       if (act->sa_handler != SIG_DFL && act->sa_handler != SIG_IGN)
         {
           _act.sa_sigaction = __sighandler;
-
-          /* we want __sighandler called with signals blocked */
-          _act.sa_mask = fillset;
         }
       result = INLINE_SYSCALL (sigaction, 3, sig, &_act, oact);
       if(result != -1)
         {
           sighandlers[sig] = act->sa_sigaction;
-          sigmasks[sig] = act->sa_mask;
         }
     }
 
   if (oact)
     {
-      /* if we called sigaction above don't call it again */
+      /* If we called sigaction above don't call it again.  */
       if (!act)
         result = INLINE_SYSCALL(sigaction, 3, sig, NULL, oact);
       if (result != -1)
@@ -105,14 +95,12 @@ __libc_sigaction (sig, act, oact)
           if (oact->sa_handler != SIG_DFL && oact->sa_handler != SIG_IGN)
             {
               oact->sa_sigaction = old_sigaction;
-              oact->sa_mask = old_sigmask;
             }
         }
     }
 
+  /* Unlock and restore signals.  */
   __libc_lock_unlock (signal_lock);
-
-  /* restore signals */
   assert (sigprocmask (SIG_SETMASK, &oldset, NULL) == 0);
 
   return result;
@@ -128,18 +116,22 @@ weak_alias (__libc_sigaction, sigaction)
 
 void __sighandler (int sig, siginfo_t *sip, void *uvp)
 {
-  /* at this point signals are blocked (see sigaction.c) */
-
-  /* only the kernel should be calling us */
   assert (sig >= 0 && sig < NSIG);
 
+  /* Block all signals and lock.  */
+  sigset_t fillset, oldset;
+  if (sigfillset (&fillset) != 0)
+    return -1;
+  if (sigprocmask (SIG_SETMASK, &fillset, &oldset) != 0)
+    return -1;
   __libc_lock_lock (signal_lock);
 
   void (*handler)(int, siginfo_t *, void *) = sighandlers[sig];
   ucontext_t *uctx = (ucontext_t*)uvp;
-  assert (sigprocmask (SIG_SETMASK, &sigmasks[sig], NULL) == 0);
 
+  /* Unlock and restore signals.  */
   __libc_lock_unlock (signal_lock);
+  assert (sigprocmask (SIG_SETMASK, &oldset, NULL) == 0);
 
   (*handler)(sig, sip, uvp);
 

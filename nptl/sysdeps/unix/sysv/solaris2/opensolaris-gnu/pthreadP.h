@@ -20,27 +20,32 @@
 #ifndef _OPENSOLARIS_PTHREADP_H
 #define _OPENSOLARIS_PTHREADP_H
 
-/* use tid as pthread_t (instead of descr) */
+/* Register atfork handlers to protect signal_lock.  */
+extern int sigaction_atfork (void);
+#define PLATFORM_PTHREAD_INIT \
+    sigaction_atfork ();
+
+/* Use tid as pthread_t (instead of descr).  */
 #define PTHREAD_T_IS_TID
 
-/* pthread_setXid not supported */
+/* pthread_setXid not supported/needed.  */
 #define NO_SETXID_SUPPORT
 
-/* disable robust list */
+/* Disable robust list.  */
 #define NO_ROBUST_LIST_SUPPORT
 
-/* disable futex support */
+/* Disable futex support.  */
 #define NO_FUTEX_SUPPORT
 
-/* make sure SIGCANCEL sanity check compiles */
+/* Make sure SIGCANCEL sanity check compiles.  */
 #define SI_TKILL SI_LWP
 #define __ASSUME_CORRECT_SI_PID
 
-/* we support tkill */
+/* We support tkill.  */
 #undef __NR_tgkill
 #undef __ASSUME_TGKILL
 
-/* rwlock macros */
+/* rwlock macros.  */
 #define _RWLOCK_WR_LOCK		0x80000000
 #define _RWLOCK_RD_MASK		0x7FFFFFFF
 #define _RWLOCK_RD_MAX      0x7FFFFFFF
@@ -85,7 +90,7 @@ static inline int __internal_kill_1 (int *errval, int sig)
   return result;
 }
 
-static inline int __internal_set_tid_address_1 (int *errval, pthread_t *tid)
+static inline pthread_t __internal_set_tid_address_1 (int *errval, pthread_t *tid)
 {
   return INLINE_SYSCALL (lwp_self, 0);
 }
