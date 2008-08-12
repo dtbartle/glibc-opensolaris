@@ -41,6 +41,13 @@
 
 #ifdef __ASSEMBLER__
 
+/* This is needed so that we know when to set %edx to -1 on error.  */
+#ifdef SYSCALL_64BIT_RETURN
+# define SYSCALL_64BIT_RETURN_ASM   orl $-1, %edx;
+#else
+# define SYSCALL_64BIT_RETURN_ASM
+#endif
+
 /* We don't want the label for the error handle to be global when we define
    it here.  */
 #ifdef PIC
@@ -159,6 +166,7 @@
   addl $_GLOBAL_OFFSET_TABLE_, %ecx;                          \
   movl %eax, rtld_errno@GOTOFF(%ecx);                         \
   orl $-1, %eax;                                  \
+  SYSCALL_64BIT_RETURN_ASM                      \
   jmp L(pseudo_end);
 
 # elif defined _LIBC_REENTRANT
@@ -175,6 +183,7 @@
   movl SYSCALL_ERROR_ERRNO@GOTNTPOFF(%ecx), %ecx;                 \
   SYSCALL_ERROR_HANDLER_TLS_STORE (%eax, %ecx);                   \
   orl $-1, %eax;                                  \
+  SYSCALL_64BIT_RETURN_ASM                      \
   jmp L(pseudo_end);
 #   ifndef NO_TLS_DIRECT_SEG_REFS
 #    define SYSCALL_ERROR_HANDLER_TLS_STORE(src, destoff)             \
@@ -203,6 +212,7 @@
   cfi_restore (ebx);                                                          \
   movl %ecx, (%eax);                                  \
   orl $-1, %eax;                                  \
+  SYSCALL_64BIT_RETURN_ASM                      \
   jmp L(pseudo_end);
 /* A quick note: it is assumed that the call to `__errno_location' does
    not modify the stack!  */
@@ -215,6 +225,7 @@
   movl errno@GOT(%ecx), %ecx;                             \
   movl %eax, (%ecx);                                  \
   orl $-1, %eax;                                  \
+  SYSCALL_64BIT_RETURN_ASM                      \
   jmp L(pseudo_end);
 # endif /* _LIBC_REENTRANT */
 #endif  /* PIC */

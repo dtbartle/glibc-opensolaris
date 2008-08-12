@@ -6,7 +6,6 @@
 
 acl                 - acl                   i:siip      acl
 clock_getres        - clock_getres          i:ip        clock_getres
-#clock_gettime       - clock_gettime         i:ip        clock_gettime
 clock_settime       - clock_settime         i:ip        clock_settime
 faccessat           - fsat:accessat         i:isi       faccessat
 facl                - facl                  i:iiip      facl
@@ -28,7 +27,6 @@ getvmusage          - rusagesys:getvmusage  i:iipp      getvmusage
 gtty                - gtty                  i:ip        gtty
 issetugid           - privsys:issetugid     Ei:         issetugid
 lchown              - lchown                i:sii       __lchown            lchown
-lseek64             - llseek                Ci:iii      __libc_lseek64      __llseek llseek __lseek64 lseek64
 memcntl             - memcntl               i:piiiii    memcntl
 mincore             - mincore               i:anV       mincore
 mmap64              - mmap64                i:piiiii    __mmap64            mmap64
