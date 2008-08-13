@@ -21,7 +21,32 @@
 #define _SYS_PSET_H
 
 #include <sys/processor.h>
+#include <features.h>
 
 typedef int psetid_t;
+
+__BEGIN_DECLS
+
+extern int  pset_create (psetid_t *newpset);
+
+extern int  pset_destroy (psetid_t pset);
+
+extern int  pset_assign (psetid_t pset, processorid_t cpu, psetid_t *opset);
+
+extern int  pset_info (psetid_t pset, int *type, unsigned int *numcpus,
+    processorid_t *cpulist);
+
+extern int  pset_bind (psetid_t pset, idtype_t idtype, id_t id,
+    psetid_t *opset);
+
+extern int  pset_getloadavg (psetid_t pset, double loadavg[], int nelem);
+
+extern int  pset_list (psetid_t *psetlist, unsigned int *numpsets);
+
+extern int  pset_setattr (psetid_t pset, unsigned int attr);
+
+extern int  pset_getattr (psetid_t pset, unsigned int *attr);
+
+__END_DECLS
 
 #endif /* _SYS_PSET_H */

@@ -44,6 +44,14 @@ pread               - pread                 i:iPii      __libc_pread        __pr
 pread64             - pread64               i:iPii      __libc_pread64      __pread64 pread64
 processor_bind      - processor_bind        i:iiip      processor_bind
 processor_info      - processor_info        i:ip        processor_info
+pset_create         - pset:pset_create      i:p         pset_create
+pset_destroy        - pset:pset_destroy     i:i         pset_destroy
+pset_assign         - pset:pset_assign      i:iip       pset_assign
+pset_info           - pset:pset_info        i:ippp      pset_info
+pset_bind           - pset:pset_bind        i:iiip      pset_bind
+pset_list           - pset:pset_list        i:pp        pset_list
+pset_setattr        - pset:pset_setattr     i:ii        pset_setattr
+pset_getattr        - pset:pset_getattr     i:ip        pset_getattr
 pwrite              - pwrite                i:iPii      __libc_pwrite       __pwrite pwrite
 pwrite64            - pwrite64              i:iPii      __libc_pwrite64     __pwrite64 pwrite64
 renameat            - fsat:renameat         i:isis      renameat
@@ -71,6 +79,7 @@ statvfs             - statvfs               i:sp        __statvfs           stat
 statvfs64           - statvfs64             i:sp        __statvfs64         statvfs64
 stty                - stty                  i:ip        stty
 systeminfo          - systeminfo            i:ipi       sysinfo
+swapctl             - uadmin:swapctl        i:ip        swapctl
 uadmin              - uadmin                i:iii       __uadmin            uadmin
 umount2             - umount2               i:si        umount2
 unlinkat            - fsat:unlinkat         i:isi       unlinkat
@@ -124,6 +133,7 @@ sys_pipe            - pipe                  i:          __syscall_pipe
 sys_pollsys         - pollsys               i:pipp      __syscall_pollsys
 sys_priocntlsys     - priocntlsys           i:ipiv      __syscall_priocntlsys
 sys_privsys         - privsys               i:iipii     __syscall_privsys
+sys_pset_getloadavg - pset:pset_getloadavg  i:ipi       __syscall_pset_getloadavg
 sys_putmsg          - putmsg                i:ippi      __syscall_putmsg
 sys_putpmsg         - putpmsg               i:ippii     __syscall_putpmsg
 sys_read            - read                  i:ibn       __syscall_read

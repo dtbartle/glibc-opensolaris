@@ -323,6 +323,16 @@
 #define SYS_signotify       205
 #define SYS_schedctl        206
 #define SYS_pset            207
+# define SYS_SUB_pset_create    0
+# define SYS_SUB_pset_destroy   1
+# define SYS_SUB_pset_assign    2
+# define SYS_SUB_pset_info      3
+# define SYS_SUB_pset_bind      4
+# define SYS_SUB_pset_getloadavg    5
+# define SYS_SUB_pset_list      6
+# define SYS_SUB_pset_setattr   7
+# define SYS_SUB_pset_getattr   8
+# define SYS_SUB_pset_assign_forced 9
 #define SYS_sparc_utrap_install 208
 #define SYS_resolvepath     209
 #define	SYS_lwp_mutex_timedlock 210

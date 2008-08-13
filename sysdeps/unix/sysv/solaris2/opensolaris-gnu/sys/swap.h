@@ -21,40 +21,47 @@
 #ifndef __SYS_SWAP_H
 #define __SYS_SWAP_H
 
+/* Docs: http://docs.sun.com/app/docs/doc/816-5167/swapctl-2?a=view */
+
 #include <features.h>
 #include <bits/types.h>
 
+/* swapctl cmd values.  */
 #define	SC_ADD		1
 #define	SC_LIST		2
 #define	SC_REMOVE	3
 #define	SC_GETNSWP	4
 #define	SC_AINFO	5
 
-typedef struct swapres {
-	char		*sr_name;
+/* swapctl arg for SC_ADD and SC_REMOVE.  */
+typedef struct swapres
+{
+	char *sr_name;
 #if defined(__USE_FILE_OFFSET64)
-	__off64_t	sr_start;
-	__off64_t	sr_length;
+	__off64_t sr_start;
+	__off64_t sr_length;
 #else
-	__off_t		sr_start;
-	__off_t		sr_length;
+	__off_t sr_start;
+	__off_t sr_length;
 #endif
 } swapres_t;
 
-typedef struct swapent {
-	char		*ste_path;
+typedef struct swapent
+{
+	char *ste_path;
 #if defined(__USE_FILE_OFFSET64)
-	__off64_t	ste_start;
-	__off64_t	ste_length;
+	__off64_t ste_start;
+	__off64_t ste_length;
 #else
-	__off_t		ste_start;
-	__off_t		ste_length;
+	__off_t ste_start;
+	__off_t ste_length;
 #endif
-	long		ste_pages;
-	long		ste_free;
-	int			ste_flags;
+	long ste_pages;
+	long ste_free;
+	int ste_flags;
 } swapent_t;
 
+/* swapctl arg for SC_LIST.  */
 typedef struct swaptable {
 	int			swt_n;
 	swapent_t	swt_ent[1];
@@ -68,6 +75,8 @@ extern int swapon (__const char *__path) __THROW;
 
 /* Stop using block special device PATH for swapping.  */
 extern int swapoff (__const char *__path) __THROW;
+
+extern int swapctl (int cmd, void *arg);
 
 __END_DECLS
 

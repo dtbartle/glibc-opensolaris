@@ -14,11 +14,13 @@ endif
 ifeq ($(subdir),misc)
 sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     getpagesizes memcntl meminfo uadmin getpflags setpflags issetugid ucred \
-    priv processor_bind processor_info p_online
+    priv processor_bind processor_info p_online pset_create pset_destroy \
+    pset_assign pset_info pset_bind pset_getloadavg pset_list pset_setattr \
+    pset_getattr swapctl
 sysdep_routines += sys_fdsync sys_sysconfig sys_brk sys_fcntl sys_utssys \
     sys_writev sys_writev_nc_ns sys_lwp_private sys_uname sys_getloadavg \
     sys_utimes sys_getpeerucred sys_ucred_get sys_privsys sys_syslabeling \
-    sys_putmsg sys_putpmsg sys_meminfo
+    sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg
 sysdep_headers += sys/feature_tests.h sys/lwp.h sys/mount.h sys/cred.h \
     sys/systeminfo.h sys/uadmin.h sys/utssys.h sys/fstyp.h sys/fsid.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/stream.h sys/synch.h \
