@@ -158,9 +158,9 @@ typedef struct fshare
 # define FD_CLOEXEC	1	/* actually anything with low bit set goes */
 
 /* For posix fcntl() and `l_type' field of a `struct flock' for lockf().  */
-# define F_RDLCK	0	/* Read lock.  */
-# define F_WRLCK	1	/* Write lock.  */
-# define F_UNLCK	2	/* Remove lock.  */
+# define F_RDLCK	1	/* Read lock.  */
+# define F_WRLCK	2	/* Write lock.  */
+# define F_UNLCK	3	/* Remove lock.  */
 /* OpenSolaris-specific */
 #define F_UNLKSYS	4
 
