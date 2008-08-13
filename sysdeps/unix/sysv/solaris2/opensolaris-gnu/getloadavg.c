@@ -30,11 +30,11 @@ getloadavg (double loadavg[], int nelem)
     nelem = 3;
   int result = INLINE_SYSCALL (getloadavg, 2, buf, nelem);
   if (result == -1)
-    return result;
+    return -1;
 
   /* the results from the kernel are scaled by a factor of 256 */
   for(i = 0; i < nelem; i++)
     loadavg[i] = (double)buf[i] / 256;
 
-  return result;
+  return nelem;
 }
