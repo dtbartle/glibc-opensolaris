@@ -21,8 +21,12 @@ static struct
     { "RLIMIT_AS", RLIMIT_AS, true },
     /* The following are traditional Unix limits which are also
        expected (by us).  */
+#ifdef RLIMIT_RSS
     { "RLIMIT_RSS", RLIMIT_RSS, true },
+#endif
+#ifdef RLIMIT_NPROC
     { "RLIMIT_NPROC", RLIMIT_NPROC, true },
+#endif
     /* The following are extensions.  */
 #ifdef RLIMIT_MEMLOCK
     { "RLIMIT_MEMLOCK", RLIMIT_MEMLOCK, false },
