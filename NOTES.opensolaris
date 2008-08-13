@@ -1,3 +1,17 @@
+auxiliary vector (auxv_t):
+
+  Proper OpenSolaris does not support statically-linked executables (i.e. via
+  gcc -static). However, glibc does, but with certain restrictions. The kernel
+  only builds the auxv_t if the elf file is not of type ET_EXEC or if the
+  PT_INTERP program header exists. This means that dynamically-linked
+  executables and libaries get an auxv_t while statically-linked executables
+  don't. This means that statically-linked executables won't see PT_TLS, which
+  is needed for __thread support. We can test for the SHARED macro for libc
+  library code, but in general, __thread will not work.
+
+  In order to fix this, it should be a matter of changing the kernel to
+  unconditionally supply the auxv_t.
+
 scheduling:
 
   The OpenSolaris kernel allows for loadable schedule classes. A scheduling
