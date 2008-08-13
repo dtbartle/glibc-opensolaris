@@ -17,6 +17,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#ifndef _ACL_H
+#define _ACL_H
+
 #include <features.h>
 #include <sys/types.h>
 
@@ -53,3 +56,5 @@ extern int acl(char *__pathp, int __cmd, int __nentries, void *__aclbufp);
 extern int facl(int __fildes, int __cmd, int __nentries, void *__aclbufp);
 
 __END_DECLS
+
+#endif /* _ACL_H */
