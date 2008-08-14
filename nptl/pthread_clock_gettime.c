@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <libc-internal.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 
 #if HP_TIMING_AVAIL

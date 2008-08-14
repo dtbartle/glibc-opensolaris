@@ -19,7 +19,7 @@
 
 #include <setjmp.h>
 #include <stdlib.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 
 /* The next two functions are similar to pthread_setcanceltype() but
