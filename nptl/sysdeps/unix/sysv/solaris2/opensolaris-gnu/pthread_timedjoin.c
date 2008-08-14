@@ -23,13 +23,6 @@
 #include "pthreadP.h"
 
 
-static void
-cleanup (void *arg)
-{
-  *(void **) arg = NULL;
-}
-
-
 int
 pthread_timedjoin_np (threadid, thread_return, abstime)
      pthread_t threadid;
