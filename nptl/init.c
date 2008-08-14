@@ -135,7 +135,6 @@ static const struct pthread_functions pthread_functions =
 static void
 sigcancel_handler (int sig, siginfo_t *si, void *ctx)
 {
-printf ("%d: sigcancel_handler\n", pthread_self ());
 #ifdef __ASSUME_CORRECT_SI_PID
   /* Determine the process ID.  It might be negative if the thread is
      in the middle of a fork() call.  */
