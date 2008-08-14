@@ -19,6 +19,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include_next <pthreaddef.h>
+
 /* Default stack size.  */
 #define ARCH_STACK_DEFAULT_SIZE	(2 * 1024 * 1024)
 
