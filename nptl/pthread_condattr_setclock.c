@@ -22,7 +22,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <sysdep.h>
-#include <pthreadP.h>
+#include "pthreadP.h"
 #include <kernel-features.h>
 
 

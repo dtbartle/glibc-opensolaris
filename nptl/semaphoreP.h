@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <semaphore.h>
-#include <pthreadP.h>
+#include "pthreadP.h"
 
 
 /* Mount point of the shared memory filesystem.  */

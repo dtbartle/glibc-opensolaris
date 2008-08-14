@@ -1,6 +1,8 @@
-/* Copyright (C) 2002 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+   OpenSolaris bits contributed by David Bartley
+    <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,24 +20,18 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include "pthreadP.h"
-
+#include <pthreadP.h>
 
 int
-pthread_rwlockattr_setkind_np (attr, pref)
-     pthread_rwlockattr_t *attr;
-     int pref;
+pthread_condattr_setpshared (attr, pshared)
+     pthread_condattr_t *attr;
+     int pshared;
 {
-  struct pthread_rwlockattr *iattr;
-
-  if (pref != PTHREAD_RWLOCK_PREFER_READER_NP
-      && pref != PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP
-      && __builtin_expect  (pref != PTHREAD_RWLOCK_PREFER_WRITER_NP, 0))
+  if (pshared != PTHREAD_PROCESS_PRIVATE
+      && __builtin_expect (pshared != PTHREAD_PROCESS_SHARED, 0))
     return EINVAL;
 
-  iattr = (struct pthread_rwlockattr *) attr;
-
-  iattr->lockkind = pref;
+  ((struct pthread_condattr *) attr)->pshared = pshared;
 
   return 0;
 }

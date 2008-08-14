@@ -18,7 +18,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <pthreadP.h>
+#include "pthreadP.h"
 
 int
 pthread_spin_init (pthread_spinlock_t *lock, int pshared)

@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
-#include <pthreadP.h>
+#include "pthreadP.h"
 
 
 int
