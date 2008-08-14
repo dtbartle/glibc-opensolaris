@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <stdlib.h>
-#include <pthreadP.h>
+#include "pthreadP.h"
 
 
 void

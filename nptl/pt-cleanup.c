@@ -19,7 +19,7 @@
 
 #include <setjmp.h>
 #include <stdlib.h>
-#include <pthreadP.h>
+#include "pthreadP.h"
 #include <jmpbuf-unwind.h>
 
 void
