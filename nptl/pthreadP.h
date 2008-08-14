@@ -21,6 +21,11 @@
 #ifndef _PTHREADP_H
 #define _PTHREADP_H	1
 
+// TODO
+#ifndef _OPENSOLARIS_PTHREADP_H
+#error nptl/pthreadP.h included directly
+#endif
+
 #include <pthread.h>
 #include <setjmp.h>
 #include <stdbool.h>
