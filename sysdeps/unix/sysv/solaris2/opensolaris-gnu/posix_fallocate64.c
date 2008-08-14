@@ -23,7 +23,7 @@
 int
 posix_fallocate64 (int fd, __off64_t offset, __off64_t len)
 {
-  struct flock fl;
+  struct flock64 fl;
   fl.l_whence = 0;
   fl.l_len = len;
   fl.l_start = offset;
