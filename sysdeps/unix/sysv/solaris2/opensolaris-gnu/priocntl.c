@@ -71,9 +71,27 @@ long priocntl (idtype_t idtype, id_t id, int cmd, ...)
   return __priocntl_common (&ps, cmd, ap);
 }
 
-long priocntlset(procset_t *ps, int cmd, ...)
+long priocntlset (procset_t *ps, int cmd, ...)
 {
   va_list ap;
   va_start (ap, cmd);
   return __priocntl_common (ps, cmd, ap);
+}
+
+/* TODO: This should not exist...  */
+long __internal_priocntl_4 (int *errval, idtype_t idtype, id_t id,
+        int cmd, ...)
+{
+  /* convert idtype/id to procset_t */
+  procset_t ps;
+  setprocset (&ps, POP_AND, idtype, id, P_ALL, 0);
+
+  int saved_errno = errno;
+  va_list ap;
+  va_start (ap, cmd);
+  int result = __priocntl_common (&ps, cmd, ap);
+  if (result != 0)
+    *errval = errno;
+  __set_errno (saved_errno);
+  return result;
 }

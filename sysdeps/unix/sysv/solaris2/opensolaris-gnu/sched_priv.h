@@ -1,8 +1,6 @@
-/* Copyright (C) 2002, 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,26 +17,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <errno.h>
+#include <sys/types.h>
+#include <sys/procset.h>
 #include <sched.h>
-#include <string.h>
-#include <sched.h>
-#include "pthreadP.h"
-#include <sched_priv.h>
-#include <sys/priocntl.h>
 
-
-int
-pthread_setschedprio (threadid, prio)
-     pthread_t threadid;
-     int prio;
-{
-  struct pthread *pd = (struct pthread *) threadid;
-
-  /* Make sure the descriptor is valid.  */
-  if (INVALID_TD_P (pd))
-    /* Not a valid thread handle.  */
-    return ESRCH;
-
-  return __sched_setparam_id (P_LWPID, threadid, prio);
-}
+extern int __sched_policy_to_class (int policy);
+extern int __sched_class_to_policy (int cid);
+extern int __sched_getparam_id (int idtype, id_t id, int *priority);
+extern int __sched_setparam_id (int idtype, id_t id, int priority);
+extern int __sched_getscheduler_id (int idtype, id_t id, int *policy,
+    int *priority);
+extern int __sched_setscheduler_id (int idtype, id_t id, int policy,
+    int priority);
+extern long __internal_priocntl_4 (int *errval, idtype_t idtype, id_t id,
+    int cmd, ...);

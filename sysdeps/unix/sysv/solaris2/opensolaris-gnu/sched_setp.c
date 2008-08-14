@@ -1,8 +1,6 @@
-/* Copyright (C) 2002, 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,26 +17,21 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <sched.h>
 #include <errno.h>
-#include <sched.h>
-#include <string.h>
-#include <sched.h>
-#include "pthreadP.h"
-#include <sched_priv.h>
-#include <sys/priocntl.h>
-
+#include <sys/procset.h>
+#include "sched_priv.h"
 
 int
-pthread_setschedprio (threadid, prio)
-     pthread_t threadid;
-     int prio;
+__sched_setparam (pid_t pid, const struct sched_param *param)
 {
-  struct pthread *pd = (struct pthread *) threadid;
-
-  /* Make sure the descriptor is valid.  */
-  if (INVALID_TD_P (pd))
-    /* Not a valid thread handle.  */
-    return ESRCH;
-
-  return __sched_setparam_id (P_LWPID, threadid, prio);
+  int errval = __sched_setparam_id (P_PID, pid, param->sched_priority);
+  if (errval != 0)
+    {
+      __set_errno (errval);
+      return -1;
+    }
+  return 0;
 }
+
+weak_alias (__sched_setparam, sched_setparam)

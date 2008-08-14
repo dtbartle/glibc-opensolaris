@@ -24,6 +24,7 @@
 #include <sched.h>
 #include <string.h>
 #include "pthreadP.h"
+#include <sys/priocntl.h>
 
 
 int
@@ -39,7 +40,6 @@ __pthread_setschedparam (threadid, policy, param)
     /* Not a valid thread handle.  */
     return ESRCH;
 
-  // TODO
-  return ENOSYS;
+  return __sched_setscheduler_id (P_LWPID, threadid, policy, param);
 }
 strong_alias (__pthread_setschedparam, pthread_setschedparam)

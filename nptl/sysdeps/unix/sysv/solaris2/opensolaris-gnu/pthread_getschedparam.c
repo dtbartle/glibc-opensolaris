@@ -22,6 +22,8 @@
 #include <errno.h>
 #include <string.h>
 #include "pthreadP.h"
+#include <sched_priv.h>
+#include <sys/priocntl.h>
 
 
 int
@@ -37,7 +39,6 @@ __pthread_getschedparam (threadid, policy, param)
     /* Not a valid thread handle.  */
     return ESRCH;
 
-  // TODO
-  return ENOSYS;
+  return __sched_getscheduler_id (P_LWPID, threadid, policy, param);
 }
 strong_alias (__pthread_getschedparam, pthread_getschedparam)

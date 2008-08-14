@@ -1,8 +1,6 @@
-/* Copyright (C) 2002, 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,26 +17,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <errno.h>
 #include <sched.h>
-#include <string.h>
-#include <sched.h>
-#include "pthreadP.h"
-#include <sched_priv.h>
 #include <sys/priocntl.h>
 
-
 int
-pthread_setschedprio (threadid, prio)
-     pthread_t threadid;
-     int prio;
+__sched_get_priority_min (int algorithm)
 {
-  struct pthread *pd = (struct pthread *) threadid;
-
-  /* Make sure the descriptor is valid.  */
-  if (INVALID_TD_P (pd))
-    /* Not a valid thread handle.  */
-    return ESRCH;
-
-  return __sched_setparam_id (P_LWPID, threadid, prio);
+  pcpri_t pri;
+  int result = priocntl (0, 0, PC_GETPRIRANGE, &pri);
+  if (result != 0)
+    return -1;
+  return pri.pc_clpmin;
 }
+
+weak_alias (__sched_get_priority_min, sched_get_priority_min)

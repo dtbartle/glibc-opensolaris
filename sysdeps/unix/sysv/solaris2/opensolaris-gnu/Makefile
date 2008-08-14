@@ -33,7 +33,7 @@ ifeq ($(subdir),dirent)
 sysdep_routines += sys_getdents sys_getdents64
 endif
 ifeq ($(subdir),posix)
-sysdep_routines += sys_nanosleep sys_pause exit-thread
+sysdep_routines += sys_nanosleep sys_pause exit-thread sched_priv
 endif
 ifeq ($(subdir),resource)
 sysdep_routines += priocntl getvmusage
@@ -48,7 +48,7 @@ sysdep_routines += sys_lwp_sigmask sys_sigqueue sys_sigtimedwait \
 endif
 ifeq ($(subdir),socket)
 sysdep_routines += sa_len sys_so_socket sys_so_socketpair sys_send \
-    sys_sendmsg sys_sendto send_msg_nosignal sys_accept sys_bind \
+    sys_sendmsg sys_sendto sys_accept sys_bind \
     sys_connect sys_getpeername sys_getsockname sys_getsockopt \
     sys_setsockopt sys_shutdown sys_recvmsg sys_listen
 sysdep_routines += netmask
@@ -76,8 +76,7 @@ nscd-modules += sys_close_nc_ns
 endif
 
 ifeq ($(subdir),nptl)
-libpthread-sysdep_routines += sys_fcntl sys_send sys_sendmsg \
-    sys_sendto sys_accept sys_connect sys_recvmsg sys_fdsync \
-    sys_open sys_open64 sys_close_nc_ns sys_sigaction \
-    send_msg_nosignal
+libpthread-sysdep_routines += sys_fcntl sys_send sys_sendmsg sys_sendto \
+    sys_accept sys_connect sys_recvmsg sys_fdsync sys_open sys_open64 \
+    sys_close_nc_ns sys_sigaction sys_priocntlsys sched_priv priocntl
 endif
