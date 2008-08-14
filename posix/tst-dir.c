@@ -28,6 +28,10 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#ifndef NAME_MAX
+# define NAME_MAX 1024
+#endif
+
 
 /* We expect four arguments:
    - source directory name
