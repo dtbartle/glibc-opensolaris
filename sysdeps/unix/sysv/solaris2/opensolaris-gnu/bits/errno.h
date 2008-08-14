@@ -93,6 +93,9 @@
 
 # define EBFONT		57	/* Bad font file fmt.  */
 
+# define EOWNERDEAD	58	/* Process died with the lock.  */
+# define ENOTRECOVERABLE	59	/* Lock is not recoverable.  */
+
 /* STREAM problems.  */
 # define ENOSTR		60	/* Device not a stream.  */
 # define ENODATA	61	/* No data (for no delay io).  */
