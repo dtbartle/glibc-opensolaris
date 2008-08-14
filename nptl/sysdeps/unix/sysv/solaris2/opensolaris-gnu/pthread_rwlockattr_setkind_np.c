@@ -28,6 +28,7 @@ pthread_rwlockattr_setkind_np (attr, pref)
      pthread_rwlockattr_t *attr;
      int pref;
 {
+  // TODO
   return ENOSYS;
 }
 

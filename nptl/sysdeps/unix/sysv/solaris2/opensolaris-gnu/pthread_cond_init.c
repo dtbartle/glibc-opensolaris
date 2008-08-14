@@ -29,7 +29,7 @@
 
 static const struct pthread_condattr default_attr =
   {
-    .pshared = PTHREAD_PROCESS_PRIVATE
+    .value = 0
   };
 
 
@@ -43,7 +43,8 @@ __pthread_cond_init (cond, cond_attr)
   icond_attr = (struct pthread_condattr *) cond_attr ?: &default_attr;
 
   memset (cond, 0, sizeof(pthread_cond_t));
-  cond->cond_type = icond_attr->pshared;
+  cond->cond_type = (icond_attr->value & 1) ?
+      PTHREAD_PROCESS_SHARED : PTHREAD_PROCESS_PRIVATE;
   cond->cond_magic = COND_MAGIC;
 
   return 0;

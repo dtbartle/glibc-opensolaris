@@ -27,6 +27,7 @@
 
 static const struct pthread_rwlockattr default_attr =
   {
+    .lockkind = PTHREAD_RWLOCK_DEFAULT_NP,
     .pshared = PTHREAD_PROCESS_PRIVATE
   };
 
@@ -50,6 +51,8 @@ __pthread_rwlock_init (rwlock, attr)
   rwlock->readercv.cond_magic = COND_MAGIC;
   rwlock->writercv.cond_type = iattr->pshared;
   rwlock->writercv.cond_magic = COND_MAGIC;
+
+// TODO: lock_kind
 
   return 0;
 }
