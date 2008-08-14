@@ -56,10 +56,7 @@ pthread_mutex_timedlock (mutex, abstime)
   struct timespec _reltime;
   struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
   if (reltime && reltime->tv_sec < 0)
-    {
-      __set_errno (ETIMEDOUT);
-      return -1;
-    }
+    return ETIMEDOUT;
 
 #if 0
 char buf[200];

@@ -28,7 +28,7 @@ int __mutex_lock_fast (pthread_mutex_t *mutex, bool try)
 {
   if (mutex->mutex_lockword32 == LOCKWORD32_UNSET_NO_WAITERS)
     {
-      /* the mutex is not held by anyone so try to grab it */
+      /* The mutex is not held by anyone so try to grab it.  */
       if (mutex->mutex_type & LOCK_SHARED)
         {
           uint64_t new_lockword64 = LOCKWORD64_SET_NO_WAITERS |
@@ -62,7 +62,7 @@ int __mutex_lock_fast (pthread_mutex_t *mutex, bool try)
        mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
        mutex->mutex_owner == (uintptr_t)THREAD_SELF)
     {
-      /* recursively held lock */
+      /* Recursively held lock.  */
       if (mutex->mutex_rcount == RECURSION_MAX)
         {
           return EAGAIN;
@@ -77,16 +77,16 @@ int __mutex_lock_fast (pthread_mutex_t *mutex, bool try)
             mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
            (mutex->mutex_owner == (uintptr_t)THREAD_SELF))
     {
-      /* error checking: lock already held */
+      /* Error checking: lock already held.  */
       return EDEADLK;
     }
   else if (try && mutex->mutex_lockbyte == LOCKBYTE_SET)
     {
-      /* trylock but lock was held */
+      /* Tried to lock but lock was held.  */
       return EBUSY;
     }
 
-  /* need to use the slow code */
+  /* Need to use the slow code.  */
   return -1;
 }
 
@@ -100,7 +100,7 @@ int __mutex_unlock_fast (pthread_mutex_t *mutex)
        mutex->mutex_owner == (uintptr_t)THREAD_SELF &&
        mutex->mutex_rcount > 0)
     {
-      /* recursively held lock */
+      /* Recursively held lock.  */
       mutex->mutex_rcount--;
       atomic_write_barrier ();
       return 0;
@@ -123,7 +123,7 @@ int __mutex_unlock_fast (pthread_mutex_t *mutex)
          in the kernel (which doesn't check this field anyhow).  */
       mutex->mutex_owner = (uintptr_t)NULL;
 
-      /* nobody is waiting on the mutex so we can try to release it */
+      /* Nobody is waiting on the mutex so we can try to release it.  */
       if (mutex->mutex_type & LOCK_SHARED)
         {
             uint64_t test_lockword64 = LOCKWORD64_SET_NO_WAITERS |
@@ -150,6 +150,6 @@ int __mutex_unlock_fast (pthread_mutex_t *mutex)
         }
     }
 
-  /* need to use the slow code */
+  /* Need to use the slow code.  */
   return -1;
 }

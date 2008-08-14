@@ -34,44 +34,122 @@
 DECLARE_INLINE_SYSCALL (int, lwp_cond_wait, pthread_cond_t *cv,
     pthread_mutex_t *mp, struct timespec *tsp, int check_park);
 
+struct _condvar_cleanup_buffer
+{
+  int oldtype;
+  pthread_cond_t *cond;
+  pthread_mutex_t *mutex;
+  int old_cond_waiters;
+  int old_mutex_rcount;
+};
+
+void
+__attribute__ ((visibility ("hidden")))
+__condvar_cleanup (void *arg)
+{
+  struct _condvar_cleanup_buffer *cbuffer =
+    (struct _condvar_cleanup_buffer *) arg;
+  pthread_mutex_t *mutex = cbuffer->mutex;
+
+  /* Note: we don't whether the mutex was unlocked by the kernel or not.  */
+
+  /* The condition variable is no longer using the mutex.  */
+  mutex->mutex_cond_waiters = cbuffer->old_cond_waiters;
+  atomic_write_barrier ();
+
+  while (1)
+    {
+      if (mutex->mutex_lockbyte == LOCKBYTE_SET &&
+        ((mutex->mutex_type & LOCK_SHARED) == 0 ||
+          mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
+         (mutex->mutex_owner == (uintptr_t)THREAD_SELF))
+        {
+          /* The lock is held by us (we didn't get signaled).  */
+          break;
+        }
+      else if (mutex->mutex_lockbyte == 0)
+        {
+          /* The mutex is unlocked.  */
+          pthread_mutex_lock (mutex);
+          break;
+        }
+    }
+
+  /* Restore the mutex_rcount.  */
+  if (mutex->mutex_lockbyte == LOCKBYTE_SET &&
+     (mutex->mutex_type & LOCK_RECURSIVE) &&
+      mutex->mutex_rcount == 0 && cbuffer->old_mutex_rcount > 0)
+    {
+      mutex->mutex_rcount = cbuffer->old_mutex_rcount;
+      atomic_write_barrier ();
+    }
+}
+
 
 int
-__pthread_cond_timedwait (cond, mutex, abstime)
+__pthread_cond_timedwait_internal (cond, mutex, abstime, cancel)
      pthread_cond_t *cond;
      pthread_mutex_t *mutex;
      const struct timespec *abstime;
+     int cancel;
 {
+  struct _pthread_cleanup_buffer buffer;
+  struct _condvar_cleanup_buffer cbuffer;
+
   /* Reject invalid timeouts.  */
   if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
     return EINVAL;
 
-  /* We don't bother with the recursive case; if the lock is recursively held
-     we'll get deadlock even if we unlock once.  */
   if ((mutex->mutex_type & LOCK_ERRORCHECK) &&
      ((mutex->mutex_lockbyte != LOCKBYTE_SET ||
        mutex->mutex_owner != (uintptr_t)THREAD_SELF ||
      ((mutex->mutex_type & LOCK_SHARED) &&
        mutex->mutex_ownerpid != THREAD_GETMEM (THREAD_SELF, pid)))))
     {
-      /* error checking: lock not held by this thread */
+      /* Error checking: lock not held by this thread.  */
       return EPERM;
+    }
+  else if ((mutex->mutex_type & LOCK_RECURSIVE) &&
+            mutex->mutex_lockbyte == LOCKBYTE_SET &&
+          ((mutex->mutex_type & LOCK_SHARED) == 0 ||
+            mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
+            mutex->mutex_owner == (uintptr_t)THREAD_SELF &&
+            mutex->mutex_rcount > 0)
+    {
+      /* Recursively held lock. XXX: Using recursive mutexes with condition
+         variables is undefined; we do what sun's libc does, namely fully
+          release the lock.  */
+      cbuffer.old_mutex_rcount = mutex->mutex_rcount;
+      mutex->mutex_rcount = 0;
+      atomic_write_barrier ();
     }
 
   /* Mark the mutex as still in use.  */
-  int old_cond_waiters = mutex->mutex_cond_waiters;
-  if (old_cond_waiters == 0)
+  cbuffer.old_cond_waiters = mutex->mutex_cond_waiters;
+  if (cbuffer.old_cond_waiters == 0)
     {
       mutex->mutex_cond_waiters = 1;
       atomic_write_barrier ();
     }
 
+  /* Prepare structure passed to cancellation handler.  */
+  cbuffer.cond = cond;
+  cbuffer.mutex = mutex;
+
+  if (cancel)
+    {
+      /* Before we block we enable cancellation.  Therefore we have to
+         install a cancellation handler.  */
+      __pthread_cleanup_push (&buffer, __condvar_cleanup, &cbuffer);
+
+      /* Enable asynchronous cancellation.  Required by the standard.  */
+      cbuffer.oldtype = __pthread_enable_asynccancel ();
+    }
+
   struct timespec _reltime;
   struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
   if (reltime && reltime->tv_sec < 0)
-    {
-      __set_errno (ETIMEDOUT);
-      return -1;
-    }
+    return ETIMEDOUT;
   int errval = INLINE_SYSCALL (lwp_cond_wait, 4, cond, mutex, reltime, 1);
   if (errval == ETIME)
     errval = ETIMEDOUT;
@@ -79,21 +157,49 @@ __pthread_cond_timedwait (cond, mutex, abstime)
   else if (errval == EINTR)
     errval = 0;
 
+  if (cancel)
+    {
+      /* Disable asynchronous cancellation.  */
+      __pthread_disable_asynccancel (cbuffer.oldtype);
+
+      /* The cancellation handling is back to normal, remove the handler.  */
+      __pthread_cleanup_pop (&buffer, 0);
+    }
+
   /* Re-acquire the lock. The docs say we must always re-acquire so we don't
      use pthread_mutex_timedlock. Note that even if the above wait fails the
      kernel always unlocks the mutex.  */
   int errval2 = pthread_mutex_lock (mutex);
-  if (errval2 != 0)
-    return errval2;
+  if (errval2 == EINTR)
+    return 0;
+  else if (errval2 != 0)
+    return EINVAL;
+
+  /* Restore the mutex_rcount.  */
+  if (mutex->mutex_type & LOCK_RECURSIVE)
+    {
+      mutex->mutex_rcount = cbuffer.old_mutex_rcount;
+      atomic_write_barrier ();
+    }
 
   /* The condition variable is no longer using the mutex.  */
-  if (old_cond_waiters == 0)
+  if (cbuffer.old_cond_waiters == 0)
     {
       mutex->mutex_cond_waiters = 0;
       atomic_write_barrier ();
     }
 
   return errval;
+}
+
+
+int
+__pthread_cond_timedwait (cond, mutex, abstime)
+     pthread_cond_t *cond;
+     pthread_mutex_t *mutex;
+     const struct timespec *abstime;
+{
+  return __pthread_cond_timedwait_internal (cond, mutex, abstime, 1);
 }
 
 versioned_symbol (libpthread, __pthread_cond_timedwait, pthread_cond_timedwait,
