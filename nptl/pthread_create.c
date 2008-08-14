@@ -252,8 +252,10 @@ start_thread (void *arg)
   THREAD_SETMEM (pd, cpuclock_offset, now);
 #endif
 
+#if USE___THREAD
   /* Initialize resolver state pointer.  */
   __resp = &pd->res;
+#endif
 
 #ifndef NO_ROBUST_LIST_SUPPORT
 #ifdef __NR_set_robust_list
