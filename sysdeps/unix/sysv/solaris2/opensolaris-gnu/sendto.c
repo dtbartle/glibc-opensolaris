@@ -19,7 +19,6 @@
 
 #include <inline-syscall.h>
 #include <sys/socket.h>
-#include <assert.h>
 #include <socket_priv.h>
 
 DECLARE_INLINE_SYSCALL (ssize_t, sendto, int s, const void *buf, size_t len,
@@ -34,8 +33,6 @@ __sendto (fd, buf, n, flags, addr, addr_len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t addr_len;
 {
-  struct sigaction act;
-  sigset_t mask;
   if(flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE
 

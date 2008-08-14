@@ -19,7 +19,6 @@
 
 #include <inline-syscall.h>
 #include <sys/socket.h>
-#include <assert.h>
 #include <socket_priv.h>
 
 DECLARE_INLINE_SYSCALL (ssize_t, sendmsg, int s, const struct msghdr *msg,
@@ -31,8 +30,6 @@ __sendmsg (fd, message, flags)
      const struct msghdr *message;
      int flags;
 {
-  struct sigaction act;
-  sigset_t mask;
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE
 
