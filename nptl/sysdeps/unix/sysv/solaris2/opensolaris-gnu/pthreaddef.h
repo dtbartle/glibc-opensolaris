@@ -45,8 +45,3 @@ extern void sigaction_atfork (void);
 /* We support tkill.  */
 #undef __NR_tgkill
 #undef __ASSUME_TGKILL
-
-/* __thread doesn't work for statically-linked executables.  */
-#if !defined (SHARED)
-# undef HAVE___THREAD
-#endif
