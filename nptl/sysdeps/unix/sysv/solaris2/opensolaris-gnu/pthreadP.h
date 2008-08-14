@@ -20,31 +20,6 @@
 #ifndef _OPENSOLARIS_PTHREADP_H
 #define _OPENSOLARIS_PTHREADP_H
 
-/* Register atfork handlers to protect signal_lock.  */
-extern void sigaction_atfork (void);
-#define PLATFORM_PTHREAD_INIT \
-    sigaction_atfork ();
-
-/* Use tid as pthread_t (instead of descr).  */
-#define PTHREAD_T_IS_TID
-
-/* pthread_setXid not supported/needed.  */
-#define NO_SETXID_SUPPORT
-
-/* Disable robust list.  */
-#define NO_ROBUST_LIST_SUPPORT
-
-/* Disable futex support.  */
-#define NO_FUTEX_SUPPORT
-
-/* Make sure SIGCANCEL sanity check compiles.  */
-#define SI_TKILL SI_LWP
-#define __ASSUME_CORRECT_SI_PID
-
-/* We support tkill.  */
-#undef __NR_tgkill
-#undef __ASSUME_TGKILL
-
 /* rwlock macros.  */
 #define _RWLOCK_WR_LOCK		0x80000000
 #define _RWLOCK_RD_MASK		0x7FFFFFFF
@@ -60,7 +35,7 @@ extern void sigaction_atfork (void);
 #undef PTHREAD_MUTEXATTR_PRIO_CEILING_SHIFT
 #define PTHREAD_MUTEXATTR_PRIO_CEILING_SHIFT	12
 #undef PTHREAD_MUTEXATTR_PRIO_CEILING_MASK
-#define PTHREAD_MUTEXATTR_PRIO_CEILING_MASK	0x00fff000
+#define PTHREAD_MUTEXATTR_PRIO_CEILING_MASK	0x0ffff000
 #undef PTHREAD_MUTEXATTR_FLAG_ROBUST
 #define PTHREAD_MUTEXATTR_FLAG_ROBUST		0x40
 #undef PTHREAD_MUTEXATTR_FLAG_PSHARED
