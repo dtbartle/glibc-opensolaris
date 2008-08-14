@@ -17,7 +17,27 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <signal.h>
+#ifndef _SOCKET_PRIV_H
+#define _SOCKET_PRIV_H
 
-extern int __send_msg_nosignal_pre (struct sigaction *oldact, sigset_t *oldset);
-extern int __send_msg_nosignal_post (struct sigaction *oldact, sigset_t *oldset);
+#include <atomic.h>
+
+/* Helper code to handle MSG_NOSIGNAL.  */
+
+extern unsigned int __sigpipe_disabled;
+
+#define SIGPIPE_DISABLE_DEFINE  unsigned int __sigpipe_disabled = 0;
+
+#define SIGPIPE_DISABLE                         \
+    do {                                        \
+      atomic_increment (&__sigpipe_disabled);   \
+    } while (0);
+
+#define SIGPIPE_ENABLE                          \
+    do {                                        \
+      atomic_decrement (&__sigpipe_disabled);   \
+    } while (0);
+
+#define SIGPIPE_IS_DISABLE      (__sigpipe_disabled != 0)
+
+#endif /* _SOCKET_PRIV_H */

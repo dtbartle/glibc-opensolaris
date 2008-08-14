@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <bits/libc-lock.h>
 #include <stdio.h>
+#include <socket_priv.h>
 
 static void (*sighandlers[_NSIG])(int, struct siginfo *, void *) = {0};
 __libc_lock_define_initialized (, signal_lock);
@@ -117,6 +118,9 @@ weak_alias (__libc_sigaction, sigaction)
 void __sighandler (int sig, siginfo_t *sip, void *uvp)
 {
   assert (sig >= 0 && sig < NSIG);
+
+  if (sig == SIGPIPE && SIGPIPE_IS_DISABLED)
+    return;
 
   /* Block all signals and lock.  */
   sigset_t fillset, oldset;

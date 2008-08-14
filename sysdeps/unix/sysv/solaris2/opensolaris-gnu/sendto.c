@@ -20,7 +20,7 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 #include <assert.h>
-#include "send_msg_nosignal.h"
+#include <socket_priv.h>
 
 DECLARE_INLINE_SYSCALL (ssize_t, sendto, int s, const void *buf, size_t len,
     int flags, __CONST_SOCKADDR_ARG to, socklen_t tolen);
@@ -37,16 +37,13 @@ __sendto (fd, buf, n, flags, addr, addr_len)
   struct sigaction act;
   sigset_t mask;
   if(flags & MSG_NOSIGNAL)
-    {
-      if(__send_msg_nosignal_pre(&act, &mask) != 0)
-        return -1;
-    }
+    SIGPIPE_DISABLE
 
   int result = INLINE_SYSCALL(sendto, 6, fd, buf, n,
     (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2, addr, addr_len);
 
   if(flags & MSG_NOSIGNAL)
-    assert (__send_msg_nosignal_post(&act, &mask) == 0);
+    SIGPIPE_ENABLE
 
   return result;
 }

@@ -24,6 +24,10 @@
 
 # include <dl-sysdep.h>
 
+/* Additional descr fields.  */
+# define PLATFORM_DESCR_FIELDS \
+    int sigpipe_disabled;
+
 /* __thread doesn't work for statically-linked executables.  */
 #if !defined (SHARED)
 # undef HAVE___THREAD

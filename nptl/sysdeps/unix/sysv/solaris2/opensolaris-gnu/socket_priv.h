@@ -17,32 +17,27 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
-#include <sys/socket.h>
-#include <assert.h>
-#include <socket_priv.h>
+#ifndef _SOCKET_PRIV_H
+#define _SOCKET_PRIV_H
 
-DECLARE_INLINE_SYSCALL (ssize_t, sendmsg, int s, const struct msghdr *msg,
-    int flags);
+#include <pthreadP.h>
+#include <atomic.h>
 
-ssize_t
-__sendmsg (fd, message, flags)
-     int fd;
-     const struct msghdr *message;
-     int flags;
-{
-  struct sigaction act;
-  sigset_t mask;
-  if (flags & MSG_NOSIGNAL)
-    SIGPIPE_DISABLE
+/* Helper code to handle MSG_NOSIGNAL.  */
 
-  int result = INLINE_SYSCALL(sendmsg, 3, fd, message,
-    (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2);
+#define SIGPIPE_DISABLE_DEFINE
 
-  if(flags & MSG_NOSIGNAL)
-    SIGPIPE_ENABLE
+#define SIGPIPE_DISABLE                                     \
+    do {                                                    \
+      atomic_increment (&THREAD_SELF->sigpipe_disabled);    \
+    } while (0);
 
-  return result;
-}
+#define SIGPIPE_ENABLE                                      \
+    do {                                                    \
+      atomic_decrement (&THREAD_SELF->sigpipe_disabled);    \
+    } while (0);
 
-weak_alias (__sendmsg, sendmsg)
+#define SIGPIPE_IS_DISABLED \
+    (THREAD_GETMEM (THREAD_SELF, sigpipe_disabled) != 0)
+
+#endif /* _SOCKET_PRIV_H */
