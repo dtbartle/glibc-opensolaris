@@ -57,8 +57,8 @@ write (1, buf, strlen(buf));
   /* Wait until we can acquire the write lock.  */
   while (rwlock->readers & (_RWLOCK_RD_MASK | _RWLOCK_WR_LOCK))
     {
-// TODO: _not_cancel
-      errval = pthread_cond_wait (&rwlock->writercv, &rwlock->mutex);
+      errval = __pthread_cond_timedwait_internal (&rwlock->writercv,
+          &rwlock->mutex, abstime, 0);
       if (errval != 0)
         return pthread_mutex_unlock (&rwlock->mutex) ?: errval;
     }

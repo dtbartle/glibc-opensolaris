@@ -29,8 +29,6 @@ int
 pthread_barrier_wait (barrier)
      pthread_barrier_t *barrier;
 {
-  bool serial_thread = false;
-
   struct pthread_barrier *ibarrier = (struct pthread_barrier *) barrier;
 
   int errval = pthread_mutex_lock (&ibarrier->mutex);
@@ -71,8 +69,8 @@ write (2, buf, strlen (buf));
   int curr_event = ibarrier->curr_event;
   do
     {
-// TODO: not_cancel
-      errval = pthread_cond_wait (&ibarrier->cond, &ibarrier->mutex);
+      errval = __pthread_cond_timedwait_internal (&ibarrier->cond,
+          &ibarrier->mutex, NULL, 0);
       if (errval != 0)
         return errval;
     }

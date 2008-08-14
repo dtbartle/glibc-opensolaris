@@ -62,9 +62,8 @@ write (1, buf, strlen(buf));
         __cond_has_waiters (&rwlock->writercv))
     {
       /* Wait for writer to wake us up.  */
-// TODO: _not_cancel
-      errval = pthread_cond_timedwait (&rwlock->readercv,
-          &rwlock->mutex, abstime);
+      errval = __pthread_cond_timedwait_internal (&rwlock->readercv,
+          &rwlock->mutex, abstime, 0);
       if (errval != 0)
         return pthread_mutex_unlock (&rwlock->mutex) ?: errval;
     }
