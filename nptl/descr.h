@@ -387,6 +387,10 @@ struct pthread
   /* Resolver state.  */
   struct __res_state res;
 
+#ifdef PLATFORM_DESCR_FIELDS
+PLATFORM_DESCR_FIELDS
+#endif
+
   /* This member must be last.  */
   char end_padding[];
 
