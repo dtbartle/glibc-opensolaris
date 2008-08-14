@@ -101,15 +101,15 @@ enum
 
 /* Read-write lock types.  */
 #if defined __USE_UNIX98 || defined __USE_XOPEN2K
-# if 0 // TODO
 enum
 {
   PTHREAD_RWLOCK_PREFER_READER_NP,
+# if 0 // TODO
   PTHREAD_RWLOCK_PREFER_WRITER_NP,
   PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP,
+# endif
   PTHREAD_RWLOCK_DEFAULT_NP = PTHREAD_RWLOCK_PREFER_READER_NP
 };
-# endif
 #endif
 
 /* Read-write lock initializers.  */
