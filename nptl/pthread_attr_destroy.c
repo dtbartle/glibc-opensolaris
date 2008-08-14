@@ -21,7 +21,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <shlib-compat.h>
 
 int

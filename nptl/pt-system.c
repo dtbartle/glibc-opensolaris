@@ -20,7 +20,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <sysdep.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 
 int

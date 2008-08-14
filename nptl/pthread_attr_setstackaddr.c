@@ -19,7 +19,7 @@
 
 #include <assert.h>
 #include <errno.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 
 int

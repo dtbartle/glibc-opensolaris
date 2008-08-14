@@ -19,7 +19,7 @@
 
 #include <setjmp.h>
 #include <stdlib.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <atomic.h>
 #include <bits/libc-lock.h>
 
