@@ -135,6 +135,7 @@ static const struct pthread_functions pthread_functions =
 static void
 sigcancel_handler (int sig, siginfo_t *si, void *ctx)
 {
+printf ("%d: sigcancel_handler\n", pthread_self ());
 #ifdef __ASSUME_CORRECT_SI_PID
   /* Determine the process ID.  It might be negative if the thread is
      in the middle of a fork() call.  */
@@ -408,9 +409,8 @@ __pthread_initialize_minimal_internal (void)
   unsigned int rtld_lock_count =
       __rtld_lock_recursive_reinitialize (GL(dl_load_lock));
 #endif
-  while (rtld_lock_count-- > 0) {
-    int errval = INTUSE (__pthread_mutex_lock) (&GL(dl_load_lock).mutex);
-}
+  while (rtld_lock_count-- > 0)
+    INTUSE (__pthread_mutex_lock) (&GL(dl_load_lock).mutex);
 
   GL(dl_make_stack_executable_hook) = &__make_stacks_executable;
 #endif
