@@ -48,7 +48,7 @@ __libc_sigaction (sig, act, oact)
      const struct sigaction *act;
      struct sigaction *oact;
 {
-  int result = 0;
+  int result;
 
   if (sig < 0 || sig >= NSIG)
     {
