@@ -20,8 +20,25 @@
 #include <resolv.h>
 #include <tls.h>
 
+#if ! USE___THREAD
+
+# undef _res
+extern struct __res_state _res;
+
+/* When threaded, _res may be a per-thread variable.  */
+struct __res_state *
+weak_const_function
+__res_state (void)
+{
+  return &_res;
+}
+
+#else
+
 struct __res_state *
 __res_state (void)
 {
   return __resp;
 }
+
+#endif
