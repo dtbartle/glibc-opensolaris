@@ -66,8 +66,13 @@ struct pthread_mutexattr
 /* Conditional variable attribute data structure.  */
 struct pthread_condattr
 {
-  int pshared;
-  clock_t clockid;
+  /* Combination of values:
+
+     Bit 0  : flag whether coditional variable will be shareable between
+	      processes.
+
+     Bit 1-7: clock ID.  */
+  int value;
 };
 
 
@@ -82,6 +87,7 @@ struct pthread_condattr
 /* Read-write lock variable attribute data structure.  */
 struct pthread_rwlockattr
 {
+  int lockkind;
   int pshared;
 };
 
