@@ -277,7 +277,7 @@ struct pthread
 #define CANCEL_RESTMASK		0xffffff80
 #else /* NO_SETXID_SUPPORT */
   /* Mask for the rest.  Helps the compiler to optimize.  */
-#define CANCEL_RESTMASK		0xffffff40
+#define CANCEL_RESTMASK		0xffffffc0
 #endif /* NO_SETXID_SUPPORT */
 
 #define CANCEL_ENABLED_AND_CANCELED(value) \
