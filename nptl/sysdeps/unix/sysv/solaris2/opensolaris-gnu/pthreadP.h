@@ -127,4 +127,7 @@ static inline int __cond_has_waiters (pthread_cond_t *cond)
   return cond->cond_waiters_kernel;
 }
 
+extern int __pthread_cond_timedwait_internal (pthread_cond_t *cond,
+    pthread_mutex_t *mutex, const struct timespec *abstime, int cancel);
+
 #endif /* _OPENSOLARIS_PTHREADP_H */
