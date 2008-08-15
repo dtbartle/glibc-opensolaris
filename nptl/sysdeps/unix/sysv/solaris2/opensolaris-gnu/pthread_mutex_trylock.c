@@ -38,9 +38,13 @@ int
 __pthread_mutex_trylock (mutex)
      pthread_mutex_t *mutex;
 {
-  int result = __mutex_lock_fast (mutex, true);
-  if(result >= 0)
-    return result;
+  /* Always hit the kernel for priority inherit locks.  */
+  if ((mutex->mutex_type & LOCK_PRIO_INHERIT) == 0)
+    {
+      int result = __mutex_lock_fast (mutex, true);
+      if(result >= 0)
+        return result;
+    }
 
   int errval = INLINE_SYSCALL (lwp_mutex_trylock, 1, mutex);
 

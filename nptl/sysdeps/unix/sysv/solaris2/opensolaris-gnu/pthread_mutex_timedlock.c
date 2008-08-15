@@ -49,9 +49,13 @@ pthread_mutex_timedlock (mutex, abstime)
   if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
     return EINVAL;
 
-  int result = __mutex_lock_fast (mutex, false);
-  if(result >= 0)
-    return result;
+  /* Always hit the kernel for priority inherit locks.  */
+  if ((mutex->mutex_type & LOCK_PRIO_INHERIT) == 0)
+    {
+      int result = __mutex_lock_fast (mutex, false);
+      if(result >= 0)
+        return result;
+    }
 
   struct timespec _reltime;
   struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);

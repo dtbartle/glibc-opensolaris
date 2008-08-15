@@ -40,9 +40,13 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
      pthread_mutex_t *mutex;
      int decr;
 {
-  int result = __mutex_unlock_fast (mutex);
-  if(result >= 0)
-    return result;
+  /* Always hit the kernel for priority inherit locks.  */
+  if ((mutex->mutex_type & LOCK_PRIO_INHERIT) == 0)
+    {
+      int result = __mutex_unlock_fast (mutex);
+      if(result >= 0)
+        return result;
+    }
 
 #if 0
 char buf[200];
