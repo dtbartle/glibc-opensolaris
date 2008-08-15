@@ -10,6 +10,8 @@
 
 #include <bits/libc-lock.h>
 
+#define LLL_LOCK_INITIALIZER PTHREAD_MUTEX_INITIALIZER
+
 #define lll_define_initialized(class, futex) \
     __libc_lock_define_initialized (class, futex)
 
@@ -18,6 +20,9 @@
 
 #define lll_lock(futex, private) \
     __libc_lock_lock (futex)
+
+#define lll_trylock(futex) \
+    __libc_lock_trylock (futex)
 
 #define lll_unlock(futex, private) \
     __libc_lock_unlock (futex)

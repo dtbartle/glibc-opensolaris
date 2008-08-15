@@ -27,7 +27,11 @@
 /* The locking here is very inexpensive, even for inlining.  */
 #define _IO_lock_inexpensive	1
 
+#ifndef lll_define
 typedef struct { int lock; int cnt; void *owner; } _IO_lock_t;
+#else
+typedef struct { lll_define (, lock); int cnt; void *owner; } _IO_lock_t;
+#endif
 
 #define _IO_lock_initializer { LLL_LOCK_INITIALIZER, 0, NULL }
 
