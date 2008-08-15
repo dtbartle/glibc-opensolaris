@@ -21,7 +21,8 @@
 
 #include <errno.h>
 #include <pthreadP.h>
-#include <stdbool.h>
+#include <stdio.h>
+#include <not-cancel.h>
 
 
 /* Wait on barrier.  */
@@ -51,12 +52,12 @@ write (2, buf, strlen (buf));
       ibarrier->left = ibarrier->init_count;
       atomic_write_barrier ();
 
-      errval = pthread_mutex_unlock (&ibarrier->mutex);
+      /* Wake other threads.  */
+      errval = pthread_cond_broadcast (&ibarrier->cond);
       if (errval != 0)
         return errval;
 
-      /* Wake other threads.  */
-      errval = pthread_cond_broadcast (&ibarrier->cond);
+      errval = pthread_mutex_unlock (&ibarrier->mutex);
       if (errval != 0)
         return errval;
 
