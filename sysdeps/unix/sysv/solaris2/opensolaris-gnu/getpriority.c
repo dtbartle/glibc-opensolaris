@@ -17,7 +17,6 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/procset.h>
@@ -25,17 +24,11 @@
 #include <limits.h>
 #include <errno.h>
 
-DECLARE_INLINE_SYSCALL (int, priocntlsys, int pc_version, procset_t *psp,
-    int cmd, ...);
-
 int
 getpriority (enum __priority_which which, id_t who)
 {
-  pcnice_t nice;
-  idtype_t type;
-  procset_t set;
-
   /* convert from PRIO_* to P_* */
+  idtype_t type;
   switch(which)
     {
     case PRIO_PROCESS:
@@ -66,12 +59,10 @@ getpriority (enum __priority_which which, id_t who)
   if(who == 0)
     who = P_MYID;
 
-  setprocset(&set, POP_AND, type, who, P_ALL, 0);
-
+  pcnice_t nice;
   nice.pc_val = 0;
   nice.pc_op = PC_GETNICE;
-
-  if (INLINE_SYSCALL (priocntlsys, 4, PC_VERSION, &set, PC_DONICE, &nice) != 0)
+  if (priocntl (type, who, PC_DONICE, &nice) == -1)
     return -1;
 
   return nice.pc_val;

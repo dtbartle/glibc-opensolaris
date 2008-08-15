@@ -17,24 +17,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/procset.h>
 #include <sys/priocntl.h>
 #include <errno.h>
 
-DECLARE_INLINE_SYSCALL (int, priocntlsys, int pc_version, procset_t *psp,
-    int cmd, ...);
-
 int
 setpriority (enum __priority_which which, id_t who, int prio)
 {
-  pcnice_t nice;
-  idtype_t type;
-  procset_t set;
-
   /* convert from PRIO_* to P_* */
+  idtype_t type;
   switch(which)
     {
     case PRIO_PROCESS:
@@ -64,17 +57,16 @@ setpriority (enum __priority_which which, id_t who, int prio)
 
   if(who == 0)
     who = P_MYID;
+
   if(prio > NZERO)
     prio = NZERO;
-  if(prio < NZERO)
+  else if(prio < NZERO)
     prio = -NZERO;
 
-  setprocset (&set, POP_AND, type, who, P_ALL, 0);
-
+  pcnice_t nice;
   nice.pc_val = prio;
   nice.pc_op = PC_SETNICE;
-
-  return INLINE_SYSCALL (priocntlsys, 4, PC_VERSION, &set, PC_DONICE, &nice);
+  return priocntl (type, who, PC_DONICE, &nice);
 }
 
 libc_hidden_def (setpriority)
