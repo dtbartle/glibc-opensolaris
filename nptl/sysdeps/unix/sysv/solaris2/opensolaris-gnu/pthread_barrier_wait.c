@@ -50,7 +50,6 @@ write (2, buf, strlen (buf));
          current waiters that it is their turn. Also reset the barrier.  */
       ++ibarrier->curr_event;
       ibarrier->left = ibarrier->init_count;
-      atomic_write_barrier ();
 
       /* Wake other threads.  */
       errval = pthread_cond_broadcast (&ibarrier->cond);
@@ -63,8 +62,6 @@ write (2, buf, strlen (buf));
 
       return PTHREAD_BARRIER_SERIAL_THREAD;
     }
-
-  atomic_write_barrier ();
 
   /* Wait until the current barrier event is done.  */
   int curr_event = ibarrier->curr_event;

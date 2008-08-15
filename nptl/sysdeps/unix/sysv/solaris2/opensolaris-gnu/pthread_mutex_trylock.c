@@ -50,10 +50,7 @@ __pthread_mutex_trylock (mutex)
 
   /* The kernel does not set mutex_owner so we set it here.  */
   if ((mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK)) && errval == 0)
-    {
-      mutex->mutex_owner = (uintptr_t)THREAD_SELF;
-      atomic_write_barrier ();
-    }
+    mutex->mutex_owner = (uintptr_t)THREAD_SELF;
 
   return errval;
 }

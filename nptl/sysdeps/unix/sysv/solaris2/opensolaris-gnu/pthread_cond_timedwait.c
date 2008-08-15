@@ -55,8 +55,8 @@ __condvar_cleanup (void *arg)
 
   /* The condition variable is no longer using the mutex.  */
   mutex->mutex_cond_waiters = cbuffer->old_cond_waiters;
-  atomic_write_barrier ();
 
+  int errval = 0;
   while (1)
     {
       if (mutex->mutex_lockbyte == LOCKBYTE_SET &&
@@ -70,19 +70,14 @@ __condvar_cleanup (void *arg)
       else if (mutex->mutex_lockbyte == 0)
         {
           /* The mutex is unlocked.  */
-          pthread_mutex_lock (mutex);
+          errval = pthread_mutex_lock (mutex);
           break;
         }
     }
 
   /* Restore the mutex_rcount.  */
-  if (mutex->mutex_lockbyte == LOCKBYTE_SET &&
-     (mutex->mutex_type & LOCK_RECURSIVE) &&
-      mutex->mutex_rcount == 0 && cbuffer->old_mutex_rcount > 0)
-    {
-      mutex->mutex_rcount = cbuffer->old_mutex_rcount;
-      atomic_write_barrier ();
-    }
+  if (errval == 0)
+    mutex->mutex_rcount = cbuffer->old_mutex_rcount;
 }
 
 
@@ -121,16 +116,12 @@ __pthread_cond_timedwait_internal (cond, mutex, abstime, cancel)
           release the lock.  */
       cbuffer.old_mutex_rcount = mutex->mutex_rcount;
       mutex->mutex_rcount = 0;
-      atomic_write_barrier ();
     }
 
   /* Mark the mutex as still in use.  */
   cbuffer.old_cond_waiters = mutex->mutex_cond_waiters;
   if (cbuffer.old_cond_waiters == 0)
-    {
-      mutex->mutex_cond_waiters = 1;
-      atomic_write_barrier ();
-    }
+    mutex->mutex_cond_waiters = 1;
 
   /* Prepare structure passed to cancellation handler.  */
   cbuffer.cond = cond;
@@ -177,17 +168,11 @@ __pthread_cond_timedwait_internal (cond, mutex, abstime, cancel)
 
   /* Restore the mutex_rcount.  */
   if (mutex->mutex_type & LOCK_RECURSIVE)
-    {
-      mutex->mutex_rcount = cbuffer.old_mutex_rcount;
-      atomic_write_barrier ();
-    }
+    mutex->mutex_rcount = cbuffer.old_mutex_rcount;
 
   /* The condition variable is no longer using the mutex.  */
   if (cbuffer.old_cond_waiters == 0)
-    {
-      mutex->mutex_cond_waiters = 0;
-      atomic_write_barrier ();
-    }
+    mutex->mutex_cond_waiters = 0;
 
   return errval;
 }

@@ -68,7 +68,6 @@ write (1, buf, strlen(buf));
   rwlock->owner = (uintptr_t)THREAD_SELF;
   if (rwlock->type & LOCK_SHARED)
     rwlock->ownerpid = THREAD_GETMEM (THREAD_SELF, pid);
-  atomic_write_barrier ();
 
 #if 0
 sprintf (buf, "%d:%d (%p): pthread_rwlock_timedwrlock (post): readers = %d\n",

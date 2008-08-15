@@ -42,7 +42,6 @@ __pthread_rwlock_trywrlock (rwlock)
   rwlock->owner = (uintptr_t)THREAD_SELF;
   if (rwlock->type & LOCK_SHARED)
     rwlock->ownerpid = THREAD_GETMEM (THREAD_SELF, pid);
-  atomic_write_barrier ();
 
   return pthread_mutex_unlock (&rwlock->mutex);
 }

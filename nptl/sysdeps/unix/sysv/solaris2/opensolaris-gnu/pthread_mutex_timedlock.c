@@ -78,10 +78,7 @@ write (2, buf, strlen(buf));
 
   /* The kernel does not set mutex_owner so we set it here.  */
   if ((mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK)) && errval == 0)
-    {
-      mutex->mutex_owner = (uintptr_t)THREAD_SELF;
-      atomic_write_barrier ();
-    }
+    mutex->mutex_owner = (uintptr_t)THREAD_SELF;
 
 #if 0
 sprintf (buf, "%d (%p): pthread_mutex_timedlock (post): mutex_type = %d, mutex_lockbyte = %d, "

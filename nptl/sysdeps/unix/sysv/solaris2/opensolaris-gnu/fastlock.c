@@ -68,7 +68,6 @@ int __mutex_lock_fast (pthread_mutex_t *mutex, bool try)
           return EAGAIN;
         }
       mutex->mutex_rcount++;
-      atomic_write_barrier ();
       return 0;
     }
   else if ((mutex->mutex_type & LOCK_ERRORCHECK) &&
@@ -102,7 +101,6 @@ int __mutex_unlock_fast (pthread_mutex_t *mutex)
     {
       /* Recursively held lock.  */
       mutex->mutex_rcount--;
-      atomic_write_barrier ();
       return 0;
     }
   else if ((mutex->mutex_type & LOCK_ERRORCHECK) &&

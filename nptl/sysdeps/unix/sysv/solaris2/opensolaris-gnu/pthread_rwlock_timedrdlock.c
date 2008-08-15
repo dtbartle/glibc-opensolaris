@@ -72,7 +72,6 @@ write (1, buf, strlen(buf));
   if (rwlock->readers == _RWLOCK_RD_MAX)
     return pthread_mutex_unlock (&rwlock->mutex) ?: EAGAIN;
   rwlock->readers++;
-  atomic_write_barrier ();
 
 #if 0
 sprintf (buf, "%d:%d (%p): pthread_rwlock_timedrdlock (post): readers = %d\n",

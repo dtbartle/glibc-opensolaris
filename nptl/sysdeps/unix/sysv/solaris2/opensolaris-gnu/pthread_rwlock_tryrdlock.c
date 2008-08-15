@@ -41,7 +41,6 @@ __pthread_rwlock_tryrdlock (rwlock)
   if (rwlock->readers == _RWLOCK_RD_MAX)
     return pthread_mutex_unlock (&rwlock->mutex) ?: EAGAIN;
   rwlock->readers++;
-  atomic_write_barrier ();
 
   return pthread_mutex_unlock (&rwlock->mutex);
 }

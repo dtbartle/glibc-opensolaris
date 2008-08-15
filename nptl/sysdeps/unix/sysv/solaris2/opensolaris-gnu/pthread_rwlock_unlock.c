@@ -61,7 +61,6 @@ write (1, buf, strlen(buf));
       rwlock->readers = (rwlock->readers & _RWLOCK_WR_LOCK) |
           ((rwlock->readers & _RWLOCK_RD_MASK) - 1);
     }
-  atomic_write_barrier ();
 
 #if 0
 sprintf (buf, "%d:%d (%p): pthread_rwlock_unlock (post): readers = %d\n",
