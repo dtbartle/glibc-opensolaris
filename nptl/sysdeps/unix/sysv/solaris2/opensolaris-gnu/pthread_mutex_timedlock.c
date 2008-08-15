@@ -45,6 +45,11 @@ pthread_mutex_timedlock (mutex, abstime)
      pthread_mutex_t *mutex;
      const struct timespec *abstime;
 {
+  /* Handle inconsistent robust mutexes.  */
+  if ((mutex->mutex_type & LOCK_ROBUST) &&
+      (mutex->mutex_flag & LOCK_NOTRECOVERABLE))
+    return ENOTRECOVERABLE;
+
   /* Reject invalid timeouts.  */
   if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
     return EINVAL;
@@ -52,41 +57,63 @@ pthread_mutex_timedlock (mutex, abstime)
   /* Always hit the kernel for priority inherit locks.  */
   if ((mutex->mutex_type & LOCK_PRIO_INHERIT) == 0)
     {
-      int result = __mutex_lock_fast (mutex, false);
-      if(result >= 0)
-        return result;
+      int res = __mutex_lock_fast (mutex, false);
+      if(res >= 0)
+        return res;
+    }
+  else
+    {
+      /* Except when we already hold a recursive lock.  */
+      if ((mutex->mutex_type & LOCK_RECURSIVE) &&
+           mutex->mutex_lockbyte == LOCKBYTE_SET &&
+         ((mutex->mutex_type & LOCK_SHARED) == 0 ||
+           mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
+           mutex->mutex_owner == (uintptr_t)THREAD_SELF)
+        {
+          if (mutex->mutex_rcount == RECURSION_MAX)
+            return EAGAIN;
+          ++mutex->mutex_rcount;
+          return 0;
+        }
     }
 
   struct timespec _reltime;
   struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
   if (reltime && reltime->tv_sec < 0)
     return ETIMEDOUT;
-
-#if 0
-char buf[200];
-sprintf (buf, "%d (%p): pthread_mutex_timedlock (pre): mutex_type = %d, mutex_lockbyte = %d, "
-    "mutex_waiters = %d, mutex_rcount = %d, mutex_owner = %p, mutex_ownerpid = %d\n",
-    pthread_self (), THREAD_SELF, mutex->mutex_type, mutex->mutex_lockbyte, mutex->mutex_waiters,
-    mutex->mutex_rcount, (void *)mutex->mutex_owner, mutex->mutex_ownerpid);
-write (2, buf, strlen(buf));
-#endif
-
   int errval = INLINE_SYSCALL (lwp_mutex_timedlock, 2, mutex, reltime);
-
   if (errval == ETIME)
     errval = ETIMEDOUT;
+  if (errval != 0 && errval != EOWNERDEAD)
+    {
+      /* The kernel sets EDEADLK for priority inherit mutexes.  */
+      if ((mutex->mutex_type & LOCK_PRIO_INHERIT) &&
+            (mutex->mutex_type & LOCK_ERRORCHECK) == 0 &&
+            errval == EDEADLK)
+        {
+          /* We aren't an error checking mutex so we need to block.  */
+          INTERNAL_SYSCALL_DECL (err);
+          if (abstime)
+            {
+              int result = INTERNAL_SYSCALL (nanosleep, err, 2, reltime, NULL);
+              errval = INTERNAL_SYSCALL_ERRNO (result, err) ? EINTR: ETIMEDOUT;
+            }
+          else
+            {
+              INTERNAL_SYSCALL (pause, err, 1, 0);
+              errval = EINTR;
+            }
+        }
+      return errval;
+    }
 
   /* The kernel does not set mutex_owner so we set it here.  */
-  if ((mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK)) && errval == 0)
+  if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
     mutex->mutex_owner = (uintptr_t)THREAD_SELF;
 
-#if 0
-sprintf (buf, "%d (%p): pthread_mutex_timedlock (post): mutex_type = %d, mutex_lockbyte = %d, "
-    "mutex_waiters = %d, mutex_rcount = %d, mutex_owner = %p, mutex_ownerpid = %d, errval = %d\n",
-    pthread_self (), THREAD_SELF, mutex->mutex_type, mutex->mutex_lockbyte, mutex->mutex_waiters,
-    mutex->mutex_rcount, (void *)mutex->mutex_owner, mutex->mutex_ownerpid, errval);
-write (2, buf, strlen(buf));
-#endif
+  /* The kernel does not set the lockbyte for priority inherit mutexes.  */
+  if (mutex->mutex_type & LOCK_PRIO_INHERIT)
+    mutex->mutex_lockbyte = 1;
 
   return errval;
 }

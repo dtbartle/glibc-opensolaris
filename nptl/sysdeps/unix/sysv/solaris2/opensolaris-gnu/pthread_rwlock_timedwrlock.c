@@ -41,13 +41,6 @@ pthread_rwlock_timedwrlock (rwlock, abstime)
   if (errval != 0)
     return errval;
 
-#if 0
-char buf[200];
-sprintf (buf, "%d:%d (%p): pthread_rwlock_timedwrlock (pre): readers = %d\n",
-    THREAD_SELF->pid, pthread_self (), THREAD_SELF, rwlock->readers);
-write (1, buf, strlen(buf));
-#endif
-
   /* Check for deadlock.  */
   if (__builtin_expect (rwlock->owner == (uintptr_t)THREAD_SELF, 0) ||
         ((rwlock->type & LOCK_SHARED) && __builtin_expect (
@@ -68,12 +61,6 @@ write (1, buf, strlen(buf));
   rwlock->owner = (uintptr_t)THREAD_SELF;
   if (rwlock->type & LOCK_SHARED)
     rwlock->ownerpid = THREAD_GETMEM (THREAD_SELF, pid);
-
-#if 0
-sprintf (buf, "%d:%d (%p): pthread_rwlock_timedwrlock (post): readers = %d\n",
-    THREAD_SELF->pid, pthread_self (), THREAD_SELF, rwlock->readers);
-write (1, buf, strlen(buf));
-#endif
 
   return pthread_mutex_unlock (&rwlock->mutex);
 }

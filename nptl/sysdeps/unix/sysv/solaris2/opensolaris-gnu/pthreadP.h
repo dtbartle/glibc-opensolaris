@@ -26,20 +26,22 @@
 #define _RWLOCK_RD_MAX      0x7FFFFFFF
 
 #include <nptl/pthreadP.h>
+#include <sys/synch.h>
 
 /* Flags in mutex attr.  */
 #undef PTHREAD_MUTEXATTR_PROTOCOL_SHIFT
-#define PTHREAD_MUTEXATTR_PROTOCOL_SHIFT	28
+#define PTHREAD_MUTEXATTR_PROTOCOL_SHIFT	0
 #undef PTHREAD_MUTEXATTR_PROTOCOL_MASK
-#define PTHREAD_MUTEXATTR_PROTOCOL_MASK		0x30000000
+#define PTHREAD_MUTEXATTR_PROTOCOL_MASK \
+  (PTHREAD_PRIO_INHERIT | PTHREAD_PRIO_PROTECT)
 #undef PTHREAD_MUTEXATTR_PRIO_CEILING_SHIFT
 #define PTHREAD_MUTEXATTR_PRIO_CEILING_SHIFT	12
 #undef PTHREAD_MUTEXATTR_PRIO_CEILING_MASK
 #define PTHREAD_MUTEXATTR_PRIO_CEILING_MASK	0x0ffff000
 #undef PTHREAD_MUTEXATTR_FLAG_ROBUST
-#define PTHREAD_MUTEXATTR_FLAG_ROBUST		0x40
+#define PTHREAD_MUTEXATTR_FLAG_ROBUST		LOCK_ROBUST
 #undef PTHREAD_MUTEXATTR_FLAG_PSHARED
-#define PTHREAD_MUTEXATTR_FLAG_PSHARED		0x01 /* LOCK_SHARED */
+#define PTHREAD_MUTEXATTR_FLAG_PSHARED		LOCK_SHARED
 #undef PTHREAD_MUTEXATTR_FLAG_BITS
 #define PTHREAD_MUTEXATTR_FLAG_BITS \
   (PTHREAD_MUTEXATTR_FLAG_ROBUST | PTHREAD_MUTEXATTR_FLAG_PSHARED \
@@ -97,11 +99,31 @@ static inline int __internal_tkill_2 (int *errval, pthread_t tid, int sig)
   return *errval = INLINE_SYSCALL (lwp_kill, 2, tid, sig);
 }
 
+static inline int __internal_pause_1 (int *errval, int unused)
+{
+  int saved_errno = errno;
+  int result = pause ();
+  if (result != 0)
+    *errval = errno;
+  __set_errno (saved_errno);
+  return result;
+}
+
+static inline int __internal_nanosleep_2 (int *errval,
+    const struct timespec *req, struct timespec *rem)
+{
+  int saved_errno = errno;
+  int result = nanosleep (req, rem);
+  if (result != 0)
+    *errval = errno;
+  __set_errno (saved_errno);
+  return result;
+}
+
 static inline int __cond_has_waiters (pthread_cond_t *cond)
 {
   return cond->cond_waiters_kernel;
 }
-
 extern int __pthread_cond_timedwait_internal (pthread_cond_t *cond,
     pthread_mutex_t *mutex, const struct timespec *abstime, int cancel);
 

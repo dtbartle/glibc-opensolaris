@@ -44,13 +44,6 @@ pthread_rwlock_timedrdlock (rwlock, abstime)
   if (errval != 0)
     return errval;
 
-#if 0
-char buf[200];
-sprintf (buf, "%d:%d (%p): pthread_rwlock_timedrdlock (pre): readers = %d\n",
-    THREAD_SELF->pid, pthread_self (), THREAD_SELF, rwlock->readers);
-write (1, buf, strlen(buf));
-#endif
-
   /* Check for deadlock.  */
   if (__builtin_expect (rwlock->owner == (uintptr_t)THREAD_SELF, 0) ||
         ((rwlock->type & LOCK_SHARED) && __builtin_expect (
@@ -71,13 +64,7 @@ write (1, buf, strlen(buf));
   /* Increment readers (note that no other bits are set).  */
   if (rwlock->readers == _RWLOCK_RD_MAX)
     return pthread_mutex_unlock (&rwlock->mutex) ?: EAGAIN;
-  rwlock->readers++;
-
-#if 0
-sprintf (buf, "%d:%d (%p): pthread_rwlock_timedrdlock (post): readers = %d\n",
-    THREAD_SELF->pid, pthread_self (), THREAD_SELF, rwlock->readers);
-write (1, buf, strlen(buf));
-#endif
+  ++rwlock->readers;
 
   return pthread_mutex_unlock (&rwlock->mutex);
 }

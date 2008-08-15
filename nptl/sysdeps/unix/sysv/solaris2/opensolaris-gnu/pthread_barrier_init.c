@@ -67,10 +67,5 @@ pthread_barrier_init (barrier, attr, count)
   ibarrier->init_count = count;
   ibarrier->curr_event = 0;
 
-#if 0
-char buf[100];
-sprintf(buf, "%d: pthread_barrier_init (%p): FOO 1: %d\n", pthread_self (), ibarrier, ibarrier->left);
-write (2, buf, strlen (buf));
-#endif
   return 0;
 }

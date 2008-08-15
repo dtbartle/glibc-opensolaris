@@ -27,7 +27,14 @@ int
 pthread_mutex_consistent_np (mutex)
      pthread_mutex_t *mutex;
 {
-  // TODO
-  return ENOSYS;
+  if ((mutex->mutex_type & LOCK_ROBUST) == 0 ||
+      (mutex->mutex_flag & LOCK_INITED) == 0 ||
+      (mutex->mutex_flag & (LOCK_OWNERDEAD | LOCK_UNMAPPED) == 0))
+    return EINVAL;
+
+  mutex->mutex_flag &= ~(LOCK_OWNERDEAD | LOCK_UNMAPPED);
+  mutex->mutex_lockword64 = 0;
+
+  return 0;
 }
 weak_alias (pthread_mutex_consistent_np, mutex_consistent)

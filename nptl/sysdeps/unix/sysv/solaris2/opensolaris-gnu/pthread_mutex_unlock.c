@@ -40,6 +40,20 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
      pthread_mutex_t *mutex;
      int decr;
 {
+  /* Handle inconsistent robust mutexes.  */
+  if (mutex->mutex_type & LOCK_ROBUST)
+    {
+      if (mutex->mutex_flag & LOCK_NOTRECOVERABLE)
+        {
+          return ENOTRECOVERABLE;
+        }
+      else if (mutex->mutex_flag & (LOCK_OWNERDEAD | LOCK_UNMAPPED))
+        {
+          mutex->mutex_flag |= LOCK_NOTRECOVERABLE;
+          return ENOTRECOVERABLE;
+        }
+    }
+
   /* Always hit the kernel for priority inherit locks.  */
   if ((mutex->mutex_type & LOCK_PRIO_INHERIT) == 0)
     {
@@ -47,29 +61,32 @@ __pthread_mutex_unlock_usercnt (mutex, decr)
       if(result >= 0)
         return result;
     }
-
-#if 0
-char buf[200];
-sprintf (buf, "%d (%p): pthread_mutex_unlock (pre): mutex_type = %d, mutex_lockbyte = %d, "
-    "mutex_waiters = %d, mutex_rcount = %d, mutex_owner = %p, mutex_ownerpid = %d\n",
-    pthread_self (), THREAD_SELF, mutex->mutex_type, mutex->mutex_lockbyte, mutex->mutex_waiters,
-    mutex->mutex_rcount, (void *)mutex->mutex_owner, mutex->mutex_ownerpid);
-write (2, buf, strlen(buf));
-#endif
+  else
+    {
+      /* Except when we already hold a recursive lock.  */
+      if ((mutex->mutex_type & LOCK_RECURSIVE) &&
+           mutex->mutex_lockbyte == LOCKBYTE_SET &&
+         ((mutex->mutex_type & LOCK_SHARED) == 0 ||
+           mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
+           mutex->mutex_owner == (uintptr_t)THREAD_SELF &&
+           mutex->mutex_rcount > 0)
+        {
+          --mutex->mutex_rcount;
+          return 0;
+        }
+    }
 
   int errval = INLINE_SYSCALL(lwp_mutex_unlock, 1, mutex);
+  if (errval != 0)
+    return errval;
+
+  /* The kernel does not clear the lockbyte for priority inherit mutexes.  */
+  if (mutex->mutex_type & LOCK_PRIO_INHERIT)
+    mutex->mutex_lockbyte = 0;
 
   /* The kernel does not clear mutex_owner so we clear it here.  */
-  if ((mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK)) && errval == 0)
+  if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
     mutex->mutex_owner = 0;
-
-#if 0
-sprintf (buf, "%d (%p): pthread_mutex_unlock (post): mutex_type = %d, mutex_lockbyte = %d, "
-    "mutex_waiters = %d, mutex_rcount = %d, mutex_owner = %p, mutex_ownerpid = %d, errval = %d\n",
-    pthread_self (), THREAD_SELF, mutex->mutex_type, mutex->mutex_lockbyte, mutex->mutex_waiters,
-    mutex->mutex_rcount, (void *)mutex->mutex_owner, mutex->mutex_ownerpid, errval);
-write (2, buf, strlen(buf));
-#endif
 
   return errval;
 }

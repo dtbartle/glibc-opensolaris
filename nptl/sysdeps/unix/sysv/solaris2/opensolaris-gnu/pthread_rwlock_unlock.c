@@ -36,13 +36,6 @@ __pthread_rwlock_unlock (pthread_rwlock_t *rwlock)
   if (errval != 0)
     return errval;
 
-#if 0
-char buf[200];
-sprintf (buf, "%d:%d (%p): pthread_rwlock_unlock (pre): readers = %d\n",
-    THREAD_SELF->pid, pthread_self (), THREAD_SELF, rwlock->readers);
-write (1, buf, strlen(buf));
-#endif
-
   if (rwlock->readers & _RWLOCK_WR_LOCK)
     {
       /* Writer unlock.  */
@@ -61,12 +54,6 @@ write (1, buf, strlen(buf));
       rwlock->readers = (rwlock->readers & _RWLOCK_WR_LOCK) |
           ((rwlock->readers & _RWLOCK_RD_MASK) - 1);
     }
-
-#if 0
-sprintf (buf, "%d:%d (%p): pthread_rwlock_unlock (post): readers = %d\n",
-    THREAD_SELF->pid, pthread_self (), THREAD_SELF, rwlock->readers);
-write (1, buf, strlen(buf));
-#endif
 
   /* Wake up a writer (if possible) or all readers.  */
   if ((rwlock->readers & _RWLOCK_RD_MASK) == 0 &&

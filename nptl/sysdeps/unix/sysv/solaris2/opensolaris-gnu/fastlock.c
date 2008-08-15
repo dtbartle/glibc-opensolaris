@@ -64,9 +64,7 @@ int __mutex_lock_fast (pthread_mutex_t *mutex, bool try)
     {
       /* Recursively held lock.  */
       if (mutex->mutex_rcount == RECURSION_MAX)
-        {
-          return EAGAIN;
-        }
+        return EAGAIN;
       mutex->mutex_rcount++;
       return 0;
     }
@@ -100,7 +98,7 @@ int __mutex_unlock_fast (pthread_mutex_t *mutex)
        mutex->mutex_rcount > 0)
     {
       /* Recursively held lock.  */
-      mutex->mutex_rcount--;
+      --mutex->mutex_rcount;
       return 0;
     }
   else if ((mutex->mutex_type & LOCK_ERRORCHECK) &&

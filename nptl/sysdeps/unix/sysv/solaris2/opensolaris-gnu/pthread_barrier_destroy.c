@@ -30,7 +30,6 @@ pthread_barrier_destroy (barrier)
 {
   struct pthread_barrier *ibarrier = (struct pthread_barrier *) barrier;
 
-fprintf(stderr, "DESTROY: %p %d %d %d\n", ibarrier, ibarrier->left, ibarrier->init_count, ibarrier->curr_event);
   if (__builtin_expect (ibarrier->left != ibarrier->init_count, 0))
     return EBUSY;
 

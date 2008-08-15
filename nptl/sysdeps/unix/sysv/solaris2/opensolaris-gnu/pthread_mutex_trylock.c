@@ -38,6 +38,11 @@ int
 __pthread_mutex_trylock (mutex)
      pthread_mutex_t *mutex;
 {
+  /* Handle inconsistent robust mutexes.  */
+  if ((mutex->mutex_type & LOCK_ROBUST) &&
+      (mutex->mutex_flag & LOCK_NOTRECOVERABLE))
+    return ENOTRECOVERABLE;
+
   /* Always hit the kernel for priority inherit locks.  */
   if ((mutex->mutex_type & LOCK_PRIO_INHERIT) == 0)
     {
@@ -45,12 +50,40 @@ __pthread_mutex_trylock (mutex)
       if(result >= 0)
         return result;
     }
+  else
+    {
+      /* Except when we already hold a recursive lock.  */
+      if ((mutex->mutex_type & LOCK_RECURSIVE) &&
+           mutex->mutex_lockbyte == LOCKBYTE_SET &&
+         ((mutex->mutex_type & LOCK_SHARED) == 0 ||
+           mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
+           mutex->mutex_owner == (uintptr_t)THREAD_SELF &&
+           mutex->mutex_rcount > 0)
+        {
+          if (mutex->mutex_rcount == RECURSION_MAX)
+            return EAGAIN;
+          ++mutex->mutex_rcount;
+          return 0;
+        }
+    }
 
   int errval = INLINE_SYSCALL (lwp_mutex_trylock, 1, mutex);
+  if (errval != 0 && errval != EOWNERDEAD)
+    {
+      /* The kernel sets EDEADLK for priority inherit mutexes.  */
+      if ((mutex->mutex_type & LOCK_PRIO_INHERIT) &&
+            (mutex->mutex_type & LOCK_ERRORCHECK) == 0 && errval == EDEADLK)
+        errval = EBUSY;
+      return errval;
+    }
 
   /* The kernel does not set mutex_owner so we set it here.  */
-  if ((mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK)) && errval == 0)
+  if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
     mutex->mutex_owner = (uintptr_t)THREAD_SELF;
+
+  /* The kernel does not set the lockbyte for priority inherit mutexes.  */
+  if (mutex->mutex_type & LOCK_PRIO_INHERIT)
+    mutex->mutex_lockbyte = 1;
 
   return errval;
 }
