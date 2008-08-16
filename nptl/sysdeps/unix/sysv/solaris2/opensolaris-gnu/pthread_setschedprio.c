@@ -40,5 +40,10 @@ pthread_setschedprio (threadid, prio)
     /* Not a valid thread handle.  */
     return ESRCH;
 
+  /* If the thread should have higher priority because of some
+     PTHREAD_PRIO_PROTECT mutexes it holds, adjust the priority.  */
+  if (__builtin_expect (pd->tpp != NULL, 0) && pd->tpp->priomax > prio)
+    prio = pd->tpp->priomax;
+
   return __sched_setparam_id (P_LWPID, threadid, prio);
 }

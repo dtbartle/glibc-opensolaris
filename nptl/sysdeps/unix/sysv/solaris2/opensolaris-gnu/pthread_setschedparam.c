@@ -40,6 +40,19 @@ __pthread_setschedparam (threadid, policy, param)
     /* Not a valid thread handle.  */
     return ESRCH;
 
+  struct sched_param p;
+  const struct sched_param *orig_param = param;
+
+  /* If the thread should have higher priority because of some
+     PTHREAD_PRIO_PROTECT mutexes it holds, adjust the priority.  */
+  if (__builtin_expect (pd->tpp != NULL, 0)
+      && pd->tpp->priomax > param->sched_priority)
+    {
+      p = *param;
+      p.sched_priority = pd->tpp->priomax;
+      param = &p;
+    }
+
   return __sched_setscheduler_id (P_LWPID, threadid, policy, param);
 }
 strong_alias (__pthread_setschedparam, pthread_setschedparam)
