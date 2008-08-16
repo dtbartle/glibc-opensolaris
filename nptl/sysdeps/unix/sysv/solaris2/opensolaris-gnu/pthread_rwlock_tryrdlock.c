@@ -45,4 +45,3 @@ __pthread_rwlock_tryrdlock (rwlock)
   return pthread_mutex_unlock (&rwlock->mutex);
 }
 strong_alias (__pthread_rwlock_tryrdlock, pthread_rwlock_tryrdlock)
-weak_alias (__pthread_rwlock_tryrdlock, rw_tryrdlock)

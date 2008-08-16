@@ -1,8 +1,6 @@
-/* Copyright (C) 2002, 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,20 +17,22 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <shlib-compat.h>
-#include <errno.h>
-#include "pthreadP.h"
-#include <string.h>
+#include <inline-syscall.h>
+#include <pthreadP.h>
+#include <synch.h>
+#include <abstime-to-reltime.h>
 
 
-int
-__pthread_cond_destroy (cond)
-     pthread_cond_t *cond;
+int cond_timedwait (cond, mutex, abstime)
+      cond_t *cond;
+      mutex_t *mutex;
+      struct timespec *abstime;
 {
-  // TODO: make sure we're done with cond (EBUSY)
+  /* Reject invalid timeouts.  */
+  if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
+    return EINVAL;
 
-  cond->cond_magic = -1;
-  return 0;
+  struct timespec _reltime;
+  struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
+  return cond_reltimedwait (cond, mutex, reltime);
 }
-versioned_symbol (libpthread, __pthread_cond_destroy,
-		  pthread_cond_destroy, GLIBC_2_3_2);

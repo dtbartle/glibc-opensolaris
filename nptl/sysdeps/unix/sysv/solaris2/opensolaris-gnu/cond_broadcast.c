@@ -1,8 +1,6 @@
-/* Copyright (C) 2002, 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,20 +17,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <shlib-compat.h>
+#include <inline-syscall.h>
+#include <pthreadP.h>
+#include <synch.h>
 #include <errno.h>
-#include "pthreadP.h"
-#include <string.h>
+
+DECLARE_INLINE_SYSCALL (int, lwp_cond_broadcast, cond_t *cv);
 
 
-int
-__pthread_cond_destroy (cond)
-     pthread_cond_t *cond;
+int cond_broadcast (cond)
+      cond_t *cond;
 {
-  // TODO: make sure we're done with cond (EBUSY)
+  /* Don't bother entering the kernel if there are no waiters.  */
+  if (cond->cond_waiters_kernel == 0)
+    return 0;
 
-  cond->cond_magic = -1;
-  return 0;
+  return INLINE_SYSCALL (lwp_cond_broadcast, 1, cond);
 }
-versioned_symbol (libpthread, __pthread_cond_destroy,
-		  pthread_cond_destroy, GLIBC_2_3_2);

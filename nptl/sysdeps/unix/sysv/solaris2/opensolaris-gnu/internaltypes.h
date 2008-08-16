@@ -58,8 +58,13 @@ struct pthread_attr
 /* Mutex attribute data structure.  */
 struct pthread_mutexattr
 {
+  /* Identifier for the kind of mutex.
+
+     Bit 31 is set if the mutex is to be shared between processes.
+
+     Bit 0 to 30 contain one of the PTHREAD_MUTEX_ values to identify
+     the type of the mutex.  */
   int mutexkind;
-  int ceiling;
 };
 
 

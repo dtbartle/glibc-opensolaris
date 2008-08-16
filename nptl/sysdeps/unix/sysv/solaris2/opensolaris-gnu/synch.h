@@ -21,6 +21,7 @@
 #define _SYNCH_H
 
 #include <sys/synch.h>
+#include <features.h>
 
 typedef lwp_mutex_t mutex_t;
 
@@ -40,9 +41,9 @@ int	cond_destroy(cond_t *);
 
 int	cond_wait(cond_t *, mutex_t *);
 
-int	cond_timedwait(cond_t *, mutex_t *, const struct timespec *);
+int	cond_timedwait(cond_t *, mutex_t *, struct timespec *);
 
-int	cond_reltimedwait(cond_t *, mutex_t *, const struct timespec *);
+int	cond_reltimedwait(cond_t *, mutex_t *, struct timespec *);
 
 int	cond_signal(cond_t *);
 
@@ -86,7 +87,7 @@ int	sema_destroy(sema_t *);
 
 int	sema_wait(sema_t *);
 
-int	sema_timedwait(sema_t *, const struct timespec *);
+int	sema_timedwait(sema_t *, struct timespec *);
 
 int	sema_reltimedwait(sema_t *, const struct timespec *);
 

@@ -29,14 +29,15 @@ __pthread_mutex_destroy (mutex)
      pthread_mutex_t *mutex;
 {
   if (mutex->mutex_lockbyte != LOCKBYTE_UNSET ||
-        mutex->mutex_cond_waiters != 0)
+      mutex->mutex_cond_waiters != 0)
     return EBUSY;
 
-  /* Set magic to an invalid value.  */
-  mutex->mutex_magic = -1;
+  if (mutex->mutex_type & LOCK_ROBUST)
+    memset (mutex, 0, sizeof(mutex_t));
+  else
+    mutex->mutex_magic = -1;
 
   return 0;
 }
 strong_alias (__pthread_mutex_destroy, pthread_mutex_destroy)
 INTDEF(__pthread_mutex_destroy)
-weak_alias (__pthread_mutex_destroy, mutex_destroy)

@@ -19,14 +19,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <endian.h>
-#include <errno.h>
-#include <sysdep.h>
-#include <pthread.h>
 #include <pthreadP.h>
-
+#include <synch.h>
 #include <shlib-compat.h>
-#include <stddef.h>
 
 
 int
@@ -34,7 +29,10 @@ __pthread_cond_wait (cond, mutex)
      pthread_cond_t *cond;
      pthread_mutex_t *mutex;
 {
-  return pthread_cond_timedwait (cond, mutex, NULL);
+  int errval = cond_reltimedwait ((cond_t *)cond, (mutex_t *)mutex, NULL);
+  if (errval == ETIME)
+    return ETIMEDOUT;
+  return errval;
 }
 
 versioned_symbol (libpthread, __pthread_cond_wait, pthread_cond_wait,

@@ -37,4 +37,3 @@ __pthread_rwlock_wrlock (rwlock)
 
 weak_alias (__pthread_rwlock_wrlock, pthread_rwlock_wrlock)
 strong_alias (__pthread_rwlock_wrlock, __pthread_rwlock_wrlock_internal)
-weak_alias (__pthread_rwlock_wrlock, rw_wrlock)

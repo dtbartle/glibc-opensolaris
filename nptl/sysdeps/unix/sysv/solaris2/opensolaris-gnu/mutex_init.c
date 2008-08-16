@@ -17,26 +17,43 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <inline-syscall.h>
 #include <pthreadP.h>
-#include <string.h>
 #include <synch.h>
-#include <synch_priv.h>
+#include <errno.h>
 
-int mutex_init (mutex_t *mutex, int type, void * arg)
+DECLARE_INLINE_SYSCALL (int, lwp_mutex_register, mutex_t *lp);
+
+
+int mutex_init (mutex, type, arg)
+      mutex_t *mutex;
+      int type;
+      void * arg;
 {
-  // TODO: check type and ceil (arg)
+  // TODO: check type
+
   if (type & LOCK_ROBUST)
     {
-      // TODO
+      if ((mutex->mutex_type & LOCK_INITED))
+        return EBUSY;
     }
   else
     {
-      memset (mutex, 0, sizeof(mutex_t));
+      memset (mutex, 0, sizeof(pthread_mutex_t));
     }
   mutex->mutex_type = type;
   mutex->mutex_flag = LOCK_INITED;
   mutex->mutex_magic = MUTEX_MAGIC;
-  mutex->mutex_ceiling = *(int *)arg;
+  mutex->mutex_ceiling = (int)arg;
+  mutex->mutex_cond_waiters = 0;
+
+  /* Register robust shared lock.  */
+  if ((type & (LOCK_ROBUST | LOCK_SHARED)) == (LOCK_ROBUST | LOCK_SHARED))
+    {
+      int errval = INLINE_SYSCALL (lwp_mutex_register, 1, mutex);
+      if (errval != 0)
+        return errval;
+    }
 
   return 0;
 }

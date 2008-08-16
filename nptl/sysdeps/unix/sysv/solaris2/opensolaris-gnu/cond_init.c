@@ -17,17 +17,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <inline-syscall.h>
 #include <pthreadP.h>
-#include <string.h>
 #include <synch.h>
-#include <synch_priv.h>
+#include <errno.h>
 
-int cond_init (cond_t *cond, int type, void *arg)
+
+int cond_init (cond, type, arg)
+      cond_t *cond;
+      int type;
+      void *arg;
 {
   // TODO: check type
-  memset (cond, 0, sizeof(cond_t));
+
+  memset (cond, 0, sizeof(pthread_cond_t));
   cond->cond_type = type;
   cond->cond_magic = COND_MAGIC;
-
-  return 0;
 }

@@ -27,8 +27,6 @@
 #include <sys/synch.h>
 #include <synch_priv.h>
 
-DECLARE_INLINE_SYSCALL (int, lwp_mutex_register, pthread_mutex_t *lp);
-
 static const struct pthread_mutexattr default_attr =
   {
     /* Default is a normal mutex, not shared between processes.  */
@@ -45,33 +43,10 @@ __pthread_mutex_init (mutex, mutexattr)
 
   imutexattr = (const struct pthread_mutexattr *) mutexattr ?: &default_attr;
 
-  if (imutexattr->mutexkind & LOCK_ROBUST)
-    {
-write (2, "MAGIC 1\n", 9);
-      if ((mutex->mutex_type & LOCK_INITED))
-        return EBUSY;
-    }
-  else
-    {
-      memset (mutex, 0, sizeof(pthread_mutex_t));
-    }
-  mutex->mutex_type = imutexattr->mutexkind;
-  mutex->mutex_flag = LOCK_INITED;
-  mutex->mutex_magic = MUTEX_MAGIC;
-  mutex->mutex_ceiling = imutexattr->ceiling;
-  mutex->mutex_cond_waiters = 0;
+  int ceiling = (imutexattr->mutexkind & PTHREAD_MUTEXATTR_PRIO_CEILING_MASK)
+      >> PTHREAD_MUTEXATTR_PRIO_CEILING_SHIFT;
 
-  /* Register robust shared lock.  */
-  if ((imutexattr->mutexkind & (LOCK_ROBUST | LOCK_SHARED)) ==
-        (LOCK_ROBUST | LOCK_SHARED))
-    {
-write (2, "MAGIC 2\n", 9);
-      int errval = INLINE_SYSCALL (lwp_mutex_register, 1, mutex);
-      if (errval != 0)
-        return errval;
-    }
-
-  return 0;
+  return mutex_init ((mutex_t *)mutex, imutexattr->mutexkind, (void *)ceiling);
 }
 strong_alias (__pthread_mutex_init, pthread_mutex_init)
 INTDEF(__pthread_mutex_init)

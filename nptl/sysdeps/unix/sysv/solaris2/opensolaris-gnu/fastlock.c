@@ -18,13 +18,13 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <synch_priv.h>
 #include <sys/synch.h>
 #include <stdbool.h>
 #include <assert.h>
 
-int __mutex_lock_fast (pthread_mutex_t *mutex, bool try)
+int __mutex_lock_fast (mutex_t *mutex, bool try)
 {
   if (mutex->mutex_lockword32 == LOCKWORD32_UNSET_NO_WAITERS)
     {
@@ -88,7 +88,7 @@ int __mutex_lock_fast (pthread_mutex_t *mutex, bool try)
 }
 
 
-int __mutex_unlock_fast (pthread_mutex_t *mutex)
+int __mutex_unlock_fast (mutex_t *mutex)
 {
   if ((mutex->mutex_type & LOCK_RECURSIVE) &&
        mutex->mutex_lockbyte == LOCKBYTE_SET &&

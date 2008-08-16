@@ -26,6 +26,8 @@
 #include <inline-syscall.h>
 #include <stddef.h>
 #include <sys/synch.h>
+#include <abstime-to-reltime.h>
+
 
 /* Try to acquire write lock for RWLOCK or return after specfied time.	*/
 int
@@ -36,6 +38,9 @@ pthread_rwlock_timedwrlock (rwlock, abstime)
   /* Reject invalid timeouts.  */
   if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
     return EINVAL;
+
+  struct timespec _reltime;
+  struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
 
   int errval = pthread_mutex_lock (&rwlock->mutex);
   if (errval != 0)
@@ -50,8 +55,8 @@ pthread_rwlock_timedwrlock (rwlock, abstime)
   /* Wait until we can acquire the write lock.  */
   while (rwlock->readers & (_RWLOCK_RD_MASK | _RWLOCK_WR_LOCK))
     {
-      errval = __pthread_cond_timedwait_internal (&rwlock->writercv,
-          &rwlock->mutex, abstime, 0);
+      errval = __cond_reltimedwait_internal ((cond_t *)&rwlock->writercv,
+          (mutex_t *)&rwlock->mutex, reltime, 0);
       if (errval != 0)
         return pthread_mutex_unlock (&rwlock->mutex) ?: errval;
     }

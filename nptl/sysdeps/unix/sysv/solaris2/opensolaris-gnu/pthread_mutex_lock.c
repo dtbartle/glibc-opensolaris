@@ -20,22 +20,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <assert.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <not-cancel.h>
 #include <pthreadP.h>
+#include <synch.h>
 
 
 int
 __pthread_mutex_lock (mutex)
      pthread_mutex_t *mutex;
 {
-  return pthread_mutex_timedlock (mutex, NULL);
+  int errval = __mutex_timedlock ((mutex_t *)mutex, NULL);
+  if (errval == ETIME)
+    return ETIMEDOUT;
+  return errval;
 }
 #ifndef __pthread_mutex_lock
 strong_alias (__pthread_mutex_lock, pthread_mutex_lock)
 strong_alias (__pthread_mutex_lock, __pthread_mutex_lock_internal)
 #endif
-weak_alias (__pthread_mutex_lock, mutex_lock)

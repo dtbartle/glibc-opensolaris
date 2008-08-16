@@ -22,7 +22,7 @@
 
 
 #include <shlib-compat.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <string.h>
 #include <sys/synch.h>
 #include <synch_priv.h>

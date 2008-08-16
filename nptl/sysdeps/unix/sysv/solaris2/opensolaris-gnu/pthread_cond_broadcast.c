@@ -19,28 +19,16 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <errno.h>
-#include <sysdep.h>
-#include <pthread.h>
 #include <pthreadP.h>
-
+#include <synch.h>
 #include <shlib-compat.h>
-#include <inline-syscall.h>
-#include <synch_priv.h>
-#include <stdio.h>
-
-DECLARE_INLINE_SYSCALL (int, lwp_cond_broadcast, pthread_cond_t *cv);
 
 
 int
 __pthread_cond_broadcast (cond)
      pthread_cond_t *cond;
 {
-  /* Don't bother entering the kernel if there are no waiters.  */
-  if (cond->cond_waiters_kernel == 0)
-    return 0;
-
-  return INLINE_SYSCALL (lwp_cond_broadcast, 1, cond);
+  return cond_broadcast ((cond_t *)cond);
 }
 
 versioned_symbol (libpthread, __pthread_cond_broadcast, pthread_cond_broadcast,

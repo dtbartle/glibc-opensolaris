@@ -38,11 +38,6 @@ pthread_barrier_wait (barrier)
 
   /* A thread entered the barrier.  */
   --ibarrier->left;
-#if 0
-char buf[100];
-sprintf(buf, "%d: pthread_barrier_wait (%p): FOO 1: %d\n", pthread_self (), ibarrier, ibarrier->left);
-write (2, buf, strlen (buf));
-#endif
 
   if (ibarrier->left == 0)
     {
@@ -67,8 +62,8 @@ write (2, buf, strlen (buf));
   int curr_event = ibarrier->curr_event;
   do
     {
-      errval = __pthread_cond_timedwait_internal (&ibarrier->cond,
-          &ibarrier->mutex, NULL, 0);
+      errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
+          (mutex_t *)&ibarrier->mutex, NULL, 0);
       if (errval != 0)
         return errval;
     }

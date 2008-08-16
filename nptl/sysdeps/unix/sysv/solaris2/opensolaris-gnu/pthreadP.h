@@ -53,6 +53,7 @@
 #include <errno.h>
 #include <inline-syscall.h>
 #include <synch_priv.h>
+#include <synch.h>
 
 DECLARE_INLINE_SYSCALL (pthread_t, lwp_self, void);
 DECLARE_INLINE_SYSCALL (int, lwp_kill, pthread_t lwpid, int sig);
@@ -124,7 +125,9 @@ static inline int __cond_has_waiters (pthread_cond_t *cond)
 {
   return cond->cond_waiters_kernel;
 }
-extern int __pthread_cond_timedwait_internal (pthread_cond_t *cond,
-    pthread_mutex_t *mutex, const struct timespec *abstime, int cancel);
+extern int __cond_reltimedwait_internal (cond_t *cond, mutex_t *mutex,
+    struct timespec *reltime, int cancel);
+
+extern int __mutex_timedlock (mutex_t *mutex, const struct timespec *abstime);
 
 #endif /* _OPENSOLARIS_PTHREADP_H */

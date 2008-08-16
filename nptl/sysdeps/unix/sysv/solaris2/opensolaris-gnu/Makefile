@@ -7,10 +7,13 @@ libpthread-sysdep_routines += pt-fork fastlock clock_gettime \
     sys_lwp_mutex_register sys_lwp_cond_wait sys_lwp_cond_signal \
     sys_lwp_cond_broadcast sys_lwp_sema_post sys_lwp_sema_trywait \
     sys_lwp_sema_timedwait sys_lwp_create sys_lwp_wait sys_lwp_exit \
-    sys_lwp_kill sys_lwp_suspend sys_lwp_continue
-libpthread-routines += sys_lwp_self \
-    thr_create thr_join thr_exit thr_self \
-    mutex_init cond_init cond_reltimedwait rwlock_init
+    sys_lwp_kill sys_lwp_suspend sys_lwp_continue sys_write
+libpthread-routines += sys_lwp_self
+
+# solaris threads/synch
+libpthread-routines += mutex_init mutex_lock mutex_trylock mutex_unlock \
+    mutex_destroy mutex_timedlock mutex_consistent cond_init cond_wait \
+    cond_timedwait cond_reltimedwait cond_signal cond_broadcast cond_destroy
 endif
 
 ifeq ($(subdir),posix)

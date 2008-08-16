@@ -20,72 +20,13 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <assert.h>
-#include <errno.h>
-#include <stdlib.h>
 #include <pthreadP.h>
-#include <inline-syscall.h>
-#include <stdbool.h>
-
-#include <synch_priv.h>
-#include <sys/synch.h>
-
-DECLARE_INLINE_SYSCALL (int, lwp_mutex_trylock, pthread_mutex_t *lp);
-
-extern int __mutex_lock_fast(pthread_mutex_t *mutex, bool try);
+#include <synch.h>
 
 int
 __pthread_mutex_trylock (mutex)
      pthread_mutex_t *mutex;
 {
-  /* Handle inconsistent robust mutexes.  */
-  if ((mutex->mutex_type & LOCK_ROBUST) &&
-      (mutex->mutex_flag & LOCK_NOTRECOVERABLE))
-    return ENOTRECOVERABLE;
-
-  /* Always hit the kernel for priority inherit locks.  */
-  if ((mutex->mutex_type & LOCK_PRIO_INHERIT) == 0)
-    {
-      int result = __mutex_lock_fast (mutex, true);
-      if(result >= 0)
-        return result;
-    }
-  else
-    {
-      /* Except when we already hold a recursive lock.  */
-      if ((mutex->mutex_type & LOCK_RECURSIVE) &&
-           mutex->mutex_lockbyte == LOCKBYTE_SET &&
-         ((mutex->mutex_type & LOCK_SHARED) == 0 ||
-           mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-           mutex->mutex_owner == (uintptr_t)THREAD_SELF &&
-           mutex->mutex_rcount > 0)
-        {
-          if (mutex->mutex_rcount == RECURSION_MAX)
-            return EAGAIN;
-          ++mutex->mutex_rcount;
-          return 0;
-        }
-    }
-
-  int errval = INLINE_SYSCALL (lwp_mutex_trylock, 1, mutex);
-  if (errval != 0 && errval != EOWNERDEAD)
-    {
-      /* The kernel sets EDEADLK for priority inherit mutexes.  */
-      if ((mutex->mutex_type & LOCK_PRIO_INHERIT) &&
-            (mutex->mutex_type & LOCK_ERRORCHECK) == 0 && errval == EDEADLK)
-        errval = EBUSY;
-      return errval;
-    }
-
-  /* The kernel does not set mutex_owner so we set it here.  */
-  if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
-    mutex->mutex_owner = (uintptr_t)THREAD_SELF;
-
-  /* The kernel does not set the lockbyte for priority inherit mutexes.  */
-  if (mutex->mutex_type & LOCK_PRIO_INHERIT)
-    mutex->mutex_lockbyte = 1;
-
-  return errval;
+  return mutex_trylock ((mutex_t *)mutex);
 }
 strong_alias (__pthread_mutex_trylock, pthread_mutex_trylock)
-weak_alias (__pthread_mutex_trylock, mutex_trylock)

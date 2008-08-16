@@ -35,4 +35,3 @@ __pthread_rwlock_destroy (rwlock)
   return 0;
 }
 strong_alias (__pthread_rwlock_destroy, pthread_rwlock_destroy)
-weak_alias (__pthread_rwlock_destroy, rwlock_destroy)

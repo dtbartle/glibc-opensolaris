@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <atomic.h>
 #include <sys/synch.h>
+#include <abstime-to-reltime.h>
 
 
 /* Try to acquire read lock for RWLOCK or return after specfied time.  */
@@ -39,6 +40,9 @@ pthread_rwlock_timedrdlock (rwlock, abstime)
   /* Reject invalid timeouts.  */
   if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
     return EINVAL;
+
+  struct timespec _reltime;
+  struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
 
   int errval = pthread_mutex_lock (&rwlock->mutex);
   if (errval != 0)
@@ -55,8 +59,8 @@ pthread_rwlock_timedrdlock (rwlock, abstime)
         __cond_has_waiters (&rwlock->writercv))
     {
       /* Wait for writer to wake us up.  */
-      errval = __pthread_cond_timedwait_internal (&rwlock->readercv,
-          &rwlock->mutex, abstime, 0);
+      errval = __cond_reltimedwait_internal ((cond_t *)&rwlock->readercv,
+          (mutex_t *)&rwlock->mutex, reltime, 0);
       if (errval != 0)
         return pthread_mutex_unlock (&rwlock->mutex) ?: errval;
     }
