@@ -128,8 +128,6 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
       cbuffer.oldtype = __pthread_enable_asynccancel ();
     }
 
-  if (reltime && reltime->tv_sec < 0)
-    return ETIME;
   int errval = INLINE_SYSCALL (lwp_cond_wait, 4, cond, mutex, reltime, 1);
 
   /* The docs say to return 0 when interrupted.  */
@@ -151,8 +149,10 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
   int errval2 = mutex_lock (mutex);
   if (errval2 == EINTR)
     return 0;
-  else if (errval2 != 0)
+  else if (errval2 != 0 && errval2 != EOWNERDEAD)
     return errval2;
+  if (errval == 0)
+    errval = errval2;
 
   /* Restore the mutex_rcount.  */
   if (mutex->mutex_type & LOCK_RECURSIVE)
