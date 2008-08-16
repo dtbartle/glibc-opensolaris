@@ -40,10 +40,6 @@ int __mutex_timedlock (mutex, abstime)
       (mutex->mutex_flag & LOCK_NOTRECOVERABLE))
     return ENOTRECOVERABLE;
 
-  /* Reject invalid timeouts.  */
-  if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
-    return EINVAL;
-
   /* Always hit the kernel for priority inherit locks.  */
   if ((mutex->mutex_type & LOCK_PRIO_INHERIT) == 0)
     {
@@ -69,11 +65,18 @@ int __mutex_timedlock (mutex, abstime)
         }
     }
 
+  /* Reject invalid timeouts.  */
+  if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
+    return EINVAL;
+
   struct timespec _reltime;
   struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
   if (reltime && reltime->tv_sec < 0)
     return ETIME;
-  int errval = INLINE_SYSCALL (lwp_mutex_timedlock, 2, mutex, reltime);
+  int errval;
+  do
+    errval = INLINE_SYSCALL (lwp_mutex_timedlock, 2, mutex, reltime);
+  while (errval == EINTR);
 
   /* The kernel sets EDEADLK for priority inherit mutexes.  */
   if (errval == EDEADLK && (mutex->mutex_type & LOCK_PRIO_INHERIT) &&
