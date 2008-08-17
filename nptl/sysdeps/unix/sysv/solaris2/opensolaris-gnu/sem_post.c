@@ -34,7 +34,6 @@ __new_sem_post (sem_t *sem)
   int errval = INLINE_SYSCALL (lwp_sema_post, 1, sem);
   if (errval == EOVERFLOW)
     errval = 0;
-
   if (errval != 0)
     {
       __set_errno (errval);

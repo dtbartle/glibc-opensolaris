@@ -38,5 +38,6 @@ __new_sem_wait (sem_t *sem)
       __set_errno (errval);
       return -1;
     }
+  return 0;
 }
 weak_alias (__new_sem_wait, sem_wait)
