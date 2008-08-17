@@ -32,7 +32,10 @@ int
 __pthread_rwlock_wrlock (rwlock)
      pthread_rwlock_t *rwlock;
 {
-  return pthread_rwlock_timedwrlock (rwlock, NULL);
+  int errval = __rw_timedwrlock ((rwlock_t *)rwlock, NULL);
+  if (errval == ETIME)
+    return ETIMEDOUT;
+  return errval;
 }
 
 weak_alias (__pthread_rwlock_wrlock, pthread_rwlock_wrlock)

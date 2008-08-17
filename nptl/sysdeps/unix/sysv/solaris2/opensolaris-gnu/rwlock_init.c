@@ -22,10 +22,15 @@
 #include <synch.h>
 #include <synch_priv.h>
 
-int rwlock_init (rwlock_t *rwlock, int type, void * arg)
+
+int rwlock_init (rwlock, type, arg)
+      rwlock_t *rwlock;
+      int type;
+      void * arg;
 {
   // TODO: check type
-  memset (rwlock, 0, sizeof(rwlock_t));
+
+  memset (rwlock, 0, sizeof(mutex_t));
   rwlock->type = type;
   rwlock->magic = RWL_MAGIC;
   rwlock->mutex.mutex_type = type;

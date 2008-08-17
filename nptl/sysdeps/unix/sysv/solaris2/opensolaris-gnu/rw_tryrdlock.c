@@ -1,8 +1,6 @@
-/* Copyright (C) 2002, 2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -24,10 +22,29 @@
 #include <synch.h>
 
 
-int
-__pthread_rwlock_tryrdlock (rwlock)
-     pthread_rwlock_t *rwlock;
+int rw_tryrdlock (rwlock)
+      rwlock_t *rwlock;
 {
-  return rw_tryrdlock ((rwlock_t *)rwlock);
+  int errval = mutex_trylock (&rwlock->mutex);
+  if (errval != 0)
+    return errval;
+
+  if ((rwlock->readers & _RWLOCK_WR_LOCK) ||
+        (__cond_has_waiters (&rwlock->writercv) &&
+        !PTHREAD_RWLOCK_PREFER_READER_P (rwlock)))
+    {
+      (void)mutex_unlock (&rwlock->mutex);
+      return EBUSY;
+    }
+
+  /* Increment readers (note that no other bits are set).  */
+  if (rwlock->readers == _RWLOCK_RD_MAX)
+    {
+      (void)mutex_unlock (&rwlock->mutex);
+      return EAGAIN;
+    }
+  rwlock->readers++;
+
+  (void)mutex_unlock (&rwlock->mutex);
+  return 0;
 }
-strong_alias (__pthread_rwlock_tryrdlock, pthread_rwlock_tryrdlock)

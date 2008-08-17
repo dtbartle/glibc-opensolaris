@@ -20,13 +20,8 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include <sysdep.h>
-#include <pthread.h>
 #include <pthreadP.h>
-#include <inline-syscall.h>
-#include <stddef.h>
-#include <sys/synch.h>
-#include <abstime-to-reltime.h>
+#include <synch.h>
 
 
 /* Try to acquire write lock for RWLOCK or return after specfied time.	*/
@@ -35,37 +30,8 @@ pthread_rwlock_timedwrlock (rwlock, abstime)
      pthread_rwlock_t *rwlock;
      const struct timespec *abstime;
 {
-  /* Reject invalid timeouts.  */
-  if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
-    return EINVAL;
-
-  struct timespec _reltime;
-  struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
-
-  int errval = pthread_mutex_lock (&rwlock->mutex);
-  if (errval != 0)
-    return errval;
-
-  /* Check for deadlock.  */
-  if (__builtin_expect (rwlock->owner == (uintptr_t)THREAD_SELF, 0) ||
-        ((rwlock->type & LOCK_SHARED) && __builtin_expect (
-        rwlock->ownerpid == THREAD_GETMEM (THREAD_SELF, pid), 0)))
-    return pthread_mutex_unlock (&rwlock->mutex) ?: EDEADLK;
-
-  /* Wait until we can acquire the write lock.  */
-  while (rwlock->readers & (_RWLOCK_RD_MASK | _RWLOCK_WR_LOCK))
-    {
-      errval = __cond_reltimedwait_internal ((cond_t *)&rwlock->writercv,
-          (mutex_t *)&rwlock->mutex, reltime, 0);
-      if (errval != 0)
-        return pthread_mutex_unlock (&rwlock->mutex) ?: errval;
-    }
-
-  /* Set the write lock.  */
-  rwlock->readers = _RWLOCK_WR_LOCK;
-  rwlock->owner = (uintptr_t)THREAD_SELF;
-  if (rwlock->type & LOCK_SHARED)
-    rwlock->ownerpid = THREAD_GETMEM (THREAD_SELF, pid);
-
-  return pthread_mutex_unlock (&rwlock->mutex);
+  int errval = __rw_timedwrlock ((rwlock_t *)rwlock, abstime);
+  if (errval == ETIME)
+    return ETIMEDOUT;
+  return errval;
 }

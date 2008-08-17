@@ -27,10 +27,13 @@ int
 __pthread_rwlock_destroy (rwlock)
      pthread_rwlock_t *rwlock;
 {
+  /* XXX: The base implemention does nothing so we do nothing too.  */
+#if 0
   if (rwlock->readers != 0)
     return EBUSY;
 
-  memset (rwlock, 0, sizeof(pthread_rwlock_t));
+  rwlock->type = -1;
+#endif
 
   return 0;
 }

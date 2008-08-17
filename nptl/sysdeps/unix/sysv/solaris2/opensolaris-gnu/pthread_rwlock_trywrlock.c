@@ -20,29 +20,14 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include "pthreadP.h"
-#include <inline-syscall.h>
-#include <stdio.h>
-#include <sys/synch.h>
+#include <pthreadP.h>
+#include <synch.h>
 
 
 int
 __pthread_rwlock_trywrlock (rwlock)
      pthread_rwlock_t *rwlock;
 {
-  int errval = pthread_mutex_trylock (&rwlock->mutex);
-  if (errval != 0)
-    return errval;
-
-  if (rwlock->readers)
-    return pthread_mutex_unlock (&rwlock->mutex) ?: EBUSY;
-
-  /* Set write lock.  */
-  rwlock->readers = _RWLOCK_WR_LOCK;
-  rwlock->owner = (uintptr_t)THREAD_SELF;
-  if (rwlock->type & LOCK_SHARED)
-    rwlock->ownerpid = THREAD_GETMEM (THREAD_SELF, pid);
-
-  return pthread_mutex_unlock (&rwlock->mutex);
+  return rw_trywrlock ((rwlock_t *)rwlock);
 }
 strong_alias (__pthread_rwlock_trywrlock, pthread_rwlock_trywrlock)
