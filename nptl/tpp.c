@@ -98,10 +98,18 @@ __pthread_tpp_change_priority (int previous_prio, int new_prio)
   tpp->priomax = newpriomax;
 
   int result = 0;
+#ifdef TPP_PTHREAD_SCHED
+  int policy;
+  struct sched_param param;
+#endif
 
   if ((self->flags & ATTR_FLAG_SCHED_SET) == 0)
     {
+#ifndef TPP_PTHREAD_SCHED
       if (__sched_getparam (self->tid, &self->schedparam) != 0)
+#else
+      if (__pthread_getschedparam (self->tid, &policy, &self->schedparam) != 0)
+#endif
 	result = errno;
       else
 	self->flags |= ATTR_FLAG_SCHED_SET;
@@ -109,7 +117,12 @@ __pthread_tpp_change_priority (int previous_prio, int new_prio)
 
   if ((self->flags & ATTR_FLAG_POLICY_SET) == 0)
     {
+#ifndef TPP_PTHREAD_SCHED
       self->schedpolicy = __sched_getscheduler (self->tid);
+#else
+      if (__pthread_getschedparam (self->tid, &self->schedpolicy, &param) != 0)
+        self->schedpolicy = -1;
+#endif
       if (self->schedpolicy == -1)
 	result = errno;
       else
@@ -124,7 +137,11 @@ __pthread_tpp_change_priority (int previous_prio, int new_prio)
 	  if (sp.sched_priority < newpriomax)
 	    sp.sched_priority = newpriomax;
 
+#ifndef TPP_PTHREAD_SCHED
 	  if (__sched_setscheduler (self->tid, self->schedpolicy, &sp) < 0)
+#else
+      if (__pthread_setschedparam (self->tid, self->schedpolicy, &sp) < 0)
+#endif
 	    result = errno;
 	}
     }
@@ -143,12 +160,20 @@ __pthread_current_priority (void)
     return self->schedparam.sched_priority;
 
   int result = 0;
+#ifdef TPP_PTHREAD_SCHED
+  int policy;
+  struct sched_param param;
+#endif
 
   lll_lock (self->lock, LLL_PRIVATE);
 
   if ((self->flags & ATTR_FLAG_SCHED_SET) == 0)
     {
+#ifndef TPP_PTHREAD_SCHED
       if (__sched_getparam (self->tid, &self->schedparam) != 0)
+#else
+      if (__pthread_getschedparam (self->tid, &policy, &self->schedparam) != 0)
+#endif
 	result = -1;
       else
 	self->flags |= ATTR_FLAG_SCHED_SET;
@@ -156,7 +181,12 @@ __pthread_current_priority (void)
 
   if ((self->flags & ATTR_FLAG_POLICY_SET) == 0)
     {
+#ifndef TPP_PTHREAD_SCHED
       self->schedpolicy = __sched_getscheduler (self->tid);
+#else
+      if (__pthread_getschedparam (self->tid, &self->schedpolicy, &param) != 0)
+        self->schedpolicy = -1;
+#endif
       if (self->schedpolicy == -1)
 	result = -1;
       else

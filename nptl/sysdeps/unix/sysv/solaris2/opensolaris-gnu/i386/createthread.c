@@ -63,11 +63,6 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
   /* Setup the stack (note that it grows down).  */
   uint32_t *stack_ptr = (uint32_t *)((uintptr_t)((uint32_t *)stackaddr - 1) &
     ~(STACK_ALIGN - 1)) + 1;
-// TODO
-#if 0
-  uint32_t *stack_ptr = (uint32_t *)(((uint32_t)stackaddr &
-      ~(STACK_ALIGN - 1));
-#endif
   *--stack_ptr = (uint32_t)pd; /* arg 1 */
   *--stack_ptr = 0; /* return addr (thread_start never returns) */
   ctx.uc_mcontext.gregs[UESP] = (greg_t)stack_ptr;

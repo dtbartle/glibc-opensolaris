@@ -39,7 +39,7 @@ int mutex_init (mutex, type, arg)
     }
   else
     {
-      memset (mutex, 0, sizeof(pthread_mutex_t));
+      memset (mutex, 0, sizeof(mutex_t));
     }
   mutex->mutex_type = type;
   mutex->mutex_flag = LOCK_INITED;

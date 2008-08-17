@@ -47,6 +47,13 @@
   (PTHREAD_MUTEXATTR_FLAG_ROBUST | PTHREAD_MUTEXATTR_FLAG_PSHARED \
    | PTHREAD_MUTEXATTR_PROTOCOL_MASK | PTHREAD_MUTEXATTR_PRIO_CEILING_MASK)
 
+#define PTHREAD_RWLOCK_TYPE_MASK    0x00000006
+#define PTHREAD_RWLOCK_TYPE_SHIFT   1
+#undef PTHREAD_RWLOCK_PREFER_READER_P
+#define PTHREAD_RWLOCK_PREFER_READER_P(rwlock) \
+    (((rwlock->type >> PTHREAD_RWLOCK_TYPE_SHIFT) & \
+    PTHREAD_RWLOCK_TYPE_MASK) != PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP)
+
 #include <sys/types.h>
 #include <signal.h>
 #include <unistd.h>
@@ -129,5 +136,11 @@ extern int __cond_reltimedwait_internal (cond_t *cond, mutex_t *mutex,
     struct timespec *reltime, int cancel);
 
 extern int __mutex_timedlock (mutex_t *mutex, const struct timespec *abstime);
+
+extern int __rw_timedrdlock (rwlock_t *rwlock, struct timespec *abstime);
+
+extern int __rw_timedwrlock (rwlock_t *rwlock, struct timespec *abstime);
+
+extern int __sema_timedwait (sema_t *sem, struct timespec *abstime);
 
 #endif /* _OPENSOLARIS_PTHREADP_H */

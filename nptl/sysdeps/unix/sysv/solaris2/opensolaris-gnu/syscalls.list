@@ -29,6 +29,6 @@ sys_lwp_cond_wait       - lwp_cond_wait         Vi:pppi __syscall_lwp_cond_wait
 sys_lwp_cond_signal     - lwp_cond_signal       Vi:p    __syscall_lwp_cond_signal
 sys_lwp_cond_broadcast  - lwp_cond_broadcast    Vi:p    __syscall_lwp_cond_broadcast
 
-sys_lwp_sema_post       - lwp_sema_post         i:p     __syscall_lwp_sema_post
-sys_lwp_sema_trywait    - lwp_sema_trywait      i:p     __syscall_lwp_sema_trywait
-sys_lwp_sema_timedwait  - lwp_sema_timedwait    i:ppi   __syscall_lwp_sema_timedwait
+sys_lwp_sema_post       - lwp_sema_post         Vi:p    __syscall_lwp_sema_post
+sys_lwp_sema_trywait    - lwp_sema_trywait      Vi:p    __syscall_lwp_sema_trywait
+sys_lwp_sema_timedwait  - lwp_sema_timedwait    Vi:ppi  __syscall_lwp_sema_timedwait

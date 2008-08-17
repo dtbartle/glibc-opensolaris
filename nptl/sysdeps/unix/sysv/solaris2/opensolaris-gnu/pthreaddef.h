@@ -29,6 +29,9 @@ extern void sigaction_atfork (void);
 /* Use tid as pthread_t (instead of descr).  */
 #define PTHREAD_T_IS_TID
 
+/* Use pthread scheduler functions in tpp.  */
+#define TPP_PTHREAD_SCHED
+
 /* pthread_setXid not supported/needed.  */
 #define NO_SETXID_SUPPORT
 

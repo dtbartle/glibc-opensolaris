@@ -13,7 +13,10 @@ libpthread-routines += sys_lwp_self
 # solaris threads/synch
 libpthread-routines += mutex_init mutex_lock mutex_trylock mutex_unlock \
     mutex_destroy mutex_timedlock mutex_consistent cond_init cond_wait \
-    cond_timedwait cond_reltimedwait cond_signal cond_broadcast cond_destroy
+    cond_timedwait cond_reltimedwait cond_signal cond_broadcast cond_destroy \
+    rwlock_init rwlock_destroy rw_rdlock rw_wrlock rw_unlock rw_tryrdlock \
+    rw_trywrlock rw_timedrdlock rw_timedwrlock sema_init sema_destroy \
+    sema_wait sema_trywait sema_post sema_timedwait
 endif
 
 ifeq ($(subdir),posix)

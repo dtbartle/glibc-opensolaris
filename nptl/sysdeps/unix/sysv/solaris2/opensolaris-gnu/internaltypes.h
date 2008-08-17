@@ -96,6 +96,7 @@ struct pthread_rwlockattr
   int pshared;
 };
 
+#define BARRIER_EXITING		0x01
 
 /* Barrier data structure.  */
 struct pthread_barrier
@@ -105,6 +106,7 @@ struct pthread_barrier
   unsigned int curr_event;
   unsigned int left;
   unsigned int init_count;
+  unsigned int flag;
 };
 
 
