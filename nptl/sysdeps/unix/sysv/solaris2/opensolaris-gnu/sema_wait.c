@@ -1,8 +1,6 @@
-/* Copyright (C) 2002, 2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,27 +17,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <errno.h>
-#include <semaphore.h>
-#include "semaphoreP.h"
-#include <sys/synch.h>
-#include <synch_priv.h>
+#include <pthreadP.h>
+#include <synch.h>
 
 
-int
-__new_sem_init (sem, pshared, value)
-     sem_t *sem;
-     int pshared;
-     unsigned int value;
+int sema_wait (sem)
+      sema_t *sem;
 {
-  int type = pshared ? PTHREAD_PROCESS_SHARED : PTHREAD_PROCESS_PRIVATE;
-  int errval = sema_init (sem, value, type, NULL);
-  if (errval != 0)
-    {
-      __set_errno (errval);
-      return -1;
-    }
-
-  return 0;
+  return __sema_timedwait (sem, NULL);
 }
-weak_alias (__new_sem_init, sem_init)

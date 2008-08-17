@@ -28,23 +28,17 @@
 #include <inline-syscall.h>
 #include <abstime-to-reltime.h>
 
-DECLARE_INLINE_SYSCALL (int, lwp_sema_timedwait, sem_t *sp,
-    struct timespec *tsp, int check_park);
-
 
 int
 sem_timedwait (sem_t *sem, const struct timespec *abstime)
 {
-  // TODO
-  struct timespec _reltime;
-  struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
-  if (reltime && reltime->tv_sec < 0)
+  int errval = __sema_timedwait ((sema_t *)sem, abstime);
+  if (errval == ETIME)
+    errval = ETIMEDOUT;
+  if (errval != 0)
     {
-      __set_errno (ETIMEDOUT);
+      __set_errno (errval);
       return -1;
     }
-  int result =  INLINE_SYSCALL (lwp_sema_timedwait, 3, sem, reltime, 1);
-  if (result == -1 && errno == ETIME)
-    __set_errno (ETIMEDOUT);
-  return result;
+  return 0;
 }

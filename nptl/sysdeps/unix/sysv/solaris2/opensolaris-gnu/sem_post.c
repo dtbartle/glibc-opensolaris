@@ -31,7 +31,15 @@ DECLARE_INLINE_SYSCALL (int, lwp_sema_post, sem_t *sp);
 int
 __new_sem_post (sem_t *sem)
 {
-  // TODO
-  return INLINE_SYSCALL (lwp_sema_post, 1, sem);
+  int errval = INLINE_SYSCALL (lwp_sema_post, 1, sem);
+  if (errval == EOVERFLOW)
+    errval = 0;
+
+  if (errval != 0)
+    {
+      __set_errno (errval);
+      return -1;
+    }
+  return 0;
 }
 weak_alias (__new_sem_post, sem_post)

@@ -30,6 +30,13 @@
 int
 __new_sem_wait (sem_t *sem)
 {
-  return sem_timedwait (sem, NULL);
+  int errval = __sema_timedwait ((sema_t *)sem, NULL);
+  if (errval == ETIME)
+    errval = ETIMEDOUT;
+  if (errval != 0)
+    {
+      __set_errno (errval);
+      return -1;
+    }
 }
 weak_alias (__new_sem_wait, sem_wait)
