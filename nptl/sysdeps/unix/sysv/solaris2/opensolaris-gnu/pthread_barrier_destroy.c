@@ -30,8 +30,18 @@ pthread_barrier_destroy (barrier)
 {
   struct pthread_barrier *ibarrier = (struct pthread_barrier *) barrier;
 
-  if (__builtin_expect (ibarrier->left != ibarrier->init_count, 0))
-    return EBUSY;
+  int errval = pthread_mutex_lock (&ibarrier->mutex);
+  if (errval != 0)
+    return EINVAL;
 
-  return 0;
+  /* Make sure barrier is not exiting.  */
+  while (ibarrier->flag & BARRIER_EXITING)
+    errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
+        (mutex_t *)&ibarrier->mutex, NULL, 0);
+
+  if (__builtin_expect (ibarrier->left != ibarrier->init_count, 0))
+    errval = EBUSY;
+
+  (void)pthread_mutex_unlock (&ibarrier->mutex);
+  return errval;
 }

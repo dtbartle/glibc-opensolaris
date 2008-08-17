@@ -36,6 +36,11 @@ pthread_barrier_wait (barrier)
   if (errval != 0)
     return errval;
 
+  /* Make sure barrier is not exiting.  */
+  while (ibarrier->flag & BARRIER_EXITING)
+    errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
+        (mutex_t *)&ibarrier->mutex, NULL, 0);
+
   /* A thread entered the barrier.  */
   --ibarrier->left;
 
@@ -44,30 +49,30 @@ pthread_barrier_wait (barrier)
       /* Increment the event counter to avoid invalid wake-ups and tell the
          current waiters that it is their turn. Also reset the barrier.  */
       ++ibarrier->curr_event;
-      ibarrier->left = ibarrier->init_count;
+
+      ibarrier->flag |= BARRIER_EXITING;
 
       /* Wake other threads.  */
-      errval = pthread_cond_broadcast (&ibarrier->cond);
-      if (errval != 0)
-        return errval;
-
-      errval = pthread_mutex_unlock (&ibarrier->mutex);
-      if (errval != 0)
-        return errval;
-
-      return PTHREAD_BARRIER_SERIAL_THREAD;
+      (void)pthread_cond_broadcast (&ibarrier->cond);
+      errval = PTHREAD_BARRIER_SERIAL_THREAD;
     }
-
-  /* Wait until the current barrier event is done.  */
-  int curr_event = ibarrier->curr_event;
-  do
+  else
     {
-      errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
-          (mutex_t *)&ibarrier->mutex, NULL, 0);
-      if (errval != 0)
-        return errval;
+      /* Wait until the current barrier event is done.  */
+      int curr_event = ibarrier->curr_event;
+      do {
+          errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
+              (mutex_t *)&ibarrier->mutex, NULL, 0);
+      } while (errval == 0 && curr_event == ibarrier->curr_event);
     }
-  while (curr_event == ibarrier->curr_event);
 
-  return pthread_mutex_unlock (&ibarrier->mutex);
+  /* If we are the last thread notify barrier waiters.  */
+  if (++ibarrier->left == ibarrier->init_count)
+    {
+      ibarrier->flag &= ~BARRIER_EXITING;
+      (void)pthread_cond_broadcast (&ibarrier->cond);
+    }
+
+  (void)pthread_mutex_unlock (&ibarrier->mutex);
+  return errval;
 }
