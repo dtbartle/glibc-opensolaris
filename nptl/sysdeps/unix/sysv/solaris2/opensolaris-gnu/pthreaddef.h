@@ -48,3 +48,6 @@ extern void sigaction_atfork (void);
 /* We support tkill.  */
 #undef __NR_tgkill
 #undef __ASSUME_TGKILL
+
+/* pthread_ is unsigned.  */
+#define FREE_P(descr) ((descr)->tid == (pthread_t)-1)
