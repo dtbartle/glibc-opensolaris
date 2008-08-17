@@ -31,7 +31,9 @@ DECLARE_INLINE_SYSCALL (int, lwp_wait, pthread_t tid, pthread_t *departed);
 
 /* XXX: we really shouldn't assume the existence of result */
 #define lll_wait_tid(tid) \
-    result = INLINE_SYSCALL (lwp_wait, 2, (tid), NULL)
+    do {                                                        \
+      result = INLINE_SYSCALL (lwp_wait, 2, (tid), NULL);       \
+    } while (result == EINTR);
 
 DECLARE_INLINE_SYSCALL (int, lwp_kill, pthread_t tid, int sig);
 
