@@ -297,7 +297,7 @@
 
 /* Some NPTL code calls these macros.  */
 # include <errno.h>
-# define INTERNAL_SYSCALL(name, err, nr, args...) __internal_##name##_##nr (&(err), args);
+# define INTERNAL_SYSCALL(name, err, nr, args...) __internal_##name##_##nr (&(err), args)
 # define INTERNAL_SYSCALL_DECL(err) int err = 0;
 # define INTERNAL_SYSCALL_ERROR_P(val, err) (err != 0)
 # define INTERNAL_SYSCALL_ERRNO(val, err) (err)

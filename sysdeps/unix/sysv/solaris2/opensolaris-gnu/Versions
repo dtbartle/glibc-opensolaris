@@ -6,7 +6,11 @@ libc {
     mount; umount; umount2;
 
     # g
-    getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv; getvmusage;
+    getcpuid; getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv;
+    getvmusage;
+
+    # i
+    issetugid;
 
     # m
     memcntl; meminfo;
@@ -15,15 +19,17 @@ libc {
     ntp_adjtime; ntp_gettime;
 
     # p
-    priocntl; priocntlset;
+    p_online; priocntl; priocntlset; processor_bind; processor_info;
+    pset_assign; pset_bind; pset_create; pset_destroy; pset_getattr;
+    pset_getloadavg; pset_info; pset_list; pset_setattr;
 
     # s
-    setpflags; setppriv;
+    setpflags; setppriv; systeminfo; swapctl;
 
     # u
-    ucred_get; ucred_free; ucred_geteuid; ucred_getruid; ucred_getsuid;
-    ucred_getegid; ucred_getrgid; ucred_getsgid; ucred_getgroups;
-    ucred_getprivset; ucred_getpid; ucred_getprojid; ucred_getzoneid;
-    ucred_getpflags; ucred_getlabel; ucred_size; uadmin;
+    uadmin; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;
+    ucred_getgroups; ucred_getlabel; ucred_getpflags; ucred_getpid;
+    ucred_getprivset; ucred_getprojid; ucred_getrgid; ucred_getruid;
+    ucred_getsgid; ucred_getsuid; ucred_getzoneid; ucred_size;
   }
 }

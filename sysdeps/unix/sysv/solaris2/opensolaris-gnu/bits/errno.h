@@ -111,6 +111,8 @@
 
 # define ECOMM		70	/* Communication error on send.  */
 # define EPROTO		71	/* Protocol error.  */
+# define ELOCKUNMAPPED	72  /* locked lock was unmapped.  */
+# define ENOTACTIVE	73  /* Facility is not active.  */
 # define EMULTIHOP	74	/* Multihop attempted.  */
 # define EBADMSG	77	/* Trying to read unreadable message.  */
 # define ENAMETOOLONG	78	/* Path name is too long.  */
