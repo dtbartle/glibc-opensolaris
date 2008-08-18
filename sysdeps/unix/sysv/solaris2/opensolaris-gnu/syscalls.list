@@ -31,17 +31,17 @@ memcntl             - memcntl               i:piiiii    memcntl
 mincore             - mincore               i:anV       mincore
 mmap64              - mmap64                i:piiiii    __mmap64            mmap64
 mount               - mount                 i:ppippipi  __mount             mount
-msgctl              - msgsys:msgctl         i:iip       msgctl
-msgget              - msgsys:msgget         i:ii        msgget
-msgrcv              - msgsys:msgrcv         i:ipiii     msgrcv
-msgsnd              - msgsys:msgsnd         i:ipii      msgsnd
+msgctl              - msgsys:msgctl         i:iip       __msgctl            msgctl
+msgget              - msgsys:msgget         i:ii        __msgget            msgget
+msgrcv              - msgsys:msgrcv         Ci:ipiii    __msgrcv            msgrcv
+msgsnd              - msgsys:msgsnd         Ci:ipii     __msgsnd            msgsnd
 nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __nanosleep nanosleep
 ntp_adjtime         - ntp_adjtime           i:p         __adjtimex          adjtimex ntp_adjtime __adjtimex_internal
 ntp_gettime         - ntp_gettime           i:p         ntp_gettime
 pathconf            - pathconf              i:pi        __pathconf          pathconf
 p_online            - p_online              i:ii        p_online
-pread               - pread                 i:iPii      __libc_pread        __pread pread
-pread64             - pread64               i:iPii      __libc_pread64      __pread64 pread64
+pread               - pread                 Ci:iPii     __libc_pread        __pread pread
+pread64             - pread64               Ci:iPii     __libc_pread64      __pread64 pread64
 processor_bind      - processor_bind        i:iiip      processor_bind
 processor_info      - processor_info        i:ip        processor_info
 pset_create         - pset:pset_create      i:p         pset_create
@@ -52,8 +52,8 @@ pset_bind           - pset:pset_bind        i:iiip      pset_bind
 pset_list           - pset:pset_list        i:pp        pset_list
 pset_setattr        - pset:pset_setattr     i:ii        pset_setattr
 pset_getattr        - pset:pset_getattr     i:ip        pset_getattr
-pwrite              - pwrite                i:iPii      __libc_pwrite       __pwrite pwrite
-pwrite64            - pwrite64              i:iPii      __libc_pwrite64     __pwrite64 pwrite64
+pwrite              - pwrite                Ci:iPii     __libc_pwrite       __pwrite pwrite
+pwrite64            - pwrite64              Ci:iPii     __libc_pwrite64     __pwrite64 pwrite64
 renameat            - fsat:renameat         i:isis      renameat
 resolvepath         - resolvepath           i:spi       resolvepath
 semctl              - semsys:semctl         i:iiiv      semctl
@@ -84,7 +84,7 @@ uadmin              - uadmin                i:iii       __uadmin            uadm
 umount2             - umount2               i:si        umount2
 unlinkat            - fsat:unlinkat         i:isi       unlinkat
 vhangup             - vhangup               i:          vhangup
-waitid              - waitid                i:iipi      __waitid            waitid
+waitid              - waitid                Ci:iipi     __waitid            waitid
 xmknod              - xmknod                i:isii      __xmknod            _xmknod
 
 #
@@ -121,7 +121,7 @@ sys_listen          - listen                i:iii       __syscall_listen
 sys_lstat           - lstat                 i:sp        __syscall_lstat
 sys_lstat64         - lstat64               i:sp        __syscall_lstat64
 sys_lwp_private     - lwp_private           i:iii       __syscall_lwp_private
-sys_lwp_sigmask     - lwp_sigmask           i:iii       __syscall_lwp_sigmask
+sys_lwp_sigmask     - lwp_sigmask           Ei:iii      __syscall_lwp_sigmask
 sys_meminfo         - meminfosys:meminfo    i:ip        __syscall_meminfo
 sys_nanosleep       - nanosleep             i:pP        __syscall_nanosleep
 sys_open            - open                  i:siv       __syscall_open
