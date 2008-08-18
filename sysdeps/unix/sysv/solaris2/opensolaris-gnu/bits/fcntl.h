@@ -97,7 +97,7 @@
 # else
 #  define F_GETLK	F_GETLK64	/* Get record locking info.  */
 #  define F_SETLK	F_SETLK64	/* Set record locking info (non-blocking).*/
-#  define F_SETLKW	F_SETLKW6P64	/* Set record locking info (blocking).  */
+#  define F_SETLKW	F_SETLKW64	/* Set record locking info (blocking).  */
 #  define F_ALLOCSP	F_ALLOCSP64	/* Allocate file space.  */
 #  define F_FREESP	F_FREESP64	/* Free file space.  */
 #  define F_SETLK_NBMAND	F_SETLK_NBMAND64	/* Private.  */
