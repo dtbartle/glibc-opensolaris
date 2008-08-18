@@ -43,6 +43,9 @@ extern void __sighandler(int, siginfo_t *, void *);
 DECLARE_INLINE_SYSCALL (int, sigaction, int signum,
     const struct sigaction *act, struct sigaction *oldact);
 
+DECLARE_INLINE_SYSCALL (int64_t, lwp_sigmask, int how, unsigned int bits0,
+    unsigned int bits1);
+
 int
 __libc_sigaction (sig, act, oact)
      int sig;
@@ -64,11 +67,9 @@ __libc_sigaction (sig, act, oact)
     }
 
   /* Block all signals and lock. */
-  sigset_t fillset, oldset;
-  if (sigfillset (&fillset) != 0)
-    return -1;
-  if (sigprocmask (SIG_SETMASK, &fillset, &oldset) != 0)
-    return -1;
+  rval_t oldmask;
+  oldmask.rval64 = INLINE_SYSCALL (lwp_sigmask, 3, SIG_SETMASK,
+      (unsigned int)-1, (unsigned int)-1);
   __libc_lock_lock (signal_lock);
 
   void (*old_sigaction)(int, siginfo_t *, void *) = sighandlers[sig];
@@ -102,7 +103,8 @@ __libc_sigaction (sig, act, oact)
 
   /* Unlock and restore signals.  */
   __libc_lock_unlock (signal_lock);
-  assert (sigprocmask (SIG_SETMASK, &oldset, NULL) == 0);
+  (void)INLINE_SYSCALL (lwp_sigmask, 3, SIG_SETMASK,
+      (unsigned int)oldmask.rval1, (unsigned int)oldmask.rval2);
 
   return result;
 }
@@ -122,12 +124,10 @@ void __sighandler (int sig, siginfo_t *sip, void *uvp)
   if (sig == SIGPIPE && SIGPIPE_IS_DISABLED)
     return;
 
-  /* Block all signals and lock.  */
-  sigset_t fillset, oldset;
-  if (sigfillset (&fillset) != 0)
-    return;
-  if (sigprocmask (SIG_SETMASK, &fillset, &oldset) != 0)
-    return;
+  /* Block all signals and lock. */
+  rval_t oldmask;
+  oldmask.rval64 = INLINE_SYSCALL (lwp_sigmask, 3, SIG_SETMASK,
+      (unsigned int)-1, (unsigned int)-1);
   __libc_lock_lock (signal_lock);
 
   void (*handler)(int, siginfo_t *, void *) = sighandlers[sig];
@@ -135,7 +135,8 @@ void __sighandler (int sig, siginfo_t *sip, void *uvp)
 
   /* Unlock and restore signals.  */
   __libc_lock_unlock (signal_lock);
-  assert (sigprocmask (SIG_SETMASK, &oldset, NULL) == 0);
+  (void)INLINE_SYSCALL (lwp_sigmask, 3, SIG_SETMASK,
+      (unsigned int)oldmask.rval1, (unsigned int)oldmask.rval2);
 
   (*handler)(sig, sip, uvp);
 

@@ -53,15 +53,13 @@ __sigprocmask (how, set, oset)
 
   /* we call lwp_sigmask to set the per-thread sigmask */
   rval_t result;
-  result.r_vals = INLINE_SYSCALL (lwp_sigmask, 3, how, bits0, bits1);
-  if (result.r_vals == -1)
-    return -1;
+  result.rval64 = INLINE_SYSCALL (lwp_sigmask, 3, how, bits0, bits1);
 
   /* now we need to convert from two bit fields to sigset_t */
   if (oset)
     {
-      oset->__sigbits[0] = result.r_val1;
-      oset->__sigbits[1] = result.r_val2;
+      oset->__sigbits[0] = result.rval1;
+      oset->__sigbits[1] = result.rval2;
       oset->__sigbits[2] = oset->__sigbits[3] = 0;
     }
 
