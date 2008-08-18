@@ -54,6 +54,9 @@
     (((rwlock->type >> PTHREAD_RWLOCK_TYPE_SHIFT) & \
     PTHREAD_RWLOCK_TYPE_MASK) != PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP)
 
+#define INVALID_TIMESPEC(tv)    ((tv) && ((tv)->tv_sec < 0 || \
+    (tv)->tv_nsec < 0 || (tv)->tv_nsec >= 1000000000))
+
 #include <sys/types.h>
 #include <signal.h>
 #include <unistd.h>

@@ -31,7 +31,7 @@ int __sema_timedwait (sem, abstime)
 {
   /* Reject invalid timeouts.  */
 /* TODO: if we can acquire the semaphore we should never check abstime */
-  if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
+  if (INVALID_TIMESPEC (abstime))
     return EINVAL;
 
   struct timespec _reltime;

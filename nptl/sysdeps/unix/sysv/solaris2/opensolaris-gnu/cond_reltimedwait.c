@@ -83,7 +83,7 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
   struct _condvar_cleanup_buffer cbuffer;
 
   /* Reject invalid timeouts.  */
-  if (reltime && (reltime->tv_nsec < 0 || reltime->tv_nsec >= 1000000000))
+  if (INVALID_TIMESPEC (reltime))
     return EINVAL;
 
   if ((mutex->mutex_type & LOCK_ERRORCHECK) &&

@@ -28,11 +28,13 @@ int __rw_timedrdlock (rwlock, abstime)
       struct timespec *abstime;
 {
   /* Reject invalid timeouts.  */
-  if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
+  if (INVALID_TIMESPEC (abstime))
     return EINVAL;
 
   struct timespec _reltime;
   struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
+  if (reltime && reltime->tv_sec < 0)
+    return ETIME;
 
   int errval = mutex_lock (&rwlock->mutex);
   if (errval != 0)

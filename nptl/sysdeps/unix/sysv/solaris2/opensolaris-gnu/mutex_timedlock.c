@@ -66,13 +66,14 @@ int __mutex_timedlock (mutex, abstime)
     }
 
   /* Reject invalid timeouts.  */
-  if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
+  if (INVALID_TIMESPEC (abstime))
     return EINVAL;
 
   struct timespec _reltime;
   struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
   if (reltime && reltime->tv_sec < 0)
     return ETIME;
+
   int errval;
   do
     errval = INLINE_SYSCALL (lwp_mutex_timedlock, 2, mutex, reltime);

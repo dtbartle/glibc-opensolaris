@@ -29,7 +29,7 @@ int cond_timedwait (cond, mutex, abstime)
       struct timespec *abstime;
 {
   /* Reject invalid timeouts.  */
-  if (abstime && (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000))
+  if (INVALID_TIMESPEC (abstime))
     return EINVAL;
 
   struct timespec _reltime;
