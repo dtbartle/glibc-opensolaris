@@ -24,7 +24,11 @@
 # include <pthreadP.h>
 #endif
 
-/* XXX: We don't support cancellable PSEUDO_SUBCALL and others.  */
+/* XXX: We don't support _NOERRNO or _ERRVAL varietites.  */
+#undef PSEUDO_ERRNO
+#undef PSEUDO_SUBCALL_NOERRNO
+#undef PSEUDO_ERRVAL
+#undef PSEUDO_SUBCALL_NOERRNO
 
 #if !defined NOT_IN_libc || defined IS_IN_libpthread || defined IS_IN_librt
 
@@ -46,18 +50,84 @@
 2:  ret;                                            \
   .size __##syscall_name##_nocancel,.-__##syscall_name##_nocancel;	      \
   L(pseudo_cancel):							      \
-    CENABLE								      \
-    SAVE_OLDTYPE							      \
   L(restart_cancel):                                       \
+    CENABLE;								      \
+    movl %eax, %ecx;                    \
     DO_CALL (syscall_name, args);                         \
-    pushl %eax; cfi_adjust_cfa_offset (4); movl %ecx, %eax; \
-    CDISABLE; popl %eax; cfi_adjust_cfa_offset (-4);    \
     jnb 3f;										\
+    pushl %eax; cfi_adjust_cfa_offset (4);  \
+    pushl %ecx; cfi_adjust_cfa_offset (4);  \
+    CDISABLE;                           \
+    addl $4, %esp; cfi_adjust_cfa_offset (-4);  \
+    popl %eax; cfi_adjust_cfa_offset (-4);    \
     cmpl $ERESTART, %eax;                   \
     je L(restart_cancel);                                      \
     jmp SYSCALL_ERROR_LABEL;                           \
 3:                                                  \
+    pushl %eax; cfi_adjust_cfa_offset (4);  \
+    pushl %ecx; cfi_adjust_cfa_offset (4);  \
+    CDISABLE;                           \
+    addl $4, %esp; cfi_adjust_cfa_offset (-4);  \
+    popl %eax; cfi_adjust_cfa_offset (-4);    \
   L(pseudo_end):
+
+/* XXX: This uses %edx, so subcalls that return 64-bit ints won't work.  */
+# undef  PSEUDO_SUBCALL
+# define PSEUDO_SUBCALL(name, syscall_name, subcall_name, args)				      \
+  .text;                                      \
+  ENTRY (name)                                    \
+    cmpl $0, %gs:MULTIPLE_THREADS_OFFSET;				      \
+    jne L(pseudo_cancel);						      \
+  .type __##subcall_name##_nocancel,@function;				      \
+  .globl __##subcall_name##_nocancel;					      \
+  __##subcall_name##_nocancel:						      \
+    movl 0(%esp), %ecx;                               \
+    movl %ecx, -4(%esp);							\
+    movl $SYS_ify (SUB_##subcall_name), 0(%esp);							\
+    addl $-4, %esp; cfi_adjust_cfa_offset (4); \
+  L(restart):                                       \
+    DO_CALL (syscall_name, args);                         \
+    jnb 2f;										\
+    cmpl $ERESTART, %eax;                   \
+    je L(restart);                                      \
+    addl $4, %esp; cfi_adjust_cfa_offset (-4); \
+    movl %ecx, 0(%esp);							\
+    jmp SYSCALL_ERROR_LABEL;                           \
+2:											\
+    addl $4, %esp;                                     \
+    movl %ecx, 0(%esp);							\
+    ret;                                            \
+  .size __##subcall_name##_nocancel,.-__##subcall_name##_nocancel;	      \
+  L(pseudo_cancel):							      \
+    CENABLE;								      \
+    movl %eax, %edx;                    \
+    movl 0(%esp), %ecx;                               \
+    movl %ecx, -4(%esp);							\
+    movl $SYS_ify (SUB_##subcall_name), 0(%esp);							\
+    addl $-4, %esp; cfi_adjust_cfa_offset (4); \
+  L(restart_cancel):                                       \
+    DO_CALL (syscall_name, args);                         \
+    jnb 3f;										\
+    pushl %eax; cfi_adjust_cfa_offset (4);  \
+    pushl %edx; cfi_adjust_cfa_offset (4);  \
+    CDISABLE;                           \
+    addl $4, %esp; cfi_adjust_cfa_offset (-4);  \
+    popl %eax; cfi_adjust_cfa_offset (-4);    \
+    cmpl $ERESTART, %eax;                   \
+    je L(restart_cancel);                                      \
+    addl $4, %esp; cfi_adjust_cfa_offset (-4); \
+    movl %edx, 0(%esp);							\
+    jmp SYSCALL_ERROR_LABEL;                           \
+3:											\
+    pushl %eax; cfi_adjust_cfa_offset (4);  \
+    pushl %edx; cfi_adjust_cfa_offset (4);  \
+    CDISABLE;                           \
+    addl $4, %esp; cfi_adjust_cfa_offset (-4);  \
+    popl %eax; cfi_adjust_cfa_offset (-4);    \
+    addl $4, %esp;                                     \
+    movl %ecx, 0(%esp);							\
+  L(pseudo_end):
+
 
 # define SAVE_OLDTYPE	movl %eax, %ecx;
 # ifdef IS_IN_libpthread
