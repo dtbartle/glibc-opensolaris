@@ -131,10 +131,52 @@ static inline int __internal_nanosleep_2 (int *errval,
   return result;
 }
 
+static inline int __internal_sched_get_priority_min_1 (int *errval, int policy)
+{
+  int saved_errno = errno;
+  int result = sched_get_priority_min (policy);
+  if (result != 0)
+    *errval = errno;
+  __set_errno (saved_errno);
+  return result;
+}
+
+static inline int __internal_sched_get_priority_max_1 (int *errval, int policy)
+{
+  int saved_errno = errno;
+  int result = sched_get_priority_max (policy);
+  if (result != 0)
+    *errval = errno;
+  __set_errno (saved_errno);
+  return result;
+}
+
+static inline int __internal_sched_getscheduler_1 (int *errval, pid_t pid)
+{
+  int saved_errno = errno;
+  int result = sched_getscheduler (pid);
+  if (result != 0)
+    *errval = errno;
+  __set_errno (saved_errno);
+  return result;
+}
+
+static inline int __internal_sched_getparam_2 (int *errval, pid_t pid,
+    struct sched_param *param)
+{
+  int saved_errno = errno;
+  int result = sched_getparam (pid, param);
+  if (result != 0)
+    *errval = errno;
+  __set_errno (saved_errno);
+  return result;
+}
+
 static inline int __cond_has_waiters (pthread_cond_t *cond)
 {
   return cond->cond_waiters_kernel;
 }
+
 extern int __cond_reltimedwait_internal (cond_t *cond, mutex_t *mutex,
     struct timespec *reltime, int cancel);
 
