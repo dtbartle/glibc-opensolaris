@@ -511,7 +511,6 @@ __pthread_create_2_1 (newthread, attr, start_routine, arg)
   THREAD_COPY_POINTER_GUARD (pd);
 #endif
 
-#if 0 // TODO
   /* Determine scheduling parameters for the thread.  */
   if (attr != NULL
       && __builtin_expect ((iattr->flags & ATTR_FLAG_NOTINHERITSCHED) != 0, 0)
@@ -549,7 +548,6 @@ __pthread_create_2_1 (newthread, attr, start_routine, arg)
 	  goto errout;
 	}
     }
-#endif
 
   /* Remember whether the thread is detached or not.  In case of an
      error we have to free the stacks of non-detached stillborn
