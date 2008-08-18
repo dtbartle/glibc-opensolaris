@@ -35,11 +35,11 @@ __pipe (__pipedes)
     }
 
   rval_t result;
-  result.r_vals = INLINE_SYSCALL (pipe, 0);
-  if (result.r_vals == -1)
+  result.rval64 = INLINE_SYSCALL (pipe, 0);
+  if (result.rval64 == -1)
     return -1;
-  __pipedes[0] = result.r_val1;
-  __pipedes[1] = result.r_val2;
+  __pipedes[0] = result.rval1;
+  __pipedes[1] = result.rval2;
 
   return 0;
 }

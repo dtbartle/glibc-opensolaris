@@ -27,12 +27,12 @@ typedef union rval
 {
     struct
     {
-        int r_v1;
-        int r_v2;
-    } r_v;
-    int64_t r_vals;
+        int32_t __rval1;
+        int32_t __rval2;
+    } rvals;
+    int64_t rval64;
 } rval_t;
-#define r_val1	r_v.r_v1
-#define r_val2	r_v.r_v2
+#define rval1	rvals.__rval1
+#define rval2	rvals.__rval2
 
 #endif /* _INLINE_SYSCALL_H */

@@ -29,11 +29,11 @@ pid_t
 __libc_fork (void)
 {
   rval_t result;
-  result.r_vals = INLINE_SYSCALL (forkx, 1, 0);
-  if (result.r_vals == -1)
+  result.rval64 = INLINE_SYSCALL (forkx, 1, 0);
+  if (result.rval64 == -1)
     return (pid_t)-1;
-  pid_t pid = (pid_t)result.r_val1;
-  if (result.r_val2)
+  pid_t pid = (pid_t)result.rval1;
+  if (result.rval2 != 0)
     pid = 0;
 
   return pid;

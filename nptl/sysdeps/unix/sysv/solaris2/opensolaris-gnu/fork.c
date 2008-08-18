@@ -120,13 +120,13 @@ __libc_fork (void)
   _IO_list_lock ();
 
   rval_t result;
-  result.r_vals = INLINE_SYSCALL (forkx, 1, 0);
-  if(result.r_vals == -1)
+  result.rval64 = INLINE_SYSCALL (forkx, 1, 0);
+  if (result.rval64 == -1)
     pid = (pid_t)-1;
-  else if(result.r_val2)
+  else if (result.rval2 != 0)
     pid = 0;
   else
-    pid = (pid_t)result.r_val1;
+    pid = (pid_t)result.rval1;
 
   if (pid == 0)
     {
