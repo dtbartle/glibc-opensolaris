@@ -56,8 +56,8 @@ enum
 typedef struct sigaltstack
   {
     void *ss_sp;
+    size_t ss_size;
     int ss_flags;
-    int ss_size;
   } stack_t;
 
 #endif /* !defined(__stack_t_defined) */
