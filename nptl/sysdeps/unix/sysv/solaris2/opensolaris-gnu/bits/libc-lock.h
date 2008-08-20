@@ -1,5 +1,5 @@
-/* libc-internal interface for mutex locks.  NPTL version.
-e  Copyright (C) 1996-2003, 2005, 2007, 2008 Free Software Foundation, Inc.
+/* libc-internal interface for mutex locks.  OpenSolaris NPTL version.
+   Copyright (C) 1996-2003, 2005, 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    OpenSolaris bits contributed by David Bartley
     <dtbartle@csclub.uwaterloo.ca>, 2008.
