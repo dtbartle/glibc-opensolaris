@@ -47,7 +47,7 @@ typedef struct __fpu
 #ifdef __amd64
 # define _NGREG		28
 #else
-# define _NREG		19
+# define _NGREG		19
 #endif
 #define NGREG		_NGREG
 
