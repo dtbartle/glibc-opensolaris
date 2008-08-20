@@ -31,7 +31,7 @@ cris-.*-linux.*		DEFAULT			GLIBC_2.2
 x86_64-.*-linux.*       DEFAULT			GLIBC_2.2.5
 powerpc64-.*-linux.*	DEFAULT			GLIBC_2.3
 .*-.*-gnu-gnu.*		DEFAULT			GLIBC_2.2.6
-.*-.*-opensolaris-gnu.*	DEFAULT			GLIBC_2.7
+.*-.*-kopensolaris-gnu.*	DEFAULT			GLIBC_2.7
 
 # Configuration		WORDSIZE[32|64]		Alternate configuration
 # -------------		----------		-----------------------
@@ -54,7 +54,7 @@ ia64-.*-linux.*		libm=6.1		GLIBC_2.2
 sh.*-.*-linux.*		libm=6			GLIBC_2.2
 .*-.*-linux.*		libm=6
 .*-.*-gnu-gnu.*		libm=6
-.*-.*-opensolaris-gnu.*	libm=1
+.*-.*-kopensolaris-gnu.*	libm=1
 
 # We provide libc.so.6 for Linux kernel versions 2.0 and later.
 alpha.*-.*-linux.*	libc=6.1
@@ -62,7 +62,7 @@ ia64-.*-linux.*		libc=6.1		GLIBC_2.2
 sh.*-.*-linux.*		libc=6			GLIBC_2.2
 sparc64.*-.*-linux.*	libc=6			GLIBC_2.2
 .*-.*-linux.*		libc=6
-.*-.*-opensolaris-gnu.*	libc=1
+.*-.*-kopensolaris-gnu.*	libc=1
 
 # libmachuser.so.1 corresponds to mach/*.defs as of Utah's UK22 release.
 .*-.*-gnu-gnu.*		libmachuser=1
