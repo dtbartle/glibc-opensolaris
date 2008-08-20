@@ -74,7 +74,7 @@ typedef struct siginfo
                 struct {
                     __uid_t __uid;	/* Real user ID of sending process.  */
                     union sigval  __value;
-                } _kill;
+                } __kill;
                 struct {
                     __clock_t __utime;
                     int __status;
