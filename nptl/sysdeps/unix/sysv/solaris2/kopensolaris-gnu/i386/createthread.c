@@ -70,7 +70,7 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
   ctx.uc_mcontext.gregs[EIP] = (greg_t)start_thread;
   ctx.uc_flags |= UC_CPU;
 
-  /* This is a hack to get the kernel to set gs for us */
+  /* This is a hack to get the kernel to set gs for us.  */
   ctx.uc_mcontext.gregs[GS] = (greg_t)LWPGS_SEL;
   ctx.uc_mcontext.gregs[ESP] = (greg_t)pd;
 
