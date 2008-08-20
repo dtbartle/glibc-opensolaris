@@ -22,7 +22,7 @@
 #include <string.h>
 
 /* TODO: temporary hack */
-#define UNAME_SYSNAME "GNU/OpenSolaris"
+#define UNAME_SYSNAME "GNU/kOpenSolaris"
 #define UNAME_MACHINE "i686"
 
 DECLARE_INLINE_SYSCALL (int, uname, struct utsname *buf);
