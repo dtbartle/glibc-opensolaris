@@ -25,4 +25,18 @@ typedef struct
     unsigned int word[4];
 } fltset_t;
 
+#define FLTILL		1
+#define FLTPRIV		2
+#define FLTBPT		3
+#define FLTTRACE	4
+#define FLTACCESS	5
+#define FLTBOUNDS	6
+#define FLTIOVF		7
+#define FLTIZDIV	8
+#define FLTFPE		9
+#define FLTSTACK	10
+#define FLTPAGE		11
+#define FLTWATCH	12
+#define FLTCPCOVF	13
+
 #endif /* _SYS_FAULT_H */

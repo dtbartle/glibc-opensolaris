@@ -68,6 +68,13 @@ typedef void *psaddr_t;
 #define PCSZONE		30
 #define PCSCREDX	31
 
+/* PCRUN codes */
+#define PRCSIG		0x01
+#define PRCFAULT	0x02
+#define PRSTEP		0x04
+#define PRSABORT	0x08
+#define PRSTOP		0x10
+
 /* /proc/<pid>/lwp/<lwpid>/lwpstatus */
 typedef struct lwpstatus
 {
@@ -175,7 +182,7 @@ enum
 	PR_SYSEXIT = 4,
 #define	PR_SYSEXIT PR_SYSEXIT
 	PR_JOBCONTROL = 5,
-#define	PR_JOBCONTROL PR_JOBCONTRO
+#define	PR_JOBCONTROL PR_JOBCONTROL
 	PR_FAULTED = 6,
 #define	PR_FAULTED PR_FAULTED
 	PR_SUSPENDED = 7,
@@ -271,6 +278,19 @@ typedef struct prmap
 	int pr_shmid;
 	int pr_filler[1];
 } prmap_t;
+
+/* pr_mflags values */
+#define	MA_EXEC			0x0001
+#define	MA_WRITE		0x0002
+#define	MA_READ			0x0004
+#define	MA_SHARED		0x0008
+#define	MA_BREAK		0x0010
+#define	MA_STACK		0x0020
+#define	MA_ANON			0x0040
+#define	MA_ISM			0x0080
+#define	MA_NORESERVE	0x0100
+#define	MA_SHM			0x0200
+#define	MA_RESERVED1	0x0400
 
 /* /proc/<pid>/xmap */
 typedef struct prxmap
@@ -417,5 +437,29 @@ typedef struct prheader
 	long pr_nent;
 	long pr_entsize;
 } prheader_t;
+
+/* based on sig*set */
+
+#define prfillset(set) \
+	{ int __cnt = sizeof (*set) / sizeof (uint32_t); \
+	while (--__cnt >= 0) ((uint32_t *)(set))[__cnt] = 0xFFFFFFFF; }
+
+#define premptyset(set) \
+	{ int __cnt = sizeof (*set) / sizeof (uint32_t); \
+	while (--__cnt >= 0) ((uint32_t *)(set))[__cnt] = 0; }
+
+#define __prmask(flag) \
+  (((uint32_t) 1) << (((flag) - 1) % (8 * sizeof (uint32_t))))
+
+# define __prword(flag)	(((flag) - 1) / (8 * sizeof (uint32_t)))
+
+#define praddset(set, flag) \
+    (((uint32_t *)(set))[__prword (flag)] |= __prmask (flag))
+
+#define prdelset(set, flag) \
+    (((uint32_t *)(set))[__prword (flag)] &= ~__prmask (flag))
+
+#define prismember(set, flag) \
+	((((uint32_t *)(set))[__prword (flag)] & __prmask (flag)) ? 1 : 0)
 
 #endif /* _SYS_PROCFS_H */
