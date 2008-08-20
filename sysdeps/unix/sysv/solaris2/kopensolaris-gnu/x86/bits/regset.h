@@ -44,13 +44,17 @@ typedef struct __fpu
 	} __fp_reg_set;
 } fpregset_t;
 
+#ifdef __amd64
 # define _NGREG		28
-# define NGREG		_NGREG
+#else
+# define _NREG		19
+#endif
+#define NGREG		_NGREG
 
 typedef int greg_t;
 
-# define prgregset_t	gregset_t
-# define prfpregset_t	fpregset_t
+#define prgregset_t		gregset_t
+#define prfpregset_t	fpregset_t
 
 typedef greg_t gregset_t[_NGREG];
 
