@@ -21,10 +21,11 @@
 
 #include "pthreadP.h"
 #include <lowlevellock.h>
+#include <not-cancel.h>
 
 unsigned long int __fork_generation attribute_hidden;
 
-lll_define_initialized (static, once_lock);
+static pthread_mutex_t once_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
 static void
 clear_once_control (void *arg)
@@ -32,7 +33,7 @@ clear_once_control (void *arg)
   pthread_once_t *once_control = (pthread_once_t *) arg;
 
   *once_control = 0;
-  lll_unlock (once_lock, LLL_PRIVATE);
+  (void)pthread_mutex_unlock (&once_lock);
 }
 
 /* XXX: This code breaks with fork - but so does sun's libc.  */
@@ -44,7 +45,7 @@ __pthread_once (once_control, init_routine)
 {
   if (*once_control == PTHREAD_ONCE_INIT)
     {
-      lll_lock (once_lock, LLL_PRIVATE);
+      (void)pthread_mutex_lock (&once_lock);
 
       if (*once_control == PTHREAD_ONCE_INIT)
 	{
@@ -60,7 +61,7 @@ __pthread_once (once_control, init_routine)
 	  *once_control = !PTHREAD_ONCE_INIT;
 	}
 
-      lll_unlock (once_lock, LLL_PRIVATE);
+      pthread_mutex_unlock (&once_lock);
     }
 
   return 0;
