@@ -449,9 +449,9 @@ typedef struct prheader
 	while (--__cnt >= 0) ((uint32_t *)(set))[__cnt] = 0; }
 
 #define __prmask(flag) \
-  (((uint32_t) 1) << (((flag) - 1) % (8 * sizeof (uint32_t))))
+  (((uint32_t) 1) << (((flag) - 1) % (8 * (int)sizeof (uint32_t))))
 
-# define __prword(flag)	(((flag) - 1) / (8 * sizeof (uint32_t)))
+# define __prword(flag)	(((flag) - 1) / (8 * (int)sizeof (uint32_t)))
 
 #define praddset(set, flag) \
     (((uint32_t *)(set))[__prword (flag)] |= __prmask (flag))
