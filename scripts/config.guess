@@ -828,7 +828,7 @@ EOF
 	# the GNU system
 	echo `echo ${UNAME_MACHINE}|sed -e 's,[-/].*$,,'`-unknown-gnu`echo ${UNAME_RELEASE}|sed -e 's,/.*$,,'`
 	exit ;;
-    *:GNU/OpenSolaris:*:*)
+    *:GNU/kOpenSolaris:*:*)
 	# other systems with GNU libc and userland
 	echo ${UNAME_MACHINE}-unknown-`echo ${UNAME_SYSTEM} | sed 's,^[^/]*/,,' | tr '[A-Z]' '[a-z]'`-gnu
 	exit ;;
