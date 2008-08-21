@@ -29,6 +29,9 @@ pthread_mutex_getprioceiling (mutex, prioceiling)
      const pthread_mutex_t *mutex;
      int *prioceiling;
 {
-  // TODO
-  return ENOSYS;
+  if (mutex->mutex_type & LOCK_PRIO_PROTECT == 0)
+    return EINVAL;
+
+  *prioceiling = mutex->mutex_ceiling;
+  return 0;
 }
