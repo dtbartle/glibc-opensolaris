@@ -30,6 +30,7 @@
 #include <socket_priv.h>
 
 static void (*sighandlers[_NSIG])(int, struct siginfo *, void *) = {0};
+static sigset_t sigmasks[_NSIG];
 __libc_lock_define_initialized (, signal_lock);
 
 /* Solaris expects the ucontext_t to be switched back at the end
@@ -73,17 +74,20 @@ __libc_sigaction (sig, act, oact)
   __libc_lock_lock (signal_lock);
 
   void (*old_sigaction)(int, siginfo_t *, void *) = sighandlers[sig];
+  sigset_t old_sigmask = sigmasks[sig];
   if (act)
     {
       struct sigaction _act = *act;
       if (act->sa_handler != SIG_DFL && act->sa_handler != SIG_IGN)
         {
           _act.sa_sigaction = __sighandler;
+          (void)sigfillset (&_act.sa_mask);
         }
       result = INLINE_SYSCALL (sigaction, 3, sig, &_act, oact);
-      if(result != -1)
+      if (result == 0)
         {
           sighandlers[sig] = act->sa_sigaction;
+          sigmasks[sig] = act->sa_mask;
         }
     }
 
@@ -92,11 +96,12 @@ __libc_sigaction (sig, act, oact)
       /* If we called sigaction above don't call it again.  */
       if (!act)
         result = INLINE_SYSCALL(sigaction, 3, sig, NULL, oact);
-      if (result != -1)
+      if (result == 0)
         {
           if (oact->sa_handler != SIG_DFL && oact->sa_handler != SIG_IGN)
             {
               oact->sa_sigaction = old_sigaction;
+              oact->sa_mask = old_sigmask;
             }
         }
     }
@@ -124,19 +129,19 @@ void __sighandler (int sig, siginfo_t *sip, void *uvp)
   if (sig == SIGPIPE && SIGPIPE_IS_DISABLED)
     return;
 
-  /* Block all signals and lock. */
-  rval_t oldmask;
-  oldmask.rval64 = INLINE_SYSCALL (lwp_sigmask, 3, SIG_SETMASK,
-      (unsigned int)-1, (unsigned int)-1);
+  /* All signals are blocked (we passed a filled sa_mask above).  */
+
   __libc_lock_lock (signal_lock);
 
   void (*handler)(int, siginfo_t *, void *) = sighandlers[sig];
+  sigset_t mask = sigmasks[sig];
   ucontext_t *uctx = (ucontext_t*)uvp;
 
-  /* Unlock and restore signals.  */
   __libc_lock_unlock (signal_lock);
+
+  /* Set signals to wait sigaction wants.  */
   (void)INLINE_SYSCALL (lwp_sigmask, 3, SIG_SETMASK,
-      (unsigned int)oldmask.rval1, (unsigned int)oldmask.rval2);
+      (unsigned int)mask.__sigbits[0], (unsigned int)mask.__sigbits[1]);
 
   (*handler)(sig, sip, uvp);
 
