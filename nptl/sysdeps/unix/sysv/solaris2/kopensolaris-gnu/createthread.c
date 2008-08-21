@@ -29,6 +29,7 @@
 #include <sys/segments.h>
 #include <inline-syscall.h>
 #include <sched_priv.h>
+#include <createthread_arch.c>
 
 DECLARE_INLINE_SYSCALL (int, lwp_create, ucontext_t *ucp, int flags,
     pthread_t *new_lwp);
