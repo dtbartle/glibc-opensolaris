@@ -39,7 +39,6 @@ These are solaris extensions that we should implement:
   _sharefs
   pset_* (sys/pset.h)
   _cladm (sys/cladm.h)
-  uadmin (sys/uadmin.h)
   uucopy, uucopystr (strings.h)
   acct (sys/acct.h)
   acctctl (sys/acctctl.h)
@@ -55,11 +54,7 @@ Insert into headers:
   strlcpy, strlcat (strings.h)
   getvmusage (sys/vm_usage.h)
 
-Use pthread_cleanup_push/pthread_cleanup_pop
-
 INVALID_NOT_TERMINATED_TD_P expects to succeed on terminated threads
-
-getpriority and setpriority share common code - refactor
 
 More __builtin_expect's
 
@@ -78,3 +73,9 @@ pthread_rwlock_*lock are not cancellation points - but we call
 Since we now use an entirely libc-based rwlock implementation we should be able
   to support PTHREAD_RWLOCK_PREFER_READER_NP, PTHREAD_RWLOCK_PREFER_WRITER_NP,
   and PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP.
+
+Use syscall instead of INLINE_SYSCALL; also create __syscall_errval
+
+Get rid of all saved_errno usage
+
+More clocks in pthread_condattr_setclock
