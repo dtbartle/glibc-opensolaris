@@ -23,38 +23,14 @@
 #include <sys/priocntl.h>
 #include <limits.h>
 #include <errno.h>
+#include <priority_priv.h>
 
 int
 getpriority (enum __priority_which which, id_t who)
 {
-  /* convert from PRIO_* to P_* */
-  idtype_t type;
-  switch(which)
-    {
-    case PRIO_PROCESS:
-      type = P_PID;
-    case PRIO_PGRP:
-      type = P_PGID;
-    case PRIO_USER:
-      type = P_UID;
-    case PRIO_GROUP:
-      type = P_GID;
-    case PRIO_SESSION:
-      type = P_SID;
-    case PRIO_LWP:
-      type = P_LWPID;
-    case PRIO_TASK:
-      type = P_TASKID;
-    case PRIO_PROJECT:
-      type = P_PROJID;
-    case PRIO_ZONE:
-      type = P_ZONEID;
-    case PRIO_CONTRACT:
-      type = P_CTID;
-    default:
-      __set_errno(EINVAL);
-      return -1;
-    }
+  idtype_t type = __prio_to_p (which);
+  if (type == -1)
+    return -1;
 
   if(who == 0)
     who = P_MYID;
