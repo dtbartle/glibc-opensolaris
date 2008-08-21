@@ -86,8 +86,8 @@ struct pthread_condattr
    of bits for other purposes.  COND_CLOCK_BITS is the number
    of bits needed to represent the ID of the clock.  COND_NWAITERS_SHIFT
    is the number of bits reserved for other purposes like the clock.  */
-#define COND_CLOCK_BITS		1
-#define COND_NWAITERS_SHIFT	1
+#define COND_CLOCK_BITS		3
+#define COND_NWAITERS_SHIFT	3
 
 
 /* Read-write lock variable attribute data structure.  */
