@@ -20,7 +20,7 @@
 #include <pthreadP.h>
 #include <thread.h>
 
-int thr_setconcurrency (void)
+int thr_getconcurrency (void)
 {
   return pthread_getconcurrency ();
 }
