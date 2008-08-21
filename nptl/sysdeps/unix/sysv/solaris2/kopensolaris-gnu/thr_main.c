@@ -22,5 +22,5 @@
 
 int thr_main (void)
 {
-  return THREAD_GETEMM (THREAD_SELF, main_thread);
+  return THREAD_GETMEM (THREAD_SELF, main_thread);
 }
