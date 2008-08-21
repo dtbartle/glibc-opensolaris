@@ -57,10 +57,10 @@ int __mutex_lock_fast (mutex_t *mutex, bool try)
         }
     }
   else if ((mutex->mutex_type & LOCK_RECURSIVE) &&
-       mutex->mutex_lockbyte == LOCKBYTE_SET &&
-     ((mutex->mutex_type & LOCK_SHARED) == 0 ||
-       mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-       mutex->mutex_owner == (uintptr_t)THREAD_SELF)
+            mutex->mutex_lockbyte == LOCKBYTE_SET &&
+          ((mutex->mutex_type & LOCK_SHARED) == 0 ||
+            mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
+            mutex->mutex_owner == (uintptr_t)THREAD_SELF)
     {
       /* Recursively held lock.  */
       if (mutex->mutex_rcount == RECURSION_MAX)
@@ -102,10 +102,10 @@ int __mutex_unlock_fast (mutex_t *mutex)
       return 0;
     }
   else if ((mutex->mutex_type & LOCK_ERRORCHECK) &&
-          ((mutex->mutex_lockbyte != LOCKBYTE_SET ||
-          ((mutex->mutex_type & LOCK_SHARED) &&
+         (((mutex->mutex_type & LOCK_SHARED) &&
             mutex->mutex_ownerpid != THREAD_GETMEM (THREAD_SELF, pid)) ||
-            mutex->mutex_owner != (uintptr_t)THREAD_SELF)))
+            mutex->mutex_owner != (uintptr_t)THREAD_SELF ||
+            mutex->mutex_lockbyte != LOCKBYTE_SET))
     {
       /* error checking: lock not held by this thread */
       return EPERM;
