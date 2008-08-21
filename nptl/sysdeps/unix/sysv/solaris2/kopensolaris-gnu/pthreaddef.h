@@ -19,12 +19,14 @@
 
 /* Register atfork handlers to protect signal_lock.  */
 extern void sigaction_atfork (void);
-#define PLATFORM_PTHREAD_INIT \
-    sigaction_atfork ();
+#define PLATFORM_PTHREAD_INIT               \
+    sigaction_atfork ();                    \
+    THREAD_SETMEM (pd, main_thread, 1);
 
 /* Additional descr fields.  */
-# define PLATFORM_DESCR_FIELDS \
-    int sigpipe_disabled;
+# define PLATFORM_DESCR_FIELDS              \
+    int sigpipe_disabled;                   \
+    int main_thread;
 
 /* Use tid as pthread_t (instead of descr).  */
 #define PTHREAD_T_IS_TID

@@ -1,8 +1,6 @@
-/* Copyright (C) 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@redhat.com>, 2003.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,19 +17,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <assert.h>
-#include <errno.h>
-#include <stdbool.h>
-#include <time.h>
-#include <sysdep.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
+#include <thread.h>
 
-
-int
-pthread_condattr_setclock (attr, clock_id)
-     pthread_condattr_t *attr;
-     clockid_t clock_id;
+int thr_main (void)
 {
-  // TODO
-  return ENOSYS;
+  return THREAD_GETMEM (THREAD_SELF, main_thread);
 }

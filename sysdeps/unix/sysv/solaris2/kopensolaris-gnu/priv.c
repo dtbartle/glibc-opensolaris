@@ -31,7 +31,7 @@ DECLARE_INLINE_SYSCALL (int, privsys, int code, priv_op_t op,
 
 __libc_lock_define (static, privimplinfo_lock);
 
-static priv_impl_info_t *__info; // TODO: free-on-exit attribute
+static priv_impl_info_t *__info; // TODO: need to free on exit
 
 int __getprivimplinfo_cached (priv_impl_info_t **info)
 {
@@ -54,7 +54,7 @@ int __getprivimplinfo_cached (priv_impl_info_t **info)
     }
 
   /* alloc and get full priv_impl_info_t */
-  size_t info_size = _info.priv_headersize + _info.priv_globalinfosize;
+  size_t info_size = PRIV_IMPL_INFO_SIZE (&_info);
   __info = malloc (info_size);
   result = INLINE_SYSCALL (privsys, 6, PRIVSYS_GETIMPLINFO, 0, 0, info,
       info_size, 0);

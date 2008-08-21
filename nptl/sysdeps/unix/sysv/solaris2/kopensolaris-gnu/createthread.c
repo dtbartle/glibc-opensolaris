@@ -28,6 +28,8 @@
 #include <sys/regset.h>
 #include <sys/segments.h>
 #include <inline-syscall.h>
+#include <sched_priv.h>
+#include <createthread_arch.c>
 
 DECLARE_INLINE_SYSCALL (int, lwp_create, ucontext_t *ucp, int flags,
     pthread_t *new_lwp);
@@ -47,32 +49,11 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
   assert (pd->header.tcb != NULL);
 #endif
 
+  /* Do arch-specific creation.  */
   ucontext_t ctx = {0};
-
-  /* Clone the segment registers (except gs - see below).  */
-  ucontext_t _ctx;
-  _ctx.uc_flags = UC_CPU;
-  if (getcontext(&_ctx) != 0)
-    return errno;
-  ctx.uc_mcontext.gregs[CS] = _ctx.uc_mcontext.gregs[CS];
-  ctx.uc_mcontext.gregs[DS] = _ctx.uc_mcontext.gregs[DS];
-  ctx.uc_mcontext.gregs[ES] = _ctx.uc_mcontext.gregs[ES];
-  ctx.uc_mcontext.gregs[FS] = _ctx.uc_mcontext.gregs[FS];
-  ctx.uc_mcontext.gregs[SS] = _ctx.uc_mcontext.gregs[SS];
-
-  /* Setup the stack (note that it grows down).  */
-  uint32_t *stack_ptr = (uint32_t *)((uintptr_t)((uint32_t *)stackaddr - 1) &
-    ~(STACK_ALIGN - 1)) + 1;
-  *--stack_ptr = (uint32_t)pd; /* arg 1 */
-  *--stack_ptr = 0; /* return addr (thread_start never returns) */
-  ctx.uc_mcontext.gregs[UESP] = (greg_t)stack_ptr;
-  ctx.uc_mcontext.gregs[EBP] = (greg_t)(stack_ptr + 2); // TODO
-  ctx.uc_mcontext.gregs[EIP] = (greg_t)start_thread;
-  ctx.uc_flags |= UC_CPU;
-
-  /* This is a hack to get the kernel to set gs for us.  */
-  ctx.uc_mcontext.gregs[GS] = (greg_t)LWPGS_SEL;
-  ctx.uc_mcontext.gregs[ESP] = (greg_t)pd;
+  int errval = create_thread_arch (&ctx, pd, attr, STACK_VARIABLES_ARGS);
+  if (errval != 0)
+    return errval;
 
   /* One more thread.  We cannot have the thread do this itself, since it
      might exist but not have been scheduled yet by the time we've returned
@@ -86,21 +67,40 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
 
   /* We set the thread to be initially suspended so that we can set
      scheduling magic.  */
-  int lwp_flags = THR_SUSPENDED |
+  int lwp_flags =
       ((attr->flags & ATTR_FLAG_DAEMON) ? THR_DAEMON : 0) |
       ((attr->flags & ATTR_FLAG_DETACHSTATE) ? THR_DETACHED : 0);
-  int errval = INLINE_SYSCALL (lwp_create, 3, &ctx, lwp_flags, &pd->tid);
-  if (errval == 0)
+  if (attr->flags & ATTR_FLAG_THR_CREATE == 0)
+    lwp_flags |= THR_SUSPENDED;
+  errval = INLINE_SYSCALL (lwp_create, 3, &ctx, lwp_flags, &pd->tid);
+  if (errval == 0 && (attr->flags & ATTR_FLAG_THR_CREATE) == 0)
     {
-      // TODO: set scheduling
+      /* Set scheduling.  */
+      if (attr->flags & (ATTR_FLAG_SCHED_SET | ATTR_FLAG_POLICY_SET))
+        {
+          int policy, priority;
+          errval = __sched_getscheduler_id (P_LWPID, pd->tid,
+            &policy, &priority);
+          if (errval == 0)
+            {
+              if (attr->flags & ATTR_FLAG_SCHED_SET)
+                priority = attr->schedparam.__sched_priority;
+              if (attr->flags & ATTR_FLAG_POLICY_SET)
+                policy = attr->schedpolicy;
 
+              errval = __sched_setscheduler_id (P_LWPID, pd->tid,
+                policy, priority);
+            }
+
+          if (errval != 0)
+            errval = EPERM;
+        }
+
+      /* Resume thread if requested.  */
       if (errval == 0)
         {
-          /* Resume thread if requested.  */
           if (!(attr->flags & ATTR_FLAG_SUSPENDED))
-            {
-              errval = INLINE_SYSCALL (lwp_continue, 1, pd->tid);
-            }
+            errval = INLINE_SYSCALL (lwp_continue, 1, pd->tid);
         }
 
       /* Kill the thread if we didn't succeed above.  */
@@ -120,5 +120,5 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
         __deallocate_stack (pd);
     }
 
-    return errval;
+  return errval;
 }

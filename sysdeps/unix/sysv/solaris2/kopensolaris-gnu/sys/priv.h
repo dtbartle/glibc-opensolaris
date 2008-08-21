@@ -21,6 +21,7 @@
 #define _SYS_PRIV_H
 
 #include <sys/types.h>
+#include <sys/procfs.h>
 
 /* privsys codes */
 #define	PRIVSYS_SETPPRIV	0
@@ -55,6 +56,9 @@ typedef struct priv_impl_info
 	uint32_t priv_globalinfosize;
 } priv_impl_info_t;
 
+#define PRIV_IMPL_INFO_SIZE(p) \
+	((p)->priv_headersize + (p)->priv_globalinfosize)
+
 typedef struct priv_info
 {
 	uint32_t priv_info_type;
@@ -73,5 +77,12 @@ typedef struct priv_info_names
 	int cnt;
 	char names[1];
 } priv_info_names_t;
+
+#define PRIV_PRPRIV_INFO_OFFSET(p) \
+	(sizeof (prpriv_t) + sizeof (priv_chunk_t)) * \
+	((p)->pr_nsets * (p)->pr_setsize - 1)
+
+#define PRIV_PRPRIV_SIZE(p) \
+	(PRIV_PRPRIV_INFO_OFFSET(p) + (p)->pr_infosize)
 
 #endif /* _SYS_PRIV_H */

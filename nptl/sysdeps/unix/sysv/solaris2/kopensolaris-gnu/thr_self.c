@@ -24,5 +24,5 @@
 
 thread_t thr_self (void)
 {
-    return pthread_self ();
+  return pthread_self ();
 }

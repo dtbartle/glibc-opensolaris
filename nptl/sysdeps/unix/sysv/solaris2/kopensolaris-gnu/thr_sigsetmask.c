@@ -1,6 +1,6 @@
 /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,32 +17,13 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <sys/procset.h>
-#include <sys/priocntl.h>
-#include <errno.h>
-#include <priority_priv.h>
+#include <pthreadP.h>
+#include <thread.h>
 
-int
-setpriority (enum __priority_which which, id_t who, int prio)
+int thr_sigsetmask (how, set, oset)
+      int how;
+      const sigset_t *set;
+      sigset_t *oset;
 {
-  idtype_t type = __prio_to_p (which);
-  if (type == -1)
-    return -1;
-
-  if(who == 0)
-    who = P_MYID;
-
-  if(prio > NZERO)
-    prio = NZERO;
-  else if(prio < NZERO)
-    prio = -NZERO;
-
-  pcnice_t nice;
-  nice.pc_val = prio;
-  nice.pc_op = PC_SETNICE;
-  return priocntl (type, who, PC_DONICE, &nice);
+  return pthread_sigmask (how, set, oset);
 }
-
-libc_hidden_def (setpriority)

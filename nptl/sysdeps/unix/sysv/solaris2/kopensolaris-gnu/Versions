@@ -34,6 +34,6 @@ libpthread {
     thr_create; thr_join; thr_exit; thr_suspend; thr_continue; thr_self;
     thr_setconcurrency; thr_getconcurrency; thr_main; thr_kill; thr_yield;
     thr_setprio; thr_getprio; thr_keycreate; thr_keycreate_once; thr_min_stack;
-    thr_setspecific; thr_sigsetmask; thr_stksegment; thr_main;
+    thr_getspecific; thr_setspecific; thr_sigsetmask; thr_stksegment; thr_main;
   }
 }

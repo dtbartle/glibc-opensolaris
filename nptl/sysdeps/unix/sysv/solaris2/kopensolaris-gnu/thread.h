@@ -66,7 +66,7 @@ extern int thr_setspecific (thread_key_t, void *);
 
 extern int thr_getspecific (thread_key_t, void **);
 
-extern size_t thr_min_stack (void);
+extern int thr_sigsetmask (int how, const sigset_t *set, sigset_t *oset);
 
 __END_DECLS
 

@@ -46,6 +46,8 @@ __pthread_cond_init (cond, cond_attr)
   cond->cond_type = (icond_attr->value & 1) ?
       PTHREAD_PROCESS_SHARED : PTHREAD_PROCESS_PRIVATE;
   cond->cond_magic = COND_MAGIC;
+  cond->cond_clockid = (((icond_attr->value) >> 1)
+      & ((1 << COND_NWAITERS_SHIFT) - 1));
 
   return 0;
 }

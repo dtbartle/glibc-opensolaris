@@ -1,4 +1,4 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+  /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>.
 
@@ -21,28 +21,35 @@
 #include <sys/resource.h>
 #include <sys/procset.h>
 #include <sys/priocntl.h>
-#include <errno.h>
-#include <priority_priv.h>
 
-int
-setpriority (enum __priority_which which, id_t who, int prio)
+static inline
+idtype_t __prio_to_p (enum __priority_which which)
 {
-  idtype_t type = __prio_to_p (which);
-  if (type == -1)
-    return -1;
-
-  if(who == 0)
-    who = P_MYID;
-
-  if(prio > NZERO)
-    prio = NZERO;
-  else if(prio < NZERO)
-    prio = -NZERO;
-
-  pcnice_t nice;
-  nice.pc_val = prio;
-  nice.pc_op = PC_SETNICE;
-  return priocntl (type, who, PC_DONICE, &nice);
+  /* convert from PRIO_* to P_* */
+  switch(which)
+    {
+    case PRIO_PROCESS:
+      return P_PID;
+    case PRIO_PGRP:
+      return P_PGID;
+    case PRIO_USER:
+      return P_UID;
+    case PRIO_GROUP:
+      return P_GID;
+    case PRIO_SESSION:
+      return P_SID;
+    case PRIO_LWP:
+      return P_LWPID;
+    case PRIO_TASK:
+      return P_TASKID;
+    case PRIO_PROJECT:
+      return P_PROJID;
+    case PRIO_ZONE:
+      return P_ZONEID;
+    case PRIO_CONTRACT:
+      return P_CTID;
+    default:
+      __set_errno(EINVAL);
+      return -1;
+    }
 }
-
-libc_hidden_def (setpriority)

@@ -38,7 +38,7 @@ int thr_create (void *stack_address, size_t stack_size,
   iattr.guardsize = __getpagesize ();
   iattr.stackaddr = stack_address;
   iattr.stacksize = stack_size;
-  iattr.flags = ATTR_FLAG_STACKADDR |
+  iattr.flags = ATTR_FLAG_STACKADDR | ATTR_FLAG_THR_CREATE |
     ((flags & THR_DETACHED) ? ATTR_FLAG_DETACHSTATE : 0) |
     ((flags & THR_SUSPENDED) ? ATTR_FLAG_SUSPENDED : 0) |
     ((flags & THR_DAEMON) ? ATTR_FLAG_DAEMON : 0);

@@ -29,6 +29,10 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#ifndef NAME_MAX
+#define NAME_MAX 512
+#endif
+
 
 // #define DEBUG
 #ifdef DEBUG

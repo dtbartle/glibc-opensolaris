@@ -35,6 +35,28 @@ typedef struct
 	int pi_clock;
 } processor_info_t;
 
+/* p_online flag values */
+enum
+{
+	P_OFFLINE = 1,
+#define P_OFFLINE	P_OFFLINE
+	P_ONLINE = 2,
+#define P_ONLINE	P_ONLINE
+	P_STATUS = 3,
+#define P_STATUS	P_STATUS
+	P_FAULTED = 4,
+#define P_FAULTED	P_FAULTED
+#define P_BAD		P_FAULTED
+	P_POWEROFF = 5,
+#define P_POWEROFF	P_POWEROFF
+	P_NOINTR = 6,
+#define P_NOINTR	P_NOINTR
+	P_SPARE = 7,
+#define P_SPARE		P_SPARE
+	P_FORCED = 0x10000000
+#define P_FORCED	P_FORCED
+};
+
 __BEGIN_DECLS
 
 extern int processor_info (processorid_t processorid, processor_info_t *infop);
