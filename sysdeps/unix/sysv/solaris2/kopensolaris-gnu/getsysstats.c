@@ -1,5 +1,6 @@
 /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -16,51 +17,38 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _BITS_REGSET_H
-#define _BITS_REGSET_H	1
+#include <inline-syscall.h>
+#include <sys/sysconfig.h>
 
-#include <features.h>
-#include <bits/types.h>
+DECLARE_INLINE_SYSCALL (long, sysconfig, int which);
 
-typedef struct __fpu
+int
+__get_nprocs ()
 {
-	union
-	{
-		struct __fpchip_state
-		{
-			__uint32_t __state[27];
-			__uint32_t __status;
-			__uint32_t __mxcsr;
-			__uint32_t __xstatus;
-			__uint32_t __pad[2];
-			__uint32_t __xmm[4][8];
-		} __fpchip_state;
-		struct __fp_emul_space
-		{
-			__uint8_t __fp_emul[246];
-			__uint8_t __fp_epad[2];
-		} __fp_emul_space;
-		__uint32_t __f_fpregs[95];
-	} __fp_reg_set;
-} fpregset_t;
+  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_NPROC_ONLN);
+}
+weak_alias (__get_nprocs, get_nprocs)
 
-#ifdef __amd64
-# define _NGREG		28
-#else
-# define _NGREG		19
-#endif
-#define NGREG		_NGREG
 
-typedef int greg_t;
+int
+__get_nprocs_conf ()
+{
+  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_NPROC_CONF);
+}
+weak_alias (__get_nprocs_conf, get_nprocs_conf)
 
-#define prgregset_t		gregset_t
-#define prfpregset_t	fpregset_t
 
-typedef greg_t gregset_t[_NGREG];
+long int
+__get_phys_pages ()
+{
+  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_PHYS_PAGES);
+}
+weak_alias (__get_phys_pages, get_phys_pages)
 
-typedef struct {
-    gregset_t gregs;
-    fpregset_t fpregs;
-} mcontext_t;
 
-#endif /* _SYS_REGSET_H */
+long int
+__get_avphys_pages ()
+{
+  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_AVPHYS_PAGES);
+}
+weak_alias (__get_avphys_pages, get_avphys_pages)

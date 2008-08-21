@@ -1,5 +1,4 @@
-/* Copyright (C) 1991,1992,1995-1997,2000,2002,2004,2008
-   Free Software Foundation, Inc.
+/* Copyright (C) 2000, 2002, 2004, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,24 +16,24 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
-#include <unistd.h>
-#include <sys/param.h>
-#include <sys/sysconfig.h>
+#include <time.h>
+
 #include <ldsodefs.h>
+
+#include <inline-syscall.h>
+#include <sys/sysconfig.h>
 
 DECLARE_INLINE_SYSCALL (long, sysconfig, int which);
 
+/* Return frequency of times().  */
 int
-__getpagesize ()
+__getclktck ()
 {
 #ifdef HAVE_AUX_VECTOR
-  /* Did the kernel pass the pagesize in the elf header? */
-  if (GLRO(dl_pagesize) != 0)
+  /* Did the kernel pass the clktck in the elf header? */
+  if (GLRO(dl_clktck) != 0)
     return GLRO(dl_pagesize);
 #endif
 
-  return (int)INLINE_SYSCALL (sysconfig, 1, _CONFIG_PAGESIZE);
+  return (int)INLINE_SYSCALL (sysconfig, 1, _CONFIG_CLK_TCK);
 }
-libc_hidden_def (__getpagesize)
-weak_alias (__getpagesize, getpagesize)

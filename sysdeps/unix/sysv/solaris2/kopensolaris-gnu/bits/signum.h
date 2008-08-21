@@ -85,5 +85,5 @@
 /* descr.h needs _NSIG */
 #if defined(_SIGNAL_H) || defined(__need_NSIG)
 #undef __need_NSIG
-# define _NSIG		65	/* Biggest signal number + 1 */
+# define _NSIG		49	/* Biggest signal number + 1 */
 #endif
