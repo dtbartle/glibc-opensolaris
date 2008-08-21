@@ -18,7 +18,7 @@ libpthread-routines += mutex_init mutex_lock mutex_trylock mutex_unlock \
     rw_trywrlock rw_timedrdlock rw_timedwrlock sema_init sema_destroy \
     sema_wait sema_trywait sema_post sema_timedwait thr_create thr_join \
     thr_exit thr_self thr_main thr_yield thr_sigsetmask thr_getspecific \
-    thr_setspecific thr_keycreate
+    thr_setspecific thr_keycreate thr_min_stack
 endif
 
 ifeq ($(subdir),posix)
