@@ -1,6 +1,6 @@
-/* Copyright (C) 1991,1992,1995-1997,2000,2002,2004,2008
-   Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,23 +18,12 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <unistd.h>
-#include <sys/param.h>
 #include <sys/sysconfig.h>
-#include <ldsodefs.h>
 
 DECLARE_INLINE_SYSCALL (long, sysconfig, int which);
 
-int
-__getpagesize ()
+long int
+__get_child_max (void)
 {
-#ifdef HAVE_AUX_VECTOR
-  /* Did the kernel pass the pagesize in the elf header? */
-  if (GLRO(dl_pagesize) != 0)
-    return GLRO(dl_pagesize);
-#endif
-
-  return (int)INLINE_SYSCALL (sysconfig, 1, _CONFIG_PAGESIZE);
+  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_CHILD_MAX);
 }
-libc_hidden_def (__getpagesize)
-weak_alias (__getpagesize, getpagesize)

@@ -95,3 +95,51 @@ reader-writer lock:
   process) of a reader-writer lock.
 
 [0] http://docs.sun.com/app/docs/doc/819-2243/rwlock-init-3c?a=view
+
+sysconf:
+
+  Many of the _SC_ sysconf values are obtained via the systemconf syscall. The
+  following is a table of mappings from _SC_ to _CONFIG_ values. The third
+  column lists the value returned by sysdeps/posix/sysconf.c.
+
+    _SC_CHILD_MAX           _CONFIG_CHILD_MAX           _get_child_max
+    _SC_CLK_TCK             _CONFIG_CLK_TCK             _getclktck
+    _SC_NGROUPS_MAX         _CONFIG_NGROUPS             NGROUPS_MAX
+    _SC_OPEN_MAX            _CONFIG_OPEN_FILES          __getdtablesize
+    _SC_PAGESIZE            _CONFIG_PAGESIZE            __getpagesize
+    _SC_XOPEN_VERSION       _CONFIG_XOPEN_VER           _XOPEN_VERSION
+    _SC_STREAM_MAX          _CONFIG_OPEN_FILES          STREAM_MAX
+    _SC_NPROCESSORS_CONF    _CONFIG_NPROC_CONF          __get_nprocs_conf
+    _SC_NPROCESSORS_ONLN    _CONFIG_NPROC_ONLN          __get_nprocs
+    _SC_NPROCESSORS_MAX     _CONFIG_NPROC_MAX
+    _SC_STACK_PROT          _CONFIG_STACK_PROT
+    _SC_AIO_LISTIO_MAX      _CONFIG_AIO_LISTIO_MAX      AIO_LISTIO_MAX
+    _SC_AIO_MAX             _CONFIG_AIO_MAX             AIO_MAX
+    _SC_AIO_PRIO_DELTA_MAX  _CONFIG_AIO_PRIO_DELTA_MAX  AIO_PRIO_DELTA_MAX
+    _SC_DELAYTIMER_MAX      _CONFIG_DELAYTIMER_MAX      DELAYTIMER_MAX
+    _SC_MQ_OPEN_MAX         _CONFIG_MQ_OPEN_MAX         MQ_OPEN_MAX
+    _SC_MQ_PRIO_MAX         _CONFIG_MQ_PRIO_MAX         MQ_PRIO_MAX
+    _SC_RTSIG_MAX           _CONFIG_RTSIG_MAX           RTSIG_MAX
+    _SC_SEM_NSEMS_MAX       _CONFIG_SEM_NSEMS_MAX       SEM_NSEMS_MAX
+    _SC_SEM_VALUE_MAX       _CONFIG_SEM_VALUE_MAX       SEM_VALUE_MAX
+    _SC_SIGQUEUE_MAX        _CONFIG_SIGQUEUE_MAX        SIGQUEUE_MAX
+    _SC_SIGRT_MAX           _CONFIG_SIGRT_MAX
+    _SC_SIGRT_MIN           _CONFIG_SIGRT_MIN
+    _SC_TIMER_MAX           _CONFIG_TIMER_MAX           TIMER_MAX
+    _SC_PHYS_PAGES          _CONFIG_PHYS_PAGES          __get_phys_pages
+    _SC_AVPHYS_PAGES        _CONFIG_AVPHYS_PAGES        __get_avphys_pages
+    _SC_COHER_BLKSZ         _CONFIG_COHERENCY
+    _SC_SPLIT_CACHE         _CONFIG_SPLIT_CACHE
+    _SC_ICACHE_SZ           _CONFIG_ICACHESZ
+    _SC_DCACHE_SZ           _CONFIG_DCACHESZ
+    _SC_ICACHE_LINESZ       _CONFIG_ICACHELINESZ
+    _SC_DCACHE_LINESZ       _CONFIG_DCACHELINESZ
+    _SC_ICACHE_BLKSZ        _CONFIG_ICACHEBLKSZ
+    _SC_DCACHE_BLKSZ        _CONFIG_DCACHEBLKSZ
+    _SC_DCACHE_TBLKSZ       _CONFIG_DCACHETBLKSZ
+    _SC_ICACHE_ASSOC        _CONFIG_ICACHE_ASSOC
+    _SC_DCACHE_ASSOC        _CONFIG_DCACHE_ASSOC
+    _SC_MAXPID              _CONFIG_MAXPID
+    _SC_CPUID_MAX           _CONFIG_CPUID_MAX
+    _SC_EPHID_MAX           _CONFIG_EPHID_MAX
+    _SC_SYMLOOP_MAX         _CONFIG_SYMLOOP_MAX         SYMLOOP_MAX
