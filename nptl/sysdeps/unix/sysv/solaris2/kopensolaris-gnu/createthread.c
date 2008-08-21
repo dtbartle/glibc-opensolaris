@@ -70,7 +70,7 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
   int lwp_flags =
       ((attr->flags & ATTR_FLAG_DAEMON) ? THR_DAEMON : 0) |
       ((attr->flags & ATTR_FLAG_DETACHSTATE) ? THR_DETACHED : 0);
-  if (attr->flags & ATTR_FLAG_THR_CREATE == 0)
+  if ((attr->flags & ATTR_FLAG_THR_CREATE) == 0)
     lwp_flags |= THR_SUSPENDED;
   errval = INLINE_SYSCALL (lwp_create, 3, &ctx, lwp_flags, &pd->tid);
   if (errval == 0 && (attr->flags & ATTR_FLAG_THR_CREATE) == 0)
