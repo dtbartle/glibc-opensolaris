@@ -17,17 +17,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
+#include <pthreadP.h>
+#include <thread.h>
 #include <sched.h>
 
-DECLARE_INLINE_SYSCALL (int, yield, void);
-
-/* Yield the processor.  */
-int
-__sched_yield (void)
+void thr_yield (void)
 {
-  return INLINE_SYSCALL (yield, 0);
+  sched_yield ();
 }
-libc_hidden_def (__sched_yield)
-
-weak_alias (__sched_yield, sched_yield)

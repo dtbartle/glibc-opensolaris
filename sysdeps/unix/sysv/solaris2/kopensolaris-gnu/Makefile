@@ -39,9 +39,6 @@ ifeq ($(subdir),resource)
 sysdep_routines += priocntl getvmusage
 sysdep_routines += sys_rusagesys sys_priocntlsys
 endif
-ifeq ($(subdir),rt)
-sysdep_routines += sys_yield
-endif
 ifeq ($(subdir),signal)
 sysdep_routines += sys_lwp_sigmask sys_sigqueue sys_sigtimedwait \
     sys_sigaction
