@@ -19,10 +19,11 @@
 
 #include <pthreadP.h>
 #include <thread.h>
-#include <errno.h>
-#include <inline-syscall.h>
 
-thread_t thr_self (void)
+int thr_sigsetmask (how, set, oset)
+      int how;
+      const sigset_t *set;
+      sigset_t *oset;
 {
-  return pthread_self ();
+  return pthread_sigmask (how, set, oset);
 }
