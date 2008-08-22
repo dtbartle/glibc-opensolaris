@@ -130,10 +130,6 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
 
   int errval = INLINE_SYSCALL (lwp_cond_wait, 4, cond, mutex, reltime, 1);
 
-  /* The docs say to return 0 when interrupted.  */
-  if (errval == EINTR)
-    errval = 0;
-
   if (cancel)
     {
       /* Disable asynchronous cancellation.  */
