@@ -24,6 +24,7 @@
 #include <bits/sigstack.h>
 #include <bits/sigset.h>
 #include <bits/regset.h>
+#include <features.h>
 
 typedef struct ucontext
 {
@@ -43,5 +44,18 @@ typedef struct ucontext
 #define UC_FPU		UC_MAU
 #define UC_MCONTEXT	(UC_CPU | UC_FPU)
 #define UC_ALL		(UC_SIGMASK | UC_STACK | UC_MCONTEXT)
+
+#define GETCONTEXT	0
+#define SETCONTEXT	1
+#define GETUSTACK	2
+#define SETUSTACK	3
+
+__BEGIN_DECLS
+
+int getustack (stack_t **);
+
+int setustack (stack_t *);
+
+__END_DECLS
 
 #endif /* _SYS_UCONTEXT_H */
