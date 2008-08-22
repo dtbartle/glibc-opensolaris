@@ -26,7 +26,8 @@ sysdep_headers += sys/feature_tests.h sys/lwp.h sys/mount.h sys/cred.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/stream.h sys/synch.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
-    sys/pset.h sys/priv.h sys/acl.h sys/procfs.h sys/reg.h
+    sys/pset.h sys/priv.h sys/acl.h sys/procfs.h sys/reg.h sys/bufmod.h \
+    sys/types32.h
 sysdep_headers += ucred.h priv.h bits/regset.h
 endif
 ifeq ($(subdir),dirent)
