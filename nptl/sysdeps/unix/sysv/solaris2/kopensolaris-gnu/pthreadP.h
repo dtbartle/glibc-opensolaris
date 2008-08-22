@@ -20,6 +20,9 @@
 #ifndef _OPENSOLARIS_PTHREADP_H
 #define _OPENSOLARIS_PTHREADP_H
 
+/* It is known that the first lwpid is 1.  */
+#define FIRST_THREAD_TID	1
+
 /* rwlock macros.  */
 #define _RWLOCK_WR_LOCK		0x80000000
 #define _RWLOCK_RD_MASK		0x7FFFFFFF
@@ -183,7 +186,8 @@ static inline int __internal_sched_getparam_2 (int *errval, pid_t pid,
 static inline int __pthread_setschedparam_internal (pthread_t threadid,
     int policy, const struct sched_param *param)
 {
-  return __sched_setscheduler_id (P_LWPID, threadid, policy, param);
+  return __sched_setscheduler_id (P_LWPID, threadid, policy,
+      param->__sched_priority);
 }
 
 static inline int __pthread_setschedprio_internal (pthread_t threadid,
@@ -195,7 +199,8 @@ static inline int __pthread_setschedprio_internal (pthread_t threadid,
 static inline int __pthread_getschedparam_internal (pthread_t threadid,
     int *policy, struct sched_param *param)
 {
-  return __sched_getscheduler_id (P_LWPID, threadid, policy, param);
+  return __sched_getscheduler_id (P_LWPID, threadid, policy,
+      &param->__sched_priority);
 }
 
 static inline int __cond_has_waiters (pthread_cond_t *cond)
