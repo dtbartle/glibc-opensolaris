@@ -50,7 +50,7 @@ int mutex_unlock (mutex)
            mutex->mutex_lockbyte == LOCKBYTE_SET &&
          ((mutex->mutex_type & LOCK_SHARED) == 0 ||
            mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-           mutex->mutex_owner == (uintptr_t)THREAD_SELF &&
+           mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid) &&
            mutex->mutex_rcount > 0)
         {
           --mutex->mutex_rcount;

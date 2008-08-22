@@ -29,7 +29,7 @@ __pthread_mutex_destroy (mutex)
      pthread_mutex_t *mutex;
 {
   if (mutex->mutex_lockbyte != LOCKBYTE_UNSET ||
-      mutex->mutex_cond_waiters != 0)
+      mutex->mutex_cond_waiters > 0)
     return EBUSY;
 
   if (mutex->mutex_type & LOCK_ROBUST)

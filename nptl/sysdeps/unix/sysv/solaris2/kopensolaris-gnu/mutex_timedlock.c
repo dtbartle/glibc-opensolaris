@@ -54,7 +54,7 @@ int __mutex_timedlock (mutex, abstime)
            mutex->mutex_lockbyte == LOCKBYTE_SET &&
          ((mutex->mutex_type & LOCK_SHARED) == 0 ||
            mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-           mutex->mutex_owner == (uintptr_t)THREAD_SELF)
+           mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid))
         {
           /* XXX: Solaris mutexes have no overflow check and don't know about
              EAGAIN; in practice overflow will not occur so we don't care.  */
@@ -87,13 +87,16 @@ int __mutex_timedlock (mutex, abstime)
       INTERNAL_SYSCALL_DECL (err);
       if (abstime)
         {
-          int result = INTERNAL_SYSCALL (nanosleep, err, 2, reltime, NULL);
-          errval = INTERNAL_SYSCALL_ERRNO (result, err) ? EINTR: ETIMEDOUT;
+          int result = INTERNAL_SYSCALL (nanosleep, err, 2, reltime, reltime);
+          do
+            errval = INTERNAL_SYSCALL_ERRNO (result, err) ? EINTR : ETIMEDOUT;
+          while (errval == EINTR);
         }
       else
         {
-          INTERNAL_SYSCALL (pause, err, 1, 0);
-          errval = EINTR;
+          do
+            INTERNAL_SYSCALL (pause, err, 1, 0);
+          while (1);
         }
     }
   if (errval != 0 && errval != EOWNERDEAD)
@@ -101,7 +104,7 @@ int __mutex_timedlock (mutex, abstime)
 
   /* The kernel does not set mutex_owner so we set it here.  */
   if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
-    mutex->mutex_owner = (uintptr_t)THREAD_SELF;
+    mutex->mutex_owner = THREAD_GETMEM (THREAD_SELF, tid);
 
   /* The kernel does not set the lockbyte for priority inherit mutexes.  */
   if (mutex->mutex_type & LOCK_PRIO_INHERIT)

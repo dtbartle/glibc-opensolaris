@@ -23,6 +23,7 @@ getpgid             - pgrpsys:getpgid       i:i         __getpgid           getp
 getpgrp             - pgrpsys:getpgrp       i:          __getpgrp           getpgrp
 getrlimit64         - getrlimit64           i:ip        getrlimit64
 getsid              - pgrpsys:getsid        i:i         __getsid            getsid
+getustack           - context:getustack     i:p         getustack
 getvmusage          - rusagesys:getvmusage  i:iipp      getvmusage
 gtty                - gtty                  i:ip        gtty
 issetugid           - privsys:issetugid     Ei:         issetugid
@@ -67,6 +68,7 @@ setpgrp             - pgrpsys:setpgrp       i:          __setpgrp           setp
 setpflags           - privsys:setpflags     i:ii        setpflags
 setrlimit64         - setrlimit64           i:ip        setrlimit64
 setsid              - pgrpsys:setsid        i:          __setsid            setsid
+setustack           - context:setustack     i:p         setustack
 shmat               - shmsys:shmat          p:ipi       shmat
 shmctl              - shmsys:shmctl         i:iip       shmctl
 shmdt               - shmsys:shmdt          i:p         shmdt

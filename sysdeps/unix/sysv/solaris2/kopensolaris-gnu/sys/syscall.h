@@ -194,6 +194,8 @@
 #define SYS_context         100
 # define SYS_SUB_getcontext     0
 # define SYS_SUB_setcontext     1
+# define SYS_SUB_getustack		2
+# define SYS_SUB_setustack		3
 #define SYS_evsys           101
 #define SYS_evtrapret       102
 #define SYS_statvfs         103
