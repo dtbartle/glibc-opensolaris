@@ -26,13 +26,12 @@
 #define mutex_flag			flags.flag1
 #define mutex_ceiling		flags.ceiling
 #define mutex_rcount		flags.mbcp_type_un.mtype_rcount.count_type2
-#define mutex_owner			data
+#define mutex_owner			data.data32.owner
 #define mutex_lockword32	lock.lock32.lockword
 #define mutex_lockword64	lock.owner64
 #define mutex_lockbyte		lock.lock64.pad[7]
 #define mutex_waiters		lock.lock64.pad[6]
-#define mutex_spinners		lock.lock64.pad[5]
-#define mutex_cond_waiters	mutex_spinners
+#define mutex_cond_waiters	data.data32.cond_waiters
 #define mutex_ownerpid		lock.lock32.ownerpid
 #define RECURSION_MAX		255 /* UCHAR_MAX */
 #define LOCKBYTE_SET        0x01

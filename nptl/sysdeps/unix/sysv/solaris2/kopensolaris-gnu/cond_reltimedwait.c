@@ -30,8 +30,7 @@ struct _condvar_cleanup_buffer
   int oldtype;
   cond_t *cond;
   mutex_t *mutex;
-  int old_cond_waiters;
-  int old_mutex_rcount;
+  uint8_t old_mutex_rcount;
 };
 
 void
@@ -44,8 +43,7 @@ __condvar_cleanup (void *arg)
 
   /* Note: we don't whether the mutex was unlocked by the kernel or not.  */
 
-  /* The condition variable is no longer using the mutex.  */
-  mutex->mutex_cond_waiters = cbuffer->old_cond_waiters;
+  /* TODO: mutex_cond_waiters needs to be a counter.  */
 
   int errval = 0;
   while (1)
@@ -53,14 +51,14 @@ __condvar_cleanup (void *arg)
       if (mutex->mutex_lockbyte == LOCKBYTE_SET &&
         ((mutex->mutex_type & LOCK_SHARED) == 0 ||
           mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-         (mutex->mutex_owner == (uintptr_t)THREAD_SELF))
+         (mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid)))
         {
           /* The lock is held by us (we didn't get signaled).  */
           break;
         }
-      else if (mutex->mutex_lockbyte == 0)
+      else
         {
-          /* The mutex is unlocked.  */
+          /* The mutex was unlocked so we claim it,  */
           errval = mutex_lock (mutex);
           break;
         }
@@ -69,6 +67,9 @@ __condvar_cleanup (void *arg)
   /* Restore the mutex_rcount.  */
   if (errval == 0)
     mutex->mutex_rcount = cbuffer->old_mutex_rcount;
+
+  /* The condition variable is no longer using the mutex.  */
+  atomic_decrement (&mutex->mutex_cond_waiters);
 }
 
 
@@ -88,7 +89,7 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
 
   if ((mutex->mutex_type & LOCK_ERRORCHECK) &&
      ((mutex->mutex_lockbyte != LOCKBYTE_SET ||
-       mutex->mutex_owner != (uintptr_t)THREAD_SELF ||
+       mutex->mutex_owner != THREAD_GETMEM (THREAD_SELF, tid) ||
      ((mutex->mutex_type & LOCK_SHARED) &&
        mutex->mutex_ownerpid != THREAD_GETMEM (THREAD_SELF, pid)))))
     {
@@ -99,7 +100,7 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
             mutex->mutex_lockbyte == LOCKBYTE_SET &&
           ((mutex->mutex_type & LOCK_SHARED) == 0 ||
             mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-            mutex->mutex_owner == (uintptr_t)THREAD_SELF &&
+            mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid) &&
             mutex->mutex_rcount > 0)
     {
       /* Recursively held lock. XXX: Using recursive mutexes with condition
@@ -110,9 +111,7 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
     }
 
   /* Mark the mutex as still in use.  */
-  cbuffer.old_cond_waiters = mutex->mutex_cond_waiters;
-  if (cbuffer.old_cond_waiters == 0)
-    mutex->mutex_cond_waiters = 1;
+  atomic_increment (&mutex->mutex_cond_waiters);
 
   /* Prepare structure passed to cancellation handler.  */
   cbuffer.cond = cond;
@@ -143,20 +142,18 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
      use __mutex_timedlock. Note that even if the above wait fails the kernel
      always unlocks the mutex.  */
   int errval2 = mutex_lock (mutex);
-  if (errval2 == EINTR)
-    return 0;
-  else if (errval2 != 0 && errval2 != EOWNERDEAD)
-    return errval2;
-  if (errval == 0)
+  if (errval2 == EOWNERDEAD)
+    errval = errval2;
+  else if (errval == 0)
     errval = errval2;
 
   /* Restore the mutex_rcount.  */
-  if (mutex->mutex_type & LOCK_RECURSIVE)
+  if ((errval2 == 0 || errval2 == EOWNERDEAD) &&
+        (mutex->mutex_type & LOCK_RECURSIVE))
     mutex->mutex_rcount = cbuffer.old_mutex_rcount;
 
   /* The condition variable is no longer using the mutex.  */
-  if (cbuffer.old_cond_waiters == 0)
-    mutex->mutex_cond_waiters = 0;
+  atomic_decrement (&mutex->mutex_cond_waiters);
 
   return errval;
 }

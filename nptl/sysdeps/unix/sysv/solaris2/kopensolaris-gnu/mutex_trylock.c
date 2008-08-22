@@ -50,7 +50,7 @@ int mutex_trylock (mutex)
            mutex->mutex_lockbyte == LOCKBYTE_SET &&
          ((mutex->mutex_type & LOCK_SHARED) == 0 ||
            mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-           mutex->mutex_owner == (uintptr_t)THREAD_SELF &&
+           mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid) &&
            mutex->mutex_rcount > 0)
         {
           if (mutex->mutex_rcount == RECURSION_MAX)
@@ -70,7 +70,7 @@ int mutex_trylock (mutex)
 
   /* The kernel does not set mutex_owner so we set it here.  */
   if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
-    mutex->mutex_owner = (uintptr_t)THREAD_SELF;
+    mutex->mutex_owner = THREAD_GETMEM (THREAD_SELF, tid);
 
   /* The kernel does not set the lockbyte for priority inherit mutexes.  */
   if (mutex->mutex_type & LOCK_PRIO_INHERIT)

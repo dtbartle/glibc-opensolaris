@@ -51,7 +51,14 @@ typedef struct _lwp_mutex
 		} lock32;
 		uint64_t owner64;
 	} lock;
-	uint64_t data;
+/* XXX: This is a non-standard use of data (see NOTES.opensolaris).  */
+	union {
+		uint64_t data64;
+		struct {
+			uint32_t owner;
+			uint32_t cond_waiters;
+		} data32;
+	} data;
 # ifdef __need_pthread_bits
 } pthread_mutex_t;
 # else
