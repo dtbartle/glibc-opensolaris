@@ -184,7 +184,10 @@ FORWARD (pthread_mutex_lock, (pthread_mutex_t *mutex), (mutex), 0)
 FORWARD (pthread_mutex_unlock, (pthread_mutex_t *mutex), (mutex), 0)
 
 
-FORWARD2 (pthread_self, pthread_t, (void), (), return 0)
+#ifndef FIRST_THREAD_TID
+# define FIRST_THREAD_TID
+#endif
+FORWARD2 (pthread_self, pthread_t, (void), (), return FIRST_THREAD_TID)
 
 
 FORWARD (pthread_setcancelstate, (int state, int *oldstate), (state, oldstate),
