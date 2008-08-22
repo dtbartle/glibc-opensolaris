@@ -58,17 +58,17 @@ int mutex_unlock (mutex)
         }
     }
 
-  int errval = INLINE_SYSCALL(lwp_mutex_unlock, 1, mutex);
+  /* The kernel does not clear mutex_owner so we clear it here.  */
+  if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
+    mutex->mutex_owner = 0;
+
+  int errval = INLINE_SYSCALL (lwp_mutex_unlock, 1, mutex);
   if (errval != 0)
     return errval;
 
   /* The kernel does not clear the lockbyte for priority inherit mutexes.  */
   if (mutex->mutex_type & LOCK_PRIO_INHERIT)
     mutex->mutex_lockbyte = 0;
-
-  /* The kernel does not clear mutex_owner so we clear it here.  */
-  if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
-    mutex->mutex_owner = 0;
 
   return errval;
 }

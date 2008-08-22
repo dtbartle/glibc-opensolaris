@@ -32,6 +32,8 @@ __pthread_cond_wait (cond, mutex)
   int errval = cond_reltimedwait ((cond_t *)cond, (mutex_t *)mutex, NULL);
   if (errval == ETIME)
     return ETIMEDOUT;
+  else if (errval == EINTR)
+    return 0;
   return errval;
 }
 

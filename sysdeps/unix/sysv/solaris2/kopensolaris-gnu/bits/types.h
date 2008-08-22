@@ -204,6 +204,7 @@ typedef __id_t	ctid_t;
 typedef short	pri_t;
 typedef long long		offset_t;
 typedef unsigned int	lwpid_t;
+typedef unsigned int	t_uint;
 
 /* OpenSolaris compatibility types.  */
 typedef unsigned short	o_mode_t;

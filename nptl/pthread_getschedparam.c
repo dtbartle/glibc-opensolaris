@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -19,7 +19,7 @@
 
 #include <errno.h>
 #include <string.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <lowlevellock.h>
 
 
@@ -29,7 +29,11 @@ __pthread_getschedparam (threadid, policy, param)
      int *policy;
      struct sched_param *param;
 {
+#ifndef PTHREAD_T_IS_TID
   struct pthread *pd = (struct pthread *) threadid;
+#else
+  struct pthread *pd = __find_in_stack_list (threadid);
+#endif
 
   /* Make sure the descriptor is valid.  */
   if (INVALID_TD_P (pd))
@@ -45,6 +49,7 @@ __pthread_getschedparam (threadid, policy, param)
      pthread_setschedparam to modify the scheduler setting it is not
      the library's problem.  In case the descriptor's values have
      not yet been retrieved do it now.  */
+#ifndef TPP_PTHREAD_SCHED
   if ((pd->flags & ATTR_FLAG_SCHED_SET) == 0)
     {
       if (__sched_getparam (pd->tid, &pd->schedparam) != 0)
@@ -61,6 +66,16 @@ __pthread_getschedparam (threadid, policy, param)
       else
 	pd->flags |= ATTR_FLAG_POLICY_SET;
     }
+#else
+  if ((pd->flags & (ATTR_FLAG_SCHED_SET | ATTR_FLAG_POLICY_SET)) == 0)
+    {
+      if (__pthread_getschedparam (pd->tid, &pd->schedpolicy, &pd->schedparam)
+            != 0)
+	result = 1;
+      else
+	pd->flags |= ATTR_FLAG_SCHED_SET | ATTR_FLAG_POLICY_SET;
+    }
+#endif
 
   if (result == 0)
     {

@@ -25,6 +25,10 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 
+#ifndef __NR_nanosleep
+#define __NR_nanosleep SYS_nanosleep
+#endif
+
 
 #define wait_code()							      \
   do {									      \
@@ -119,6 +123,8 @@ do_test (void)
       return 1;
     }
 
+  wait_code ();
+
 #ifdef WAIT_IN_CHILD
   int e = pthread_barrier_wait (&b);
   if (e != 0 && e != PTHREAD_BARRIER_SERIAL_THREAD)
@@ -177,6 +183,8 @@ do_test (void)
       return 1;
     }
 #endif
+
+  wait_code ();
 
   if (pthread_join (th, &r) != 0)
     {
