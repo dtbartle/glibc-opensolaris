@@ -57,7 +57,7 @@ int __rw_timedrdlock (rwlock, abstime)
       /* Wait for writer to wake us up.  */
       errval = __cond_reltimedwait_internal ((cond_t *)&rwlock->readercv,
           (mutex_t *)&rwlock->mutex, reltime, 0);
-      if (errval != 0)
+      if (errval != 0 && errval != EINTR)
         {
           (void)mutex_unlock (&rwlock->mutex);
           return errval;

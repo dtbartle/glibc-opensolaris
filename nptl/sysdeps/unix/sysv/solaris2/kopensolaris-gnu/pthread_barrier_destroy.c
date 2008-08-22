@@ -35,9 +35,13 @@ pthread_barrier_destroy (barrier)
     return EINVAL;
 
   /* Make sure barrier is not exiting.  */
-  while (ibarrier->flag & BARRIER_EXITING)
-    errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
-        (mutex_t *)&ibarrier->mutex, NULL, 0);
+  while (errval == 0 && (ibarrier->flag & BARRIER_EXITING))
+    {
+      errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
+          (mutex_t *)&ibarrier->mutex, NULL, 0);
+      if (errval == EINTR)
+        errval = 0;
+    }
 
   if (__builtin_expect (ibarrier->left != ibarrier->init_count, 0))
     errval = EBUSY;

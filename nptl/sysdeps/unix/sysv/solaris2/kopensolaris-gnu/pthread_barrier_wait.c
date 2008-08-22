@@ -38,8 +38,15 @@ pthread_barrier_wait (barrier)
 
   /* Make sure barrier is not exiting.  */
   while (ibarrier->flag & BARRIER_EXITING)
-    errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
+    {
+      errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
         (mutex_t *)&ibarrier->mutex, NULL, 0);
+      if (errval != EINTR && errval != 0)
+        {
+          (void)pthread_mutex_unlock (&ibarrier->mutex);
+          return errval;
+        }
+    }
 
   /* A thread entered the barrier.  */
   --ibarrier->left;
@@ -60,10 +67,17 @@ pthread_barrier_wait (barrier)
     {
       /* Wait until the current barrier event is done.  */
       int curr_event = ibarrier->curr_event;
-      do {
+      do
+        {
           errval = __cond_reltimedwait_internal ((cond_t *)&ibarrier->cond,
               (mutex_t *)&ibarrier->mutex, NULL, 0);
-      } while (errval == 0 && curr_event == ibarrier->curr_event);
+          if (errval != EINTR && errval != 0)
+            {
+              (void)pthread_mutex_unlock (&ibarrier->mutex);
+              return errval;
+            }
+        }
+      while (curr_event == ibarrier->curr_event);
     }
 
   /* If we are the last thread notify barrier waiters.  */
