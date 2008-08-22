@@ -68,6 +68,10 @@
 DECLARE_INLINE_SYSCALL (pthread_t, lwp_self, void);
 DECLARE_INLINE_SYSCALL (int, lwp_kill, pthread_t lwpid, int sig);
 
+/* These are the result of the macro expansion of INTERNAL_SYSCALL.  */
+
+/* XXX: These are really gross and should die.  */
+
 static inline int __internal_kill_1 (int *errval, int sig)
 {
   int saved_errno = errno;
@@ -172,20 +176,39 @@ static inline int __internal_sched_getparam_2 (int *errval, pid_t pid,
   return result;
 }
 
+/* These are used by the "real" associated functions.  */
+
+#include <sched_priv.h>
+
+static inline int __pthread_setschedparam_internal (pthread_t threadid,
+    int policy, const struct sched_param *param)
+{
+  return __sched_setscheduler_id (P_LWPID, threadid, policy, param);
+}
+
+static inline int __pthread_setschedprio_internal (pthread_t threadid,
+    int prio)
+{
+  return __sched_setparam_id (P_LWPID, threadid, prio);
+}
+
+static inline int __pthread_getschedparam_internal (pthread_t threadid,
+    int *policy, struct sched_param *param)
+{
+  return __sched_getscheduler_id (P_LWPID, threadid, policy, param);
+}
+
 static inline int __cond_has_waiters (pthread_cond_t *cond)
 {
   return cond->cond_waiters_kernel;
 }
 
+/* These functions are used to implement the "real" associated functions.  */
 extern int __cond_reltimedwait_internal (cond_t *cond, mutex_t *mutex,
     struct timespec *reltime, int cancel);
-
 extern int __mutex_timedlock (mutex_t *mutex, const struct timespec *abstime);
-
 extern int __rw_timedrdlock (rwlock_t *rwlock, struct timespec *abstime);
-
 extern int __rw_timedwrlock (rwlock_t *rwlock, struct timespec *abstime);
-
 extern int __sema_timedwait (sema_t *sem, struct timespec *abstime);
 
 #endif /* _OPENSOLARIS_PTHREADP_H */

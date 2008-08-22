@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2004, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -21,7 +21,7 @@
 #include <sched.h>
 #include <string.h>
 #include <sched.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <lowlevellock.h>
 
 
@@ -30,7 +30,11 @@ pthread_setschedprio (threadid, prio)
      pthread_t threadid;
      int prio;
 {
+#ifndef PTHREAD_T_IS_TID
   struct pthread *pd = (struct pthread *) threadid;
+#else
+  struct pthread *pd = __find_in_stack_list (threadid);
+#endif
 
   /* Make sure the descriptor is valid.  */
   if (INVALID_TD_P (pd))
@@ -49,7 +53,12 @@ pthread_setschedprio (threadid, prio)
     param.sched_priority = pd->tpp->priomax;
 
   /* Try to set the scheduler information.  */
+#ifndef TPP_PTHREAD_SCHED
   if (__builtin_expect (sched_setparam (pd->tid, &param) == -1, 0))
+#else
+  if (__builtin_expect (__pthread_setschedprio_internal (pd->tid, prio) ==
+        -1, 0))
+#endif
     result = errno;
   else
     {

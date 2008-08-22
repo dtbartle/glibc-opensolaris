@@ -1,4 +1,5 @@
-/* Copyright (C) 2002, 2003, 2004, 2006, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008
+    Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -20,7 +21,7 @@
 #include <errno.h>
 #include <sched.h>
 #include <string.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <lowlevellock.h>
 
 
@@ -30,7 +31,11 @@ __pthread_setschedparam (threadid, policy, param)
      int policy;
      const struct sched_param *param;
 {
+#ifndef PTHREAD_T_IS_TID
   struct pthread *pd = (struct pthread *) threadid;
+#else
+  struct pthread *pd = __find_in_stack_list (threadid);
+#endif
 
   /* Make sure the descriptor is valid.  */
   if (INVALID_TD_P (pd))
@@ -55,8 +60,13 @@ __pthread_setschedparam (threadid, policy, param)
     }
 
   /* Try to set the scheduler information.  */
+#ifndef TPP_PTHREAD_SCHED
   if (__builtin_expect (__sched_setscheduler (pd->tid, policy,
 					      param) == -1, 0))
+#else
+  if (__builtin_expect (__pthread_setschedparam_internal (pd->tid, policy,
+					      param) == -1, 0))
+#endif
     result = errno;
   else
     {
