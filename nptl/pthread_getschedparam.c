@@ -69,7 +69,7 @@ __pthread_getschedparam (threadid, policy, param)
 #else
   if ((pd->flags & (ATTR_FLAG_SCHED_SET | ATTR_FLAG_POLICY_SET)) == 0)
     {
-      if (__pthread_getschedparam (pd->tid, &pd->schedpolicy, &pd->schedparam)
+      if (__pthread_getschedparam_internal (pd->tid, &pd->schedpolicy, &pd->schedparam)
             != 0)
 	result = 1;
       else
