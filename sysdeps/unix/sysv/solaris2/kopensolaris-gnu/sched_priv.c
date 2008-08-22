@@ -44,13 +44,13 @@ __libc_lock_define_initialized (static, lock);
 
 int __sched_policy_to_class (int policy)
 {
-  __libc_lock_lock (lock);
-
   if (policy < 0 || policy >= _SCHED_NEXT)
     {
       __set_errno (EINVAL);
       return -1;
     }
+
+  __libc_lock_lock (lock);
 
   /* Try to get cid from clname.  */
   if (__sched_policies[policy].pc_cid == -1)
@@ -65,6 +65,8 @@ int __sched_policy_to_class (int policy)
 
 int __sched_class_to_policy (int cid)
 {
+  int policy = -1;
+
   __libc_lock_lock (lock);
 
   for (int i = 0; i < _SCHED_NEXT; i++)
@@ -74,26 +76,26 @@ int __sched_class_to_policy (int cid)
 
       if (__sched_policies[i].pc_cid == cid)
         {
-          __libc_lock_unlock (lock);
-          return i;
+          policy = i;
+          break;
         }
     }
 
   __libc_lock_unlock (lock);
 
-  return -1;
+  return policy;
 }
 
 int __sched_getparam_id (int idtype, id_t id, int *priority)
 {
-  INTERNAL_SYSCALL_DECL (err);
-
   pcprio_t prio;
   prio.pc_op = PC_GETPRIO;
-  int result = INTERNAL_SYSCALL (priocntl, err,
-    4, idtype, id, PC_DOPRIO, &prio);
+  prio.pc_cid = 0;
+  prio.pc_val = 0;
+printf ("__sched_getparam_id: idtype = %d, id = %d, op = PC_GETPRIO\n", idtype, id);
+  int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
-    return err;
+    return errno;
 
   *priority = prio.pc_val;
 
@@ -102,36 +104,36 @@ int __sched_getparam_id (int idtype, id_t id, int *priority)
 
 int __sched_setparam_id (int idtype, id_t id, int priority)
 {
-  INTERNAL_SYSCALL_DECL (err);
-
   /* We need pc_cid to be valid in the PC_SETPRIO call.  */
   pcprio_t prio;
   prio.pc_op = PC_GETPRIO;
-  int result = INTERNAL_SYSCALL (priocntl, err,
-    4, idtype, id, PC_DOPRIO, &prio);
+  prio.pc_cid = 0;
+  prio.pc_val = 0;
+printf ("__sched_setparam_id: idtype = %d, id = %d, op = PC_GETPRIO\n", idtype, id);
+  int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
-    return err;
+    return errno;
 
   prio.pc_op = PC_SETPRIO;
   prio.pc_val = priority;
-  result = INTERNAL_SYSCALL (priocntl, err,
-    4, idtype, id, PC_DOPRIO, &prio);
+printf ("__sched_setparam_id: idtype = %d, id = %d, op = PC_SETPRIO, priority = %d\n", idtype, id, priority);
+  result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
-    return err;
+    return errno;
 
   return 0;
 }
 
 int __sched_getscheduler_id (int idtype, id_t id, int *policy, int *priority)
 {
-  INTERNAL_SYSCALL_DECL (err);
-
   pcprio_t prio;
   prio.pc_op = PC_GETPRIO;
-  int result = INTERNAL_SYSCALL (priocntl, err,
-    4, idtype, id, PC_DOPRIO, &prio);
+  prio.pc_cid = 0;
+  prio.pc_val = 0;
+printf ("__sched_getscheduler_id: idtype = %d, id = %d, op = PC_GETPRIO, prio = %p\n", idtype, id, &prio);
+  int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
-    return err;
+    return errno;
 
   if (priority)
     *priority = prio.pc_val;
@@ -142,8 +144,6 @@ int __sched_getscheduler_id (int idtype, id_t id, int *policy, int *priority)
 
 int __sched_setscheduler_id (int idtype, id_t id, int policy, int priority)
 {
-  INTERNAL_SYSCALL_DECL (err);
-
   pcprio_t prio;
   prio.pc_op = PC_SETPRIO;
   prio.pc_val = priority;
@@ -151,10 +151,10 @@ int __sched_setscheduler_id (int idtype, id_t id, int policy, int priority)
   if (prio.pc_cid == -1)
     return -1;
 
-  int result = INTERNAL_SYSCALL (priocntl, err,
-    4, idtype, id, PC_DOPRIO, &prio);
+printf ("__sched_setscheduler_id: idtype = %d, id = %d, op = PC_GETPRIO, policy = %d, priority = %d\n", idtype, id, policy, priority);
+  int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
-    return err;
+    return errno;
 
   return 0;
 }
