@@ -108,8 +108,8 @@
 #define SYS_ioctl           54
 #define SYS_uadmin          55
 #define SYS_utssys          57
+  /* subcode 1 unused */
 # define SYS_SUB_uname          0 /* obsolete */
-    /* subcode 1 unused */
 # define SYS_SUB_ustat          2
 # define SYS_SUB_fusers         3
 #define SYS_fdsync          58
