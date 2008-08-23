@@ -33,10 +33,13 @@ pthread_sigmask (how, newmask, oldmask)
 {
   sigset_t local_newmask;
 
+  if (how != SIG_BLOCK && how != SIG_SETMASK && how != SIG_UNBLOCK)
+    return EINVAL;
+
   /* The only thing we have to make sure here is that SIGCANCEL is
      not blocked.  */
   if (newmask != NULL
-	  || __builtin_expect (__sigismember (newmask, SIGCANCEL), 0))
+	  && __builtin_expect (__sigismember (newmask, SIGCANCEL), 0))
     {
       local_newmask = *newmask;
       __sigdelset (&local_newmask, SIGCANCEL);
