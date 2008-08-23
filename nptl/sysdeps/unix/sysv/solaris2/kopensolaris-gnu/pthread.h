@@ -86,14 +86,14 @@ enum
 /* Mutex initializers.  */
 #define PTHREAD_MUTEX_INITIALIZER       \
     {{0, 0, 0, {PTHREAD_PROCESS_PRIVATE}, 0x4d58 /* MUTEX_MAGIC */ },   \
-    {{{0, 0, 0, 0, 0, 0, 0, 0}}}, 0}
+    {{{0, 0, 0, 0, 0, 0, 0, 0}}}, {0}}
 #ifdef __USE_GNU
 # define PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP     \
     {{0, 0, 0, {PTHREAD_PROCESS_PRIVATE | PTHREAD_MUTEX_RECURSIVE_NP},  \
-    0x4d58 /* MUTEX_MAGIC */}, {{{0, 0, 0, 0, 0, 0, 0, 0}}}, 0}
+    0x4d58 /* MUTEX_MAGIC */}, {{{0, 0, 0, 0, 0, 0, 0, 0}}}, {0}}
 # define PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP    \
     {{0, 0, 0, {PTHREAD_PROCESS_PRIVATE | PTHREAD_MUTEX_ERRORCHECK_NP}, \
-    0x4d58 /* MUTEX_MAGIC */}, {{{0, 0, 0, 0, 0, 0, 0, 0}}}, 0}
+    0x4d58 /* MUTEX_MAGIC */}, {{{0, 0, 0, 0, 0, 0, 0, 0}}}, {0}}
 # define PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP  \
     PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP // TODO
 #endif
