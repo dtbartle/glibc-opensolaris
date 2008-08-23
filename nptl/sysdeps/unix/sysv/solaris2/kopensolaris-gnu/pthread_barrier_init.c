@@ -56,16 +56,14 @@ pthread_barrier_init (barrier, attr, count)
   ibarrier = (struct pthread_barrier *) barrier;
 
   /* Initialize the individual fields.  */
-  memset (&ibarrier->mutex, 0, sizeof(pthread_mutex_t));
+  memset (ibarrier, 0, sizeof(struct pthread_barrier));
   ibarrier->mutex.mutex_type = iattr->pshared;
   ibarrier->mutex.mutex_flag = LOCK_INITED;
   ibarrier->mutex.mutex_magic = MUTEX_MAGIC;
-  memset (&ibarrier->cond, 0, sizeof(pthread_cond_t));
   ibarrier->cond.cond_type = iattr->pshared;
   ibarrier->cond.cond_magic = COND_MAGIC;
   ibarrier->left = count;
   ibarrier->init_count = count;
-  ibarrier->curr_event = 0;
 
   return 0;
 }
