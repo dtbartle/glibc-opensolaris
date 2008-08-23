@@ -44,15 +44,14 @@ __pthread_rwlock_init (rwlock, attr)
   memset (rwlock, 0, sizeof(pthread_rwlock_t));
   rwlock->type = iattr->pshared;
   rwlock->magic = RWL_MAGIC;
-  rwlock->mutex.mutex_type = iattr->pshared;
+  rwlock->mutex.mutex_type = iattr->pshared |
+      (iattr->lockkind << PTHREAD_RWLOCK_TYPE_SHIFT);
   rwlock->mutex.mutex_flag = LOCK_INITED;
   rwlock->mutex.mutex_magic = MUTEX_MAGIC;
   rwlock->readercv.cond_type = iattr->pshared;
   rwlock->readercv.cond_magic = COND_MAGIC;
   rwlock->writercv.cond_type = iattr->pshared;
   rwlock->writercv.cond_magic = COND_MAGIC;
-
-// TODO: lock_kind
 
   return 0;
 }
