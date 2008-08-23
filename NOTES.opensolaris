@@ -54,15 +54,22 @@ mutex:
     mutex_waiters (8-bits): This is set to 1 when there is another thread
       waiting and 0 when there are no other waiters.
 
-    mutex_spinners (8-bits): This byte is apparently unused. We reuse it (as
-      mutex_cond_waiters) to mark a mutex that has been unlocked by cond_wait
-      (hence it will be reacquired later).
+    mutex_spinners (8-bits): This byte is apparently unused.
 
-    mutex_ownerpid (32-bits):
+    mutex_ownerpid (32-bits): Set to the mutex owner's process pid when the
+      mutex is shared.
 
-  The mutex_owner field is a 64-bit field that stores a pointer to the owning
-  thread descriptor. It is not checked in the kernel and is only cleared by
-  the kernel during cleanup.
+  The data field (aka mutex_owner) is used by sun libc to store a pointer to
+  the thread-descriptor of the owning thread. We split this 64-bit field into
+  two fields:
+
+    mutex_owner (32-bits): The lwpid of the owning thread.
+
+    mutex_cond (32-bits): An in-use counter that is incremented when waiting on
+      a condition and decremented when we return (or are cancelled).
+
+  The kernel only touches the data field when it is cleared during cleanup for
+  certain mutex types.
 
   The kernel does not handle recursive or error-checking mutexes.
 
@@ -77,7 +84,10 @@ condition variable:
   condition variable and 0 otherwise. The cond_waiters_user byte is not
   used by the kernel.
 
-  The only clock types supported are CLOCK_REALTIME and CLOCK_HIGHRES.
+  The only clock types supported by sun libc are CLOCK_REALTIME and
+  CLOCK_HIGHRES.
+
+  The data field is not used by the kernel.
 
 reader-writer lock:
 
@@ -91,8 +101,8 @@ reader-writer lock:
   private implementation that used the embedded mutex and cv's would also work
   correctly in the shared case.
 
-  Three additional fields are included for tracking the owner (thread and
-  process) of a reader-writer lock.
+  Our implementation adds three additional fields are included for tracking
+  the owner (thread and process) of a reader-writer lock.
 
 [0] http://docs.sun.com/app/docs/doc/819-2243/rwlock-init-3c?a=view
 

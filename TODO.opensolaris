@@ -47,6 +47,8 @@ These are solaris extensions that we should implement:
   exportfs, nfs_getfh, nfssvc [SYS_nfssys] (sys/nfssec.h) [maybe not]
   lgrpsys
   gethomelgroup
+  atomic_*
+  membar_*
 
 Insert into headers:
   resolvpath (unistd.h)
@@ -79,3 +81,8 @@ Use syscall instead of INLINE_SYSCALL; also create __syscall_errval
 Get rid of all saved_errno usage
 
 More clocks in pthread_condattr_setclock
+
+List of CDDL headers needed to compile random stuff:
+  sys/dlpi.h
+
+Use cond_t data field for broadcast seqence

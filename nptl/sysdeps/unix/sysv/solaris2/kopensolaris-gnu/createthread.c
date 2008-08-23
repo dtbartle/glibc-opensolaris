@@ -55,6 +55,9 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
   if (errval != 0)
     return errval;
 
+  /* Threads inherit the parent's sigmask.  */
+  pthread_sigmask (SIG_SETMASK, NULL, &ctx.uc_sigmask);
+
   /* One more thread.  We cannot have the thread do this itself, since it
      might exist but not have been scheduled yet by the time we've returned
      and need to check the value to behave correctly.  We must do it before

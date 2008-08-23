@@ -32,9 +32,6 @@
 /* The number of threads per process.  */
 #define _POSIX_THREAD_THREADS_MAX	64
 
-/* This is the value this implementation supports.  */
-#define PTHREAD_THREADS_MAX	16384
-
 /* Maximum amount by which a process can descrease its asynchronous I/O
    priority level.  */
 #define AIO_PRIO_DELTA_MAX	20
@@ -60,15 +57,15 @@
 /* Maximum message queue priority level.  */
 #define MQ_PRIO_MAX		32768
 
-/* max # of characters in a path name */
+/* Maximum number of characters in a path name.  */
 #define PATH_MAX    1024
 
-/* max # of files a process can have open */
+/* Maximum number of files a process can have open.  */
 #define OPEN_MAX    256
 
 #define NGROUPS_MAX 16
 
-/* TODO: the 64-bit case is larger but I reckon this enough for all */
+/* XXX: The 64-bit case is larger but this should be enough for all.  */
 #define ARG_MAX    1048320
 
 #define CHILD_MAX   25
