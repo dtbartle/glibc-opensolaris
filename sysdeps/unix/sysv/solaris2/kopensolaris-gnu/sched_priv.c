@@ -92,7 +92,6 @@ int __sched_getparam_id (int idtype, id_t id, int *priority)
   prio.pc_op = PC_GETPRIO;
   prio.pc_cid = 0;
   prio.pc_val = 0;
-printf ("__sched_getparam_id: idtype = %d, id = %d, op = PC_GETPRIO\n", idtype, id);
   int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;
@@ -109,14 +108,12 @@ int __sched_setparam_id (int idtype, id_t id, int priority)
   prio.pc_op = PC_GETPRIO;
   prio.pc_cid = 0;
   prio.pc_val = 0;
-printf ("__sched_setparam_id: idtype = %d, id = %d, op = PC_GETPRIO\n", idtype, id);
   int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;
 
   prio.pc_op = PC_SETPRIO;
   prio.pc_val = priority;
-printf ("__sched_setparam_id: idtype = %d, id = %d, op = PC_SETPRIO, priority = %d\n", idtype, id, priority);
   result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;
@@ -130,7 +127,6 @@ int __sched_getscheduler_id (int idtype, id_t id, int *policy, int *priority)
   prio.pc_op = PC_GETPRIO;
   prio.pc_cid = 0;
   prio.pc_val = 0;
-printf ("__sched_getscheduler_id: idtype = %d, id = %d, op = PC_GETPRIO, prio = %p\n", idtype, id, &prio);
   int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;
@@ -151,7 +147,6 @@ int __sched_setscheduler_id (int idtype, id_t id, int policy, int priority)
   if (prio.pc_cid == -1)
     return -1;
 
-printf ("__sched_setscheduler_id: idtype = %d, id = %d, op = PC_GETPRIO, policy = %d, priority = %d\n", idtype, id, policy, priority);
   int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;
