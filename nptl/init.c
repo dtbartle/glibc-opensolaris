@@ -131,6 +131,11 @@ static const struct pthread_functions pthread_functions =
 #endif
 
 
+#ifdef PLATFORM_STATIC_DECLS
+PLATFORM_STATIC_DECLS
+#endif
+
+
 /* For asynchronous cancellation we use a signal.  This is the handler.  */
 static void
 sigcancel_handler (int sig, siginfo_t *si, void *ctx)

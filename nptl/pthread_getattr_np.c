@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 #include <lowlevellock.h>
 #include <ldsodefs.h>
 
@@ -35,7 +35,12 @@ pthread_getattr_np (thread_id, attr)
      pthread_t thread_id;
      pthread_attr_t *attr;
 {
+#ifndef PTHREAD_T_IS_TID
   struct pthread *thread = (struct pthread *) thread_id;
+#else
+  struct pthread *thread = __find_in_stack_list (thread_id);
+#endif
+
   struct pthread_attr *iattr = (struct pthread_attr *) attr;
   int ret = 0;
 
@@ -65,6 +70,9 @@ pthread_getattr_np (thread_id, attr)
     }
   else
     {
+#ifdef GET_MAIN_STACK_INFO
+      ret = GET_MAIN_STACK_INFO (&iattr->stackaddr, &iattr->stacksize);
+#else
       /* No stack information available.  This must be for the initial
 	 thread.  Get the info in some magical way.  */
       assert (abs (thread->pid) == thread->tid);
@@ -129,6 +137,7 @@ pthread_getattr_np (thread_id, attr)
 
 	  fclose (fp);
 	}
+#endif
     }
 
   iattr->flags |= ATTR_FLAG_STACKADDR;

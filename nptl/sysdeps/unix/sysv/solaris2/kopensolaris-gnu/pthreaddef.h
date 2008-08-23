@@ -19,14 +19,35 @@
 
 /* Register atfork handlers to protect signal_lock.  */
 extern void sigaction_atfork (void);
-#define PLATFORM_PTHREAD_INIT               \
-    sigaction_atfork ();                    \
-    THREAD_SETMEM (pd, main_thread, 1);
+
+#include <ucontext.h>
+#define PLATFORM_PTHREAD_INIT                   \
+    sigaction_atfork ();                        \
+    THREAD_SETMEM (pd, main_thread, 1);         \
+    ucontext_t _ctx;                            \
+    if (getcontext (&_ctx) == 0)                \
+      {                                         \
+        main_stackaddr = _ctx.uc_stack.ss_sp;   \
+        main_stacksize = _ctx.uc_stack.ss_size; \
+      }
 
 /* Additional descr fields.  */
 # define PLATFORM_DESCR_FIELDS              \
     int sigpipe_disabled;                   \
     int main_thread;
+
+/* Static variables.  */
+#define PLATFORM_STATIC_DECLS   \
+    void *main_stackaddr;       \
+    size_t main_stacksize;
+extern void *main_stackaddr;
+extern size_t main_stacksize;
+
+/* We can get the main thread's stack via getcontext (see above).  */
+#define GET_MAIN_STACK_INFO(stackaddr, stacksize)       \
+    ({*stackaddr = main_stackaddr + main_stacksize;     \
+      *stacksize = main_stacksize;                      \
+      0;})
 
 /* Use tid as pthread_t (instead of descr).  */
 #define PTHREAD_T_IS_TID
