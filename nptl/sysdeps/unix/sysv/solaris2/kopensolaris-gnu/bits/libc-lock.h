@@ -29,11 +29,6 @@
 #include <synch_priv.h>
 
 
-#ifdef _LIBC
-# include <tls.h>
-# include <pthread-functions.h>
-#endif
-
 /* Mutex type.  */
 #if defined _LIBC || defined _IO_MTSAFE_IO
 typedef pthread_mutex_t __libc_lock_t;
@@ -48,6 +43,11 @@ typedef struct __libc_rwlock_opaque__ __libc_rwlock_t;
 typedef struct __libc_lock_opaque__ __libc_lock_t;
 typedef struct __libc_lock_recursive_opaque__ __libc_lock_recursive_t;
 typedef struct __libc_rwlock_opaque__ __libc_rwlock_t;
+#endif
+
+#ifdef _LIBC
+# include <tls.h>
+# include <pthread-functions.h>
 #endif
 
 /* Type for key to thread-specific data.  */

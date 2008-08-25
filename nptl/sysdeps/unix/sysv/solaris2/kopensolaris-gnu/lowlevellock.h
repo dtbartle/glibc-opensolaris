@@ -1,8 +1,6 @@
 #ifndef _LOWLEVELLOCK_H
 #define _LOWLEVELLOCK_H	1
 
-#include <stddef.h>
-#include <inline-syscall.h>
 #include <pthread.h>
 
 #define lll_define(class, futex) \
@@ -13,17 +11,21 @@
 #define lll_define_initialized(class, futex) \
     class pthread_mutex_t futex = PTHREAD_MUTEX_INITIALIZER
 
+#include <stddef.h>
+#include <inline-syscall.h>
+#include <bits/libc-lock.h>
+
 #define lll_init(futex) \
-    __pthread_mutex_init (&(futex), NULL)
+    __libc_lock_init (futex)
 
 #define lll_lock(futex, private) \
-    __pthread_mutex_lock (&(futex))
+    __libc_lock_lock (futex)
 
 #define lll_trylock(futex) \
-    __pthread_mutex_trylock (&(futex))
+    __libc_lock_trylock (futex)
 
 #define lll_unlock(futex, private) \
-    __pthread_mutex_unlock (&(futex))
+    __libc_lock_unlock (futex)
 
 DECLARE_INLINE_SYSCALL (int, lwp_wait, pthread_t tid, pthread_t *departed);
 
