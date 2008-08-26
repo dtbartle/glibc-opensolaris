@@ -90,12 +90,13 @@ if_freenameindex (struct if_nameindex *ifn)
 libc_hidden_def (if_freenameindex)
 
 
+/* XXX: if_nameindex is O(n^2) in the number of interfaces.  */
 struct if_nameindex *
 if_nameindex (void)
 {
   int fd = __opensock ();
   int flags = LIFC_NOXMIT | LIFC_TEMPORARY | LIFC_ALLZONES;
-  unsigned int nifs, i;
+  unsigned int nifs, i, j, k;
   char *buf;
   struct if_nameindex *idx = NULL;
   struct lifnum lifn;
@@ -108,24 +109,25 @@ if_nameindex (void)
   /* determine number of interfaces */
   lifn.lifn_family = AF_UNSPEC;
   lifn.lifn_flags = flags;
-  if (__ioctl (fd, SIOCGLIFNUM, &lifn) < 0)
+  if (__ioctl (fd, SIOCGLIFNUM, &lifn) != 0)
     {
       close_not_cancel_no_status (fd);
       return NULL;
     }
-  nifs = lifc.lifc_len;
+  nifs = lifn.lifn_count;
 
   /* get interfaces */
   lifc.lifc_family = AF_UNSPEC;
   lifc.lifc_flags = flags;
   lifc.lifc_len = nifs * sizeof(struct lifreq);
-  lifc.lifc_buf = buf = malloc (lifc.lifc_len);
+  buf = malloc (lifc.lifc_len);
+  lifc.lifc_buf = buf;
   if (buf == NULL)
     {
       close_not_cancel_no_status (fd);
       return NULL;
     }
-  if (__ioctl (fd, SIOCGLIFCONF, &lifc) < 0)
+  if (__ioctl (fd, SIOCGLIFCONF, &lifc) != 0)
     {
       close_not_cancel_no_status (fd);
       free (buf);
@@ -141,25 +143,33 @@ if_nameindex (void)
       return NULL;
     }
 
-  /* TODO: apparently we might get duplicate interfaces */
-  for (i = 0; i < nifs; ++i)
+  for (i = 0, j = 0, k = 0; i < nifs; ++i)
     {
-      idx[i].if_name = __strdup (lifr->lifr_name);
-      if (idx[i].if_name == NULL)
+      /* Check if we already have seen this interface.  */
+      for (j = 0; j < i; ++j)
+        {
+          if (strcmp (idx[j].if_name, lifr[i].lifr_name) == 0)
+            goto A;
+        }
+
+      idx[k].if_name = __strdup (lifr[i].lifr_name);
+      if (idx[k].if_name == NULL)
         {
           close_not_cancel_no_status (fd);
           free (buf);
           free (idx);
           return NULL;
         }
-      idx[i].if_index = if_nametoindex (lifr->lifr_name);
+      idx[k].if_index = if_nametoindex (lifr[i].lifr_name);
+      ++k;
+A:;
     }
 
-  idx[i].if_index = 0;
-  idx[i].if_name = NULL;
+  idx[k].if_index = 0;
+  idx[k].if_name = NULL;
 
   close_not_cancel_no_status (fd);
-  free(buf);
+  free (buf);
   return idx;
 }
 libc_hidden_def (if_nameindex)
