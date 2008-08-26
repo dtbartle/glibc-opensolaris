@@ -268,7 +268,8 @@ struct ifconf
 # define _IOT_ifconf _IOT(_IOTS(struct ifconf),1,0,0,0,0) /* not right */
 
 /* Structure used in SIOCLIF*ND requests. */
-typedef struct lif_nd_req {
+typedef struct lif_nd_req
+  {
 #define ND_MAX_HDW_LEN  64
     struct sockaddr_storage lnr_addr;
     uint8_t lnr_state_create;
@@ -278,7 +279,7 @@ typedef struct lif_nd_req {
     int lnr_flags;
     int lnr_pad0;
     char lnr_hdw_addr[ND_MAX_HDW_LEN];
-} lif_nd_req_t;
+  } lif_nd_req_t;
 
 #define ND_UNCHANGED	0
 #define ND_INCOMPLETE	1
@@ -299,24 +300,28 @@ typedef struct lif_nd_req {
 #define NDF_PROXY_OFF	0x20
 
 /* Structure used for the SIOC[GS]LIFLNKINFO requests. */
-typedef struct lif_ifinfo_req {
+typedef struct lif_ifinfo_req
+  {
     uint8_t lir_maxhops;
     uint32_t lir_reachtime;
     uint32_t lir_reachretrans;
     uint32_t lir_maxmtu;
-} lif_ifinfo_req_t;
+  } lif_ifinfo_req_t;
 
 /* Recommended replacement structure for ifreq. */
-struct lifreq {
+struct lifreq
+  {
 # define LIFNAMSIZ	LIF_NAMESIZE
 # define LIFGRNAMSIZ	LIF_NAMESIZE
     char lifr_name[LIFNAMSIZ];
-    union {
+    union
+      {
         int lifru_addrlen;
         unsigned int lifru_ppa;
-    } lifr_lifru1;
+      } lifr_lifru1;
     unsigned int lifr_movetoindex;
-    union {
+    union
+      {
         struct sockaddr_storage lifru_addr;
         struct sockaddr_storage lifru_dstaddr;
         struct sockaddr_storage lifru_broadaddr;
@@ -359,61 +364,69 @@ struct lifreq {
 #define lifr_zoneid	lifr_lifru.lifru_zoneid
 
 /* Structure used in SIOCT* requests. */
-struct sioc_addrreq {
+struct sioc_addrreq
+  {
     struct sockaddr_storage sa_addr;
     int sa_res;
     int sa_pad;
-};
+  };
 
 /* Structure used in SIOCGETLSGCNT requests. */
-struct sioc_lsg_req {
+struct sioc_lsg_req
+  {
     struct sockaddr_storage slr_src;
     struct sockaddr_storage slr_grp;
     unsigned int slr_pktcnt;
     unsigned int slr_bytecnt;
     unsigned int slr_wrong_if;
     unsigned int slr_pad;
-};
+  };
 
 /* Structure used in SIOCGLIFNUM request. */
-struct lifnum {
+struct lifnum
+  {
     sa_family_t lifn_family;
     int lifn_flags;
     int lifn_count;
-};
+  };
 
 /* Structure used in SIOCGLIFCONF request. */
-struct lifconf {
+struct lifconf
+  {
     sa_family_t lifc_family;
     int lifc_flags;
     int lifc_len;
-    union {
+    union
+      {
         __caddr_t lifcu_buf;
         struct lifreq *lifcu_req;
-    } lifc_lifcu;
-};
+      } lifc_lifcu;
+  };
 #define lifc_buf	lifc_lifcu.lifcu_buf
 #define lifc_req	lifc_lifcu.lifcu_req
 
 /* Structure used in SIOCGLIFSRCOF request. */
-struct lifsrcof {
+struct lifsrcof
+  {
     unsigned int lifs_ifindex;
     size_t lifs_maxlen;
     size_t lifs_len;
-    union {
+    union
+      {
         __caddr_t lifsu_buf;
         struct lifreq *lifsu_req;
-    } lifs_lifsu;
-};
+      } lifs_lifsu;
+ };
 #define lifs_buf lifs_lifsu.lifsu_buf
 #define lifs_req lifs_lifsu.lifsu_req
 
-#define LIFC_NOXMIT				0x1
-#define LIFC_EXTERNAL_SOURCE	0x2
-#define LIFC_TEMPORARY			0x4
-#define LIFC_ALLZONES			0x8
+#define LIFC_NOXMIT				0x01
+#define LIFC_EXTERNAL_SOURCE	0x02
+#define LIFC_TEMPORARY			0x04
+#define LIFC_ALLZONES			0x08
 
-typedef struct if_data {
+typedef struct if_data
+  {
     unsigned char ifi_type;
     unsigned char ifi_addrlen;
     unsigned char ifi_hdrlen;
@@ -431,9 +444,10 @@ typedef struct if_data {
     unsigned int ifi_omcasts;
     unsigned int ifi_iqdrops;
     unsigned int ifi_noproto;
-} if_data_t;
+  } if_data_t;
 
-typedef struct if_msghdr {
+typedef struct if_msghdr
+  {
     unsigned short ifm_msglen;
     unsigned char ifm_version;
     unsigned char ifm_type;
@@ -441,9 +455,10 @@ typedef struct if_msghdr {
     int ifm_flags;
     unsigned short ifm_index;
     struct  if_data ifm_data;
-} if_msghdr_t;
+  } if_msghdr_t;
 
-typedef struct ifa_msghdr {
+typedef struct ifa_msghdr
+  {
     unsigned short ifam_msglen;
     unsigned char ifam_version;
     unsigned char ifam_type;
@@ -451,18 +466,20 @@ typedef struct ifa_msghdr {
     int ifam_flags;
     unsigned short ifam_index;
     int ifam_metric;
-} ifa_msghdr_t;
+  } ifa_msghdr_t;
 
-enum ifta_proto {
+enum ifta_proto
+  {
     IFTAP_INVALID,
     IFTAP_IPV4,
     IFTAP_IPV6
-};
+  };
 
 #define IFTUN_VERSION 1
 
 /* Structure used in SIOCTUN[SG]PARAM requests. */
-struct iftun_req {
+struct iftun_req
+  {
 #define IFTUN_SECINFOLEN 8
     char ifta_lifr_name[LIFNAMSIZ];
     struct sockaddr_storage ifta_saddr;
@@ -476,7 +493,7 @@ struct iftun_req {
     uint8_t ifta_hop_limit;
     uint8_t ifta_spare0;
     uint32_t ifta_spare1;
-};
+  };
 
 #define IFTUN_SRC	0x01
 #define IFTUN_DST	0x02
