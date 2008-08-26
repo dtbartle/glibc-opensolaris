@@ -26,7 +26,6 @@
 #include <not-cancel.h>
 #include <memory.h>
 
-/* TODO: we might need to query the interfaces separately */
 unsigned int
 if_nametoindex (const char *ifname)
 {
@@ -106,7 +105,7 @@ if_nameindex (void)
   if (fd < 0)
     return NULL;
 
-  /* determine number of interfaces */
+  /* Determine number of interfaces.  */
   lifn.lifn_family = AF_UNSPEC;
   lifn.lifn_flags = flags;
   if (__ioctl (fd, SIOCGLIFNUM, &lifn) != 0)
@@ -116,7 +115,7 @@ if_nameindex (void)
     }
   nifs = lifn.lifn_count;
 
-  /* get interfaces */
+  /* Get interfaces.  */
   lifc.lifc_family = AF_UNSPEC;
   lifc.lifc_flags = flags;
   lifc.lifc_len = nifs * sizeof(struct lifreq);
