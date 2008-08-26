@@ -37,17 +37,17 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
   /* set NULL fds to be the empty set */
   fd_set emptyfds;
   FD_ZERO (&emptyfds);
-  fd_set *_readfds = readfds ? readfds : &emptyfds;
-  fd_set *_writefds = writefds ? writefds : &emptyfds;
-  fd_set *_exceptfds = exceptfds ? exceptfds : &emptyfds;
+  const fd_set *_readfds = readfds ?: &emptyfds;
+  const fd_set *_writefds = writefds ?: &emptyfds;
+  const fd_set *_exceptfds = exceptfds ?: &emptyfds;
 
   /* fill pollfd structure */
   struct pollfd *pfd = alloca (nfds * sizeof(struct pollfd));
   int fd;
   nfds_t i = 0;
-  for(fd = 0; fd < nfds; fd++)
+  for (fd = 0; fd < nfds; fd++)
     {
-      if(FD_ISSET (fd, _readfds) || FD_ISSET (fd, _writefds)
+      if (FD_ISSET (fd, _readfds) || FD_ISSET (fd, _writefds)
             || FD_ISSET (fd, _exceptfds))
         {
           pfd[i].fd = fd;
