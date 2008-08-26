@@ -51,7 +51,8 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
             || FD_ISSET (fd, _exceptfds))
         {
           pfd[i].fd = fd;
-          pfd[i].events = pfd[i].revents = 0;
+          pfd[i].events = 0;
+          pfd[i].revents = 0;
           if (FD_ISSET (fd, _readfds))
                 pfd[i].events |= POLLRDNORM;
           if(FD_ISSET (fd, _writefds))

@@ -21,8 +21,6 @@
 #include <termios.h>
 #include <errno.h>
 
-/* Note: TCSANOW == TCSETSF, TCSADRAIN == TCSETSW, TCSAFLUSH == TCSETSF.  */
-
 int
 tcsetattr (fd, optional_actions, termios_p)
      int fd;
@@ -32,9 +30,11 @@ tcsetattr (fd, optional_actions, termios_p)
   switch (optional_actions)
     {
     case TCSANOW:
+      return __ioctl (fd, TCSETS, termios_p);
     case TCSADRAIN:
+      return __ioctl (fd, TCSETSW, termios_p);
     case TCSAFLUSH:
-      return __ioctl (fd, optional_actions, termios_p);
+      return __ioctl (fd, TCSETSF, termios_p);
     default:
       __set_errno (EINVAL);
       return -1;
