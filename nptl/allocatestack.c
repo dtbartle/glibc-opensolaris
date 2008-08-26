@@ -1059,8 +1059,6 @@ void
 attribute_hidden
 __wait_lookup_done (void)
 {
-    // TODO
-#if 0
   lll_lock (stack_cache_lock, LLL_PRIVATE);
 
   struct pthread *self = THREAD_SELF;
@@ -1111,5 +1109,4 @@ __wait_lookup_done (void)
     }
 
   lll_unlock (stack_cache_lock, LLL_PRIVATE);
-#endif /* 0 */
 }
