@@ -33,16 +33,17 @@ __sendto (fd, buf, n, flags, addr, addr_len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t addr_len;
 {
-  if(flags & MSG_NOSIGNAL)
+  if (flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE
 
-  int result = INLINE_SYSCALL(sendto, 6, fd, buf, n,
+  int result = INLINE_SYSCALL (sendto, 6, fd, buf, n,
     (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2, addr, addr_len);
 
-  if(flags & MSG_NOSIGNAL)
+  if (flags & MSG_NOSIGNAL)
     SIGPIPE_ENABLE
 
   return result;
 }
 
 weak_alias (__sendto, sendto)
+LIBC_CANCEL_HANDLED (); /* sys_sendto handles cancellation */

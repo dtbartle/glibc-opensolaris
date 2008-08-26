@@ -17,13 +17,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sysdep.h>
-#include <sys/trap.h>
+#include <sysdep-cancel.h>
+#include <inline-syscall.h>
+#include <sys/fcntl.h>
 
-	  .text;
-ENTRY (gethrtime)
-    movl $T_GETHRTIME, %eax
-    int $T_FASTTRAP
-L(pseudo_end):
-	ret
-PSEUDO_END (gethrtime)
+DECLARE_INLINE_SYSCALL (int, fdsync, int fd, int flag);
+
+int
+fdatasync (int fildes)
+{
+  return INLINE_SYSCALL (fdsync, 2, fildes, FDSYNC);
+}
+LIBC_CANCEL_HANDLED (); /* sys_fdsync handles cancellation */

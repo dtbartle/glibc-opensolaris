@@ -46,3 +46,4 @@ __send (fd, buf, n, flags)
 
 libc_hidden_def (__send)
 weak_alias (__send, send)
+LIBC_CANCEL_HANDLED (); /* sys_send handles cancellation */

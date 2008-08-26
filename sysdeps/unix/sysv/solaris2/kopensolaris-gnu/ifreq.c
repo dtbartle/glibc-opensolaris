@@ -17,30 +17,37 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
-#include <sys/socket.h>
-#include <socket_priv.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <errno.h>
+#include <stddef.h>
+#include <string.h>
+#include <not-cancel.h>
+#include <memory.h>
 
-DECLARE_INLINE_SYSCALL (ssize_t, sendmsg, int s, const struct msghdr *msg,
-    int flags);
-
-ssize_t
-__sendmsg (fd, message, flags)
-     int fd;
-     const struct msghdr *message;
-     int flags;
+void
+__ifreq (struct ifreq **ifreqs, int *num_ifs, int sockfd)
 {
-  if (flags & MSG_NOSIGNAL)
-    SIGPIPE_DISABLE
+  struct ifconf ifc;
+  int nifs;
+  char *buf;
 
-  int result = INLINE_SYSCALL (sendmsg, 3, fd, message,
-    (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2);
+  /* Determine number of interfaces.  */
+  if (__ioctl (sockfd, SIOCGIFNUM, &nifs) != 0)
+      return;
 
-  if (flags & MSG_NOSIGNAL)
-    SIGPIPE_ENABLE
+  /* Get interfaces.  */
+  ifc.ifc_len = nifs * sizeof(struct ifreq);
+  buf = malloc (ifc.ifc_len);
+  ifc.ifc_buf = buf;
+  if (buf == NULL)
+      return;
+  if (__ioctl (sockfd, SIOCGIFCONF, &ifc) != 0)
+    {
+      free (buf);
+      return;
+    }
 
-  return result;
+  *ifreqs = (struct ifreq *)buf;
+  *num_ifs = nifs;
 }
-
-weak_alias (__sendmsg, sendmsg)
-LIBC_CANCEL_HANDLED (); /* sys_sendmsg handles cancellation */

@@ -34,3 +34,4 @@ __libc_accept (fd, addr, addr_len)
 
 weak_alias (__libc_accept, accept)
 libc_hidden_def (accept)
+LIBC_CANCEL_HANDLED (); /* sys_accept handles cancellation */

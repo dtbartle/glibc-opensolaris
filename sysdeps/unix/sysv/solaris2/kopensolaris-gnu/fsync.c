@@ -23,16 +23,10 @@
 
 DECLARE_INLINE_SYSCALL (int, fdsync, int fd, int flag);
 
-int fsync(int fd)
+int
+fsync (fd)
+     int fd;
 {
-  if (SINGLE_THREAD_P)
-    return INLINE_SYSCALL (fdsync, 2, fd, FSYNC);
-
-  int oldtype = LIBC_CANCEL_ASYNC ();
-
-  int result = INLINE_SYSCALL (fdsync, 2, fd, FSYNC);
-
-  LIBC_CANCEL_RESET (oldtype);
-
-  return result;
+  return INLINE_SYSCALL (fdsync, 2, fd, FSYNC);
 }
+LIBC_CANCEL_HANDLED (); /* sys_fdsync handles cancellation */
