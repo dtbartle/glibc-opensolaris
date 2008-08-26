@@ -35,43 +35,44 @@ grantpt (int fd)
   pto.pto_ruid = getuid ();
   pto.pto_rgid = -1;
 
-  /* keep calling getgrnam with a bigger buffer */
+  /* Keep calling getgrnam with a bigger buffer.  */
   size_t len = INIT_GROUP_LEN;
   char *buf = NULL;
   struct group gr, *gro;
   do
-  {
-    buf = realloc (buf, len);
-    if (!buf)
-      {
-        /* if we can't allocate 64 KB something is wrong */
-        free(buf);
-        return -1;
-      }
-    gro = NULL;
-    int result = getgrnam_r ("tty", &gr, buf, len, &gro);
-    if(result == 0)
-      {
-        /* no entry found */
-        if(gro == NULL)
+    {
+      buf = realloc (buf, len);
+      if (!buf)
+        {
+          /* If we can't allocate 64 KB something is wrong.  */
+          free(buf);
+          return -1;
+        }
+      gro = NULL;
+      int result = getgrnam_r ("tty", &gr, buf, len, &gro);
+      if(result == 0)
+        {
+          /* No entry found.  */
+          if(gro == NULL)
+            break;
+          pto.pto_rgid = gro->gr_gid;
+        }
+      else if (errno != EINTR && errno != ERANGE && errno != ENOMEM)
+        {
+          /* Unknown error - assume failure.  */
           break;
-        pto.pto_rgid = gro->gr_gid;
-      }
-    else if (errno != EINTR && errno != ERANGE && errno != ENOMEM)
-      {
-        /* this isn't an error that we expect */
-        break;
-      }
+        }
 
       len <<= 1;
-  } while (len < MAX_GROUP_LEN);
+    }
+  while (len < MAX_GROUP_LEN);
   free (buf);
 
-  /* if getgrnam fails we use the user's gid */
+  /* If getgrnam fails we use the user's gid.  */
   if (pto.pto_rgid == -1)
     pto.pto_rgid = getgid ();
 
-  /* send OWNERPT down */
+  /* Send OWNERPT down.  */
   struct strioctl si;
   si.ic_cmd = OWNERPT;
   si.ic_timout = 0;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2002, 2003, 2007 Free Software Foundation, Inc.
+/* Copyright (C) 2002, 2003, 2007, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -113,8 +113,10 @@ __libc_fork (void)
 
   _IO_list_lock ();
 
+#ifndef PTHREAD_T_IS_TID
 #ifndef NDEBUG
   pid_t ppid = THREAD_GETMEM (THREAD_SELF, tid);
+#endif
 #endif
 
   /* We need to prevent the getpid() code to update the PID field so
@@ -135,13 +137,19 @@ __libc_fork (void)
     {
       struct pthread *self = THREAD_SELF;
 
+#ifndef PTHREAD_T_IS_TID
       assert (THREAD_GETMEM (self, tid) != ppid);
+#endif
 
       if (__fork_generation_pointer != NULL)
 	*__fork_generation_pointer += 4;
 
       /* Adjust the PID field for the new process.  */
+#ifndef PTHREAD_T_IS_TID
       THREAD_SETMEM (self, pid, THREAD_GETMEM (self, tid));
+#else
+      THREAD_SETMEM (self, pid, getpid ());
+#endif
 
 #if HP_TIMING_AVAIL
       /* The CPU clock of the thread and process have to be set to zero.  */
@@ -183,11 +191,17 @@ __libc_fork (void)
 	}
 
       /* Initialize the fork lock.  */
+#ifndef lll_init
       __fork_lock = LLL_LOCK_INITIALIZER;
+#else
+      lll_init (__fork_lock);
+#endif
     }
   else
     {
+#ifndef PTHREAD_T_IS_TID
       assert (THREAD_GETMEM (THREAD_SELF, tid) == ppid);
+#endif
 
       /* Restore the PID value.  */
       THREAD_SETMEM (THREAD_SELF, pid, parentpid);

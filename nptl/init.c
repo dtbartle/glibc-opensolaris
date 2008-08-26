@@ -205,12 +205,14 @@ struct xid_command *__xidcmd attribute_hidden;
 static void
 sighandler_setxid (int sig, siginfo_t *si, void *ctx)
 {
+#ifndef PTHREAD_T_IS_TID
 #ifdef __ASSUME_CORRECT_SI_PID
   /* Determine the process ID.  It might be negative if the thread is
      in the middle of a fork() call.  */
   pid_t pid = THREAD_GETMEM (THREAD_SELF, pid);
   if (__builtin_expect (pid < 0, 0))
     pid = -pid;
+#endif
 #endif
 
   /* Safety check.  It would be possible to call this function for

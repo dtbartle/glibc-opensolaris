@@ -21,6 +21,8 @@
 #include <termios.h>
 #include <errno.h>
 
+/* Note: TCSANOW == TCSETSF, TCSADRAIN == TCSETSW, TCSAFLUSH == TCSETSF.  */
+
 int
 tcsetattr (fd, optional_actions, termios_p)
      int fd;
