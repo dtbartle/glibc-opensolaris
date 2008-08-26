@@ -27,17 +27,17 @@
 DECLARE_INLINE_SYSCALL (int, brk, __caddr_t *addr);
 
 /*
-  Solaris will round brk addresses up to an 8 - 16 byte
-  alignment. We don't take this into account, which is
-  safe; we will always just assume a slightly smaller
-  amount of core than we actually have available.
+  Solaris will round the break up to an 8 - 16 byte alignment. We don't take
+  this into account, which is safe; we will always just assume a slightly
+  smaller amount of core than we actually have available.
 
-  Solaris doesn't return the current break address via brk,
-  so we track it here.
+  Solaris doesn't return the current break via brk, so we track it here.
 
-  Unlike Linux, the initial break is managed by libc. This
-  means that we need to select an initial break location;
-  we set the intiail break to the end of the loaded image.
+  For dynamic executables, the kernel does not set the initial break. It
+  expects libc to set the initial break to the tail of the executable being
+  loaded. For static executables we use &_end.
+
+  See uts/common/exec/elf/elf.c, line 800.
 */
 
 #define BRK_ALIGN(addr) (void *)(((uintptr_t)addr + 0x7) & ~(uintptr_t)0x7)
@@ -54,31 +54,29 @@ __brk (addr)
   if (__curbrk == 0)
     {
 #ifndef SHARED
-      /* if we are statically compiled we can use &_end */
+      /* If we are statically compiled we can use &_end.  */
       addr = &_end;
 #else
       if (GL(dl_ns)[LM_ID_BASE]._ns_loaded)
         {
-          /* the dynamic executable has been mapped in */
+          /* The dynamic executable has been mapped in.  */
           addr = (void*)GL(dl_ns)[LM_ID_BASE]._ns_loaded->l_map_end;
         }
       else if (GL(dl_rtld_map).l_addr == 0)
         {
-          /* this must be a static executable or the l_addr of
-            ld.so would have been filled in */
+          /* This must be ld.so.1 being run directly.  */
           addr = &_end;
         }
       else
         {
-          /* we can't initialize the break until the executable
-            has been mapped in */
+          /* The executable has not been mapped in.  */
           return -1;
         }
 #endif
       }
     else if (addr == 0)
       {
-        /* we have multiple libc's */
+        /* We have multiple libc's.  */
         return 0;
     }
 
