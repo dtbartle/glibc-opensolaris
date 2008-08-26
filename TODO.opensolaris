@@ -86,3 +86,5 @@ List of CDDL headers needed to compile random stuff:
   sys/dlpi.h
 
 Use cond_t data field for broadcast seqence
+
+Use timer_* syscalls
