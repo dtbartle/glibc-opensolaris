@@ -6,7 +6,6 @@
 
 acl                 - acl                   i:siip      acl
 clock_getres        - clock_getres          i:ip        clock_getres
-clock_settime       - clock_settime         i:ip        clock_settime
 faccessat           - fsat:accessat         i:isi       faccessat
 facl                - facl                  i:iiip      facl
 fchownat            - fsat:fchownat         i:isiii     fchownat
