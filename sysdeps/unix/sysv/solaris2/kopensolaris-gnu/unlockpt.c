@@ -25,7 +25,7 @@
 int
 unlockpt (int fd)
 {
-  /* send UNLKPT down */
+  /* Send UNLKPT down.  */
   struct strioctl si;
   si.ic_cmd = UNLKPT;
   si.ic_timout = 0;
