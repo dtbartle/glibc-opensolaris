@@ -157,6 +157,15 @@
 
 #define ret_ERRVAL ret
 
+#undef  PSEUDO_FASTTRAP
+#define PSEUDO_FASTTRAP(name, trap_name, args)                \
+  .text;                                      \
+  ENTRY (name)                                    \
+    movl $T_##trap_name, %eax;                 \
+    int $T_FASTTRAP;                    \
+  L(pseudo_end):
+
+
 #ifndef PIC
 # define SYSCALL_ERROR_HANDLER  /* Nothing here; code in sysdep.S is used.  */
 #else
