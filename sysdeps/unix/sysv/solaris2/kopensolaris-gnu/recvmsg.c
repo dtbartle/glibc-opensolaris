@@ -32,3 +32,4 @@ __recvmsg (fd, message, flags)
 }
 
 weak_alias (__recvmsg, recvmsg)
+LIBC_CANCEL_HANDLED (); /* sys_recvmsg handles cancellation */

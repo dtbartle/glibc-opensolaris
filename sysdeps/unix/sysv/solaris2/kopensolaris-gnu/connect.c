@@ -35,3 +35,4 @@ __libc_connect (fd, addr, len)
 weak_alias (__libc_connect, __connect)
 weak_alias (__libc_connect, connect)
 weak_alias (__libc_connect, __connect_internal)
+LIBC_CANCEL_HANDLED (); /* sys_connect handles cancellation */

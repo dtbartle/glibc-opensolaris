@@ -33,13 +33,14 @@ __sendmsg (fd, message, flags)
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE
 
-  int result = INLINE_SYSCALL(sendmsg, 3, fd, message,
+  int result = INLINE_SYSCALL (sendmsg, 3, fd, message,
     (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2);
 
-  if(flags & MSG_NOSIGNAL)
+  if (flags & MSG_NOSIGNAL)
     SIGPIPE_ENABLE
 
   return result;
 }
 
 weak_alias (__sendmsg, sendmsg)
+LIBC_CANCEL_HANDLED (); /* sys_sendmsg handles cancellation */
