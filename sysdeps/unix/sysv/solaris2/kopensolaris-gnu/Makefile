@@ -27,8 +27,10 @@ sysdep_headers += sys/feature_tests.h sys/lwp.h sys/mount.h sys/cred.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
     sys/pset.h sys/priv.h sys/acl.h sys/procfs.h sys/reg.h sys/bufmod.h \
-    sys/types32.h
-sysdep_headers += ucred.h priv.h bits/regset.h
+    sys/types32.h sys/task.h sys/isa_defs.h sys/door.h sys/corectl.h \
+    sys/elf.h sys/rctl.h sys/task.h sys/zone.h
+sysdep_headers += ucred.h priv.h bits/regset.h project.h proc_service.h \
+    door.h rtld_db.h zone.h project.h
 endif
 ifeq ($(subdir),dirent)
 sysdep_routines += sys_getdents sys_getdents64
