@@ -88,3 +88,5 @@ List of CDDL headers needed to compile random stuff:
 Use cond_t data field for broadcast seqence
 
 Use timer_* syscalls
+
+Instead of AT_SECURE we can use AF_SUN_SETUGID [AT_SUN_AUXFLAGS]
