@@ -16,11 +16,14 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_TYPES32_H
-#define _SYS_TYPES32_H
+#ifndef _SYS_MKDEV_H
+#define _SYS_MKDEV_H
 
-#include <sys/types.h>
+#include <sys/sysmacros.h>
 
-typedef uint32_t dev32_t;
+#define NBITSMAJOR32	14
+#define NBITSMINOR32	18
+#define MAXMAJ32		0x3FFFUL
+#define MAXMIN32		0x3FFFFUL
 
-#endif /* _SYS_TYPES32_H */
+#endif /* _SYS_MKDEV_H */
