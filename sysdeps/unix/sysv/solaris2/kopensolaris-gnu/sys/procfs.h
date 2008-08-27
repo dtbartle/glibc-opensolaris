@@ -29,10 +29,8 @@
 #include <sys/priv.h>
 #include <bits/regset.h>
 #include <time.h>
-
-typedef void *psaddr_t;
-
 #include <bits/wordsize.h>
+#include <sys/isa_defs.h>
 
 /* control codes for ctl and lwpctl */
 #define PCNULL		0
@@ -461,5 +459,19 @@ typedef struct prheader
 
 #define prismember(set, flag) \
 	((((uint32_t *)(set))[__prword (flag)] & __prmask (flag)) ? 1 : 0)
+
+/* Data models.  */
+#define PR_MODEL_UNKNOWN	0
+#define PR_MODEL_ILP32	1
+#define PR_MODEL_LP64   2
+#if defined(_LP64)
+# define PR_MODEL_NATIVE	PR_MODEL_LP64
+#elif defined(_ILP32)
+# define PR_MODEL_NATIVE	PR_MODEL_ILP32
+#else
+# error Unknown data model
+#endif
+
+typedef uchar_t instr_t;
 
 #endif /* _SYS_PROCFS_H */

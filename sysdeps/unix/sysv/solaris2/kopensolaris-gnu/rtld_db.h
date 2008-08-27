@@ -1,5 +1,6 @@
 /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -16,36 +17,30 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_AUXV_H
-#define _SYS_AUXV_H
+#ifndef _RTLD_DB_H
+#define _RTLD_DB_H
 
-typedef struct
+#include <sys/types.h>
+#include <features.h>
+#include <proc_service.h>
+
+typedef struct rd_agent rd_agent_t;
+
+typedef struct rd_loadobj
   {
-	int a_type;
-	union
-	  {
-		long a_val;
-		void *a_ptr;
-		void (*a_fcn)();
-	} a_un;
-  } auxv_t;
+	psaddr_t rl_nameaddr;
+	unsigned int rl_flags;
+	psaddr_t l_base;
+	psaddr_t rl_data_base;
+	Lmid_t rl_lmident;
+	psaddr_t rl_refnameaddr;
+	psaddr_t rl_plt_base;
+	unsigned int rl_plt_size;
+	psaddr_t rl_bend;
+	psaddr_t rl_padstart;
+	psaddr_t rl_padend;
+	psaddr_t rl_dynamic;
+	unsigned long rl_tlsmodid;
+  } rd_loadobj_t;
 
-#define AT_SUN_IFLUSH		2010
-#define AT_SUN_CPU		2011
-
-#define AT_SUN_EXECNAME		2014
-#define AT_SUN_MMU		2015
-#define AT_SUN_LDDATA		2016
-#define AT_SUN_AUXFLAGS		2017
-#define AT_SUN_EMULATOR		2018
-#define AT_SUN_BRANDNAME	2019
-#define AT_SUN_BRAND_AUX1	2020
-#define AT_SUN_BRAND_AUX2	2021
-#define AT_SUN_BRAND_AUX3	2022
-
-/* Passed in AT_SUN_AUXFLAGS.  */
-#define AF_SUN_SETUGID		0x01
-#define AF_SUN_HWCAPVERIFY	0x02
-#define AF_SUN_NOPLM		0x04
-
-#endif /* _SYS_AUXV_H */
+#endif /* _RTLD_DB_H */

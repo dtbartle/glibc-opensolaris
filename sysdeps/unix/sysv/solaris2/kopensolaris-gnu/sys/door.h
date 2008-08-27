@@ -1,4 +1,5 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Declarations of privilege functions and types.
+   Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,36 +17,23 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_AUXV_H
-#define _SYS_AUXV_H
+#ifndef _SYS_DOOR_H
+#define _SYS_DOOR_H
 
-typedef struct
+#include <sys/types.h>
+
+typedef unsigned long long door_ptr_t;
+typedef unsigned int door_attr_t;
+typedef unsigned long long door_id_t;
+
+typedef struct door_info
   {
-	int a_type;
-	union
-	  {
-		long a_val;
-		void *a_ptr;
-		void (*a_fcn)();
-	} a_un;
-  } auxv_t;
+	pid_t di_target;
+	door_ptr_t di_proc;
+	door_ptr_t di_data;
+	door_attr_t di_attributes;
+	door_id_t di_uniquifier;
+	int di_resv[4];
+  } door_info_t;
 
-#define AT_SUN_IFLUSH		2010
-#define AT_SUN_CPU		2011
-
-#define AT_SUN_EXECNAME		2014
-#define AT_SUN_MMU		2015
-#define AT_SUN_LDDATA		2016
-#define AT_SUN_AUXFLAGS		2017
-#define AT_SUN_EMULATOR		2018
-#define AT_SUN_BRANDNAME	2019
-#define AT_SUN_BRAND_AUX1	2020
-#define AT_SUN_BRAND_AUX2	2021
-#define AT_SUN_BRAND_AUX3	2022
-
-/* Passed in AT_SUN_AUXFLAGS.  */
-#define AF_SUN_SETUGID		0x01
-#define AF_SUN_HWCAPVERIFY	0x02
-#define AF_SUN_NOPLM		0x04
-
-#endif /* _SYS_AUXV_H */
+#endif /* _SYS_DOOR_H */

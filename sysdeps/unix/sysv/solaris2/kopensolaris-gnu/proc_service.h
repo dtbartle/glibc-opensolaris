@@ -1,5 +1,6 @@
 /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -16,36 +17,30 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_AUXV_H
-#define _SYS_AUXV_H
+#ifndef _PROC_SERVICE_H
+#define _PROC_SERVICE_H
 
-typedef struct
+#include <elf.h>
+#include <sys/isa_defs.h>
+#include <sys/types.h>
+
+struct ps_prochandle;
+
+typedef enum
   {
-	int a_type;
-	union
-	  {
-		long a_val;
-		void *a_ptr;
-		void (*a_fcn)();
-	} a_un;
-  } auxv_t;
+	PS_OK,
+	PS_ERR,
+	PS_BADPID,
+	PS_BADLID,
+	PS_BADADDR,
+	PS_NOSYM,
+	PS_NOFREGS
+  } ps_err_e;
 
-#define AT_SUN_IFLUSH		2010
-#define AT_SUN_CPU		2011
+#ifdef _LP64
+typedef Elf64_Sym ps_sym_t;
+#else
+typedef Elf32_Sym ps_sym_t;
+#endif
 
-#define AT_SUN_EXECNAME		2014
-#define AT_SUN_MMU		2015
-#define AT_SUN_LDDATA		2016
-#define AT_SUN_AUXFLAGS		2017
-#define AT_SUN_EMULATOR		2018
-#define AT_SUN_BRANDNAME	2019
-#define AT_SUN_BRAND_AUX1	2020
-#define AT_SUN_BRAND_AUX2	2021
-#define AT_SUN_BRAND_AUX3	2022
-
-/* Passed in AT_SUN_AUXFLAGS.  */
-#define AF_SUN_SETUGID		0x01
-#define AF_SUN_HWCAPVERIFY	0x02
-#define AF_SUN_NOPLM		0x04
-
-#endif /* _SYS_AUXV_H */
+#endif /* _PROC_SERVICE_H */

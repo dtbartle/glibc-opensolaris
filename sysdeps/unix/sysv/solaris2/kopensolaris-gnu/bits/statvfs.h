@@ -26,7 +26,7 @@
 
 #define _FSTYPSZ 16
 
-struct statvfs
+typedef struct statvfs
 {
     unsigned long int f_bsize;
     unsigned long int f_frsize;
@@ -53,10 +53,10 @@ struct statvfs
 #if __WORDSIZE == 32
     unsigned long f_filler[16];
 #endif
-};
+} statvfs_t;
 
 #ifdef __USE_LARGEFILE64
-struct statvfs64
+typedef struct statvfs64
 {
     unsigned long int f_bsize;
     unsigned long int f_frsize;
@@ -74,7 +74,7 @@ struct statvfs64
 #if __WORDSIZE == 32
     unsigned long f_filler[16];
 #endif
-};
+} statvfs64_t;
 #endif
 
 /* Definitions for the flag in `f_flag'.  These definitions should be
