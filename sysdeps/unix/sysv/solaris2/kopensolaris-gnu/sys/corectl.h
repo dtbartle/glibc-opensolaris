@@ -19,8 +19,34 @@
 #ifndef _SYS_CORECTL_H
 #define _SYS_CORECTL_H
 
+#include <sys/types.h>
+#include <sys/refstr.h>
+#include <features.h>
+
 typedef unsigned long long core_content_t;
 
+typedef struct corectl_content
+  {
+	core_content_t ccc_content;
+	kmutex_t ccc_mtx;
+	uint32_t ccc_refcnt;
+  } corectl_content_t;
+
+typedef struct corectl_path
+  {
+	refstr_t *ccp_path;
+	kmutex_t ccp_mtx;
+	uint32_t ccp_refcnt;
+  } corectl_path_t;
+
+/* Options.  */
+#define CC_GLOBAL_PATH		0x01
+#define CC_PROCESS_PATH		0x02
+#define CC_GLOBAL_SETID		0x04
+#define CC_PROCESS_SETID	0x08
+#define CC_GLOBAL_LOG		0x10
+
+/* core_content_t values.  */
 #define CC_CONTENT_STACK	0x0001ULL
 #define CC_CONTENT_HEAP		0x0002ULL
 #define CC_CONTENT_SHFILE	0x0004ULL
@@ -42,5 +68,37 @@ typedef unsigned long long core_content_t;
 	 CC_CONTENT_TEXT | CC_CONTENT_DATA | CC_CONTENT_RODATA | \
 	 CC_CONTENT_ANON | CC_CONTENT_CTF)
 #define CC_CONTENT_INVALID  (-1ULL)
+
+__BEGIN_DECLS
+
+extern  int core_set_options (int);
+
+extern  int core_get_options (void);
+
+extern  int core_set_global_path (const char *, size_t);
+
+extern  int core_get_global_path (char *, size_t);
+
+extern  int core_set_default_path (const char *, size_t);
+
+extern  int core_get_default_path (char *, size_t);
+
+extern  int core_set_process_path (const char *, size_t, pid_t);
+
+extern  int core_get_process_path (char *, size_t, pid_t);
+
+extern  int core_set_global_content (const core_content_t *);
+
+extern  int core_get_global_content (core_content_t *);
+
+extern  int core_set_default_content (const core_content_t *);
+
+extern  int core_get_default_content (core_content_t *);
+
+extern  int core_set_process_content (const core_content_t *, pid_t);
+
+extern  int core_get_process_content (core_content_t *, pid_t);
+
+__END_DECLS
 
 #endif /* _SYS_CORECTL_H */
