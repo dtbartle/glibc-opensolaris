@@ -113,8 +113,10 @@ libc_freeres_ptr (static char *ttyname_buf);
 char *
 ttyname (int fd)
 {
+#ifndef __ASSUME_PROC_SELF_FD_NOT_SYMLINK
   static size_t buflen;
   char procname[30];
+#endif
   struct stat64 st, st1;
   int dostat = 0;
   char *name;
@@ -126,6 +128,7 @@ ttyname (int fd)
   if (__builtin_expect (__tcgetattr (fd, &term) < 0, 0))
     return NULL;
 
+#ifndef __ASSUME_PROC_SELF_FD_NOT_SYMLINK
   /* We try using the /proc filesystem.  */
   *_fitoa_word (fd, __stpcpy (procname, "/proc/self/fd/"), 10, 0) = '\0';
 
@@ -160,6 +163,7 @@ ttyname (int fd)
       ttyname_buf[len] = '\0';
       return ttyname_buf;
     }
+#endif /* __ASSUME_PROC_SELF_FD_NOT_SYMLINK */
 
   if (__fxstat64 (_STAT_VER, fd, &st) < 0)
     return NULL;
