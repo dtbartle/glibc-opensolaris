@@ -21,7 +21,6 @@
 #define _SYS_PRIV_H
 
 #include <sys/types.h>
-#include <sys/procfs.h>
 
 /* privsys codes */
 #define	PRIVSYS_SETPPRIV	0
