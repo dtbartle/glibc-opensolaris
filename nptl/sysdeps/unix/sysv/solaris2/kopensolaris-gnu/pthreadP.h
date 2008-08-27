@@ -61,6 +61,7 @@
     (tv)->tv_nsec < 0 || (tv)->tv_nsec >= 1000000000))
 
 #include <sys/types.h>
+#include <sys/syscall.h>
 #include <signal.h>
 #include <unistd.h>
 #include <errno.h>
@@ -68,26 +69,22 @@
 #include <synch_priv.h>
 #include <synch.h>
 
-DECLARE_INLINE_SYSCALL (pthread_t, lwp_self, void);
-DECLARE_INLINE_SYSCALL (int, lwp_kill, pthread_t lwpid, int sig);
-
 /* These are the result of the macro expansion of INTERNAL_SYSCALL.  */
 
 /* XXX: These are really gross and should die.  */
 
 static inline int __internal_kill_1 (int *errval, int sig)
 {
-  int saved_errno = errno;
-  int result = kill (THREAD_SELF->pid, sig);
-  if (result != 0)
-    *errval = errno;
-  __set_errno (saved_errno);
-  return result;
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_kill, sig);
+  return ret.sys_rval1;
 }
 
 static inline pthread_t __internal_set_tid_address_1 (int *errval, pthread_t *tid)
 {
-  return INLINE_SYSCALL (lwp_self, 0);
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_lwp_self);
+  return *tid = ret.sys_rval1;
 }
 
 static inline int __internal_rt_sigprocmask_4 (int *errval, int how,
@@ -104,38 +101,31 @@ static inline int __internal_rt_sigprocmask_4 (int *errval, int how,
 static inline int __internal_write_3 (int *errval, int fd, const void *buf,
     size_t count)
 {
-  int saved_errno = errno;
-  int result = write (fd, buf, count);
-  if (result != 0)
-    *errval = errno;
-  __set_errno (saved_errno);
-  return result;
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_write, fd, buf, count);
+  return ret.sys_rval1;
 }
 
 static inline int __internal_tkill_2 (int *errval, pthread_t tid, int sig)
 {
-  return *errval = INLINE_SYSCALL (lwp_kill, 2, tid, sig);
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_lwp_kill, tid, sig);
+  return ret.sys_rval1;
 }
 
 static inline int __internal_pause_1 (int *errval, int unused)
 {
-  int saved_errno = errno;
-  int result = pause ();
-  if (result != 0)
-    *errval = errno;
-  __set_errno (saved_errno);
-  return result;
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_pause);
+  return ret.sys_rval1;
 }
 
 static inline int __internal_nanosleep_2 (int *errval,
     const struct timespec *req, struct timespec *rem)
 {
-  int saved_errno = errno;
-  int result = nanosleep (req, rem);
-  if (result != 0)
-    *errval = errno;
-  __set_errno (saved_errno);
-  return result;
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_nanosleep, req, rem);
+  return ret.sys_rval1;
 }
 
 static inline int __internal_sched_get_priority_min_1 (int *errval, int policy)

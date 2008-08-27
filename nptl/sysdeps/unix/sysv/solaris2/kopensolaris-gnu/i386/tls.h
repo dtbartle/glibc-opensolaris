@@ -34,7 +34,7 @@
 
 /* OpenSolaris has lwp_private in order to set the thread data.  */
 # include <sys/lwp.h>
-# include <inline-syscall.h>
+# include <sys/syscall.h>
 
 # undef TLS_INIT_TP
 # define TLS_INIT_TP(thrdescr, secondcall) \
@@ -42,6 +42,7 @@
      tcbhead_t *_head = _thrdescr;					      \
      union user_desc_init _segdescr;					      \
      int _result;							      \
+     sysret_t ret;                                          \
 									      \
      _head->tcb = _thrdescr;						      \
      /* For now the thread descriptor is at the same address.  */	      \
@@ -49,10 +50,8 @@
      /* New syscall handling support.  */				      \
      INIT_SYSINFO;							      \
                                                                     \
-     DECLARE_INLINE_SYSCALL (int, lwp_private, int cmd, int which,       \
-       uintptr_t base);                \
-     (INLINE_SYSCALL (lwp_private, 3, _LWP_SETPRIVATE, _LWP_GSBASE,       \
-       (uintptr_t)_thrdescr) == -1)            \
+     (__systemcall (&ret, SYS_lwp_private, _LWP_SETPRIVATE, _LWP_GSBASE,       \
+       (uintptr_t)_thrdescr) != 0)            \
        ? "lwp_private failed when setting up thread-local storage\n" : NULL; \
   })
 

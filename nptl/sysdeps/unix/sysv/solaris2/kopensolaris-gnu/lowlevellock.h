@@ -11,7 +11,7 @@
 
 #include <pthread.h>
 #include <stddef.h>
-#include <inline-syscall.h>
+#include <sys/syscall.h>
 #include <bits/libc-lock.h>
 
 #define lll_init(futex) \
@@ -34,17 +34,15 @@
 #define lll_futex_wake(futex, nr, private) \
     sched_yield ()
 
-DECLARE_INLINE_SYSCALL (int, lwp_wait, pthread_t tid, pthread_t *departed);
-
 /* XXX: We really shouldn't assume the existence of result.  */
 #define lll_wait_tid(tid) \
-    do {                                                        \
-      result = INLINE_SYSCALL (lwp_wait, 2, (tid), NULL);       \
+    do {                                                            \
+      sysret_t __ret;                                               \
+      result = __systemcall (&__ret, SYS_lwp_wait, (tid), NULL);    \
     } while (result == EINTR);
 
-DECLARE_INLINE_SYSCALL (int, lwp_kill, pthread_t tid, int sig);
-
 #define lll_tryjoin(tid) \
-    (INLINE_SYSCALL (lwp_kill, 2, (tid), 0) != ESRCH)
+    ({sysret_t __ret;                                               \
+    __systemcall (&__ret, SYS_lwp_kill, (tid), 0) != ESRCH;})
 
 #endif /* _LOWLEVELLOCK_H */

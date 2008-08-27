@@ -67,7 +67,7 @@
 # define SYS_SUB_setsid         3
 # define SYS_SUB_getpgid        4
 # define SYS_SUB_setpgid        5
-#define SYS_xenix           40
+#define SYS_uucopystr       40
 #define SYS_dup             41
 #define SYS_pipe            42
 #define SYS_times           43
@@ -360,6 +360,20 @@
 #define SYS_open64          225
 #define SYS_rpcsys          226
 #define SYS_zone            227
+# define SYS_SUB_zone_create        0
+# define SYS_SUB_zone_destroy       1
+# define SYS_SUB_zone_getattr       2
+# define SYS_SUB_zone_enter         3
+# define SYS_SUB_zone_list          4
+# define SYS_SUB_zone_shutdown      5
+# define SYS_SUB_zone_lookup        6
+# define SYS_SUB_zone_boot          7
+# define SYS_SUB_zone_version       8
+# define SYS_SUB_zone_setattr       9
+# define SYS_SUB_zone_add_datalink  10
+# define SYS_SUB_zone_del_datalink  11
+# define SYS_SUB_zone_check_datalink    12
+# define SYS_SUB_zone_list_datalink 13
 #define SYS_autofssys       228
 #define SYS_getcwd          229
 #define SYS_so_socket       230
@@ -400,6 +414,15 @@ typedef struct
 	long sys_rval1;
 	long sys_rval2;
   } sysret_t;
+
+#include <features.h>
+
+__BEGIN_DECLS
+
+extern int  __systemcall (sysret_t *, int, ...);
+
+__END_DECLS
+
 #endif
 
 #endif  /* sys/syscall.h */
