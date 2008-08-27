@@ -53,8 +53,9 @@ These are solaris extensions that we should implement:
 Insert into headers:
   resolvpath (unistd.h)
   issetugid (unistd.h)
-  strlcpy, strlcat (strings.h)
+  strlcpy, strlcat (string.h or strings.h)
   getvmusage (sys/vm_usage.h)
+  uucopy, uucopystr (string.h or strings.h)
 
 INVALID_NOT_TERMINATED_TD_P expects to succeed on terminated threads
 
@@ -83,7 +84,14 @@ Get rid of all saved_errno usage
 More clocks in pthread_condattr_setclock
 
 List of CDDL headers needed to compile random stuff:
-  sys/dlpi.h
+  sys/dlpi.h [Should be LGPL'd]
+  sys/sysi86.h [Should be LGPL'd]
+  sys/ctf_api.h [libctf]
+  libctf.h [libctf]
+  sys/ctf.h [libctr[
+  libproc.h [libproc]
+  libelf.h [libelf]
+  gelf.h [libelf; need to add Elf64_Cap]
 
 Use cond_t data field for broadcast seqence
 
