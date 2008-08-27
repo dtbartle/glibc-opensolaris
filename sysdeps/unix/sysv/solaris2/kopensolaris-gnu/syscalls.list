@@ -85,9 +85,23 @@ swapctl             - uadmin:swapctl        i:ip        swapctl
 uadmin              - uadmin                i:iii       __uadmin            uadmin
 umount2             - umount2               i:si        umount2
 unlinkat            - fsat:unlinkat         i:isi       unlinkat
+uucopy              - uucopy                i:ppi       uucopy
+uucopystr           - uucopystr             i:ppi       uucopystr
 vhangup             - vhangup               i:          vhangup
 waitid              - waitid                Ci:iipi     __waitid            waitid
 xmknod              - xmknod                i:isii      __xmknod            _xmknod
+zone_add_datalink   - zone:zone_add_datalink i:is       zone_add_datalink
+zone_boot           - zone:zone_boot        i:i         zone_boot
+zone_check_datalink - zone:zone_check_datalink  i:ps    zone_check_datalink
+zone_destroy        - zone:zone_destroy     i:i         zone_destroy
+zone_enter          - zone:zone_enter       i:i         zone_enter
+zone_getattr        - zone:zone_getattr     i:iipi      zone_getattr
+zone_list           - zone:zone_list        i:pp        zone_list
+zone_list_datalink  - zone:zone_list_datalink   i:ipp   zone_list_datalink
+zone_remove_datalink - zone:zone_del_datalink i:s       zone_remove_datalink
+zone_setattr        - zone:zone_setattr     i:iipi      zone_setattr
+zone_shutdown       - zone:zone_shutdown    i:i         zone_shutdown
+zone_version        - zone:zone_version     i:p         zone_version
 
 #
 # implement these in helper files
@@ -96,12 +110,7 @@ xmknod              - xmknod                i:isii      __xmknod            _xmk
 sys_accept          - accept                Ci:iBN      __syscall_accept
 sys_bind            - bind                  i:ipii      __syscall_bind
 sys_brk             - brk                   i:p         __syscall_brk
-sys_chdir           - chdir                 i:s         __syscall_chdir
-sys_clock_gettime   - clock_gettime         i:ip        __syscall_clock_gettime
-sys_close           - close                 i:i         __syscall_close
-sys_close_nc_ns     - close                 Vi:i        __syscall_close_nc_ns
 sys_connect         - connect               Ci:ipi      __syscall_connect
-sys_fchdir          - fchdir                i:i         __syscall_fchdir
 sys_fcntl           - fcntl                 i:iiF       __syscall_fcntl
 sys_fdsync          - fdsync                Ci:ii       __syscall_fdsync
 sys_forkx           - forksys:forkx         i:i         __syscall_forkx
@@ -125,12 +134,10 @@ sys_lstat64         - lstat64               i:sp        __syscall_lstat64
 sys_lwp_private     - lwp_private           i:iii       __syscall_lwp_private
 sys_lwp_sigmask     - lwp_sigmask           Ei:iii      __syscall_lwp_sigmask
 sys_meminfo         - meminfosys:meminfo    i:ip        __syscall_meminfo
-sys_nanosleep       - nanosleep             i:pP        __syscall_nanosleep
 sys_open            - open                  i:siv       __syscall_open
 sys_open64          - open64                i:pii       __syscall_open64
 sys_openat          - fsat:openat           i:isiv      __syscall_openat
 sys_openat64        - fsat:openat64         i:isiv      __syscall_openat64
-sys_pause           - pause                 i:          __syscall_pause
 sys_pipe            - pipe                  i:          __syscall_pipe
 sys_pollsys         - pollsys               i:pipp      __syscall_pollsys
 sys_priocntlsys     - priocntlsys           i:ipiv      __syscall_priocntlsys
@@ -138,7 +145,6 @@ sys_privsys         - privsys               i:iipii     __syscall_privsys
 sys_pset_getloadavg - pset:pset_getloadavg  i:ipi       __syscall_pset_getloadavg
 sys_putmsg          - putmsg                i:ippi      __syscall_putmsg
 sys_putpmsg         - putpmsg               i:ippii     __syscall_putpmsg
-sys_read            - read                  i:ibn       __syscall_read
 sys_recvmsg         - recvmsg               Ci:ipi      __syscall_recvmsg
 sys_rusagesys       - rusagesys             i:ip        __syscall_rusagesys
 sys_send            - send                  Ci:ibni     __syscall_send
@@ -162,8 +168,5 @@ sys_ucred_get       - ucredsys:ucred_get    i:ip        __syscall_ucred_get
 sys_uname           - uname                 i:p         __syscall_uname
 sys_utimes          - utimes                i:sp        __syscall_utimes
 sys_utssys          - utssys                i:piiP      __syscall_utssys
-sys_write           - write                 i:ibn       __syscall_write
-sys_writev          - writev                i:ipi       __syscall_writev
-sys_writev_nc_ns    - writev                Vi:ipi      __syscall_writev_nc_ns
+sys_zone_lookup     - zone:zone_lookup      i:p         __syscall_zone_lookup
 #sys_door
-#sys_zone

@@ -2,18 +2,19 @@ libc {
   GLIBC_2.7 {
     __errno_location;
     __register_atfork;
-    gethrtime; strlcat; strlcpy; getnetmaskbyaddr;
-    mount; umount; umount2;
+
+    # TODO
+    getnetmaskbyaddr;
 
     # g
-    getcpuid; getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv;
-    getvmusage;
+    getcpuid; gethrtime; gethrvtime; getpagesizes; getpagesizes2; getpeerucred;
+    getpflags; getppriv; getustack; getvmusage;
 
     # i
     issetugid;
 
     # m
-    memcntl; meminfo;
+    memcntl; meminfo; mount;
 
     # n
     ntp_adjtime; ntp_gettime;
@@ -23,13 +24,23 @@ libc {
     pset_assign; pset_bind; pset_create; pset_destroy; pset_getattr;
     pset_getloadavg; pset_info; pset_list; pset_setattr;
 
+    # r
+    resolvepath;
+
     # s
-    setpflags; setppriv; systeminfo; swapctl;
+    setpflags; setppriv; setustack; strlcat; strlcpy; swapctl; __systemcall;
+    systeminfo;
 
     # u
     uadmin; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;
     ucred_getgroups; ucred_getlabel; ucred_getpflags; ucred_getpid;
     ucred_getprivset; ucred_getprojid; ucred_getrgid; ucred_getruid;
-    ucred_getsgid; ucred_getsuid; ucred_getzoneid; ucred_size;
+    ucred_getsgid; ucred_getsuid; ucred_getzoneid; ucred_size; umount;
+    umount2;
+
+    # z
+    zone_add_datalink; zone_boot; zone_check_datalink; zone_destroy;
+    zone_enter; zone_getattr; zone_list; zone_list_datalink; zone_remove_datalink; zone_setattr; zone_shutdown;
+    zone_version;
   }
 }
