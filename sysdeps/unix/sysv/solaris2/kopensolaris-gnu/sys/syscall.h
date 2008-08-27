@@ -391,9 +391,15 @@
 
 #ifndef __ASSEMBLER__
 typedef struct
-{
+  {
 	unsigned int word[16];
-} sysset_t;
+  } sysset_t;
+
+typedef struct
+  {
+	long sys_rval1;
+	long sys_rval2;
+  } sysret_t;
 #endif
 
 #endif  /* sys/syscall.h */

@@ -1,4 +1,5 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Declarations of zone functions and types.
+   Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,36 +17,25 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_AUXV_H
-#define _SYS_AUXV_H
+#ifndef _SYS_ZONE_H
+#define _SYS_ZONE_H
 
-typedef struct
-  {
-	int a_type;
-	union
-	  {
-		long a_val;
-		void *a_ptr;
-		void (*a_fcn)();
-	} a_un;
-  } auxv_t;
+#define GLOBAL_ZONEID	0
 
-#define AT_SUN_IFLUSH		2010
-#define AT_SUN_CPU		2011
+/* Zone attributes.  */
+#define ZONE_ATTR_ROOT		1
+#define ZONE_ATTR_NAME		2
+#define ZONE_ATTR_STATUS	3
+#define ZONE_ATTR_PRIVSET	4
+#define ZONE_ATTR_UNIQID	5
+#define ZONE_ATTR_POOLID	6
+#define ZONE_ATTR_INITPID	7
+#define ZONE_ATTR_SLBL		8
+#define ZONE_ATTR_INITNAME	9
+#define ZONE_ATTR_BOOTARGS	10
+#define ZONE_ATTR_BRAND		11
+#define ZONE_ATTR_PHYS_MCAP	12
+#define ZONE_ATTR_SCHED_CLASS	13
+#define ZONE_ATTR_FLAGS		14
 
-#define AT_SUN_EXECNAME		2014
-#define AT_SUN_MMU		2015
-#define AT_SUN_LDDATA		2016
-#define AT_SUN_AUXFLAGS		2017
-#define AT_SUN_EMULATOR		2018
-#define AT_SUN_BRANDNAME	2019
-#define AT_SUN_BRAND_AUX1	2020
-#define AT_SUN_BRAND_AUX2	2021
-#define AT_SUN_BRAND_AUX3	2022
-
-/* Passed in AT_SUN_AUXFLAGS.  */
-#define AF_SUN_SETUGID		0x01
-#define AF_SUN_HWCAPVERIFY	0x02
-#define AF_SUN_NOPLM		0x04
-
-#endif /* _SYS_AUXV_H */
+#endif /* _SYS_ZONE_H */

@@ -54,7 +54,8 @@
 # define MAP_ALIGN	0x200		/* Address specifies alignment.  */
 # define MAP_TEXT	0x200		/* Map code segment.  */
 # define MAP_INITDATA	0x800		/* Map data segment.  */
-# define MAP_RENAME		0x20		/* Rename private pages to file.  */
+# define MAP_RENAME	0x20		/* Rename private pages to file.  */
+# define _MAP_NEW	0x80000000	/* Never use this.  */
 #endif
 
 /* Flags to `msync'.  */
@@ -81,14 +82,16 @@
 
 # include <sys/types.h>
 
+# define MISYS_MEMINFO	0x0
+
 typedef struct meminfo
-{
+  {
     const uint64_t *mi_inaddr;
     const unsigned int *mi_info_req;
     uint64_t *mi_outdata;
     unsigned int *mi_validity;
     int mi_info_count;
-} meminfo_t;
+  } meminfo_t;
 
 /* info_req field */
 # define MEMINFO_SHIFT		16
@@ -149,7 +152,12 @@ typedef struct meminfo
 # define POSIX_MADV_DONTNEED	4 /* Don't need these pages.  */
 #endif
 
-#include <bits/types.h>
+struct memcntl_mha
+  {
+	unsigned int mha_cmd;
+    unsigned int mha_flags;
+    size_t mha_pagesize;
+  };
 
 __BEGIN_DECLS
 

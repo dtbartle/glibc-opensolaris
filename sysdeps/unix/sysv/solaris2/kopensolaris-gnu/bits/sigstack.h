@@ -21,6 +21,8 @@
 # error "Never include this file directly.  Use <signal.h> instead"
 #endif
 
+#include <bits/types.h>
+
 #if !defined(__need_stack_t)
 
 /* Structure describing a signal stack (obsolete).  */
@@ -56,7 +58,7 @@ enum
 typedef struct sigaltstack
   {
     void *ss_sp;
-    size_t ss_size;
+    __SIZE_TYPE__ ss_size;
     int ss_flags;
   } stack_t;
 

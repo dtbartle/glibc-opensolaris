@@ -202,17 +202,22 @@ typedef __id_t	poolid_t;
 typedef __id_t	zoneid_t;
 typedef __id_t	ctid_t;
 typedef short	pri_t;
-typedef long long		offset_t;
+typedef long long	offset_t;
 typedef unsigned int	lwpid_t;
-typedef unsigned int	t_uint;
+typedef unsigned char	uchar_t;
+typedef unsigned int	uint_t;
+typedef unsigned short	ushort_t;
+typedef unsigned long	ulong_t;
+typedef unsigned long long	u_longlong_t;
+typedef unsigned long	psaddr_t;
 
 /* OpenSolaris compatibility types.  */
 typedef unsigned short	o_mode_t;
-typedef short	o_dev_t;
+typedef short		o_dev_t;
 typedef unsigned short	o_uid_t;
 typedef unsigned short	o_gid_t;
-typedef short	o_nlink_t;
-typedef short	o_pid_t;
+typedef short		o_nlink_t;
+typedef short		o_pid_t;
 typedef unsigned short	o_ino_t;
 
 #if defined(__USE_MISC)

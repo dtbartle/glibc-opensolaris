@@ -1,5 +1,5 @@
 ifeq ($(subdir),nptl)
-headers += bits/synch.h thread.h sys/synch.h
+headers += synch.h bits/synch.h sys/synch.h thread.h
 sysdep_routines += register-atfork unregister-atfork libc_pthread_init \
     libc_multiple_threads fastlock
 libpthread-sysdep_routines += pt-fork fastlock clock_gettime \

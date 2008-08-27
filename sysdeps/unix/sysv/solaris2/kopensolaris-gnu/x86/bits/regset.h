@@ -50,11 +50,14 @@ typedef struct __fpu
 # define _NGREG		19
 #endif
 #define NGREG		_NGREG
+#define NPRGREG		_NGREG
 
 typedef int greg_t;
 
-#define prgregset_t		gregset_t
+#define prgregset_t	gregset_t
 #define prfpregset_t	fpregset_t
+#define prgreg_t	greg_t
+#define prfpregset	fpu
 
 typedef greg_t gregset_t[_NGREG];
 

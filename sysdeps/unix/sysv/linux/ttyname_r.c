@@ -97,10 +97,13 @@ getttyname_r (char *buf, size_t buflen, dev_t mydev, ino64_t myino,
 int
 __ttyname_r (int fd, char *buf, size_t buflen)
 {
+#ifndef __ASSUME_PROC_SELF_FD_NOT_SYMLINK
   char procname[30];
+#endif
   struct stat64 st, st1;
   int dostat = 0;
   int save = errno;
+  ssize_t ret;
 
   /* Test for the absolute minimal size.  This makes life easier inside
      the loop.  */
@@ -122,10 +125,11 @@ __ttyname_r (int fd, char *buf, size_t buflen)
   if (__builtin_expect (__tcgetattr (fd, &term) < 0, 0))
     return errno;
 
+#ifndef __ASSUME_PROC_SELF_FD_NOT_SYMLINK
   /* We try using the /proc filesystem.  */
   *_fitoa_word (fd, __stpcpy (procname, "/proc/self/fd/"), 10, 0) = '\0';
 
-  ssize_t ret = __readlink (procname, buf, buflen - 1);
+  ret = __readlink (procname, buf, buflen - 1);
   if (__builtin_expect (ret == -1 && errno == ENOENT, 0))
     {
       __set_errno (EBADF);
@@ -148,6 +152,7 @@ __ttyname_r (int fd, char *buf, size_t buflen)
       buf[ret] = '\0';
       return 0;
     }
+#endif /* __ASSUME_PROC_SELF_FD_NOT_SYMLINK */
 
   if (__fxstat64 (_STAT_VER, fd, &st) < 0)
     return errno;
