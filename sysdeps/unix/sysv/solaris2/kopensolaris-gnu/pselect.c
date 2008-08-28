@@ -34,14 +34,14 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
       return -1;
     }
 
-  /* set NULL fds to be the empty set */
+  /* Set NULL fds to be the empty set.  */
   fd_set emptyfds;
   FD_ZERO (&emptyfds);
   const fd_set *_readfds = readfds ?: &emptyfds;
   const fd_set *_writefds = writefds ?: &emptyfds;
   const fd_set *_exceptfds = exceptfds ?: &emptyfds;
 
-  /* fill pollfd structure */
+  /* Fill pollfd structure.  */
   struct pollfd *pfd = alloca (nfds * sizeof(struct pollfd));
   int fd;
   nfds_t i = 0;
@@ -64,13 +64,13 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
     }
   nfds_t num_pfd = i;
 
-  /* ppoll is cancelable so don't implement cancellation here */
+  /* ppoll is cancelable so don't implement cancellation here.  */
   int result = ppoll (pfd, num_pfd, timeout, sigmask);
   if (result == -1)
     return -1;
 
-  /* check for POLLNVAL */
-  for (i = 0; fd < num_pfd; i++)
+  /* Check for POLLNVAL.  */
+  for (i = 0; i < num_pfd; i++)
     {
       if (pfd[i].revents & POLLNVAL)
         {
@@ -79,18 +79,15 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
         }
     }
 
-  /* clear fd_set's */
-  for (i = 0; i < nfds; i++)
-    {
-      if (readfds)
-          __FD_CLR (fd, readfds);
-      if (writefds)
-          __FD_CLR (fd, writefds);
-      if (exceptfds)
-          __FD_CLR (fd, exceptfds);
-    }
+  /* Clear fd_set's.  */
+  if (readfds)
+    __FD_ZERO (readfds);
+  if (writefds)
+    __FD_ZERO (writefds);
+  if (exceptfds)
+    __FD_ZERO (exceptfds);
 
-  /* fill fd_set's */
+  /* Fill fd_set's.  */
   int bits = 0;
   for (i = 0; i < num_pfd; i++)
     {
@@ -100,19 +97,19 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
       assert (fd < nfds);
 
       if (readfds && ((revents & POLLRDNORM) || ((events & POLLRDNORM)
-            && (events & (POLLHUP | POLLERR)))))
+            && (revents & (POLLHUP | POLLERR)))))
         {
           __FD_SET (fd, readfds);
           bits++;
         }
       if (writefds && ((revents & POLLWRNORM) || ((events & POLLWRNORM)
-              && (events & (POLLHUP | POLLERR)))))
+              && (revents & (POLLHUP | POLLERR)))))
         {
           __FD_SET (fd, writefds);
           bits++;
         }
       if (exceptfds && ((revents & POLLRDBAND) || ((events & POLLRDBAND)
-              && (events & (POLLHUP | POLLERR)))))
+              && (revents & (POLLHUP | POLLERR)))))
         {
           __FD_SET (fd, exceptfds);
           bits++;
