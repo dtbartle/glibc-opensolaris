@@ -4,6 +4,7 @@
 # these implement libc functions directly
 #
 
+acct                - acct                  i:s         acct
 acl                 - acl                   i:siip      acl
 clock_getres        - clock_getres          i:ip        clock_getres
 core_get_default_content    - corectl:core_get_default_content  i:p core_get_default_content
