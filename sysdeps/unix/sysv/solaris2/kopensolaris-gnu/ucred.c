@@ -135,7 +135,6 @@ unsigned int ucred_getpflags (const ucred_t *uc, unsigned int flags)
 
 m_label_t *ucred_getlabel (const ucred_t *uc)
 {
-  // TODO: this could be cached
   int syslabeling = INLINE_SYSCALL (syslabeling, 0);
   if (!syslabeling || uc->uc_labeloff == 0)
     {
@@ -155,13 +154,11 @@ size_t ucred_size (void)
     priv_impl_info_t *info;
     assert (__getprivimplinfo_cached (&info) == 0);
 
-// TODO: fix
-const int auditinfo64_addr_t_size = 44;
-const int bslabel_t_size = 36;
+    /* XXX: We shouldn't use AUDITINFO64_ADDR_T_SIZE and BSLABEL_T_SIZE.  */
     return sizeof(ucred_t) + sizeof(prcred_t) + sizeof(prpriv_t) +
         ((int)sysconf (_SC_NGROUPS_MAX) - 1) * sizeof(gid_t) +
         sizeof(priv_chunk_t) * (info->priv_setsize * info->priv_nsets - 1) +
-        info->priv_infosize + auditinfo64_addr_t_size + bslabel_t_size;
+        info->priv_infosize + AUDITINFO64_ADDR_T_SIZE + BSLABEL_T_SIZE;
 }
 
 
