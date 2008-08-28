@@ -43,7 +43,7 @@ int __getprivimplinfo_cached (priv_impl_info_t **info)
 
   __libc_lock_lock (privimplinfo_lock);
 
-  /* first call: get header */
+  /* First call: get header.  */
   priv_impl_info_t _info;
   int result = INLINE_SYSCALL (privsys, 6, PRIVSYS_GETIMPLINFO, 0, 0, &_info,
       sizeof(_info), 0);
@@ -53,10 +53,10 @@ int __getprivimplinfo_cached (priv_impl_info_t **info)
       return -1;
     }
 
-  /* alloc and get full priv_impl_info_t */
+  /* Second call: alloc and get full priv_impl_info_t.  */
   size_t info_size = PRIV_IMPL_INFO_SIZE (&_info);
   __info = malloc (info_size);
-  result = INLINE_SYSCALL (privsys, 6, PRIVSYS_GETIMPLINFO, 0, 0, info,
+  result = INLINE_SYSCALL (privsys, 6, PRIVSYS_GETIMPLINFO, 0, 0, __info,
       info_size, 0);
   if (result != 0)
     {
