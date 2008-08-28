@@ -5,6 +5,7 @@
 #
 
 acct                - acct                  i:s         acct
+acctctl             - acctctl               i:ipi       acctctl
 acl                 - acl                   i:siip      acl
 clock_getres        - clock_getres          i:ip        clock_getres
 core_get_default_content    - corectl:core_get_default_content  i:p core_get_default_content
@@ -41,6 +42,8 @@ getsid              - pgrpsys:getsid        i:i         __getsid            gets
 getustack           - context:getustack     i:p         getustack
 getvmusage          - rusagesys:getvmusage  i:iipp      getvmusage
 gtty                - gtty                  i:ip        gtty
+idmap_reg           - sidsys:idmap_reg      i:i         idmap_reg
+idmap_unreg         - sidsys:idmap_unreg    i:i         idmap_unreg
 issetugid           - privsys:issetugid     Ei:         issetugid
 lchown              - lchown                i:sii       __lchown            lchown
 memcntl             - memcntl               i:piiiii    memcntl
@@ -128,6 +131,7 @@ zone_version        - zone:zone_version     i:p         zone_version
 #
 
 sys_accept          - accept                Ci:iBN      __syscall_accept
+sys_allocids        - sidsys:allocids       i:iii       __syscall_allocids
 sys_bind            - bind                  i:ipii      __syscall_bind
 sys_brk             - brk                   i:p         __syscall_brk
 sys_connect         - connect               Ci:ipi      __syscall_connect
