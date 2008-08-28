@@ -74,7 +74,7 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
     }
 
   /* clear fd_set's */
-  for (i = 0; i < nfds; i++)
+  for (fd = 0; fd < nfds; fd++)
     {
       if (readfds)
           FD_CLR (fd, readfds);
