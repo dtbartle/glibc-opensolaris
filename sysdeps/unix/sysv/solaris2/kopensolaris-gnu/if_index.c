@@ -96,7 +96,7 @@ if_nameindex (void)
   int fd = __opensock ();
   int flags = LIFC_NOXMIT | LIFC_TEMPORARY | LIFC_ALLZONES;
   unsigned int nifs, i, j, k;
-  char *buf;
+  char *buf = NULL;
   struct if_nameindex *idx = NULL;
   struct lifnum lifn;
   struct lifconf lifc;
@@ -109,10 +109,7 @@ if_nameindex (void)
   lifn.lifn_family = AF_UNSPEC;
   lifn.lifn_flags = flags;
   if (__ioctl (fd, SIOCGLIFNUM, &lifn) != 0)
-    {
-      close_not_cancel_no_status (fd);
-      return NULL;
-    }
+    goto error;
   nifs = lifn.lifn_count;
 
   /* Get interfaces.  */
@@ -122,25 +119,14 @@ if_nameindex (void)
   buf = malloc (lifc.lifc_len);
   lifc.lifc_buf = buf;
   if (buf == NULL)
-    {
-      close_not_cancel_no_status (fd);
-      return NULL;
-    }
+    goto error;
   if (__ioctl (fd, SIOCGLIFCONF, &lifc) != 0)
-    {
-      close_not_cancel_no_status (fd);
-      free (buf);
-      return NULL;
-    }
+    goto error;
   lifr = lifc.lifc_req;
 
   idx = malloc ((nifs + 1) * sizeof (struct if_nameindex));
   if (idx == NULL)
-    {
-      close_not_cancel_no_status (fd);
-      free (buf);
-      return NULL;
-    }
+    goto error;
 
   for (i = 0, j = 0, k = 0; i < nifs; ++i)
     {
@@ -154,12 +140,12 @@ if_nameindex (void)
       idx[k].if_name = __strdup (lifr[i].lifr_name);
       if (idx[k].if_name == NULL)
         {
-          close_not_cancel_no_status (fd);
-          free (buf);
+          for (i = 0; i <= k; ++i)
+            free (idx[i].if_name);
           free (idx);
-          return NULL;
+          goto error;
         }
-      idx[k].if_index = if_nametoindex (lifr[i].lifr_name);
+      idx[k].if_index = if_nametoindex (idx[k].if_name);
       ++k;
 A:;
     }
@@ -170,5 +156,10 @@ A:;
   close_not_cancel_no_status (fd);
   free (buf);
   return idx;
+
+error:
+  close_not_cancel_no_status (fd);
+  free (buf);
+  return NULL;
 }
 libc_hidden_def (if_nameindex)
