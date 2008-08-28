@@ -27,6 +27,7 @@ fpathconf           - fpathconf             i:ii        __fpathcon          fpat
 fstatvfs            - fstatvfs              i:ip        __fstatvfs          fstatvfs
 fstatvfs64          - fstatvfs64            i:ip        __fstatvfs64        fstatvfs64
 futimesat           - fsat:futimesat        i:isi       futimesat
+getacct             - exacctsys:getacct     i:iipi      getacct
 getcpuid            - getcpuid              i:          getcpuid
 getpflags           - privsys:getpflags     i:i         getpflags
 getmsg              - getmsg                i:ppp       getmsg
@@ -67,6 +68,7 @@ pset_bind           - pset:pset_bind        i:iiip      pset_bind
 pset_list           - pset:pset_list        i:pp        pset_list
 pset_setattr        - pset:pset_setattr     i:ii        pset_setattr
 pset_getattr        - pset:pset_getattr     i:ip        pset_getattr
+putacct             - exacctsys:putacct     i:iipii     putacct
 pwrite              - pwrite                Ci:iPii     __libc_pwrite       __pwrite pwrite
 pwrite64            - pwrite64              Ci:iPii     __libc_pwrite64     __pwrite64 pwrite64
 renameat            - fsat:renameat         i:isis      renameat
@@ -95,6 +97,7 @@ sockconfig          - sockconfig            i:iiis      _sockconfig         sock
 statvfs             - statvfs               i:sp        __statvfs           statvfs
 statvfs64           - statvfs64             i:sp        __statvfs64         statvfs64
 stty                - stty                  i:ip        stty
+sysfs               - sysfs                 i:iii       sysfs
 systeminfo          - systeminfo            i:ipi       sysinfo
 swapctl             - uadmin:swapctl        i:ip        swapctl
 uadmin              - uadmin                i:iii       __uadmin            uadmin
@@ -104,6 +107,7 @@ uucopy              - uucopy                i:ppi       uucopy
 uucopystr           - uucopystr             i:ppi       uucopystr
 vhangup             - vhangup               i:          vhangup
 waitid              - waitid                Ci:iipi     __waitid            waitid
+wracct              - exacctsys             i:iii       wracct
 xmknod              - xmknod                i:isii      __xmknod            _xmknod
 zone_add_datalink   - zone:zone_add_datalink i:is       zone_add_datalink
 zone_boot           - zone:zone_boot        i:i         zone_boot

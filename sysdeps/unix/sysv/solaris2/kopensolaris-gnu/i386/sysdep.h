@@ -30,6 +30,37 @@
 #include <sysdeps/unix/i386/sysdep.h>
 #include <bp-sym.h>
 #include <bp-asm.h>
+
+/* XXX: This needs to come before #include <tls.h>.  */
+
+/* Pointer mangling support.  */
+#if defined NOT_IN_libc && defined IS_IN_rtld
+/* We cannot use the thread descriptor because in ld.so we use setjmp
+   earlier than the descriptor is initialized.  Using a global variable
+   is too complicated here since we have no PC-relative addressing mode.  */
+#else
+# ifdef __ASSEMBLER__
+#  define PTR_MANGLE(reg)   xorl %gs:POINTER_GUARD, reg;              \
+                roll $9, reg
+#  define PTR_DEMANGLE(reg) rorl $9, reg;                     \
+                xorl %gs:POINTER_GUARD, reg
+# else
+#  define PTR_MANGLE(var)   asm ("xorl %%gs:%c2, %0\n"            \
+                     "roll $9, %0"                \
+                     : "=r" (var)                 \
+                     : "0" (var),                 \
+                       "i" (offsetof (tcbhead_t,          \
+                              pointer_guard)))
+#  define PTR_DEMANGLE(var) asm ("rorl $9, %0\n"                  \
+                     "xorl %%gs:%c2, %0"              \
+                     : "=r" (var)                 \
+                     : "0" (var),                 \
+                       "i" (offsetof (tcbhead_t,          \
+                              pointer_guard)))
+# endif
+#endif
+
+
 /* Defines RTLD_PRIVATE_ERRNO and USE_DL_SYSINFO.  */
 #include <dl-sysdep.h>
 #include <tls.h>
@@ -270,38 +301,6 @@
     : "=c" (__res));                              \
      __res; })
 #endif
-
-#endif  /* __ASSEMBLER__ */
-
-
-/* Pointer mangling support.  */
-#if defined NOT_IN_libc && defined IS_IN_rtld
-/* We cannot use the thread descriptor because in ld.so we use setjmp
-   earlier than the descriptor is initialized.  Using a global variable
-   is too complicated here since we have no PC-relative addressing mode.  */
-#else
-# ifdef __ASSEMBLER__
-#  define PTR_MANGLE(reg)   xorl %gs:POINTER_GUARD, reg;              \
-                roll $9, reg
-#  define PTR_DEMANGLE(reg) rorl $9, reg;                     \
-                xorl %gs:POINTER_GUARD, reg
-# else
-#  define PTR_MANGLE(var)   asm ("xorl %%gs:%c2, %0\n"            \
-                     "roll $9, %0"                \
-                     : "=r" (var)                 \
-                     : "0" (var),                 \
-                       "i" (offsetof (tcbhead_t,          \
-                              pointer_guard)))
-#  define PTR_DEMANGLE(var) asm ("rorl $9, %0\n"                  \
-                     "xorl %%gs:%c2, %0"              \
-                     : "=r" (var)                 \
-                     : "0" (var),                 \
-                       "i" (offsetof (tcbhead_t,          \
-                              pointer_guard)))
-# endif
-#endif
-
-#ifndef __ASSEMBLER__
 
 /* TODO: This is a terrible implementation of INTERNAL_SYSCALL.  */
 
