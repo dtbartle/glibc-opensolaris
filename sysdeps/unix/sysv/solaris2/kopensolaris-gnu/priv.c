@@ -31,7 +31,7 @@ DECLARE_INLINE_SYSCALL (int, privsys, int code, priv_op_t op,
 
 __libc_lock_define (static, privimplinfo_lock);
 
-static priv_impl_info_t *__info; // TODO: need to free on exit
+libc_freeres_ptr (static priv_impl_info_t *__info);
 
 int __getprivimplinfo_cached (priv_impl_info_t **info)
 {

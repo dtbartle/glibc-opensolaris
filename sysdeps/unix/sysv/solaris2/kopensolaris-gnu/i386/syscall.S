@@ -46,7 +46,7 @@ ENTRY (__systemcall)
 	movl 4(%esp), %edx	/* Save return address into %edx.  */
 	pushl %edx		/* Restore return address on stack.  */
 	cfi_adjust_cfa_offset (8)
-	jb 1	/* Jump to error handler if error.  */
+	jb 1f	/* Jump to error handler if error.  */
 	movl %eax, 0(%ecx)	/* Set first 4 bytes of sysret_t.  */
 	movl %edx, 4(%ecx)	/* Set second 4 bytes of sysret_t.  */
 	xorl %eax, %eax		/* Set return to 0.  */
