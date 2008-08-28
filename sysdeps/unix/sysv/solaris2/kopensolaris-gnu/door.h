@@ -21,9 +21,26 @@
 #define _DOOR_H
 
 #include <sys/door.h>
+#include <ucred.h>
 #include <features.h>
 
 __BEGIN_DECLS
+
+int door_create (void (*)(void *, char *, size_t, door_desc_t *, uint_t),
+    void *, uint_t);
+int door_revoke (int);
+int door_info (int, door_info_t *);
+int door_call (int, door_arg_t *);
+int door_return (char *, size_t, door_desc_t *, uint_t);
+int door_cred (door_cred_t *);
+int door_ucred (ucred_t **);
+int door_bind (int);
+int door_unbind (void);
+int door_getparam (int, int, size_t *);
+int door_setparam (int, int, size_t);
+
+typedef void door_server_func_t(door_info_t *);
+door_server_func_t *door_server_create(door_server_func_t *);
 
 __END_DECLS
 

@@ -21,10 +21,27 @@
 #define _SYS_DOOR_H
 
 #include <sys/types.h>
+#include <sys/isa_defs.h>
+
+#define DOOR_CREATE	0
+#define DOOR_REVOKE	1
+#define DOOR_INFO	2
+#define DOOR_CALL	3
+#define DOOR_BIND	6
+#define DOOR_UNBIND	7
+#define DOOR_UNREFSYS	8
+#define DOOR_UCRED	9
+#define DOOR_RETURN	10
+#define DOOR_GETPARAM	11
+#define DOOR_SETPARAM	12
 
 typedef unsigned long long door_ptr_t;
 typedef unsigned int door_attr_t;
 typedef unsigned long long door_id_t;
+
+#if _LONG_LONG_ALIGNMENT == 8 && _LONG_LONG_ALIGNMENT_32 == 4
+# pragma pack(4)
+#endif
 
 typedef struct door_info
   {
@@ -35,5 +52,61 @@ typedef struct door_info
 	door_id_t di_uniquifier;
 	int di_resv[4];
   } door_info_t;
+
+typedef struct door_desc
+  {
+	door_attr_t d_attributes;
+	union
+	  {
+		struct
+		  {
+			int d_descriptor;
+			door_id_t d_id;
+		  } d_desc;
+		int d_resv[5];
+	  } d_data;
+} door_desc_t;
+
+#if _LONG_LONG_ALIGNMENT == 8 && _LONG_LONG_ALIGNMENT_32 == 4
+# pragma pack()
+#endif
+
+typedef struct door_cred
+  {
+	uid_t dc_euid;
+	gid_t dc_egid;
+	uid_t dc_ruid;
+	gid_t dc_rgid;
+	pid_t dc_pid;
+	int dc_resv[4];
+  } door_cred_t;
+
+typedef struct door_arg
+  {
+	char *data_ptr;
+	size_t data_size;
+	door_desc_t *desc_ptr;
+	unsigned int desc_num;
+	char *rbuf;
+	size_t rsize;
+  } door_arg_t;
+
+struct door_results
+  {
+	void *cookie;
+	char *data_ptr;
+	size_t data_size;
+	door_desc_t *desc_ptr;
+	size_t desc_num;
+	void (*pc)();
+	int nservers;
+	door_info_t *door_info;
+  };
+
+typedef struct door_return_desc
+  {
+    door_desc_t *desc_ptr;
+    unsigned int desc_num;
+  } door_return_desc_t;
 
 #endif /* _SYS_DOOR_H */
