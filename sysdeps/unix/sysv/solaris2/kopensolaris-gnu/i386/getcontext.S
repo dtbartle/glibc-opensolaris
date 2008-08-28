@@ -24,45 +24,50 @@
 /* note: make sure that we do not use %edx as a scratch (see swapcontext.S) */
 
 ENTRY(__getcontext)
-    /* load ucp (arg) into %ecx */
-    movl 4(%esp), %ecx
+	/* load ucp (arg) into %ecx */
+	movl 4(%esp), %ecx
 
-    /* load return address into %eax */
-    movl 0(%esp), %eax
+	/* load return address into %eax */
+	movl 0(%esp), %eax
 
-    /* push ucp, subcall number, and return address */
-    pushl %ecx
-    pushl $SYS_SUB_getcontext
-    pushl %eax
+	/* push ucp, subcall number, and return address */
+	pushl %ecx
+	pushl $SYS_SUB_getcontext
+	pushl %eax
+	cfi_adjust_cfa_offset (12);
 
-    /* call context syscall */
-    DO_CALL(context, 2)
-    jnb 1f
+	/* call context syscall */
+	DO_CALL(context, 2)
 
-    /* pop args from stack */
-    addl $12, %esp
+	/* Jump if not error.  */
+	jnb 1f;
 
-    /* jump to error label */
-    jmp SYSCALL_ERROR_LABEL
+	/* pop args from stack */
+	addl $12, %esp
+	cfi_adjust_cfa_offset (-12);
+
+	/* Jump to error label.  */
+	jmp SYSCALL_ERROR_LABEL;
 
 1:
-    /* pop args from stack */
-    addl $12, %esp
+	/* pop args from stack */
+	addl $12, %esp
+	cfi_adjust_cfa_offset (-12);
 
-    /* load ucp (arg) into %ecx */
-    movl 4(%esp), %ecx
+	/* load ucp (arg) into %ecx */
+	movl 4(%esp), %ecx
 
-    /* save %esp */
-    leal 4(%esp), %eax
-    movl %eax, oUESP(%ecx)
+	/* save %esp */
+	leal 4(%esp), %eax
+	movl %eax, oUESP(%ecx)
 
-    /* save %eip */
-    movl 0(%esp), %eax
-    movl %eax, oEIP(%ecx)
+	/* save %eip */
+	movl 0(%esp), %eax
+	movl %eax, oEIP(%ecx)
 
-    /* return 0 on success */
-    xorl %eax, %eax
-    movl %eax, oEAX(%ecx)
+	/* return 0 on success */
+	xorl %eax, %eax
+	movl %eax, oEAX(%ecx)
 L(pseudo_end):
 	ret
 PSEUDO_END(__getcontext)

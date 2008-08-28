@@ -22,17 +22,18 @@
 ENTRY (__vfork)
 
     /* save the return address */
-    popl %ecx
+    popl %ecx; cfi_adjust_cfa_offset (-4);
 
     /* call vforkx(0) */
     pushl $0
     pushl $SYS_SUB_vforkx
     pushl %ecx
+	cfi_adjust_cfa_offset (12);
     DO_CALL (forksys, 1)
     jb 2f
 
     /* pop vforkx args */
-    addl $12, %esp
+    addl $12, %esp; cfi_adjust_cfa_offset (-12);
 
     /* In the parent process, %edx == 0, %eax == child pid.
        In the child process, %edx == 1, %eax == parent pid. */
@@ -44,10 +45,10 @@ ENTRY (__vfork)
 
 2:
     /* pop vforkx args */
-    addl $12, %esp
+    addl $12, %esp; cfi_adjust_cfa_offset (-12);
 
     /* restore the return address and jump to the syscall error label */
-    pushl %ecx
+    pushl %ecx; cfi_adjust_cfa_offset (4);
     jmp SYSCALL_ERROR_LABEL
 
 L(pseudo_end):
