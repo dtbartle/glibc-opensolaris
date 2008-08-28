@@ -20,10 +20,18 @@
 #ifndef _SYS_FSTYP_H
 #define	_SYS_FSTYP_H
 
+#include <features.>
+
 #define	FSTYPSZ		16
 
 #define	GETFSIND	1
 #define	GETFSTYP	2
 #define	GETNFSTYP	3
+
+__BEGIN_DECLS
+
+int sysfs (int, ...);
+
+__END_DECLS
 
 #endif /* _SYS_FSTYP_H */

@@ -97,6 +97,7 @@ sockconfig          - sockconfig            i:iiis      _sockconfig         sock
 statvfs             - statvfs               i:sp        __statvfs           statvfs
 statvfs64           - statvfs64             i:sp        __statvfs64         statvfs64
 stty                - stty                  i:ip        stty
+sysfs               - sysfs                 i:iii       sysfs
 systeminfo          - systeminfo            i:ipi       sysinfo
 swapctl             - uadmin:swapctl        i:ip        swapctl
 uadmin              - uadmin                i:iii       __uadmin            uadmin

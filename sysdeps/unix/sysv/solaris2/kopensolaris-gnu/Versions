@@ -35,7 +35,7 @@ libc {
     resolvepath;
 
     # s
-    setpflags; setppriv; setustack; strlcat; strlcpy; swapctl; __systemcall;
+    setpflags; setppriv; setustack; strlcat; strlcpy; swapctl; __systemcall; sysfs;
     systeminfo;
 
     # u
