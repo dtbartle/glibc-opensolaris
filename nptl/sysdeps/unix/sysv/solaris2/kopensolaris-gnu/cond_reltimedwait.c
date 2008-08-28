@@ -43,8 +43,6 @@ __condvar_cleanup (void *arg)
 
   /* Note: we don't whether the mutex was unlocked by the kernel or not.  */
 
-  /* TODO: mutex_cond_waiters needs to be a counter.  */
-
   int errval = 0;
   while (1)
     {

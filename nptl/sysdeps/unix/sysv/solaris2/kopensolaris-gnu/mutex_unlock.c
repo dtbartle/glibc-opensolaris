@@ -59,8 +59,7 @@ int mutex_unlock (mutex)
     }
 
   /* The kernel does not clear mutex_owner so we clear it here.  */
-  if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
-    mutex->mutex_owner = 0;
+  mutex->mutex_owner = 0;
 
   int errval = INLINE_SYSCALL (lwp_mutex_unlock, 1, mutex);
   if (errval != 0)
