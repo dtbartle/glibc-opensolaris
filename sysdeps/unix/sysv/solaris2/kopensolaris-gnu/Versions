@@ -18,7 +18,8 @@ libc {
 
     # g
     getacct; getcpuid; gethrtime; gethrvtime; getpagesizes; getpagesizes2;
-    getpeerucred; getpflags; getppriv; getustack; getvmusage;
+    getpeerucred; getpflags; getppriv; getprojid; gettaskid; getustack;
+    getvmusage;
 
     # i
     idmap_reg; idmap_unreg; issetugid;
@@ -38,15 +39,15 @@ libc {
     resolvepath;
 
     # s
-    setpflags; setppriv; setustack; strlcat; strlcpy; swapctl; __systemcall; sysfs;
-    systeminfo;
+    setpflags; setppriv; settaskid; setustack; strlcat; strlcpy; swapctl;
+    __systemcall; sysfs; systeminfo;
 
     # u
     uadmin; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;
     ucred_getgroups; ucred_getlabel; ucred_getpflags; ucred_getpid;
     ucred_getprivset; ucred_getprojid; ucred_getrgid; ucred_getruid;
     ucred_getsgid; ucred_getsuid; ucred_getzoneid; ucred_size; umount;
-    umount2;
+    umount2; utssys;
 
     # w
     wracct;
