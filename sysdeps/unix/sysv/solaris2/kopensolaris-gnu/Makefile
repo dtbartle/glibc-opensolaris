@@ -40,7 +40,7 @@ sysdep_headers += sys/feature_tests.h sys/lwp.h sys/mount.h sys/cred.h \
     sys/time_impl.h sys/mutex.h sys/tsol/label.h sys/exacct.h sys/acct.h \
     sys/sid.h
 sysdep_headers += ucred.h priv.h bits/regset.h project.h proc_service.h \
-    door.h rtld_db.h zone.h project.h
+    door.h rtld_db.h zone.h project.h pcsample.h
 endif
 ifeq ($(subdir),dirent)
 sysdep_routines += sys_getdents sys_getdents64
