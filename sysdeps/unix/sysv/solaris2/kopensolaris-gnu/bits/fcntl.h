@@ -218,8 +218,10 @@ struct flock64
 # define FREAD		0x01
 # define FWRITE		0x02
 # define NDELAY		0x04
+# define FNDELAY	NDELAY
 # define FAPPEND	0x08
 # define FSYNC		0x10
+# define FFSYNC		FSYNC
 # define FREVOKED	0x20
 # define FDSYNC		0x40
 # define FNONBLOCK	0x80
