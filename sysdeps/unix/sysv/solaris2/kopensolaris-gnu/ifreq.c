@@ -30,24 +30,27 @@ __ifreq (struct ifreq **ifreqs, int *num_ifs, int sockfd)
 {
   struct ifconf ifc;
   int nifs;
-  char *buf;
+  char *buf = NULL;
 
   /* Determine number of interfaces.  */
   if (__ioctl (sockfd, SIOCGIFNUM, &nifs) != 0)
-      return;
+    goto error;
 
   /* Get interfaces.  */
   ifc.ifc_len = nifs * sizeof(struct ifreq);
   buf = malloc (ifc.ifc_len);
   ifc.ifc_buf = buf;
   if (buf == NULL)
-      return;
+    goto error;
   if (__ioctl (sockfd, SIOCGIFCONF, &ifc) != 0)
-    {
-      free (buf);
-      return;
-    }
+    goto error;
 
   *ifreqs = (struct ifreq *)buf;
   *num_ifs = nifs;
+  return;
+
+error:
+  *ifreqs = NULL;
+  *num_ifs = 0;
+  free (buf);
 }
