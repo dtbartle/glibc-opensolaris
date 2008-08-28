@@ -1,4 +1,4 @@
-/* Copyright (C) 1998, 2000, 2001, 2002 Free Software Foundation, Inc.
+/* Copyright (C) 1998, 2000, 2001, 2002, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Zack Weinberg <zack@rabi.phys.columbia.edu>, 1998.
    OpenSolaris bits contributed by David Bartley
@@ -26,6 +26,8 @@
 #include <string.h>
 #include <stdio-common/_itoa.h>
 #include <errno.h>
+#include <sys/ptms.h>
+#include <stropts.h>
 
 /* Directory where we can find the slave pty nodes.  */
 #define _PATH_DEVPTS "/dev/pts/"
@@ -47,46 +49,50 @@ ptsname (int fd)
    terminal associated with the master FD is open on in BUF.
    Return 0 on success, otherwise an error number.  */
 int
-__ptsname_r (fd, buf, len)
-     int fd __attribute__ ((unused));
-     char *buf __attribute__ ((unused));
-     size_t len __attribute__ ((unused));
+__ptsname_r (int fd, char *buf, size_t buflen)
 {
-    int save_errno = errno;
-
     if (buf == NULL)
     {
         __set_errno (EINVAL);
         return EINVAL;
     }
 
-    if (!__isatty (fd))
-    {
+    /* isatty doesn't work on ptm's.  */
+    struct strioctl si;
+    si.ic_cmd = ISPTM;
+    si.ic_len = 0;
+    si.ic_timout = 0;
+    si.ic_dp = NULL;
+    if (ioctl(fd, I_STR, &si) != 0)
+      {
         __set_errno (ENOTTY);
         return ENOTTY;
-    }
+      }
 
-    /* get the minor number of the pts */
+    /* Get the minor number of the pts.  */
     struct stat st;
-    if(fstat(fd, &st) < 0)
+    if (fstat (fd, &st) < 0)
         return -1;
+    int ptyno = minor (st.st_rdev);
 
     /* Buffer we use to print the number in.  For a maximum size for
        `int' of 8 bytes we never need more than 20 digits.  */
     char numbuf[21];
-    _itoa(minor(st.st_rdev), numbuf, 10, 0);
+    const char *devpts = _PATH_DEVPTS;
+    const size_t devptslen = strlen (_PATH_DEVPTS);
+    char *p;
 
-    if(len < strlen(_PATH_DEVPTS) + strlen(numbuf) + sizeof('\0'))
-    {
-        __set_errno(ERANGE);
-        return -1;
-    }
+    numbuf[sizeof (numbuf) - 1] = '\0';
+    p = _itoa_word (ptyno, &numbuf[sizeof (numbuf) - 1], 10, 0);
 
-    /* construct name */
-    strcpy(buf, _PATH_DEVPTS);
-    strcpy(buf + strlen(_PATH_DEVPTS), numbuf);
+    if (buflen < devptslen + (&numbuf[sizeof (numbuf)] - p))
+      {
+        __set_errno (ERANGE);
+        return ERANGE;
+      }
 
-    __set_errno(save_errno);
+    memcpy (__stpcpy (buf, devpts), p, &numbuf[sizeof (numbuf)] - p);
+
     return 0;
 }
 weak_alias (__ptsname_r, ptsname_r)
