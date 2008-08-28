@@ -157,11 +157,11 @@ size_t ucred_size (void)
 
 // TODO: fix
 const int auditinfo64_addr_t_size = 44;
-const int m_label_t_size = 36;
+const int bslabel_t_size = 36;
     return sizeof(ucred_t) + sizeof(prcred_t) + sizeof(prpriv_t) +
         ((int)sysconf (_SC_NGROUPS_MAX) - 1) * sizeof(gid_t) +
         sizeof(priv_chunk_t) * (info->priv_setsize * info->priv_nsets - 1) +
-        info->priv_infosize + auditinfo64_addr_t_size + m_label_t_size;
+        info->priv_infosize + auditinfo64_addr_t_size + bslabel_t_size;
 }
 
 
