@@ -1,6 +1,8 @@
 #ifndef _LOWLEVELLOCK_H
 #define _LOWLEVELLOCK_H	1
 
+#include <pthread.h>
+
 #define lll_define(class, futex) \
     class pthread_mutex_t futex
 
@@ -9,7 +11,6 @@
 #define lll_define_initialized(class, futex) \
     class pthread_mutex_t futex = PTHREAD_MUTEX_INITIALIZER
 
-#include <pthread.h>
 #include <stddef.h>
 #include <sys/syscall.h>
 #include <bits/libc-lock.h>
