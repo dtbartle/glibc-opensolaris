@@ -23,7 +23,7 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     core_get_options core_get_process_content core_get_process_path \
     core_set_default_content core_set_default_path core_set_global_content \
     core_set_global_path core_set_options core_set_process_content \
-    core_set_process_path
+    core_set_process_path getacct putacct wracct
 sysdep_routines += sys_fdsync sys_sysconfig sys_brk sys_fcntl sys_utssys \
     sys_lwp_private sys_uname sys_getloadavg sys_utimes sys_getpeerucred \
     sys_ucred_get sys_privsys sys_syslabeling sys_putmsg sys_putpmsg \
