@@ -6,6 +6,20 @@
 
 acl                 - acl                   i:siip      acl
 clock_getres        - clock_getres          i:ip        clock_getres
+core_get_default_content    - corectl:core_get_default_content  i:p core_get_default_content
+core_get_default_path   - corectl:core_get_default_path i:pi    core_get_default_path
+core_get_global_content - corectl:core_get_global_content   i:p     core_get_global_content
+core_get_global_path    - corectl:core_get_global_path  i:pi    core_get_global_path
+core_get_options    - corectl:core_get_options  i:      core_get_options
+core_get_process_content    - corectl:core_get_process_content  i:pi    core_get_process_content
+core_get_process_path   - corectl:core_get_process_path i:pii   core_get_process_path
+core_set_default_content    - corectl:core_set_default_content  i:p core_set_default_content
+core_set_default_path   - corectl:core_set_default_path i:pi    core_set_default_path
+core_set_global_content - corectl:core_set_global_content   i:p core_set_global_content
+core_set_global_path    - corectl:core_set_global_path  i:pi    core_set_global_path
+core_set_options    - corectl:core_set_options  i:i     core_set_options
+core_set_process_content    - corectl:core_set_process_content  i:pi    core_set_process_content
+core_set_process_path   - corectl:core_set_process_path i:pii   core_set_process_path
 faccessat           - fsat:accessat         i:isi       faccessat
 facl                - facl                  i:iiip      facl
 fchownat            - fsat:fchownat         i:isiii     fchownat
