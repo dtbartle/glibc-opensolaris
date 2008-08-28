@@ -34,30 +34,24 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
       return -1;
     }
 
-  /* Set NULL fds to be the empty set.  */
-  fd_set emptyfds;
-  FD_ZERO (&emptyfds);
-  const fd_set *_readfds = readfds ?: &emptyfds;
-  const fd_set *_writefds = writefds ?: &emptyfds;
-  const fd_set *_exceptfds = exceptfds ?: &emptyfds;
-
   /* Fill pollfd structure.  */
   struct pollfd *pfd = alloca (nfds * sizeof(struct pollfd));
   int fd;
   nfds_t i = 0;
   for (fd = 0; fd < nfds; fd++)
     {
-      if (FD_ISSET (fd, _readfds) || FD_ISSET (fd, _writefds)
-            || FD_ISSET (fd, _exceptfds))
+      if ((readfds && FD_ISSET (fd, readfds)) ||
+          (writefds && FD_ISSET (fd, writefds)) ||
+          (exceptfds && FD_ISSET (fd, exceptfds)))
         {
           pfd[i].fd = fd;
           pfd[i].events = 0;
           pfd[i].revents = 0;
-          if (FD_ISSET (fd, _readfds))
+          if (readfds && FD_ISSET (fd, readfds))
                 pfd[i].events |= POLLRDNORM;
-          if(FD_ISSET (fd, _writefds))
+          if (writefds && FD_ISSET (fd, writefds))
                 pfd[i].events |= POLLWRNORM;
-          if(FD_ISSET (fd, _exceptfds))
+          if (exceptfds && FD_ISSET (fd, exceptfds))
                 pfd[i].events |= POLLRDBAND;
           i++;
         }
@@ -79,13 +73,16 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
         }
     }
 
-  /* Clear fd_set's.  */
-  if (readfds)
-    __FD_ZERO (readfds);
-  if (writefds)
-    __FD_ZERO (writefds);
-  if (exceptfds)
-    __FD_ZERO (exceptfds);
+  /* clear fd_set's */
+  for (i = 0; i < nfds; i++)
+    {
+      if (readfds)
+          FD_CLR (fd, readfds);
+      if (writefds)
+          FD_CLR (fd, writefds);
+      if (exceptfds)
+          FD_CLR (fd, exceptfds);
+    }
 
   /* Fill fd_set's.  */
   int bits = 0;
