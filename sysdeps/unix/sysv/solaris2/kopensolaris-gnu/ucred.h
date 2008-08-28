@@ -22,9 +22,7 @@
 #include <features.h>
 #include <sys/types.h>
 #include <sys/priv.h>
-
-// TODO: this belongs in sys/tsol/label.h
-typedef struct _mac_label_impl m_label_t;
+#include <sys/tsol/label.h>
 
 typedef struct ucred_s ucred_t;
 
