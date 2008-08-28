@@ -17,8 +17,8 @@ libc {
     core_set_process_content; core_set_process_path;
 
     # g
-    getacct; getcpuid; gethrtime; gethrvtime; getpagesizes; getpagesizes2; getpeerucred;
-    getpflags; getppriv; getustack; getvmusage;
+    getacct; getcpuid; gethrtime; gethrvtime; getpagesizes; getpagesizes2;
+    getpeerucred; getpflags; getppriv; getustack; getvmusage;
 
     # i
     idmap_reg; idmap_unreg; issetugid;
@@ -30,7 +30,7 @@ libc {
     ntp_adjtime; ntp_gettime;
 
     # p
-    p_online; priocntl; priocntlset; processor_bind; processor_info;
+    pc_sample; p_online; priocntl; priocntlset; processor_bind; processor_info;
     pset_assign; pset_bind; pset_create; pset_destroy; pset_getattr;
     pset_getloadavg; pset_info; pset_list; pset_setattr; putacct;
 

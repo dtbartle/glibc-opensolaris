@@ -58,6 +58,7 @@ nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __na
 ntp_adjtime         - ntp_adjtime           i:p         __adjtimex          adjtimex ntp_adjtime __adjtimex_internal
 ntp_gettime         - ntp_gettime           i:p         ntp_gettime
 pathconf            - pathconf              i:pi        __pathconf          pathconf
+pcsample            - pcsample              i:pi        pcsample
 p_online            - p_online              i:ii        p_online
 ppoll               - pollsys               Ci:pipp     ppoll
 pread               - pread                 Ci:iPii     __libc_pread        __pread pread
