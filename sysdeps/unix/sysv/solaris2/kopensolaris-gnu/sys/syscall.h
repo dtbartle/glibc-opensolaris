@@ -251,6 +251,20 @@
 #define SYS_lwp_sema_trywait  149
 #define SYS_lwp_detach      150
 #define SYS_corectl         151
+# define SYS_SUB_core_set_options   1
+# define SYS_SUB_core_get_options   2
+# define SYS_SUB_core_set_global_path   3
+# define SYS_SUB_core_get_global_path   4
+# define SYS_SUB_core_set_process_path  5
+# define SYS_SUB_core_get_process_path  6
+# define SYS_SUB_core_set_global_content    7
+# define SYS_SUB_core_get_global_content    8
+# define SYS_SUB_core_set_process_content   9
+# define SYS_SUB_core_get_process_content   10
+# define SYS_SUB_core_set_default_path  11
+# define SYS_SUB_core_get_default_path  12
+# define SYS_SUB_core_set_default_content   13
+# define SYS_SUB_core_get_default_content   14
 #define SYS_modctl          152
 #define SYS_fchroot         153
 #define SYS_utimes          154
