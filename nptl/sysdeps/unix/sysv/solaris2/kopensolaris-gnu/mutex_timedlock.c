@@ -103,8 +103,7 @@ int __mutex_timedlock (mutex, abstime)
     return errval;
 
   /* The kernel does not set mutex_owner so we set it here.  */
-  if (mutex->mutex_type & (LOCK_RECURSIVE | LOCK_ERRORCHECK))
-    mutex->mutex_owner = THREAD_GETMEM (THREAD_SELF, tid);
+  mutex->mutex_owner = THREAD_GETMEM (THREAD_SELF, tid);
 
   /* The kernel does not set the lockbyte for priority inherit mutexes.  */
   if (mutex->mutex_type & LOCK_PRIO_INHERIT)

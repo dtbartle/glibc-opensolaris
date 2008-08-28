@@ -40,6 +40,7 @@ ntp_adjtime         - ntp_adjtime           i:p         __adjtimex          adjt
 ntp_gettime         - ntp_gettime           i:p         ntp_gettime
 pathconf            - pathconf              i:pi        __pathconf          pathconf
 p_online            - p_online              i:ii        p_online
+ppoll               - pollsys               Ci:pipp     ppoll
 pread               - pread                 Ci:iPii     __libc_pread        __pread pread
 pread64             - pread64               Ci:iPii     __libc_pread64      __pread64 pread64
 processor_bind      - processor_bind        i:iiip      processor_bind
@@ -139,7 +140,6 @@ sys_open64          - open64                i:pii       __syscall_open64
 sys_openat          - fsat:openat           i:isiv      __syscall_openat
 sys_openat64        - fsat:openat64         i:isiv      __syscall_openat64
 sys_pipe            - pipe                  i:          __syscall_pipe
-sys_pollsys         - pollsys               i:pipp      __syscall_pollsys
 sys_priocntlsys     - priocntlsys           i:ipiv      __syscall_priocntlsys
 sys_privsys         - privsys               i:iipii     __syscall_privsys
 sys_pset_getloadavg - pset:pset_getloadavg  i:ipi       __syscall_pset_getloadavg
