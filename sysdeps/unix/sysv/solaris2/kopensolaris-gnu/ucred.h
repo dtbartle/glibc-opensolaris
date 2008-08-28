@@ -26,6 +26,10 @@
 
 typedef struct ucred_s ucred_t;
 
+/* XXX: These shouldn't exist.  */
+#define AUDITINFO64_ADDR_T_SIZE		44
+#define BSLABEL_T_SIZE		36
+
 __BEGIN_DECLS
 
 ucred_t *ucred_get(pid_t pid);
