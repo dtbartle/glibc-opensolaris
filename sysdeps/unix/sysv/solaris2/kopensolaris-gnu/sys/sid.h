@@ -1,4 +1,5 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Declarations of SID functions and types.
+   Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,31 +17,29 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_TYPES32_H
-#define _SYS_TYPES32_H
+#ifndef _SYS_SID_H
+#define _SYS_SID_H
 
 #include <sys/types.h>
+#include <features.h>
 
-typedef uint32_t	caddr32_t;
-typedef int32_t		daddr32_t;
-typedef int32_t		off32_t;
-typedef uint32_t	ino32_t;
-typedef int32_t		blkcnt32_t;
-typedef uint32_t	fsblkcnt32_t;
-typedef uint32_t	fsfilcnt32_t;
-typedef int32_t		id32_t;
-typedef uint32_t	major32_t;
-typedef uint32_t	minor32_t;
-typedef int32_t		key32_t;
-typedef uint32_t	mode32_t;
-typedef uint32_t	uid32_t;
-typedef uint32_t	gid32_t;
-typedef uint32_t	nlink32_t;
-typedef uint32_t	dev32_t;
-typedef int32_t		pid32_t;
-typedef uint32_t	size32_t;
-typedef int32_t		ssize32_t;
-typedef int32_t		time32_t;
-typedef int32_t		clock32_t;
+#define SIDSYS_ALLOC_IDS	0
+#define SIDSYS_IDMAP_REG	1
+#define SIDSYS_IDMAP_UNREG	2
 
-#endif /* _SYS_TYPES32_H */
+/* allocids flags.  */
+#define SID_EXTEND_RANGE	0
+#define SID_NEW_RANGE	1
+
+#define SIDSYS_SID2ID	0
+#define SIDSYS_ID2SID	1
+
+__BEGIN_DECLS
+
+int allocids (int, int, uid_t *, int, gid_t *);
+int idmap_reg (int);
+int idmap_unreg (int);
+
+__END_DECLS
+
+#endif /* _SYS_SID_H */

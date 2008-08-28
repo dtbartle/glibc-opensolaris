@@ -1,4 +1,5 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Declarations of privilege functions and types.
+   Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,31 +17,46 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_TYPES32_H
-#define _SYS_TYPES32_H
+#ifndef _SYS_ACCT_H
+#define _SYS_ACCT_H
 
+#include <features.h>
 #include <sys/types.h>
+#include <sys/types32.h>
 
-typedef uint32_t	caddr32_t;
-typedef int32_t		daddr32_t;
-typedef int32_t		off32_t;
-typedef uint32_t	ino32_t;
-typedef int32_t		blkcnt32_t;
-typedef uint32_t	fsblkcnt32_t;
-typedef uint32_t	fsfilcnt32_t;
-typedef int32_t		id32_t;
-typedef uint32_t	major32_t;
-typedef uint32_t	minor32_t;
-typedef int32_t		key32_t;
-typedef uint32_t	mode32_t;
-typedef uint32_t	uid32_t;
-typedef uint32_t	gid32_t;
-typedef uint32_t	nlink32_t;
-typedef uint32_t	dev32_t;
-typedef int32_t		pid32_t;
-typedef uint32_t	size32_t;
-typedef int32_t		ssize32_t;
-typedef int32_t		time32_t;
-typedef int32_t		clock32_t;
+#define AFORK		0001
+#define ASU		0002
+#ifdef SUN_SRC_COMPAT
+# define ACOMPAT	0004
+# define ACORE		0010
+# define AXSIG		0020
+#endif
+#define AEXPND		0040
+#define ACCTF		0300
 
-#endif /* _SYS_TYPES32_H */
+typedef unsigned short comp_t;
+
+struct acct
+  {
+	char ac_flag;
+	char ac_stat;
+	uid32_t ac_uid;
+	gid32_t ac_gid;
+	dev32_t ac_tty;
+	time32_t ac_btime;
+	comp_t ac_utime;
+	comp_t ac_stime;
+	comp_t ac_etime;
+	comp_t ac_mem;
+	comp_t ac_io;
+	comp_t ac_rw;
+	char ac_comm[8];
+};
+
+__BEGIN_DECLS
+
+extern int acct (const char *);
+
+__END_DECLS
+
+#endif /* _SYS_ACCT_H */
