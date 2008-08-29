@@ -1,4 +1,4 @@
-/* Declarations of processor sets.
+/* Declarations of x86 (i386 and amd64) macros.
    Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -32,17 +32,34 @@
 #define _INT_ALIGNMENT		4
 #define _FLOAT_ALIGNMENT	4
 #define _FLOAT_COMPLEX_ALIGNMENT	4
-#define _LONG_ALIGNMENT		4
-#define _LONG_LONG_ALIGNMENT	4
-#define _DOUBLE_ALIGNMENT	4
-#define _DOUBLE_COMPLEX_ALIGNMENT	4
-#define _LONG_DOUBLE_ALIGNMENT		4
-#define _LONG_DOUBLE_COMPLEX_ALIGNMENT	4
-#define _POINTER_ALIGNMENT	4
-#define _MAX_ALIGNMENT		4
-#define _ALIGNMENT_REQUIRED	0
-#define _LONG_LONG_ALIGNMENT_32	_LONG_LONG_ALIGNMENT
-#define _ILP32
+
+#ifdef __amd64__
+# define _LONG_ALIGNMENT	8
+# define _LONG_LONG_ALIGNMENT	8
+# define _DOUBLE_ALIGNMENT	8
+# define _DOUBLE_COMPLEX_ALIGNMENT	8
+# define _LONG_DOUBLE_ALIGNMENT	16
+# define _LONG_DOUBLE_COMPLEX_ALIGNMENT	16
+# define _POINTER_ALIGNMENT	8
+# define _MAX_ALIGNMENT		16
+# define _ALIGNMENT_REQUIRED	1
+# define _LP64
+# define _MULTI_DATAMODEL
+# define __i386_COMPAT
+#else /* __i386__ */
+# define _LONG_ALIGNMENT	4
+# define _LONG_LONG_ALIGNMENT	4
+# define _DOUBLE_ALIGNMENT	4
+# define _DOUBLE_COMPLEX_ALIGNMENT	4
+# define _LONG_DOUBLE_ALIGNMENT	4
+# define _LONG_DOUBLE_COMPLEX_ALIGNMENT	4
+# define _POINTER_ALIGNMENT	4
+# define _MAX_ALIGNMENT		4
+# define _ALIGNMENT_REQUIRED	0
+# define _ILP32
+#endif /* __amd64__ */
+
+#define _LONG_LONG_ALIGNMENT_32	4
 #define _SUNOS_VTOC_16
 #define _DMA_USES_PHYSADDR
 #define _FIRMWARE_NEEDS_FDISK
