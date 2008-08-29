@@ -25,7 +25,7 @@
 #include <pthreadP.h>
 #include <lowlevellock.h>
 
-#undef DONT_NEED_AIO_MISC_COND
+#define DONT_NEED_AIO_MISC_COND	1
 
 #define AIO_MISC_NOTIFY(waitlist) \
   do {									      \
