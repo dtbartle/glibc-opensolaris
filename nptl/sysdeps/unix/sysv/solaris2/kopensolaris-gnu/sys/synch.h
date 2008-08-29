@@ -28,18 +28,21 @@
 #define USYNC_PROCESS	0x01
 
 /* mutex_type values */
-#define LOCK_NORMAL			USYNC_THREAD
-#define LOCK_SHARED			USYNC_PROCESS
+#define LOCK_NORMAL		USYNC_THREAD
+#define LOCK_SHARED		USYNC_PROCESS
 #define LOCK_ERRORCHECK		0x02
 #define LOCK_RECURSIVE		0x04
 #define LOCK_PRIO_INHERIT	0x10
 #define LOCK_PRIO_PROTECT	0x20
-#define LOCK_ROBUST			0x40
+#define LOCK_ROBUST		0x40
+
+/* deprecated */
+#define USYNC_PROCESS_ROBUST	0x08
 
 /* mutex_flag values */
 #define	LOCK_OWNERDEAD		0x01
 #define	LOCK_NOTRECOVERABLE	0x02
-#define	LOCK_INITED			0x04
+#define	LOCK_INITED		0x04
 #define	LOCK_UNMAPPED		0x08
 
 #define MUTEX_MAGIC		0x4d58 /* "MX" */
