@@ -27,4 +27,12 @@ sysdep_routines += sys_forkx
 endif
 
 # Needed in both the signal and nptl subdir.
-CFLAGS-sigaction.c = -DWRAPPER_INCLUDE='<nptl/sigaction.c>'
+# We also need to enable exceptions.
+CFLAGS-sigaction.c = -DWRAPPER_INCLUDE='<nptl/sigaction.c>' -fexceptions
+
+# The following are cancellation points.  Some of the functions can
+# block and therefore temporarily enable asynchronous cancellation.
+# Those must be compiled asynchronous unwind tables.
+CFLAGS-cond_reltimedwait.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-cond_timedwait.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-cond_wait.c = -fexceptions -fasynchronous-unwind-tables
