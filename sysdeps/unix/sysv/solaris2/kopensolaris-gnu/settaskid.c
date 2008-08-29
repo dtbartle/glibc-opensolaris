@@ -1,6 +1,6 @@
-/* Declarations of privilege functions and types.
-   Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,31 +17,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _DOOR_H
-#define _DOOR_H
+#include <inline-syscall.h>
+#include <sys/task.h>
 
-#include <sys/door.h>
-#include <ucred.h>
-#include <features.h>
+DECLARE_INLINE_SYSCALL (int, settaskid, projid_t project, unsigned int flags);
 
-__BEGIN_DECLS
+taskid_t
+settaskid (projid_t project, unsigned int flags)
+{
+  int res;
 
-int door_create (void (*)(void *, char *, size_t, door_desc_t *, uint_t),
-    void *, uint_t);
-int door_revoke (int);
-int door_info (int, door_info_t *);
-int door_call (int, door_arg_t *);
-int door_return (char *, size_t, door_desc_t *, uint_t);
-int door_cred (door_cred_t *);
-int door_ucred (ucred_t **);
-int door_bind (int);
-int door_unbind (void);
-int door_getparam (int, int, size_t *);
-int door_setparam (int, int, size_t);
+  /* settaskid cannot return EINTR.  */
+  do
+    res = INLINE_SYSCALL (settaskid, 2, project, flags);
+  while (res == -1 && errno == EINTR);
 
-typedef void door_server_func_t(door_info_t *);
-door_server_func_t *door_server_create(door_server_func_t *);
-
-__END_DECLS
-
-#endif /* _DOOR_H */
+  return res;
+}

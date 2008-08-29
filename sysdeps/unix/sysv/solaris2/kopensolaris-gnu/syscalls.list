@@ -37,8 +37,10 @@ getpmsg             - getpmsg               i:pppp      getpmsg
 getpagesizes        - getpagesizes:getpagesizes2  i:pi  __getpagesizes      getpagesizes getpagesizes2
 getpgid             - pgrpsys:getpgid       i:i         __getpgid           getpgid
 getpgrp             - pgrpsys:getpgrp       i:          __getpgrp           getpgrp
+getprojid           - tasksys:getprojid     i:          getprojid
 getrlimit64         - getrlimit64           i:ip        getrlimit64
 getsid              - pgrpsys:getsid        i:i         __getsid            getsid
+gettaskid           - tasksys:gettaskid     i:          gettaskid
 getustack           - context:getustack     i:p         getustack
 getvmusage          - rusagesys:getvmusage  i:iipp      getvmusage
 gtty                - gtty                  i:ip        gtty
@@ -58,6 +60,7 @@ nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __na
 ntp_adjtime         - ntp_adjtime           i:p         __adjtimex          adjtimex ntp_adjtime __adjtimex_internal
 ntp_gettime         - ntp_gettime           i:p         ntp_gettime
 pathconf            - pathconf              i:pi        __pathconf          pathconf
+pcsample            - pcsample              i:pi        pcsample
 p_online            - p_online              i:ii        p_online
 ppoll               - pollsys               Ci:pipp     ppoll
 pread               - pread                 Ci:iPii     __libc_pread        __pread pread
@@ -107,6 +110,7 @@ swapctl             - uadmin:swapctl        i:ip        swapctl
 uadmin              - uadmin                i:iii       __uadmin            uadmin
 umount2             - umount2               i:si        umount2
 unlinkat            - fsat:unlinkat         i:isi       unlinkat
+utssys              - utssys                i:piip      utssys
 uucopy              - uucopy                i:ppi       uucopy
 uucopystr           - uucopystr             i:ppi       uucopystr
 vhangup             - vhangup               i:          vhangup
@@ -176,6 +180,7 @@ sys_sendfilev64     - sendfilev:sendfilev64 i:ipip      __syscall_sendfilev64
 sys_sendmsg         - sendmsg               Ci:ipi      __syscall_sendmsg
 sys_sendto          - sendto                Ci:ibnibn   __syscall_sendto
 sys_setsockopt      - setsockopt            i:iiibn     __syscall_setsockopt
+sys_settaskid       - tasksys:settaskid     i:ii        __syscall_settaskid
 sys_shutdown        - shutdown              i:iii       __syscall_shutdown
 sys_sigaction       - sigaction             i:iPP       __syscall_sigaction
 sys_sigqueue        - sigqueue              i:iiPii     __syscall_sigqueue

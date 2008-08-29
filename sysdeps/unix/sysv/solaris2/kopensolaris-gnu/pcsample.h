@@ -1,6 +1,5 @@
 /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +16,16 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _PROJECT_H
-#define _PROJECT_H
+#ifndef _PCSAMPLE_H
+#define _PCSAMPLE_H
 
+#include <sys/types.h>
 #include <features.h>
 
 __BEGIN_DECLS
 
+long pcsample (uintptr_t [], long);
+
 __END_DECLS
 
-#endif /* _PROJECT_H */
+#endif /* _PCSAMPLE_H */

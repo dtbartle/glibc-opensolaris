@@ -47,7 +47,7 @@
 #define SYS_setuid          23
 #define SYS_getuid          24
 #define SYS_stime           25
-#define SYS_ptrace          26
+#define SYS_pcsample        26
 #define SYS_alarm           27
 #define SYS_fstat           28
 #define SYS_pause           29
