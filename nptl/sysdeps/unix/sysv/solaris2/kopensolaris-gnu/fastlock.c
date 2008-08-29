@@ -56,11 +56,7 @@ int __mutex_lock_fast (mutex_t *mutex, bool try)
             }
         }
     }
-  else if ((mutex->mutex_type & LOCK_RECURSIVE) &&
-            mutex->mutex_lockbyte == LOCKBYTE_SET &&
-          ((mutex->mutex_type & LOCK_SHARED) == 0 ||
-            mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-            mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid))
+  else if ((mutex->mutex_type & LOCK_RECURSIVE) && MUTEX_IS_OWNER (mutex))
     {
       /* Recursively held lock.  */
       if (mutex->mutex_rcount == RECURSION_MAX)
@@ -68,11 +64,7 @@ int __mutex_lock_fast (mutex_t *mutex, bool try)
       mutex->mutex_rcount++;
       return 0;
     }
-  else if ((mutex->mutex_type & LOCK_ERRORCHECK) &&
-            mutex->mutex_lockbyte == LOCKBYTE_SET &&
-          ((mutex->mutex_type & LOCK_SHARED) == 0 ||
-            mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-           (mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid)))
+  else if ((mutex->mutex_type & LOCK_ERRORCHECK) && MUTEX_IS_OWNER (mutex))
     {
       /* Error checking: lock already held.  */
       return EDEADLK;
@@ -90,22 +82,14 @@ int __mutex_lock_fast (mutex_t *mutex, bool try)
 
 int __mutex_unlock_fast (mutex_t *mutex)
 {
-  if ((mutex->mutex_type & LOCK_RECURSIVE) &&
-       mutex->mutex_lockbyte == LOCKBYTE_SET &&
-     ((mutex->mutex_type & LOCK_SHARED) == 0 ||
-       mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-       mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid) &&
+  if ((mutex->mutex_type & LOCK_RECURSIVE) && MUTEX_IS_OWNER (mutex) &&
        mutex->mutex_rcount > 0)
     {
       /* Recursively held lock.  */
       --mutex->mutex_rcount;
       return 0;
     }
-  else if ((mutex->mutex_type & LOCK_ERRORCHECK) &&
-         (((mutex->mutex_type & LOCK_SHARED) &&
-            mutex->mutex_ownerpid != THREAD_GETMEM (THREAD_SELF, pid)) ||
-            mutex->mutex_owner != THREAD_GETMEM (THREAD_SELF, tid) ||
-            mutex->mutex_lockbyte != LOCKBYTE_SET))
+  else if ((mutex->mutex_type & LOCK_ERRORCHECK) && MUTEX_NOT_OWNER (mutex))
     {
       /* error checking: lock not held by this thread */
       return EPERM;

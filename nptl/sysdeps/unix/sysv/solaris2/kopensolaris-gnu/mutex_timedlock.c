@@ -50,11 +50,7 @@ int __mutex_timedlock (mutex, abstime)
   else
     {
       /* Except when we already hold a recursive lock.  */
-      if ((mutex->mutex_type & LOCK_RECURSIVE) &&
-           mutex->mutex_lockbyte == LOCKBYTE_SET &&
-         ((mutex->mutex_type & LOCK_SHARED) == 0 ||
-           mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-           mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid))
+      if ((mutex->mutex_type & LOCK_RECURSIVE) && MUTEX_IS_OWNER (mutex))
         {
           /* XXX: Solaris mutexes have no overflow check and don't know about
              EAGAIN; in practice overflow will not occur so we don't care.  */
