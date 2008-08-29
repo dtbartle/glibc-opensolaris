@@ -22,11 +22,9 @@
 
 #include <tls.h>
 #include <ucontext.h>
-#include <sys/segments.h>
 #include <sys/stack.h>
 #include <sys/stack.h>
 #include <sys/regset.h>
-#include <sys/segments.h>
 #include <inline-syscall.h>
 #include <sched_priv.h>
 #include <createthread_arch.c>
@@ -111,7 +109,14 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
         INLINE_SYSCALL (lwp_kill, 2, pd->tid, SIGKILL);
     }
 
-  if (errval != 0)
+  if (errval == 0)
+    {
+      /* We now have for sure more than one thread.  The main thread might
+         not yet have the flag set.  No need to set the global variable
+         again if this is what we use.  */
+      THREAD_SETMEM (THREAD_SELF, header.multiple_threads, 1);
+    }
+  else
     {
       atomic_decrement (&__nptl_nthreads); /* Oops, we lied for a second.  */
 
