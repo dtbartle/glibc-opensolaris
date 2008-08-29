@@ -28,7 +28,8 @@ int cond_init (cond, type, arg)
       int type;
       void *arg;
 {
-  // TODO: check type
+  if (type != LOCK_NORMAL && type != LOCK_SHARED)
+    return EINVAL;
 
   memset (cond, 0, sizeof(cond_t));
   cond->cond_type = type;

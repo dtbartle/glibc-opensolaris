@@ -28,7 +28,8 @@ int rwlock_init (rwlock, type, arg)
       int type;
       void * arg;
 {
-  // TODO: check type
+  if (type != LOCK_NORMAL && type != LOCK_SHARED)
+    return EINVAL;
 
   memset (rwlock, 0, sizeof(rwlock_t));
   rwlock->type = type;
