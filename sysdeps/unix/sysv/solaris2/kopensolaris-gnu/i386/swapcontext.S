@@ -30,10 +30,9 @@ ENTRY(__swapcontext)
     movl 0(%esp), %eax
 
     /* push ucp, subcall number, and return address */
-    pushl %ecx
-    pushl $SYS_SUB_getcontext
-    pushl %eax
-	cfi_adjust_cfa_offset (12);
+    pushl %ecx; cfi_adjust_cfa_offset (4)
+    pushl $SYS_SUB_getcontext; cfi_adjust_cfa_offset (4)
+    pushl %eax; cfi_adjust_cfa_offset (4)
 
     /* call context syscall */
     DO_CALL(context, 2)
@@ -42,16 +41,14 @@ ENTRY(__swapcontext)
 	jnb 1f;
 
 	/* pop args from stack */
-	addl $12, %esp
-	cfi_adjust_cfa_offset (-12);
+	addl $12, %esp; cfi_adjust_cfa_offset (-12);
 
 	/* Jump to error label.  */
 	jmp SYSCALL_ERROR_LABEL;
 
 1:
     /* pop args from stack */
-    addl $12, %esp
-	cfi_adjust_cfa_offset (-12);
+    addl $12, %esp; cfi_adjust_cfa_offset (-12);
 
     /* load ucp (arg) into %ecx */
     movl 4(%esp), %ecx
@@ -72,15 +69,13 @@ ENTRY(__swapcontext)
     movl 8(%esp), %edx
 
     /* push ucp */
-    pushl %edx
-	cfi_adjust_cfa_offset (4);
+    pushl %edx; cfi_adjust_cfa_offset (4);
 
     /* call __setcontext */
     call __setcontext
 
     /* pop ucp */
-    addl $4, %esp
-	cfi_adjust_cfa_offset (-4);
+    addl $4, %esp; cfi_adjust_cfa_offset (-4)
 
     /* __setcontext sets the return (%eax) */
 L(pseudo_end):

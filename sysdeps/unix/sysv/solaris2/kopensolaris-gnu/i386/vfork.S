@@ -25,10 +25,9 @@ ENTRY (__vfork)
     popl %ecx; cfi_adjust_cfa_offset (-4);
 
     /* call vforkx(0) */
-    pushl $0
-    pushl $SYS_SUB_vforkx
-    pushl %ecx
-	cfi_adjust_cfa_offset (12);
+    pushl $0; cfi_adjust_cfa_offset (4)
+    pushl $SYS_SUB_vforkx; cfi_adjust_cfa_offset (4)
+    pushl %ecx; cfi_adjust_cfa_offset (4)
     DO_CALL (forksys, 1)
     jb 2f
 
