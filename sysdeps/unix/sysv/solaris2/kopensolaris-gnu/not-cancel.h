@@ -70,3 +70,6 @@ extern __pid_t __waitpid_not_cancel(__pid_t pid, int *stat_loc, int options);
 
 #define sigsuspend_not_cancel(set) \
     syscall (SYS_sigsuspend, (set))
+
+#define waitid_not_cancel(idtype, id, infop, options) \
+    syscall (SYS_waitid, (idtype), (id), (infop), (options))

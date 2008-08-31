@@ -34,13 +34,13 @@ __waitpid_not_cancel (__pid_t pid, int *stat_loc, int options)
 
   /* implement waitpid by calling waitid */
   if (pid < -1)
-    result = waitid (P_PGID, -pid, &info, options);
+    result = waitid_not_cancel (P_PGID, -pid, &info, options);
   else if (pid == -1)
-    result = waitid (P_ALL, 0, &info, options);
+    result = waitid_not_cancel (P_ALL, 0, &info, options);
   else if (pid == 0)
-    result = waitid (P_PGID, getpgid(0), &info, options);
+    result = waitid_not_cancel (P_PGID, getpgid(0), &info, options);
   else /* if(pid > 0) */
-    result = waitid (P_PID, pid, &info, options);
+    result = waitid_not_cancel (P_PID, pid, &info, options);
 
   if (result == -1)
     return -1;
