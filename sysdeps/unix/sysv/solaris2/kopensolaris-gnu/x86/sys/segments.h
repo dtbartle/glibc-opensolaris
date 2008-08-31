@@ -1,4 +1,5 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Declaration of segments.
+   Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,35 +17,18 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_REGSET_H
-#define _SYS_REGSET_H	1
+#ifndef _SYS_SEGMENTS_H
+#define _SYS_SEGMENTS_H 1
 
-#include <features.h>
+#define IDXTOSEL(s)		((s) << 3)
+#define SEL_GDT(s, r)	(IDXTOSEL(s) | r)
 
-#ifdef __USE_MISC
+#define SEL_UPL		3
 
-#include <bits/regset.h>
+#define GDT_LWPFS	55
+#define GDT_LWPGS	56
 
-# define GS		0
-# define FS		1
-# define ES		2
-# define DS		3
-# define EDI		4
-# define ESI		5
-# define EBP		6
-# define ESP		7
-# define EBX		8
-# define EDX		9
-# define ECX		10
-# define EAX		11
-# define TRAPNO	12
-# define ERR		13
-# define EIP		14
-# define CS		15
-# define EFL		16
-# define UESP	17
-# define SS		18
+#define LWPFS_SEL	SEL_GDT(GDT_LWPFS, SEL_UPL)
+#define LWPGS_SEL	SEL_GDT(GDT_LWPGS, SEL_UPL)
 
-#endif
-
-#endif /* _SYS_REGSET_H */
+#endif /* _SYS_SEGMENTS_H */

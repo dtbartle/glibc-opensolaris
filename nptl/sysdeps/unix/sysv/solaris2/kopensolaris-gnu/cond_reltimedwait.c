@@ -30,6 +30,7 @@ struct _condvar_cleanup_buffer
   int oldtype;
   cond_t *cond;
   mutex_t *mutex;
+  int recursive;
   uint8_t old_mutex_rcount;
 };
 
@@ -46,10 +47,7 @@ __condvar_cleanup (void *arg)
   int errval = 0;
   while (1)
     {
-      if (mutex->mutex_lockbyte == LOCKBYTE_SET &&
-        ((mutex->mutex_type & LOCK_SHARED) == 0 ||
-          mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-         (mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid)))
+      if (MUTEX_IS_OWNER (mutex))
         {
           /* The lock is held by us (we didn't get signaled).  */
           break;
@@ -79,31 +77,26 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
      int cancel;
 {
   struct _pthread_cleanup_buffer buffer;
-  struct _condvar_cleanup_buffer cbuffer;
+  struct _condvar_cleanup_buffer cbuffer = {
+    .recursive = 0
+  };
 
   /* Reject invalid timeouts.  */
   if (INVALID_TIMESPEC (reltime))
     return EINVAL;
 
-  if ((mutex->mutex_type & LOCK_ERRORCHECK) &&
-     ((mutex->mutex_lockbyte != LOCKBYTE_SET ||
-       mutex->mutex_owner != THREAD_GETMEM (THREAD_SELF, tid) ||
-     ((mutex->mutex_type & LOCK_SHARED) &&
-       mutex->mutex_ownerpid != THREAD_GETMEM (THREAD_SELF, pid)))))
+  if ((mutex->mutex_type & LOCK_ERRORCHECK) && MUTEX_NOT_OWNER (mutex))
     {
       /* Error checking: lock not held by this thread.  */
       return EPERM;
     }
-  else if ((mutex->mutex_type & LOCK_RECURSIVE) &&
-            mutex->mutex_lockbyte == LOCKBYTE_SET &&
-          ((mutex->mutex_type & LOCK_SHARED) == 0 ||
-            mutex->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&
-            mutex->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid) &&
+  else if ((mutex->mutex_type & LOCK_RECURSIVE) && MUTEX_IS_OWNER (mutex) &&
             mutex->mutex_rcount > 0)
     {
       /* Recursively held lock. XXX: Using recursive mutexes with condition
          variables is undefined; we do what sun's libc does, namely fully
          release the lock.  */
+      cbuffer.recursive = 1;
       cbuffer.old_mutex_rcount = mutex->mutex_rcount;
       mutex->mutex_rcount = 0;
     }
@@ -146,8 +139,7 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
     errval = errval2;
 
   /* Restore the mutex_rcount.  */
-  if ((errval2 == 0 || errval2 == EOWNERDEAD) &&
-        (mutex->mutex_type & LOCK_RECURSIVE))
+  if ((errval2 == 0 || errval2 == EOWNERDEAD) && cbuffer.recursive)
     mutex->mutex_rcount = cbuffer.old_mutex_rcount;
 
   /* The condition variable is no longer using the mutex.  */

@@ -57,6 +57,14 @@
     (((rwlock->type >> PTHREAD_RWLOCK_TYPE_SHIFT) & \
     PTHREAD_RWLOCK_TYPE_MASK) != PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP)
 
+#define MUTEX_IS_OWNER(mutex) \
+       (mutex->mutex_lockbyte == LOCKBYTE_SET &&                        \
+     (((mutex)->mutex_type & LOCK_SHARED) == 0 ||                       \
+      (mutex)->mutex_ownerpid == THREAD_GETMEM (THREAD_SELF, pid)) &&   \
+     ((mutex)->mutex_owner == THREAD_GETMEM (THREAD_SELF, tid)))
+
+#define MUTEX_NOT_OWNER(mutex)  (! MUTEX_IS_OWNER (mutex))
+
 #define INVALID_TIMESPEC(tv)    ((tv) && ((tv)->tv_sec < 0 || \
     (tv)->tv_nsec < 0 || (tv)->tv_nsec >= 1000000000))
 

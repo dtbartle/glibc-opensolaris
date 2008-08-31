@@ -42,10 +42,10 @@ __pthread_rwlock_init (rwlock, attr)
   iattr = ((const struct pthread_rwlockattr *) attr) ?: &default_attr;
 
   memset (rwlock, 0, sizeof(pthread_rwlock_t));
-  rwlock->type = iattr->pshared;
-  rwlock->magic = RWL_MAGIC;
-  rwlock->mutex.mutex_type = iattr->pshared |
+  rwlock->type = iattr->pshared |
       (iattr->lockkind << PTHREAD_RWLOCK_TYPE_SHIFT);
+  rwlock->magic = RWL_MAGIC;
+  rwlock->mutex.mutex_type = iattr->pshared;
   rwlock->mutex.mutex_flag = LOCK_INITED;
   rwlock->mutex.mutex_magic = MUTEX_MAGIC;
   rwlock->readercv.cond_type = iattr->pshared;

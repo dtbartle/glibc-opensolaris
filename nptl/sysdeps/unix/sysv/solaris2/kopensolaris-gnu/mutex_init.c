@@ -32,6 +32,10 @@ int mutex_init (mutex, type, arg)
 {
   // TODO: check type
 
+  /* USYNC_PROCESS_ROBUST must be mapped to LOCK_SHARED | LOCK_ROBUST.  */
+  if (type & USYNC_PROCESS_ROBUST)
+    type = (type & ~USYNC_PROCESS_ROBUST) | LOCK_SHARED | LOCK_ROBUST;
+
   if (type & LOCK_ROBUST)
     {
       if ((mutex->mutex_type & LOCK_INITED))

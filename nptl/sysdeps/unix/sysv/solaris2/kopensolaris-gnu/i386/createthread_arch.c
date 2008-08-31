@@ -17,6 +17,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <sys/segments.h>
+
 static int
 create_thread_arch (ucontext_t *ctx, struct pthread *pd,
            const struct pthread_attr *attr, STACK_VARIABLES_PARMS)
@@ -38,7 +40,7 @@ create_thread_arch (ucontext_t *ctx, struct pthread *pd,
   *--stack_ptr = (uint32_t)pd; /* arg 1 */
   *--stack_ptr = 0; /* return addr (thread_start never returns) */
   ctx->uc_mcontext.gregs[UESP] = (greg_t)stack_ptr;
-  ctx->uc_mcontext.gregs[EBP] = (greg_t)(stack_ptr + 2); // TODO
+  ctx->uc_mcontext.gregs[EBP] = 0;
   ctx->uc_mcontext.gregs[EIP] = (greg_t)start_thread;
   ctx->uc_flags |= UC_CPU;
 
