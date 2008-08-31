@@ -29,7 +29,7 @@ __libc_connect (fd, addr, len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t len;
 {
-    return INLINE_SYSCALL (connect, 4, fd, addr, len, SOV_XPG4_2);
+  return INLINE_SYSCALL (connect, 4, fd, addr, len, SOV_XPG4_2);
 }
 
 weak_alias (__libc_connect, __connect)
