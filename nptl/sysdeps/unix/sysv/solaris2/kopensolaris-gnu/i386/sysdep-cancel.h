@@ -32,6 +32,9 @@
 
 #if !defined NOT_IN_libc || defined IS_IN_libpthread || defined IS_IN_librt
 
+/* Note that CDISABLE is an internal function, so we need to
+   pass-by-register (we pass the argument in %eax).  */
+
 # undef  PSEUDO
 # define PSEUDO(name, syscall_name, args)                      \
   .text;                                      \
@@ -56,18 +59,16 @@
     DO_CALL (syscall_name, args);                         \
     jnb 3f;										\
     pushl %eax; cfi_adjust_cfa_offset (4);  \
-    pushl %ecx; cfi_adjust_cfa_offset (4);  \
+    movl %ecx, %eax;                        \
     CDISABLE;                           \
-    addl $4, %esp; cfi_adjust_cfa_offset (-4);  \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
     cmpl $ERESTART, %eax;                   \
     je L(restart_cancel);                                      \
     jmp SYSCALL_ERROR_LABEL;                           \
 3:                                                  \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
-    pushl %ecx; cfi_adjust_cfa_offset (4);  \
+    movl %ecx, %eax;                        \
     CDISABLE;                           \
-    addl $4, %esp; cfi_adjust_cfa_offset (-4);  \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
   L(pseudo_end):
 
@@ -109,9 +110,8 @@
     DO_CALL (syscall_name, args);                         \
     jnb 3f;										\
     pushl %eax; cfi_adjust_cfa_offset (4);  \
-    pushl %edx; cfi_adjust_cfa_offset (4);  \
+    movl %ecx, %eax;                        \
     CDISABLE;                           \
-    addl $4, %esp; cfi_adjust_cfa_offset (-4);  \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
     cmpl $ERESTART, %eax;                   \
     je L(restart_cancel);                                      \
@@ -120,12 +120,11 @@
     jmp SYSCALL_ERROR_LABEL;                           \
 3:											\
     pushl %eax; cfi_adjust_cfa_offset (4);  \
-    pushl %edx; cfi_adjust_cfa_offset (4);  \
+    movl %ecx, %eax;                        \
     CDISABLE;                           \
-    addl $4, %esp; cfi_adjust_cfa_offset (-4);  \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
-    addl $4, %esp;                                     \
-    movl %ecx, 0(%esp);							\
+    addl $4, %esp; cfi_adjust_cfa_offset (4);                        \
+    movl %edx, 0(%esp);							\
   L(pseudo_end):
 
 
