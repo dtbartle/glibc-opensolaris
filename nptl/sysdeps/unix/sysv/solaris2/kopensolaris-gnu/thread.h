@@ -20,6 +20,8 @@
 #ifndef _THREAD_H
 #define _THREAD_H
 
+#include <sys/signal.h>
+
 typedef unsigned int thread_t;
 typedef unsigned int thread_key_t;
 
