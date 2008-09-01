@@ -22,6 +22,7 @@ core_set_global_path    - corectl:core_set_global_path  i:pi    core_set_global_
 core_set_options    - corectl:core_set_options  i:i     core_set_options
 core_set_process_content    - corectl:core_set_process_content  i:pi    core_set_process_content
 core_set_process_path   - corectl:core_set_process_path i:pii   core_set_process_path
+creat               - creat                 Ci:si       __libc_creat        creat
 faccessat           - fsat:accessat         i:isi       faccessat
 facl                - facl                  i:iiip      facl
 fchownat            - fsat:fchownat         i:isiii     fchownat
@@ -54,7 +55,7 @@ mmap64              - mmap64                i:piiiii    __mmap64            mmap
 mount               - mount                 i:ppippipi  __mount             mount
 msgctl              - msgsys:msgctl         i:iip       __msgctl            msgctl
 msgget              - msgsys:msgget         i:ii        __msgget            msgget
-msgrcv              - msgsys:msgrcv         Ci:ipiii    __msgrcv            msgrcv
+msgrcv              - msgsys:msgrcv         Ci:ipiii    __libc_msgrcv       msgrcv
 msgsnd              - msgsys:msgsnd         Ci:ipii     __msgsnd            msgsnd
 nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __nanosleep nanosleep
 ntp_adjtime         - ntp_adjtime           i:p         __adjtimex          adjtimex ntp_adjtime __adjtimex_internal
