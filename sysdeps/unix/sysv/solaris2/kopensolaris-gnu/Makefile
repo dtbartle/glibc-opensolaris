@@ -85,3 +85,22 @@ libpthread-sysdep_routines += sys_fcntl sys_send sys_sendmsg sys_sendto \
     sys_accept sys_connect sys_recvmsg sys_fdsync sys_open sys_open64 \
     sys_sigaction sys_priocntlsys sched_priv priocntl syscall
 endif
+
+CFLAGS-accept.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-connect.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-fsync.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-fdatasync.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-fsync.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-msgrcv.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-msync.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-open.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-open64.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-openat.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-openat64.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-recvmsg.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-pselect.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-select.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-send.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-sendmsg.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-sendto.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-tcdrain.c = -fexceptions -fasynchronous-unwind-tables
