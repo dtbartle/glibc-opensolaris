@@ -20,6 +20,10 @@
 #ifndef _SYS_ZONE_H
 #define _SYS_ZONE_H
 
+#include <sys/types.h>
+#include <sys/priv.h>
+#include <sys/tsol/label.h>
+
 #define GLOBAL_ZONEID	0
 
 /* Zone attributes.  */
@@ -37,5 +41,22 @@
 #define ZONE_ATTR_PHYS_MCAP	12
 #define ZONE_ATTR_SCHED_CLASS	13
 #define ZONE_ATTR_FLAGS		14
+
+typedef struct
+  {
+	const char *zone_name;
+	const char *zone_root;
+	const struct priv_set *zone_privs;
+	size_t zone_privssz;
+	const char *rctlbuf;
+	size_t rctlbufsz;
+	int *extended_error;
+	const char *zfsbuf;
+	size_t zfsbufsz;
+	int match;
+	uint32_t doi;
+	const bslabel_t *label;
+	int flags;
+  } zone_def;
 
 #endif /* _SYS_ZONE_H */
