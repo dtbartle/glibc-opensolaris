@@ -35,9 +35,11 @@ _dl_make_stack_executable (void **stack_endp)
   int errval = __systemcall (&ret, SYS_context, GETCONTEXT, &ctx);
   if (errval != 0)
     return errval;
+
+  /* The given stack pointer better be in range.  */
   if (*stack_endp < ctx.uc_stack.ss_sp ||
         *stack_endp > (ctx.uc_stack.ss_sp + ctx.uc_stack.ss_size))
-    return EINVAL;
+    return ENOTSUP;
 
   errval = __systemcall (&ret, SYS_mprotect, ctx.uc_stack.ss_sp,
       ctx.uc_stack.ss_size, PROT_READ | PROT_WRITE | PROT_EXEC);
