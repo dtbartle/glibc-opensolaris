@@ -17,9 +17,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <inline-syscall.h>
 #include "priv_priv.h"
 #include <zone.h>
-#include <inline-syscall.h>
+#include <dlfcn.h>
 
 DECLARE_INLINE_SYSCALL (zoneid_t, zone_create, zone_def *def);
 DECLARE_INLINE_SYSCALL (zoneid_t, zone_lookup, const char *name);
@@ -48,7 +49,7 @@ zoneid_t zone_create (const char *name, const char *root,
       const char *zfsbuf, size_t zfsbufsz, int *extended_error, int match,
       int doi, const bslabel_t *label, int flags)
 {
-  priv_impl_info_t info;
+  priv_impl_info_t *info;
   int res = __getprivimplinfo_cached (&info);
   if (res != 0)
     return -1;
@@ -57,7 +58,7 @@ zoneid_t zone_create (const char *name, const char *root,
   def.zone_name = name;
   def.zone_root = root;
   def.zone_privs = privs;
-  def.zone_privssz = info.priv_setsize * sizeof (priv_chunk_t);
+  def.zone_privssz = info->priv_setsize * sizeof (priv_chunk_t);
   def.rctlbuf = rctlbuf;
   def.rctlbufsz = rctlbufsz;
   def.extended_error = extended_error;
@@ -71,4 +72,19 @@ zoneid_t zone_create (const char *name, const char *root,
   return INLINE_SYSCALL (zone_create, 1, &def);
 }
 
-// TODO: zone_get_id
+
+int (*_zone_get_id)(const char *, zoneid_t *);
+
+int zone_get_id (const char *str, zoneid_t *idp)
+{
+  /* libzonecfg.so.1 has the real function.  */
+  void *lzc = __libc_dlopen ("libzonecfg.so.1");
+  if (lzc)
+    {
+      _zone_get_id = __libc_dlsym (lzc, "zone_get_id");
+      if (_zone_get_id)
+        return _zone_get_id (str, idp);
+    }
+
+  return ENOSYS;
+}

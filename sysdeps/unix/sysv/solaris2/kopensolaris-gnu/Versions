@@ -54,7 +54,8 @@ libc {
 
     # z
     zone_add_datalink; zone_boot; zone_check_datalink; zone_create;
-    zone_destroy; zone_enter; zone_getattr; zone_list; zone_list_datalink;
-    zone_remove_datalink; zone_setattr; zone_shutdown; zone_version;
+    zone_destroy; zone_enter; zone_get_id; zone_getattr; zone_list;
+    zone_list_datalink; zone_remove_datalink; zone_setattr; zone_shutdown;
+    zone_version;
   }
 }
