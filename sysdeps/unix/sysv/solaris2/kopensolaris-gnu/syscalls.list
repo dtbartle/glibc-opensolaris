@@ -68,6 +68,7 @@ pread               - pread                 Ci:iPii     __libc_pread        __pr
 pread64             - pread64               Ci:iPii     __libc_pread64      __pread64 pread64
 processor_bind      - processor_bind        i:iiip      processor_bind
 processor_info      - processor_info        i:ip        processor_info
+profil              - profil                :piii       __profil            profil
 pset_create         - pset:pset_create      i:p         pset_create
 pset_destroy        - pset:pset_destroy     i:i         pset_destroy
 pset_assign         - pset:pset_assign      i:iip       pset_assign

@@ -23,26 +23,26 @@
 #include <bits/types.h>
 
 typedef struct __fpu
-{
+  {
 	union
-	{
+	  {
 		struct __fpchip_state
-		{
+		  {
 			__uint32_t __state[27];
 			__uint32_t __status;
 			__uint32_t __mxcsr;
 			__uint32_t __xstatus;
 			__uint32_t __pad[2];
 			__uint32_t __xmm[4][8];
-		} __fpchip_state;
+		  } __fpchip_state;
 		struct __fp_emul_space
-		{
+		  {
 			__uint8_t __fp_emul[246];
 			__uint8_t __fp_epad[2];
-		} __fp_emul_space;
+		  } __fp_emul_space;
 		__uint32_t __f_fpregs[95];
-	} __fp_reg_set;
-} fpregset_t;
+	  } __fp_reg_set;
+  } fpregset_t;
 
 #ifdef __amd64
 # define _NGREG		28
@@ -61,9 +61,10 @@ typedef int greg_t;
 
 typedef greg_t gregset_t[_NGREG];
 
-typedef struct {
+typedef struct
+  {
     gregset_t gregs;
     fpregset_t fpregs;
-} mcontext_t;
+  } mcontext_t;
 
 #endif /* _SYS_REGSET_H */
