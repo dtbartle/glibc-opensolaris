@@ -1,6 +1,6 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Machine-dependent SIGPROF signal handler.  OpenSolaris i386 version.
+   Copyright (C) 1996, 1997, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,23 +17,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sysdep-cancel.h>
-#include <inline-syscall.h>
-#include <sys/socket.h>
+#include <sys/ucontext.h>
+#include <sys/regset.h>
 
-DECLARE_INLINE_SYSCALL (int, connect, int sock, __CONST_SOCKADDR_ARG addr,
-    unsigned int addrlen, int version);
-
-int
-__libc_connect (fd, addr, len)
-     int fd;
-     __CONST_SOCKADDR_ARG addr;
-     socklen_t len;
+static void
+profil_counter (int signr, int code, struct ucontext *ucp)
 {
-  return INLINE_SYSCALL (connect, 4, fd, addr, len, SOV_XPG4_2);
+  profil_count ((void *) ucp->uc_mcontext.gregs[EIP]);
 }
-
-weak_alias (__libc_connect, __connect)
-weak_alias (__libc_connect, connect)
-weak_alias (__libc_connect, __connect_internal)
-LIBC_CANCEL_HANDLED (); /* sys_connect handles cancellation */

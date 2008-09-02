@@ -105,19 +105,19 @@
   ENTRY (name)                                    \
     movl 0(%esp), %ecx;                               \
     movl %ecx, -4(%esp);							\
-    movl $SYS_ify (SUB_##subcall_name), 0(%esp);							\
-    addl $-4, %esp; cfi_adjust_cfa_offset (4); \
+    addl $-4, %esp; \
+    movl $SYS_ify (SUB_##subcall_name), 4(%esp);							\
   L(restart):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 2f;										\
     cmpl $ERESTART, %eax;                   \
     je L(restart);                                      \
-    addl $4, %esp; cfi_adjust_cfa_offset (-4); \
-    movl %ecx, 0(%esp);							\
+    movl %ecx, 4(%esp);							\
+    addl $4, %esp; \
     jmp SYSCALL_ERROR_LABEL;                           \
 2:											\
-    addl $4, %esp; cfi_adjust_cfa_offset (-4); \
-    movl %ecx, 0(%esp);							\
+    movl %ecx, 4(%esp);							\
+    addl $4, %esp; \
   L(pseudo_end):
 
 #undef  PSEUDO_END
@@ -136,12 +136,11 @@
   ENTRY (name)                                    \
     movl 0(%esp), %ecx;                               \
     movl %ecx, -4(%esp);							\
-    movl $SYS_ify (SUB_##subcall_name), 0(%esp);							\
-    addl $-4, %esp; cfi_adjust_cfa_offset (4); \
+    addl $-4, %esp; \
+    movl $SYS_ify (SUB_##subcall_name), 4(%esp);							\
     DO_CALL (syscall_name, args);                         \
-    addl $4, %esp; cfi_adjust_cfa_offset (-4); \
-    DO_CALL (syscall_name, args);                         \
-    movl %ecx, 0(%esp);
+    movl %ecx, 4(%esp);							\
+    addl $4, %esp;
 
 #undef  PSEUDO_END_NOERRNO
 #define PSEUDO_END_NOERRNO(name)                          \
@@ -168,8 +167,8 @@
   ENTRY (name)                                    \
     movl 0(%esp), %ecx;                               \
     movl %ecx, -4(%esp);							\
-    movl $SYS_ify (SUB_##subcall_name), 0(%esp);							\
-    addl $-4, %esp; cfi_adjust_cfa_offset (4); \
+    addl $-4, %esp; \
+    movl $SYS_ify (SUB_##subcall_name), 4(%esp);							\
   L(restart):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 1f;										\
@@ -178,8 +177,8 @@
     jmp 2f;                             \
 1:  xorl %eax, %eax;                        \
 2:											\
-    addl $4, %esp; cfi_adjust_cfa_offset (-4); \
-    movl %ecx, 0(%esp);
+    movl %ecx, 4(%esp);                 \
+    addl $4, %esp;
 
 
 #undef  PSEUDO_END_ERRVAL

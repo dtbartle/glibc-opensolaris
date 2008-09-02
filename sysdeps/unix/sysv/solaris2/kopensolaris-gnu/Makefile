@@ -13,7 +13,7 @@ endif
 ifeq ($(subdir),misc)
 sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     getpagesizes memcntl meminfo uadmin getpflags setpflags issetugid ucred \
-    priv processor_bind processor_info p_online pset_create pset_destroy \
+    priv_priv processor_bind processor_info p_online pset_create pset_destroy \
     pset_assign pset_info pset_bind pset_getloadavg pset_list pset_setattr \
     pset_getattr swapctl getustack setustack gethrvtime uucopy uucopystr \
     zone_add_datalink zone_boot zone_check_datalink zone_destroy zone_enter \
@@ -25,12 +25,12 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     core_set_global_path core_set_options core_set_process_content \
     core_set_process_path getacct putacct wracct sysfs acct allocids \
     idmap_reg idmap_unreg acctctl pcsample settaskid gettaskid getprojid \
-    utssys
+    utssys zone
 sysdep_routines += sys_fdsync sys_sysconfig sys_brk sys_fcntl sys_utssys \
     sys_lwp_private sys_uname sys_getloadavg sys_utimes sys_getpeerucred \
     sys_ucred_get sys_privsys sys_syslabeling sys_putmsg sys_putpmsg \
-    sys_meminfo sys_pset_getloadavg sys_zone_lookup sys_allocids \
-    sys_settaskid
+    sys_meminfo sys_pset_getloadavg sys_zone_create sys_allocids \
+    sys_settaskid sys_zone_lookup
 sysdep_headers += sys/feature_tests.h sys/lwp.h sys/mount.h sys/cred.h \
     sys/systeminfo.h sys/uadmin.h sys/utssys.h sys/fstyp.h sys/fsid.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/stream.h sys/synch.h \
@@ -40,7 +40,7 @@ sysdep_headers += sys/feature_tests.h sys/lwp.h sys/mount.h sys/cred.h \
     sys/types32.h sys/task.h sys/isa_defs.h sys/door.h sys/corectl.h \
     sys/elf.h sys/rctl.h sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h \
     sys/time_impl.h sys/mutex.h sys/tsol/label.h sys/exacct.h sys/acct.h \
-    sys/sid.h
+    sys/sid.h sys/siginfo.h
 sysdep_headers += ucred.h priv.h bits/regset.h proc_service.h door.h zone.h \
     rtld_db.h project.h pcsample.h
 endif
@@ -85,3 +85,22 @@ libpthread-sysdep_routines += sys_fcntl sys_send sys_sendmsg sys_sendto \
     sys_accept sys_connect sys_recvmsg sys_fdsync sys_open sys_open64 \
     sys_sigaction sys_priocntlsys sched_priv priocntl syscall
 endif
+
+CFLAGS-accept.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-connect.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-fsync.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-fdatasync.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-fsync.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-msgrcv.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-msync.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-open.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-open64.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-openat.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-openat64.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-recvmsg.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-pselect.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-select.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-send.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-sendmsg.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-sendto.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-tcdrain.c = -fexceptions -fasynchronous-unwind-tables

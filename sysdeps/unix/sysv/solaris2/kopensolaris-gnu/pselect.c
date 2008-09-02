@@ -21,7 +21,7 @@
 #include <sys/select.h>
 #include <sys/poll.h>
 #include <errno.h>
-#include <alloca.h>
+#include <memory.h>
 #include <assert.h>
 
 int
@@ -35,7 +35,18 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
     }
 
   /* Fill pollfd structure.  */
-  struct pollfd *pfd = alloca (nfds * sizeof(struct pollfd));
+  int pfd_len = nfds * sizeof(struct pollfd);
+  int use_alloca = __libc_use_alloca (pfd_len);
+  struct pollfd *pfd;
+  if (use_alloca)
+    pfd = alloca (pfd_len);
+  else
+    {
+      pfd = malloc (pfd_len);
+      if (!pfd)
+        return -1;
+    }
+
   int fd;
   nfds_t i = 0;
   for (fd = 0; fd < nfds; fd++)
@@ -61,13 +72,19 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
   /* ppoll is cancelable so don't implement cancellation here.  */
   int result = ppoll (pfd, num_pfd, timeout, sigmask);
   if (result == -1)
-    return -1;
+    {
+      if (!use_alloca)
+        free (pfd);
+      return -1;
+    }
 
   /* Check for POLLNVAL.  */
   for (i = 0; i < num_pfd; i++)
     {
       if (pfd[i].revents & POLLNVAL)
         {
+          if (!use_alloca)
+            free (pfd);
           __set_errno (EBADFD);
           return -1;
         }
@@ -113,6 +130,8 @@ __pselect (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
         }
     }
 
+  if (!use_alloca)
+    free (pfd);
   return bits;
 }
 

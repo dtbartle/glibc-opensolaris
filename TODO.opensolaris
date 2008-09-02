@@ -6,7 +6,6 @@ Implement:
         see ucred_getruid
     sys_errlist
     CLEAR, ECHO, etc...
-    dl-execstack.c
     [gs]etsourcefilter (SIOCGMSFILTER / SIOCSMSFILTER)
     [gs]etipv4sourcefilter (SIOCGIPMSFILTER / SIOCSIPMSFILTER)
 See /usr/include/gnu/stubs-32.h
@@ -26,29 +25,21 @@ ptrace details:
     write command (long) followed by struct
 
 These are solaris extensions that we should implement:
-  nlist, nlist.h
   [gs]etrctl, rctl.h
   door_*
   port_*
-  pcsample (pcsample.h)
   profil (unistd.h)
   inst_sync
   install_utrap, sparc_utrap_install
   modctl
-  core_* (corectl)
   _sharefs
-  pset_* (sys/pset.h)
   _cladm (sys/cladm.h)
-  uucopy, uucopystr (strings.h)
-  acct (sys/acct.h)
-  acctctl (sys/acctctl.h)
-  getacct, putacct, wracct [SYS_exacctsys] (sys/exacct.h)
-  allocids, idmap_reg, idmap_unreg [SYS_sidsys] (sys/sid.h)
   exportfs, nfs_getfh, nfssvc [SYS_nfssys] (sys/nfssec.h) [maybe not]
   lgrpsys
   gethomelgroup
   atomic_*
   membar_*
+  getzoneid
 
 Insert into headers:
   resolvpath (unistd.h)
@@ -98,3 +89,5 @@ Use cond_t data field for broadcast seqence
 Use timer_* syscalls
 
 Instead of AT_SECURE we can use AF_SUN_SETUGID [AT_SUN_AUXFLAGS]
+
+We can't _exit if the main thread goes away since we have daemon threaeds (THR_DAEMON)

@@ -27,7 +27,7 @@
 #include <stdio-common/_itoa.h>
 #include <errno.h>
 #include <sys/ptms.h>
-#include <stropts.h>
+#include <streams/stropts.h>
 
 /* Directory where we can find the slave pty nodes.  */
 #define _PATH_DEVPTS "/dev/pts/"

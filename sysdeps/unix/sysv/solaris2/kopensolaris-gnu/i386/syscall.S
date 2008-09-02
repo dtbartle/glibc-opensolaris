@@ -20,11 +20,11 @@
 
 	  .text;
 ENTRY (__syscall)
-	popl %ecx; cfi_adjust_cfa_offset (4)	/* Pop return address into %ecx.  */
-	popl %eax; cfi_adjust_cfa_offset (4)	/* Pop syscall number into %eax. */
-	pushl %ecx; cfi_adjust_cfa_offset (4)	/* Push back return adderss.  */
+	popl %ecx	/* Pop return address into %ecx.  */
+	popl %eax	/* Pop syscall number into %eax. */
+	pushl %ecx	/* Push back return adderss.  */
 	int $0x91	/* Do the system call.  */
-	pushl %ecx; cfi_adjust_cfa_offset (4)	/* Push back return address.  */
+	pushl %ecx	/* Push back return address.  */
 	jb SYSCALL_ERROR_LABEL;	/* Jump to error handler if error.  */
 
 L(pseudo_end):
@@ -34,15 +34,14 @@ weak_alias (__syscall, syscall)
 
 	  .text;
 ENTRY (__systemcall)
-	popl %edx; cfi_adjust_cfa_offset (4)	/* Pop return address into %edx.  */
-	popl %ecx; cfi_adjust_cfa_offset (4)	/* Pop sysret_t into %ecx.  */
-	popl %eax; cfi_adjust_cfa_offset (4)	/* Load syscall number into %eax.  */
-	pushl %edx; cfi_adjust_cfa_offset (4)	/* Push return address onto stack.  */
-	cfi_adjust_cfa_offset (-8)
+	popl %edx	/* Pop return address into %edx.  */
+	popl %ecx	/* Pop sysret_t into %ecx.  */
+	popl %eax	/* Load syscall number into %eax.  */
+	pushl %edx	/* Push return address onto stack.  */
 	int $0x91		/* Do the system call.  */
-	pushl %ecx; cfi_adjust_cfa_offset (4)	/* Restore sysret_t on stack.  */
+	pushl %ecx	/* Restore sysret_t on stack.  */
 	movl 4(%esp), %edx	/* Save return address into %edx.  */
-	pushl %edx; cfi_adjust_cfa_offset (4)	/* Restore return address on stack.  */
+	pushl %edx	/* Restore return address on stack.  */
 	jb 1f	/* Jump to error handler if error.  */
 	movl %eax, 0(%ecx)	/* Set first 4 bytes of sysret_t.  */
 	movl %edx, 4(%ecx)	/* Set second 4 bytes of sysret_t.  */

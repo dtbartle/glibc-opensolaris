@@ -17,43 +17,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sysdep.h>
+#ifndef _PRIV_PRIV_H
+#define _PRIV_PRIV_H
 
-ENTRY (__vfork)
+#include <priv.h>
 
-    /* save the return address */
-    popl %ecx; cfi_adjust_cfa_offset (-4)
+extern int __getprivimplinfo_cached (priv_impl_info_t **info);
 
-    /* call vforkx(0) */
-    pushl $0; cfi_adjust_cfa_offset (4)
-    pushl $SYS_SUB_vforkx; cfi_adjust_cfa_offset (4)
-    pushl %ecx; cfi_adjust_cfa_offset (4)
-    DO_CALL (forksys, 1)
-    jb 2f
-
-    /* pop vforkx args */
-    addl $12, %esp; cfi_adjust_cfa_offset (-12)
-
-    /* In the parent process, %edx == 0, %eax == child pid.
-       In the child process, %edx == 1, %eax == parent pid. */
-    decl %edx
-    andl %edx, %eax
-
-    /* jump to the old return address */
-    jmp *%ecx
-
-2:
-    /* pop vforkx args */
-    addl $12, %esp; cfi_adjust_cfa_offset (-12)
-
-    /* restore the return address and jump to the syscall error label */
-    pushl %ecx; cfi_adjust_cfa_offset (4)
-    jmp SYSCALL_ERROR_LABEL
-
-L(pseudo_end):
-    ret
-
-PSEUDO_END (__vfork)
-
-libc_hidden_def (__vfork)
-weak_alias (__vfork, vfork)
+#endif /* _PRIV_PRIV_H */

@@ -19,7 +19,7 @@ libc {
     # g
     getacct; getcpuid; gethrtime; gethrvtime; getpagesizes; getpagesizes2;
     getpeerucred; getpflags; getppriv; getprojid; gettaskid; getustack;
-    getvmusage;
+    getvmusage; getzoneid; getzoneidbyname;
 
     # i
     idmap_reg; idmap_unreg; issetugid;
@@ -53,8 +53,9 @@ libc {
     wracct;
 
     # z
-    zone_add_datalink; zone_boot; zone_check_datalink; zone_destroy;
-    zone_enter; zone_getattr; zone_list; zone_list_datalink; zone_remove_datalink; zone_setattr; zone_shutdown;
+    zone_add_datalink; zone_boot; zone_check_datalink; zone_create;
+    zone_destroy; zone_enter; zone_get_id; zone_getattr; zone_list;
+    zone_list_datalink; zone_remove_datalink; zone_setattr; zone_shutdown;
     zone_version;
   }
 }
