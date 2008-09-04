@@ -523,7 +523,12 @@ __pthread_create_2_1 (newthread, attr, start_routine, arg)
 	pd->schedpolicy = iattr->schedpolicy;
       else if ((pd->flags & ATTR_FLAG_POLICY_SET) == 0)
 	{
+#ifndef TPP_PTHREAD_SCHED
 	  pd->schedpolicy = INTERNAL_SYSCALL (sched_getscheduler, scerr, 1, 0);
+#else
+      struct sched_param _param;
+      pthread_getschedparam (pthread_self (), &pd->schedpolicy, &_param);
+#endif
 	  pd->flags |= ATTR_FLAG_POLICY_SET;
 	}
 
@@ -532,7 +537,12 @@ __pthread_create_2_1 (newthread, attr, start_routine, arg)
 		sizeof (struct sched_param));
       else if ((pd->flags & ATTR_FLAG_SCHED_SET) == 0)
 	{
+#ifndef TPP_PTHREAD_SCHED
 	  INTERNAL_SYSCALL (sched_getparam, scerr, 2, 0, &pd->schedparam);
+#else
+      int _policy;
+      pthread_getschedparam (pthread_self (), &_policy, &pd->schedparam);
+#endif
 	  pd->flags |= ATTR_FLAG_SCHED_SET;
 	}
 
