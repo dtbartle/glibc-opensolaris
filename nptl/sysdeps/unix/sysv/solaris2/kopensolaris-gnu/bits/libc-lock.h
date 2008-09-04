@@ -26,7 +26,7 @@
 #define __need_NULL
 #include <stddef.h>
 #include <sys/synch.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 
 /* Mutex type.  */

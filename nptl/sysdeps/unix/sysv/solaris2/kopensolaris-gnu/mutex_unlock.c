@@ -21,7 +21,7 @@
 #include <pthreadP.h>
 #include <synch.h>
 #include <errno.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 DECLARE_INLINE_SYSCALL (int, lwp_mutex_unlock, mutex_t *lp);
 

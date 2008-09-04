@@ -22,7 +22,7 @@
 #include "pthreadP.h"
 #include <string.h>
 #include <sys/synch.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 
 static const struct pthread_rwlockattr default_attr =

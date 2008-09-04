@@ -22,7 +22,7 @@
 #include <synch.h>
 #include <errno.h>
 #include <time.h>
-#include <synch_priv.h>
+#include <synchP.h>
 #include <abstime-to-reltime.h>
 
 DECLARE_INLINE_SYSCALL (int, lwp_mutex_timedlock, mutex_t *lp,

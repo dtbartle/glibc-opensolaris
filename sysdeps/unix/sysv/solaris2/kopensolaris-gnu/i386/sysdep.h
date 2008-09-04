@@ -30,7 +30,7 @@
 #include <sysdeps/unix/i386/sysdep.h>
 #include <bp-sym.h>
 #include <bp-asm.h>
-#include <syscall_priv.h>
+#include <syscallP.h>
 
 /* XXX: This needs to come before #include <tls.h>.  */
 

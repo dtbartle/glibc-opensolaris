@@ -20,7 +20,7 @@
 #include <sysdep-cancel.h>
 #include <inline-syscall.h>
 #include <sys/socket.h>
-#include <socket_priv.h>
+#include <socketP.h>
 
 DECLARE_INLINE_SYSCALL (ssize_t, send, int s, const void *buf, size_t len,
     int flags);

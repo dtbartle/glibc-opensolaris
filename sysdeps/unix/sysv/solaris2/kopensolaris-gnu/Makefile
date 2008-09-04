@@ -13,7 +13,7 @@ endif
 ifeq ($(subdir),misc)
 sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     getpagesizes memcntl meminfo uadmin getpflags setpflags issetugid ucred \
-    priv_priv processor_bind processor_info p_online pset_create pset_destroy \
+    privP processor_bind processor_info p_online pset_create pset_destroy \
     pset_assign pset_info pset_bind pset_getloadavg pset_list pset_setattr \
     pset_getattr swapctl getustack setustack gethrvtime uucopy uucopystr \
     zone_add_datalink zone_boot zone_check_datalink zone_destroy zone_enter \
@@ -48,7 +48,7 @@ ifeq ($(subdir),dirent)
 sysdep_routines += sys_getdents sys_getdents64
 endif
 ifeq ($(subdir),posix)
-sysdep_routines += exit-thread sched_priv
+sysdep_routines += exit-thread schedP
 endif
 ifeq ($(subdir),resource)
 sysdep_routines += priocntl getvmusage
@@ -83,7 +83,7 @@ endif
 ifeq ($(subdir),nptl)
 libpthread-sysdep_routines += sys_fcntl sys_send sys_sendmsg sys_sendto \
     sys_accept sys_connect sys_recvmsg sys_fdsync sys_open sys_open64 \
-    sys_sigaction sys_priocntlsys sched_priv priocntl syscall
+    sys_sigaction sys_priocntlsys schedP priocntl syscall
 endif
 
 CFLAGS-accept.c = -fexceptions -fasynchronous-unwind-tables

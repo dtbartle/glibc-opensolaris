@@ -19,7 +19,7 @@
 
 #include <errno.h>
 #include <pthreadP.h>
-#include <synch_priv.h>
+#include <synchP.h>
 #include <sys/synch.h>
 #include <stdbool.h>
 #include <assert.h>

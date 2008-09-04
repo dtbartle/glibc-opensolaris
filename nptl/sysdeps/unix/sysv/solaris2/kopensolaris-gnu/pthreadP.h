@@ -74,8 +74,9 @@
 #include <unistd.h>
 #include <errno.h>
 #include <inline-syscall.h>
-#include <synch_priv.h>
+#include <synchP.h>
 #include <synch.h>
+#include <schedP.h>
 
 /* These are the result of the macro expansion of INTERNAL_SYSCALL.  */
 
@@ -157,8 +158,6 @@ static inline int __internal_sched_get_priority_max_1 (int *errval, int policy)
 }
 
 /* These are used by the "real" associated functions.  */
-
-#include <sched_priv.h>
 
 static inline int __pthread_setschedparam_internal (pthread_t threadid,
     int policy, const struct sched_param *param)

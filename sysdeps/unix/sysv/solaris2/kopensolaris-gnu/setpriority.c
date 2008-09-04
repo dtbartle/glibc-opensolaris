@@ -22,7 +22,7 @@
 #include <sys/procset.h>
 #include <sys/priocntl.h>
 #include <errno.h>
-#include <priority_priv.h>
+#include <priorityP.h>
 
 int
 setpriority (enum __priority_which which, id_t who, int prio)

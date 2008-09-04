@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include "sched_priv.h"
+#include <schedP.h>
 #include <sys/priocntl.h>
 #include <bits/libc-lock.h>
 

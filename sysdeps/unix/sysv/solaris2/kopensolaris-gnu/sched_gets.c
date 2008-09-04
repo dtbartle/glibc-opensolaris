@@ -20,7 +20,7 @@
 #include <sched.h>
 #include <errno.h>
 #include <sys/procset.h>
-#include "sched_priv.h"
+#include <schedP.h>
 
 int
 __sched_getscheduler (pid_t pid)

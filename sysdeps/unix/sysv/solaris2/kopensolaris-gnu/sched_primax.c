@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <sched.h>
-#include <sched_priv.h>
+#include <schedP.h>
 #include <errno.h>
 #include <sys/priocntl.h>
 

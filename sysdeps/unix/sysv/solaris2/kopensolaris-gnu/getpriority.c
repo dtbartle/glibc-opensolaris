@@ -23,7 +23,7 @@
 #include <sys/priocntl.h>
 #include <limits.h>
 #include <errno.h>
-#include <priority_priv.h>
+#include <priorityP.h>
 
 int
 getpriority (enum __priority_which which, id_t who)
