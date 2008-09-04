@@ -34,3 +34,5 @@ int cond_signal (cond)
 
   return INLINE_SYSCALL (lwp_cond_signal, 1, cond);
 }
+
+weak_alias (cond_signal, __lwp_cond_signal)

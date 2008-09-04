@@ -28,3 +28,5 @@ int sema_post (sem)
 {
   return INLINE_SYSCALL (lwp_sema_post, 1, sem);
 }
+
+weak_alias (sema_post, _lwp_sema_post)

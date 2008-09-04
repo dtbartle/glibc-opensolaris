@@ -31,7 +31,7 @@ sysdep_routines += sys_fdsync sys_sysconfig sys_brk sys_fcntl sys_utssys \
     sys_ucred_get sys_privsys sys_syslabeling sys_putmsg sys_putpmsg \
     sys_meminfo sys_pset_getloadavg sys_zone_create sys_allocids \
     sys_settaskid sys_zone_lookup
-sysdep_headers += sys/feature_tests.h sys/lwp.h sys/mount.h sys/cred.h \
+sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/systeminfo.h sys/uadmin.h sys/utssys.h sys/fstyp.h sys/fsid.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/stream.h sys/synch.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \

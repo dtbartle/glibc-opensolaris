@@ -67,3 +67,5 @@ int mutex_unlock (mutex)
 
   return errval;
 }
+
+weak_alias (mutex_unlock, _lwp_mutex_unlock)

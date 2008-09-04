@@ -28,3 +28,5 @@ int sema_trywait (sem)
 {
   return INLINE_SYSCALL (lwp_sema_trywait, 1, sem);
 }
+
+weak_alias (sema_trywait, _lwp_sema_trywait)

@@ -21,9 +21,11 @@
 #define _SYS_LWP_H
 
 #include <sys/types.h>
-
+#include <features.h>
 #define __need_timespec
 #include <time.h>
+
+typedef unsigned int lwpid_t;
 
 struct lwpinfo
 {
@@ -41,5 +43,15 @@ struct lwpinfo
 
 #define _LWP_SETPRIVATE		0
 #define _LWP_GETPRIVATE		1
+
+__BEGIN_DECLS
+
+int _lwp_kill (lwpid_t, int);
+int _lwp_info (struct lwpinfo *);
+lwpid_t _lwp_self (void);
+int _lwp_suspend (lwpid_t);
+int _lwp_continue (lwpid_t);
+
+__END_DECLS
 
 #endif /* _SYS_LWP_H */

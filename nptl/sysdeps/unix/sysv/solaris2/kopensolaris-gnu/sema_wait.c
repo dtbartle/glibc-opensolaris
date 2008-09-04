@@ -26,3 +26,5 @@ int sema_wait (sem)
 {
   return __sema_timedwait (sem, NULL);
 }
+
+weak_alias (sema_wait, _lwp_sema_wait)

@@ -18,6 +18,13 @@ libpthread {
     cond_init; cond_destroy; cond_wait; cond_timedwait; cond_reltimedwait;
     cond_signal; cond_broadcast;
 
+    # l
+    _lwp_cond_broadcast; _lwp_cond_timedwait; _lwp_cond_reltimedwait;
+    _lwp_cond_signal; _lwp_cond_wait; _lwp_continue; _lwp_info; _lwp_kill;
+    _lwp_mutex_lock; _lwp_mutex_trylock; _lwp_mutex_unlock; _lwp_self;
+    _lwp_sema_init; _lwp_sema_post; _lwp_sema_trywait; _lwp_sema_wait;
+    _lwp_suspend;
+
     # m
     mutex_init; mutex_destroy; mutex_consistent; mutex_lock; mutex_trylock;
     mutex_unlock;

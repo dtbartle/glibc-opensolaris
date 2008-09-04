@@ -31,3 +31,5 @@ int thr_suspend (thread_t target_thread)
 
   return INLINE_SYSCALL (lwp_suspend, 1, target_thread);
 }
+
+weak_alias (thr_suspend, _lwp_suspend)

@@ -73,3 +73,5 @@ int mutex_trylock (mutex)
 
   return errval;
 }
+
+weak_alias (mutex_trylock, _lwp_mutex_trylock)

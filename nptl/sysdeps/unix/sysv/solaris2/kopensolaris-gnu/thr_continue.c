@@ -31,3 +31,5 @@ int thr_continue (thread_t target_thread)
 
   return INLINE_SYSCALL (lwp_continue, 1, target_thread);
 }
+
+weak_alias (thr_continue, _lwp_continue)

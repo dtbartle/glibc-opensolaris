@@ -54,3 +54,4 @@ __pthread_kill (threadid, signo)
 	  ? INTERNAL_SYSCALL_ERRNO (val, err) : 0);
 }
 strong_alias (__pthread_kill, pthread_kill)
+weak_alias (__pthread_kill, _lwp_kill)
