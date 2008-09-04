@@ -209,6 +209,7 @@ typedef unsigned short	ushort_t;
 typedef unsigned long	ulong_t;
 typedef unsigned long long	u_longlong_t;
 typedef unsigned long	psaddr_t;
+typedef unsigned int	lwpid_t;
 
 /* OpenSolaris compatibility types.  */
 typedef unsigned short	o_mode_t;

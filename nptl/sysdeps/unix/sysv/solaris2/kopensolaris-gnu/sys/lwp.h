@@ -25,8 +25,6 @@
 #define __need_timespec
 #include <time.h>
 
-typedef unsigned int lwpid_t;
-
 struct lwpinfo
 {
     struct timespec lwp_utime;
