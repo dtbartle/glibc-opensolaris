@@ -156,27 +156,6 @@ static inline int __internal_sched_get_priority_max_1 (int *errval, int policy)
   return result;
 }
 
-static inline int __internal_sched_getscheduler_1 (int *errval, pid_t pid)
-{
-  int saved_errno = errno;
-  int result = sched_getscheduler (pid);
-  if (result != 0)
-    *errval = errno;
-  __set_errno (saved_errno);
-  return result;
-}
-
-static inline int __internal_sched_getparam_2 (int *errval, pid_t pid,
-    struct sched_param *param)
-{
-  int saved_errno = errno;
-  int result = sched_getparam (pid, param);
-  if (result != 0)
-    *errval = errno;
-  __set_errno (saved_errno);
-  return result;
-}
-
 /* These are used by the "real" associated functions.  */
 
 #include <sched_priv.h>
