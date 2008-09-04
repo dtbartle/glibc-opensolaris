@@ -40,7 +40,7 @@
     do {                                                            \
       sysret_t __ret;                                               \
       result = __systemcall (&__ret, SYS_lwp_wait, (tid), NULL);    \
-    } while (result == EINTR);
+    } while (result == EINTR || result == ERESTART);
 
 #define lll_tryjoin(tid) \
     ({sysret_t __ret;                                               \

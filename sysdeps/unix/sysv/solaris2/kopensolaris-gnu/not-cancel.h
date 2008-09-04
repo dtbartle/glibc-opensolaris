@@ -45,14 +45,30 @@ extern int openat64_not_cancel(int dirfd, const char *name,
     ({sysret_t __ret; \
     (void)__systemcall (&__ret, SYS_close, (fd));})
 
-#define read_not_cancel(fd, buf, n) \
-    syscall (SYS_read, (fd), (buf), (n))
-#define write_not_cancel(fd, buf, n) \
-    syscall (SYS_write, (fd), (buf), (n))
+#define read_not_cancel(fd, buf, n)                                     \
+    ({int __fd = (fd);                                                  \
+      void *__buf = (buf);                                              \
+      size_t __n = (n);                                                 \
+      int __ret;                                                        \
+      while ((__ret = syscall (SYS_read, __fd, __buf, __n)) == -1 &&    \
+            errno == ERESTART);                                         \
+      __ret;})
+#define write_not_cancel(fd, buf, n)                                    \
+    ({int __fd = (fd);                                                  \
+      void *__buf = (buf);                                              \
+      size_t __n = (n);                                                 \
+      int __ret;                                                        \
+      while ((__ret = syscall (SYS_write, __fd, __buf, __n)) == -1 &&   \
+            errno == ERESTART);                                         \
+      __ret;})
 
-#define writev_not_cancel_no_status(fd, iov, n) \
-    ({sysret_t __ret; \
-    (void)__systemcall (&__ret, SYS_writev, (fd), (iov), (n));})
+#define writev_not_cancel_no_status(fd, iov, n)                         \
+    ({sysret_t __ret;                                                   \
+      int __fd = (fd);                                                  \
+      const struct iovec *__iov = (iov);                                \
+      size_t __n = (n);                                                 \
+      while (__systemcall (&__ret, SYS_writev, __fd, __iov, __n) ==     \
+            ERESTART);})
 
 extern int __fcntl_not_cancel (int fd, int cmd, ...);
 #define fcntl_not_cancel(fd, cmd, val) \
@@ -72,4 +88,11 @@ extern __pid_t __waitpid_not_cancel(__pid_t pid, int *stat_loc, int options);
     syscall (SYS_sigsuspend, (set))
 
 #define waitid_not_cancel(idtype, id, infop, options) \
-    syscall (SYS_waitid, (idtype), (id), (infop), (options))
+    ({idtype_t __idtype = (idtype);                                     \
+      id_t __id = (id);                                                 \
+      siginfo_t *__infop = (infop);                                     \
+      int __options = (options);                                        \
+      int __ret;                                                        \
+      while ((__ret = syscall (SYS_waitid, __idtype, __id, __infop,     \
+            __options)) == -1 && errno == ERESTART);                    \
+      __ret;})
