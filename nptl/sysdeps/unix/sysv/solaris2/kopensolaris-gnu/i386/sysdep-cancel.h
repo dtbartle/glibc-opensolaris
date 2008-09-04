@@ -58,12 +58,12 @@
     movl %eax, %ecx;                    \
     DO_CALL (syscall_name, args);                         \
     jnb 3f;										\
+    cmpl $ERESTART, %eax;                   \
+    je L(restart_cancel);                                      \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
     movl %ecx, %eax;                        \
     CDISABLE;                           \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
-    cmpl $ERESTART, %eax;                   \
-    je L(restart_cancel);                                      \
     jmp SYSCALL_ERROR_LABEL;                           \
 3:                                                  \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
@@ -109,12 +109,12 @@
   L(restart_cancel):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 3f;										\
+    cmpl $ERESTART, %eax;                   \
+    je L(restart_cancel);                                      \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
     movl %ecx, %eax;                        \
     CDISABLE;                           \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
-    cmpl $ERESTART, %eax;                   \
-    je L(restart_cancel);                                      \
     movl 0(%esp), %ecx;                               \
     movl %ecx, 4(%esp);							\
     addl $4, %esp;                          \
