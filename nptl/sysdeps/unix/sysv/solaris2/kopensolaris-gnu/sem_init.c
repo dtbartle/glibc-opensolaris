@@ -23,7 +23,7 @@
 #include <semaphore.h>
 #include "semaphoreP.h"
 #include <sys/synch.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 
 int

@@ -23,14 +23,14 @@
 #include <assert.h>
 #include <inline-syscall.h>
 
-DECLARE_INLINE_SYSCALL (int, lwp_wait, lwpid_t lwpid, lwpid_t *departed);
+DECLARE_INLINE_SYSCALL (int, lwp_wait, thread_t lwpid, thread_t *departed);
 
 int thr_join (thread_t thread, thread_t *departed, void **status)
 {
   if (thread == 0)
     {
       /* Wait for any thread to terminate.  */
-      lwpid_t _departed;
+      thread_t _departed;
       int errval = INLINE_SYSCALL (lwp_wait, 2, 0, &_departed);
       if(errval != 0)
         return errval;

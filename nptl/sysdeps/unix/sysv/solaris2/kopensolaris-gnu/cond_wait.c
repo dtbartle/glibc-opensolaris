@@ -29,3 +29,5 @@ int cond_wait (cond, mutex)
 {
   return cond_reltimedwait (cond, mutex, NULL);
 }
+
+weak_alias (cond_wait, _lwp_cond_wait)

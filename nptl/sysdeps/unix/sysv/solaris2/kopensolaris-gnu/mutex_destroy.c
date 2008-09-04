@@ -20,7 +20,7 @@
 #include <pthreadP.h>
 #include <synch.h>
 #include <errno.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 
 int mutex_destroy (mutex)

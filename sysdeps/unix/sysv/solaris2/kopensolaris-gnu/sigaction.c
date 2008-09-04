@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <bits/libc-lock.h>
 #include <stdio.h>
-#include <socket_priv.h>
+#include <socketP.h>
 
 static void (*sighandlers[_NSIG])(int, struct siginfo *, void *) = {0};
 static sigset_t sigmasks[_NSIG];

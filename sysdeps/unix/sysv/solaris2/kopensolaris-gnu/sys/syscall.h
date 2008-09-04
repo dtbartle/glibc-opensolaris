@@ -61,12 +61,6 @@
 #define SYS_kill            37
 #define SYS_fstatfs         38
 #define SYS_pgrpsys         39
-# define SYS_SUB_getpgrp        0
-# define SYS_SUB_setpgrp        1
-# define SYS_SUB_getsid         2
-# define SYS_SUB_setsid         3
-# define SYS_SUB_getpgid        4
-# define SYS_SUB_setpgid        5
 #define SYS_uucopystr       40
 #define SYS_dup             41
 #define SYS_pipe            42
@@ -76,42 +70,16 @@
 #define SYS_setgid          46
 #define SYS_getgid          47
 #define SYS_signal          48
-# define SYS_SUB_signal         0
-# define SYS_SUB_sigset         1
-# define SYS_SUB_sighold        2
-# define SYS_SUB_sigrelse       3
-# define SYS_SUB_sigignore      4
-# define SYS_SUB_sigpause       5
 #define SYS_msgsys          49
-# define SYS_SUB_msgget         0
-# define SYS_SUB_msgctl         1
-# define SYS_SUB_msgrcv         2
-# define SYS_SUB_msgsnd         3
-# define SYS_SUB_msgids         4
-# define SYS_SUB_msgsnap        5
 #define SYS_syssun          50
 #define SYS_sysi86          50
 #define SYS_sysppc          50
 #define SYS_acct            51
 #define SYS_shmsys          52
-# define SYS_SUB_shmat          0
-# define SYS_SUB_shmctl         1
-# define SYS_SUB_shmdt          2
-# define SYS_SUB_shmget         3
-# define SYS_SUB_shmids         4
 #define SYS_semsys          53
-# define SYS_SUB_semctl         0
-# define SYS_SUB_semget         1
-# define SYS_SUB_semop          2
-# define SYS_SUB_semids         3
-# define SYS_SUB_semtimedop     4
 #define SYS_ioctl           54
 #define SYS_uadmin          55
 #define SYS_utssys          57
-  /* subcode 1 unused */
-# define SYS_SUB_uname          0 /* obsolete */
-# define SYS_SUB_ustat          2
-# define SYS_SUB_fusers         3
 #define SYS_fdsync          58
 #define SYS_execve          59
 #define SYS_umask           60
@@ -120,59 +88,19 @@
 #define SYS_ulimit          63
 /* 64 - 69 are reserved */
 #define SYS_tasksys         70
-# define SYS_SUB_settaskid      0
-# define SYS_SUB_gettaskid      1
-# define SYS_SUB_getprojid      2
 #define SYS_acctctl         71
 #define SYS_exacctsys       72
-# define SYS_SUB_getacct        0
-# define SYS_SUB_putacct        1
-# define SYS_SUB_wracct         2
 #define SYS_getpagesizes    73
-# define SYS_SUB_getpagesizes2  0
-# define SYS_SUB_getpagesizes   0
 #define SYS_rctlsys         74
-# define SYS_SUB_getrctl        0
-# define SYS_SUB_setrctl        1
-# define SYS_SUB_rctllist       2
-# define SYS_SUB_rctlctl        3
 #define SYS_sidsys          75
-# define SYS_SUB_allocids       0
-# define SYS_SUB_idmap_reg      1
-# define SYS_SUB_idmap_unreg    2
 #define SYS_fsat            76
-# define SYS_SUB_openat         0
-# define SYS_SUB_openat64       1
-# define SYS_SUB_fstatat64      2
-# define SYS_SUB_fstatat        3
-# define SYS_SUB_fchownat       4
-# define SYS_SUB_unlinkat       5
-# define SYS_SUB_futimesat      6
-# define SYS_SUB_renameat       7
-# define SYS_SUB_accessat       8
-# define SYS_SUB_openattrdirat  9
 #define SYS_lwp_park        77
-# define SYS_SUB_lwp_park       0
-# define SYS_SUB_lwp_unpark     1
-# define SYS_SUB_lwp_unpark_all 2
-# define SYS_SUB_lwp_unpark_cancel  3
-# define SYS_SUB_lwp_set_park   4
 #define SYS_sendfilev       78
-# define SYS_SUB_sendfilev      0
-# define SYS_SUB_sendfilev64    1
 #define SYS_rmdir           79
 #define SYS_mkdir           80
 #define SYS_getdents        81
 #define SYS_privsys         82
-# define SYS_SUB_setppriv       0
-# define SYS_SUB_getppriv       1
-# define SYS_SUB_getimplinfo    2
-# define SYS_SUB_setpflags      3
-# define SYS_SUB_getpflags      4
-# define SYS_SUB_issetugid      5
 #define SYS_ucredsys        83
-# define SYS_ucred_get          0
-# define SYS_getpeerucred       1
 #define SYS_sysfs           84
 #define SYS_getmsg          85
 #define SYS_putmsg          86
@@ -189,13 +117,7 @@
 #define SYS_sigaltstack     97
 #define SYS_sigaction       98
 #define SYS_sigpending      99
-# define SYS_SUB_sigpending     1
-# define SYS_SUB_sigfillset     2
 #define SYS_context         100
-# define SYS_SUB_getcontext     0
-# define SYS_SUB_setcontext     1
-# define SYS_SUB_getustack		2
-# define SYS_SUB_setustack		3
 #define SYS_evsys           101
 #define SYS_evtrapret       102
 #define SYS_statvfs         103
@@ -239,9 +161,6 @@
 #define SYS_sharefs         140
 #define SYS_seteuid         141
 #define SYS_forksys         142
-# define SYS_SUB_forkx          0
-# define SYS_SUB_forkallx       1
-# define SYS_SUB_vforkx         2
 #define SYS_fork1           143
 #define SYS_sigtimedwait    144
 #define SYS_lwp_info        145
@@ -251,20 +170,6 @@
 #define SYS_lwp_sema_trywait  149
 #define SYS_lwp_detach      150
 #define SYS_corectl         151
-# define SYS_SUB_core_set_options   1
-# define SYS_SUB_core_get_options   2
-# define SYS_SUB_core_set_global_path   3
-# define SYS_SUB_core_get_global_path   4
-# define SYS_SUB_core_set_process_path  5
-# define SYS_SUB_core_get_process_path  6
-# define SYS_SUB_core_set_global_content    7
-# define SYS_SUB_core_get_global_content    8
-# define SYS_SUB_core_set_process_content   9
-# define SYS_SUB_core_get_process_content   10
-# define SYS_SUB_core_set_default_path  11
-# define SYS_SUB_core_get_default_path  12
-# define SYS_SUB_core_set_default_content   13
-# define SYS_SUB_core_get_default_content   14
 #define SYS_modctl          152
 #define SYS_fchroot         153
 #define SYS_utimes          154
@@ -294,20 +199,8 @@
 #define SYS_kaio            178
 #define SYS_cpc             179
 #define SYS_lgrpsys         180
-# define SYS_SUB_lgrp_generation    1
-# define SYS_SUB_lgrp_version   2
-# define SYS_SUB_lgrp_snapshot  3
-# define SYS_SUB_lgrp_affinity_set  4
-# define SYS_SUB_lgrp_affinity_get  5
-# define SYS_SYB_lgrp_latency   6
-# define SYS_SUB_lgrp_home      7
 #define SYS_meminfosys      SYS_lgrpsys
-# define SYS_SUB_meminfo        0
 #define SYS_rusagesys       181
-# define SYS_SUB_getrusage		0
-# define SYS_SUB_getrusage_chld	1
-# define SYS_SUB_getrusage_lwp	2
-# define SYS_SUB_getvmusage		3
 #define SYS_port            182
 #define SYS_pollsys         183
 #define SYS_labelsys        184
@@ -328,37 +221,17 @@
 #define SYS_nanosleep       199
 #define SYS_facl            200
 #define SYS_door            201
-# define SYS_SUB_door_create    0
-# define SYS_SUB_door_revoke    1
-# define SYS_SUB_door_info      2
-# define SYS_SUB_door_call      3
-# define SYS_SUB_door_return    4
 #define SYS_setreuid        202
 #define SYS_setregid        203
 #define SYS_install_utrap   204
 #define SYS_signotify       205
 #define SYS_schedctl        206
 #define SYS_pset            207
-# define SYS_SUB_pset_create    0
-# define SYS_SUB_pset_destroy   1
-# define SYS_SUB_pset_assign    2
-# define SYS_SUB_pset_info      3
-# define SYS_SUB_pset_bind      4
-# define SYS_SUB_pset_getloadavg    5
-# define SYS_SUB_pset_list      6
-# define SYS_SUB_pset_setattr   7
-# define SYS_SUB_pset_getattr   8
-# define SYS_SUB_pset_assign_forced 9
 #define SYS_sparc_utrap_install 208
 #define SYS_resolvepath     209
 #define	SYS_lwp_mutex_timedlock 210
 #define	SYS_lwp_sema_timedwait  211
 #define SYS_lwp_rwlock_sys  212
-# define SYS_SUB_lwp_rwlock_rdlock  0
-# define SYS_SUB_lwp_rwlock_wrlock  1
-# define SYS_SUB_lwp_rwlock_tryrdlock   2
-# define SYS_SUB_lwp_rwlock_trywrlock   3
-# define SYS_SUB_lwp_rwlock_unlock  4
 #define SYS_getdents64      213
 #define SYS_mmap64          214
 #define SYS_stat64          215
@@ -374,20 +247,6 @@
 #define SYS_open64          225
 #define SYS_rpcsys          226
 #define SYS_zone            227
-# define SYS_SUB_zone_create        0
-# define SYS_SUB_zone_destroy       1
-# define SYS_SUB_zone_getattr       2
-# define SYS_SUB_zone_enter         3
-# define SYS_SUB_zone_list          4
-# define SYS_SUB_zone_shutdown      5
-# define SYS_SUB_zone_lookup        6
-# define SYS_SUB_zone_boot          7
-# define SYS_SUB_zone_version       8
-# define SYS_SUB_zone_setattr       9
-# define SYS_SUB_zone_add_datalink  10
-# define SYS_SUB_zone_del_datalink  11
-# define SYS_SUB_zone_check_datalink    12
-# define SYS_SUB_zone_list_datalink 13
 #define SYS_autofssys       228
 #define SYS_getcwd          229
 #define SYS_so_socket       230

@@ -17,7 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include "sched_priv.h"
+#include <schedP.h>
 #include <errno.h>
 #include <sys/priocntl.h>
 #include <sched.h>

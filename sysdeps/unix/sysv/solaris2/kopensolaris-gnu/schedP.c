@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include "sched_priv.h"
+#include <schedP.h>
 #include <sys/priocntl.h>
 #include <bits/libc-lock.h>
 
@@ -90,8 +90,6 @@ int __sched_getparam_id (int idtype, id_t id, int *priority)
 {
   pcprio_t prio;
   prio.pc_op = PC_GETPRIO;
-  prio.pc_cid = 0;
-  prio.pc_val = 0;
   int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;
@@ -106,8 +104,6 @@ int __sched_setparam_id (int idtype, id_t id, int priority)
   /* We need pc_cid to be valid in the PC_SETPRIO call.  */
   pcprio_t prio;
   prio.pc_op = PC_GETPRIO;
-  prio.pc_cid = 0;
-  prio.pc_val = 0;
   int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;
@@ -125,8 +121,6 @@ int __sched_getscheduler_id (int idtype, id_t id, int *policy, int *priority)
 {
   pcprio_t prio;
   prio.pc_op = PC_GETPRIO;
-  prio.pc_cid = 0;
-  prio.pc_val = 0;
   int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;

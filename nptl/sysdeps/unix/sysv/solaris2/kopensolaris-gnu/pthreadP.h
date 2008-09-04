@@ -74,8 +74,9 @@
 #include <unistd.h>
 #include <errno.h>
 #include <inline-syscall.h>
-#include <synch_priv.h>
+#include <synchP.h>
 #include <synch.h>
+#include <schedP.h>
 
 /* These are the result of the macro expansion of INTERNAL_SYSCALL.  */
 
@@ -156,30 +157,7 @@ static inline int __internal_sched_get_priority_max_1 (int *errval, int policy)
   return result;
 }
 
-static inline int __internal_sched_getscheduler_1 (int *errval, pid_t pid)
-{
-  int saved_errno = errno;
-  int result = sched_getscheduler (pid);
-  if (result != 0)
-    *errval = errno;
-  __set_errno (saved_errno);
-  return result;
-}
-
-static inline int __internal_sched_getparam_2 (int *errval, pid_t pid,
-    struct sched_param *param)
-{
-  int saved_errno = errno;
-  int result = sched_getparam (pid, param);
-  if (result != 0)
-    *errval = errno;
-  __set_errno (saved_errno);
-  return result;
-}
-
 /* These are used by the "real" associated functions.  */
-
-#include <sched_priv.h>
 
 static inline int __pthread_setschedparam_internal (pthread_t threadid,
     int policy, const struct sched_param *param)

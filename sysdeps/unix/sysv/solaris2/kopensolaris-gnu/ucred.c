@@ -21,7 +21,7 @@
 #include <unistd.h>
 #include <ucred.h>
 #include <errno.h>
-#include <ucred_priv.h>
+#include <ucredP.h>
 #include <assert.h>
 
 DECLARE_INLINE_SYSCALL (int, getpeerucred, int fd, ucred_t *ucred);

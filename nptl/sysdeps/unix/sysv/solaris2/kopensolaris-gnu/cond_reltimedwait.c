@@ -156,3 +156,5 @@ int cond_reltimedwait (cond, mutex, reltime)
 {
   return __cond_reltimedwait_internal (cond, mutex, reltime, 1);
 }
+
+weak_alias (cond_reltimedwait, _lwp_cond_reltimedwait)

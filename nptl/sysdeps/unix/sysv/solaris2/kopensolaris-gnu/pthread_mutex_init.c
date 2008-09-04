@@ -25,7 +25,7 @@
 #include <string.h>
 #include <pthreadP.h>
 #include <sys/synch.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 static const struct pthread_mutexattr default_attr =
   {

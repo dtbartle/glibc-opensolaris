@@ -20,7 +20,7 @@
 #include <sched.h>
 #include <errno.h>
 #include <sys/procset.h>
-#include "sched_priv.h"
+#include <schedP.h>
 
 int
 __sched_getparam (pid_t pid, struct sched_param *param)

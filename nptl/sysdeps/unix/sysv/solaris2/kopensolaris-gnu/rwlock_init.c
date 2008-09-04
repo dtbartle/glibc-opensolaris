@@ -20,7 +20,7 @@
 #include <pthreadP.h>
 #include <string.h>
 #include <synch.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 
 int rwlock_init (rwlock, type, arg)

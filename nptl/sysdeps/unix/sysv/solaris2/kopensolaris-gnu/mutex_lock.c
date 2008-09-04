@@ -25,3 +25,5 @@ int mutex_lock (mutex)
 {
   return __mutex_timedlock (mutex, NULL);
 }
+
+weak_alias (mutex_lock, _lwp_mutex_lock)

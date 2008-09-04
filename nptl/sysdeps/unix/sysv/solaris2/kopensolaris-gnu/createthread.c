@@ -26,7 +26,7 @@
 #include <sys/stack.h>
 #include <sys/regset.h>
 #include <inline-syscall.h>
-#include <sched_priv.h>
+#include <schedP.h>
 #include <createthread_arch.c>
 
 DECLARE_INLINE_SYSCALL (int, lwp_create, ucontext_t *ucp, int flags,

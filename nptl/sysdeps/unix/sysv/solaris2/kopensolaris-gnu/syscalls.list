@@ -32,3 +32,5 @@ sys_lwp_cond_broadcast  - lwp_cond_broadcast    Vi:p    __syscall_lwp_cond_broad
 sys_lwp_sema_post       - lwp_sema_post         Vi:p    __syscall_lwp_sema_post
 sys_lwp_sema_trywait    - lwp_sema_trywait      Vi:p    __syscall_lwp_sema_trywait
 sys_lwp_sema_timedwait  - lwp_sema_timedwait    Vi:ppi  __syscall_lwp_sema_timedwait
+
+_lwp_info               - lwp_info              Vi:p    _lwp_info

@@ -36,3 +36,5 @@ int cond_timedwait (cond, mutex, abstime)
   struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
   return cond_reltimedwait (cond, mutex, reltime);
 }
+
+weak_alias (cond_timedwait, _lwp_cond_timedwait)

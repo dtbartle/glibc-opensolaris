@@ -18,12 +18,21 @@
    02111-1307 USA.  */
 
 #include <sched.h>
+#include <schedP.h>
+#include <errno.h>
 #include <sys/priocntl.h>
 
 int
 __sched_get_priority_max (int algorithm)
 {
   pcpri_t pri;
+  pri.pc_cid = __sched_policy_to_class (algorithm);
+  if (pri.pc_cid == -1)
+    {
+      __set_errno (EINVAL);
+      return -1;
+    }
+
   int result = priocntl (0, 0, PC_GETPRIRANGE, &pri);
   if (result != 0)
     return -1;

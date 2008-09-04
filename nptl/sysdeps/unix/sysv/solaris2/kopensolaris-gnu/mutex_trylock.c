@@ -21,7 +21,7 @@
 #include <pthreadP.h>
 #include <synch.h>
 #include <errno.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 DECLARE_INLINE_SYSCALL (int, lwp_mutex_trylock, mutex_t *lp);
 
@@ -73,3 +73,5 @@ int mutex_trylock (mutex)
 
   return errval;
 }
+
+weak_alias (mutex_trylock, _lwp_mutex_trylock)

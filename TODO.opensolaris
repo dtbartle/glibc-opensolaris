@@ -27,10 +27,7 @@ ptrace details:
 These are solaris extensions that we should implement:
   [gs]etrctl, rctl.h
   door_*
-  port_*
-  profil (unistd.h)
-  inst_sync
-  install_utrap, sparc_utrap_install
+  port_* (port.h)
   modctl
   _sharefs
   _cladm (sys/cladm.h)

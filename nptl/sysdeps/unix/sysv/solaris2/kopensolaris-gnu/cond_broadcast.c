@@ -34,3 +34,5 @@ int cond_broadcast (cond)
 
   return INLINE_SYSCALL (lwp_cond_broadcast, 1, cond);
 }
+
+weak_alias (cond_broadcast, _lwp_cond_broadcast)

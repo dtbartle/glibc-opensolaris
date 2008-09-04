@@ -21,7 +21,7 @@
 
 #include <string.h>
 #include <pthreadP.h>
-#include <synch_priv.h>
+#include <synchP.h>
 
 
 int

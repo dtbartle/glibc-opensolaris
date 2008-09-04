@@ -17,22 +17,22 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sched.h>
-#include <errno.h>
-#include <sys/procset.h>
-#include <schedP.h>
+#include <pthreadP.h>
+#include <synch.h>
 
-int
-__sched_getscheduler (pid_t pid)
+
+int _lwp_sema_init (sem, count)
+      sema_t *sem;
+      int count;
 {
-  int policy;
-  int errval = __sched_getscheduler_id (P_PID, pid, &policy, NULL);
-  if (errval != 0)
-    {
-      __set_errno (errval);
-      return -1;
-    }
-  return policy;
-}
+  /* Parameter sanity check.  */
+  if (__builtin_expect (count > SEM_VALUE_MAX, 0))
+    return EINVAL;
 
-weak_alias (__sched_getscheduler, sched_getscheduler)
+  memset (sem, 0, sizeof(sema_t));
+  sem->count = (uint32_t)count;
+  sem->type = LOCK_SHARED;
+  sem->magic = SEMA_MAGIC;
+
+  return 0;
+}

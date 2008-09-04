@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include "priv_priv.h"
+#include <privP.h>
 #include <zone.h>
 #include <dlfcn.h>
 
