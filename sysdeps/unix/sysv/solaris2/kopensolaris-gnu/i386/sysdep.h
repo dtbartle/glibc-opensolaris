@@ -23,9 +23,6 @@
 #ifndef _OPENSOLARIS_I386_SYSDEP_H
 #define _OPENSOLARIS_I386_SYSDEP_H 1
 
-/* Make sure that we always use the new procfs api.  */
-#define _STRUCTURED_PROC	1
-
 #define DECLARE_INLINE_SYSCALL(ret, name, args...) \
     extern ret __syscall_##name (args)
 
