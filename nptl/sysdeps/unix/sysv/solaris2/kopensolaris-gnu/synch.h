@@ -24,11 +24,8 @@
 #include <features.h>
 
 typedef lwp_mutex_t mutex_t;
-
 typedef lwp_cond_t cond_t;
-
 typedef lwp_rwlock_t rwlock_t;
-
 typedef lwp_sema_t sema_t;
 
 __BEGIN_DECLS
