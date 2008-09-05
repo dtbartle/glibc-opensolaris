@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <sys/param.h>
+#include <string.h>
 
 
 int
