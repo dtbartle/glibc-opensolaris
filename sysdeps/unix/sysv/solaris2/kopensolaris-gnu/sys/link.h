@@ -17,34 +17,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _RTLD_DB_H
-#define _RTLD_DB_H
+#ifndef _SYS_LINK_H
+#define _SYS_LINK_H
 
-#include <sys/types.h>
-#include <features.h>
-#include <proc_service.h>
+#define LM_ID_BASE	0x00
+#define LM_ID_LDSO	0x01
+#define LM_ID_NUM	2
 
-typedef unsigned long Lmid_t;
+#define LM_ID_BRAND	0xfd
+#define LM_ID_NONE	0xfe
+#define LM_ID_NEWLM	0xff
 
-typedef struct rd_agent rd_agent_t;
-
-typedef struct rd_loadobj
-  {
-	psaddr_t rl_nameaddr;
-	unsigned int rl_flags;
-	psaddr_t rl_base;
-	psaddr_t rl_data_base;
-	Lmid_t rl_lmident;
-	psaddr_t rl_refnameaddr;
-	psaddr_t rl_plt_base;
-	unsigned int rl_plt_size;
-	psaddr_t rl_bend;
-	psaddr_t rl_padstart;
-	psaddr_t rl_padend;
-	psaddr_t rl_dynamic;
-	unsigned long rl_tlsmodid;
-  } rd_loadobj_t;
-
-typedef int rl_iter_f (const rd_loadobj_t *, void *);
-
-#endif /* _RTLD_DB_H */
+#endif /* _SYS_LINK_H */

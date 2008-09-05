@@ -203,6 +203,7 @@ typedef __id_t	zoneid_t;
 typedef __id_t	ctid_t;
 typedef short	pri_t;
 typedef long long	offset_t;
+typedef long long	longlong_t;
 typedef unsigned char	uchar_t;
 typedef unsigned int	uint_t;
 typedef unsigned short	ushort_t;

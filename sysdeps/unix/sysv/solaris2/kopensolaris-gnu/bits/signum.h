@@ -87,3 +87,6 @@
 #undef __need_NSIG
 # define _NSIG		49	/* Biggest signal number + 1 */
 #endif
+
+/* This is here for lack of a better location.  */
+#define SIG2STR_MAX	32
