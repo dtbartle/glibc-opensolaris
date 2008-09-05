@@ -26,8 +26,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
-#include "proc_service.h"
-#include "thread_db.h"
+#include <proc_service.h>
+#include <thread_db.h>
 #include "../nptl/pthreadP.h"  	/* This is for *_BITMASK only.  */
 
 /* Indeces for the symbol names.  */
