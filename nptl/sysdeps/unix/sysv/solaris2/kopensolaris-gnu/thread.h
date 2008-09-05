@@ -21,6 +21,7 @@
 #define _THREAD_H
 
 #include <sys/signal.h>
+#include <synch.h>
 
 typedef unsigned int thread_t;
 typedef unsigned int thread_key_t;

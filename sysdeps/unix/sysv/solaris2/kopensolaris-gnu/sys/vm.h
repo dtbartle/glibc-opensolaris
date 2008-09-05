@@ -1,6 +1,6 @@
-/* Include file for getting new procfs API
-   Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _PROCFS_H
-#define _PROCFS_H
+#ifndef _SYS_VM_H
+#define _SYS_VM_H
 
-#ifndef _STRUCTURED_PROC
-# define _STRUCTURED_PROC	1
-#endif
+#include <sys/vmparam.h>
 
-#include <sys/procfs.h>
-
-#endif /* _PROCFS_H */
+#endif /* _SYS_VM_H */

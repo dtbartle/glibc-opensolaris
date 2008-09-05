@@ -40,7 +40,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/types32.h sys/task.h sys/isa_defs.h sys/door.h sys/corectl.h \
     sys/elf.h sys/rctl.h sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h \
     sys/time_impl.h sys/mutex.h sys/tsol/label.h sys/exacct.h sys/acct.h \
-    sys/sid.h sys/siginfo.h
+    sys/sid.h sys/siginfo.h sys/vm.h sys/vmparam.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
     rtld_db.h project.h pcsample.h
 endif

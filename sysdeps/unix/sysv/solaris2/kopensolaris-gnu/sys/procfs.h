@@ -20,6 +20,16 @@
 #ifndef _SYS_PROCFS_H
 #define _SYS_PROCFS_H	1
 
+#ifndef _STRUCTURED_PROC
+# define _STRUCTURED_PROC	0
+#endif
+
+#if _STRUCTURED_PROC == 0
+
+# include <sys/old_procfs.h>
+
+#else
+
 #include <sys/types.h>
 #include <sys/signal.h>
 #include <sys/fault.h>
@@ -472,6 +482,8 @@ typedef struct prheader
 # error Unknown data model
 #endif
 
-typedef uchar_t instr_t;
+typedef unsigned char instr_t;
+
+#endif /* _STRUCTURED_PROC == 0 */
 
 #endif /* _SYS_PROCFS_H */
