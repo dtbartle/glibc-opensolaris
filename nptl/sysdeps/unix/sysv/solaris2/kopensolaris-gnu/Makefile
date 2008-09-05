@@ -19,7 +19,7 @@ libpthread-routines += mutex_init mutex_lock mutex_trylock mutex_unlock \
     thr_exit thr_self thr_main thr_yield thr_sigsetmask thr_getspecific \
     thr_setspecific thr_keycreate thr_min_stack thr_getconcurrency \
     thr_setconcurrency thr_continue thr_suspend thr_getprio thr_setprio \
-    _lwp_sema_init _lwp_info
+    thr_stksegment _lwp_sema_init _lwp_info
 endif
 
 ifeq ($(subdir),posix)
