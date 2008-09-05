@@ -1,5 +1,4 @@
-/* Declarations of privilege functions and types.
-   Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,23 +16,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_RCTL_H
-#define _SYS_RCTL_H
+#ifndef _SYS_FRAME_H
+#define _SYS_FRAME_H
 
-#include <features.h>
+#include <sys/regset.h>
 
-typedef unsigned long long rctl_qty_t;
-typedef int rctl_priv_t;
-typedef struct rctlblk rctlblk_t;
+struct frame
+  {
+	greg_t fr_savfp;
+	greg_t fr_savpc;
+  };
 
-__BEGIN_DECLS
-
-int setrctl (const char *controlname, rctlblk_t *old_blk, rctlblk_t *new_blk,
-    unsigned int flags);
-
-int getrctl (const char *controlname, rctlblk_t *old_blk, rctlblk_t *new_blk,
-    unsigned int flags);
-
-__END_DECLS
-
-#endif /* _SYS_RCTL_H */
+#endif /* _SYS_FRAME_H */

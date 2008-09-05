@@ -17,23 +17,23 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_RCTL_H
-#define _SYS_RCTL_H
+#ifndef _SYS_RCTL_IMPL_H
+#define _SYS_RCTL_IMPL_H
 
-#include <features.h>
+#include <sys/rctl.h>
+#include <sys/resource.h>
 
-typedef unsigned long long rctl_qty_t;
-typedef int rctl_priv_t;
-typedef struct rctlblk rctlblk_t;
+typedef struct rctl_opaque
+  {
+	rctl_qty_t rcq_value;
+	rctl_qty_t rcq_enforced_value;
+	rctl_priv_t rcq_privilege;
+	int rcq_global_flagaction;
+	int rcq_global_syslog_level;
+	int rcq_local_flagaction;
+	int rcq_local_signal;
+	id_t rcq_local_recipient_pid;
+	hrtime_t rcq_firing_time;
+  } rctl_opaque_t;
 
-__BEGIN_DECLS
-
-int setrctl (const char *controlname, rctlblk_t *old_blk, rctlblk_t *new_blk,
-    unsigned int flags);
-
-int getrctl (const char *controlname, rctlblk_t *old_blk, rctlblk_t *new_blk,
-    unsigned int flags);
-
-__END_DECLS
-
-#endif /* _SYS_RCTL_H */
+#endif /* _SYS_RCTL_IMPL_H */

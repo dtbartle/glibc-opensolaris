@@ -1,4 +1,4 @@
-/* Declarations of privilege functions and types.
+/* Declarations of x86 (i386 and amd64) procfs structs and macros.
    Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -17,23 +17,25 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_RCTL_H
-#define _SYS_RCTL_H
+#ifndef _SYS_PROCFS_ISA_H
+#define _SYS_PROCFS_ISA_H
 
-#include <features.h>
+#include <sys/regset.h>
 
-typedef unsigned long long rctl_qty_t;
-typedef int rctl_priv_t;
-typedef struct rctlblk rctlblk_t;
+#ifdef __i386__
+# define R_PC	EIP
+# define R_PS	EFL
+# define R_SP	UESP
+# define R_FP	EBP
+# define R_R0	EAX
+# define R_R1	EDX
+#else
+# define R_PC	REG_RIP
+# define R_PS	REG_RFL
+# define R_SP	REG_RSP
+# define R_FP	REG_RBP
+# define R_R0	REG_RAX
+# define R_R1	REG_RDX
+#endif
 
-__BEGIN_DECLS
-
-int setrctl (const char *controlname, rctlblk_t *old_blk, rctlblk_t *new_blk,
-    unsigned int flags);
-
-int getrctl (const char *controlname, rctlblk_t *old_blk, rctlblk_t *new_blk,
-    unsigned int flags);
-
-__END_DECLS
-
-#endif /* _SYS_RCTL_H */
+#endif /* _SYS_PROCFS_ISA_H */
