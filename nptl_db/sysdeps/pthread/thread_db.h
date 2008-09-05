@@ -240,11 +240,8 @@ typedef struct td_ta_stats
 
 /* Since Sun's library is based on Solaris threads we have to define a few
    types to map them to POSIX threads.  */
-#if 0
 typedef pthread_t thread_t;
 typedef pthread_key_t thread_key_t;
-#endif
-#include <thread.h>
 
 
 /* Callback for iteration over threads.  */
