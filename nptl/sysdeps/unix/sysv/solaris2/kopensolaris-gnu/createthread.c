@@ -25,6 +25,7 @@
 #include <sys/stack.h>
 #include <sys/stack.h>
 #include <sys/regset.h>
+#include <sys/lwp.h>
 #include <inline-syscall.h>
 #include <schedP.h>
 #include <createthread_arch.c>
@@ -69,10 +70,10 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
   /* We set the thread to be initially suspended so that we can set
      scheduling magic.  */
   int lwp_flags =
-      ((attr->flags & ATTR_FLAG_DAEMON) ? THR_DAEMON : 0) |
-      ((attr->flags & ATTR_FLAG_DETACHSTATE) ? THR_DETACHED : 0);
+      ((attr->flags & ATTR_FLAG_DAEMON) ? LWP_DAEMON : 0) |
+      ((attr->flags & ATTR_FLAG_DETACHSTATE) ? LWP_DETACHED : 0);
   if ((attr->flags & ATTR_FLAG_THR_CREATE) == 0)
-    lwp_flags |= THR_SUSPENDED;
+    lwp_flags |= LWP_SUSPENDED;
   errval = INLINE_SYSCALL (lwp_create, 3, &ctx, lwp_flags, &pd->tid);
   if (errval == 0 && (attr->flags & ATTR_FLAG_THR_CREATE) == 0)
     {
