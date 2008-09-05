@@ -1,16 +1,4 @@
-The following headers are missing FSF headers:
-
-More CHECK_1 and co. from bp-checks.h
-Implement:
-    [sg]etres[ug]d
-        see ucred_getruid
-    sys_errlist
-    CLEAR, ECHO, etc...
-    [gs]etsourcefilter (SIOCGMSFILTER / SIOCSMSFILTER)
-    [gs]etipv4sourcefilter (SIOCGIPMSFILTER / SIOCSIPMSFILTER)
-See /usr/include/gnu/stubs-32.h
-
-Check syscalls.list; change some p => s
+/usr/include/gnu/stubs-32.h
 
 ptrace details:
   /proc/PID/{as,ctl,status,sigact,psinfo}
@@ -36,7 +24,6 @@ These are solaris extensions that we should implement:
   gethomelgroup
   atomic_*
   membar_*
-  getzoneid
 
 Insert into headers:
   resolvpath (unistd.h)
@@ -49,25 +36,9 @@ INVALID_NOT_TERMINATED_TD_P expects to succeed on terminated threads
 
 More __builtin_expect's
 
-Use LIBC_CANCEL_HANDLED where needed
-
-We should probably define _LP64 and _IP32 (sys/isa_defs.h)
-
-The following are cancellation points (need to enable async cancellation):
-  pthread_cond_timedwait, pthread_cond_wait
-  sem_timedwait, sem_wait
-
-pthread_rwlock_*lock are not cancellation points - but we call
-  pthread_cond_timedwait, which is a cancellation point. Hence
-  we need something like __pthread_cond_timedwait_no_cancel.
-
 Since we now use an entirely libc-based rwlock implementation we should be able
   to support PTHREAD_RWLOCK_PREFER_READER_NP, PTHREAD_RWLOCK_PREFER_WRITER_NP,
   and PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP.
-
-Use syscall instead of INLINE_SYSCALL; also create __syscall_errval
-
-Get rid of all saved_errno usage
 
 More clocks in pthread_condattr_setclock
 
