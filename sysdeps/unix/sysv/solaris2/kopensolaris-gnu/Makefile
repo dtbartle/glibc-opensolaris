@@ -41,7 +41,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/elf.h sys/rctl.h sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h \
     sys/time_impl.h sys/mutex.h sys/tsol/label.h sys/exacct.h sys/acct.h \
     sys/sid.h sys/siginfo.h
-sysdep_headers += ucred.h priv.h bits/regset.h proc_service.h door.h zone.h \
+sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
     rtld_db.h project.h pcsample.h
 endif
 ifeq ($(subdir),dirent)
