@@ -1,3 +1,4 @@
 ifeq ($(subdir),misc)
 sysdep_headers += sys/segments.h
-endif 
+sysdep_routines +=  sysi86
+endif
