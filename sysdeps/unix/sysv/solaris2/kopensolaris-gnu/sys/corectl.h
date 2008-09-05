@@ -21,6 +21,7 @@
 
 #include <sys/types.h>
 #include <sys/refstr.h>
+#include <sys/mutex.h>
 #include <features.h>
 
 typedef unsigned long long core_content_t;

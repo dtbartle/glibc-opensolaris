@@ -1,6 +1,6 @@
-/* Declarations of privilege functions and types.
-   Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,23 +17,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_RCTL_H
-#define _SYS_RCTL_H
+#ifndef _SYS_LINK_H
+#define _SYS_LINK_H
 
-#include <features.h>
+#define LM_ID_BASE	0x00
+#define LM_ID_LDSO	0x01
+#define LM_ID_NUM	2
 
-typedef unsigned long long rctl_qty_t;
-typedef int rctl_priv_t;
-typedef struct rctlblk rctlblk_t;
+#define LM_ID_BRAND	0xfd
+#define LM_ID_NONE	0xfe
+#define LM_ID_NEWLM	0xff
 
-__BEGIN_DECLS
-
-int setrctl (const char *controlname, rctlblk_t *old_blk, rctlblk_t *new_blk,
-    unsigned int flags);
-
-int getrctl (const char *controlname, rctlblk_t *old_blk, rctlblk_t *new_blk,
-    unsigned int flags);
-
-__END_DECLS
-
-#endif /* _SYS_RCTL_H */
+#endif /* _SYS_LINK_H */

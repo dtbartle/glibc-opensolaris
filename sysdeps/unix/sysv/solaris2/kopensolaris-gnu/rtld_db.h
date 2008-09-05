@@ -24,13 +24,15 @@
 #include <features.h>
 #include <proc_service.h>
 
+typedef unsigned long Lmid_t;
+
 typedef struct rd_agent rd_agent_t;
 
 typedef struct rd_loadobj
   {
 	psaddr_t rl_nameaddr;
 	unsigned int rl_flags;
-	psaddr_t l_base;
+	psaddr_t rl_base;
 	psaddr_t rl_data_base;
 	Lmid_t rl_lmident;
 	psaddr_t rl_refnameaddr;
@@ -42,5 +44,7 @@ typedef struct rd_loadobj
 	psaddr_t rl_dynamic;
 	unsigned long rl_tlsmodid;
   } rd_loadobj_t;
+
+typedef int rl_iter_f (const rd_loadobj_t *, void *);
 
 #endif /* _RTLD_DB_H */

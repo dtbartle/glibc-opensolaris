@@ -1,1 +1,1 @@
-#include <sys/ioct.h>
+#include <sys/ioctl.h>
