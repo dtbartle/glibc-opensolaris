@@ -21,6 +21,7 @@
 #include <alloca.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
+#include <string.h>
 
 
 int
