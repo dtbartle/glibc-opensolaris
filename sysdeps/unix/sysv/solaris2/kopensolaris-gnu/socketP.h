@@ -25,19 +25,9 @@
 /* Helper code to handle MSG_NOSIGNAL.  */
 
 extern unsigned int __sigpipe_disabled;
-
 #define SIGPIPE_DISABLE_DEFINE  unsigned int __sigpipe_disabled = 0;
-
-#define SIGPIPE_DISABLE                         \
-    do {                                        \
-      atomic_increment (&__sigpipe_disabled);   \
-    } while (0);
-
-#define SIGPIPE_ENABLE                          \
-    do {                                        \
-      atomic_decrement (&__sigpipe_disabled);   \
-    } while (0);
-
+#define SIGPIPE_DISABLE         atomic_increment (&__sigpipe_disabled)
+#define SIGPIPE_ENABLE          atomic_decrement (&__sigpipe_disabled)
 #define SIGPIPE_IS_DISABLE      (__sigpipe_disabled != 0)
 
 #endif /* _SOCKET_PRIV_H */

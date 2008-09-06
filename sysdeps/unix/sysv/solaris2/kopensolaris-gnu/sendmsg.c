@@ -32,13 +32,13 @@ __sendmsg (fd, message, flags)
      int flags;
 {
   if (flags & MSG_NOSIGNAL)
-    SIGPIPE_DISABLE
+    SIGPIPE_DISABLE;
 
   int result = INLINE_SYSCALL (sendmsg, 3, fd, message,
     (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2);
 
   if (flags & MSG_NOSIGNAL)
-    SIGPIPE_ENABLE
+    SIGPIPE_ENABLE;
 
   return result;
 }

@@ -25,7 +25,7 @@
 DECLARE_INLINE_SYSCALL (ssize_t, send, int s, const void *buf, size_t len,
     int flags);
 
-SIGPIPE_DISABLE_DEFINE
+SIGPIPE_DISABLE_DEFINE;
 
 ssize_t
 __send (fd, buf, n, flags)
@@ -35,12 +35,12 @@ __send (fd, buf, n, flags)
      int flags;
 {
   if (flags & MSG_NOSIGNAL)
-    SIGPIPE_DISABLE
+    SIGPIPE_DISABLE;
 
   int result = INLINE_SYSCALL (send, 4, fd, buf, n, flags & ~MSG_NOSIGNAL);
 
   if (flags & MSG_NOSIGNAL)
-    SIGPIPE_ENABLE
+    SIGPIPE_ENABLE;
 
   return result;
 }
