@@ -17,10 +17,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <ucontext.h>
+#include <sys/isa_defs.h>
+
+/* Get the arch-specific version.  */
+#include_next <pthreaddef.h>
+
 /* Register atfork handlers to protect signal_lock.  */
 extern void sigaction_atfork (void);
 
-#include <ucontext.h>
 #define PLATFORM_PTHREAD_INIT                   \
     sigaction_atfork ();                        \
     THREAD_SETMEM (pd, main_thread, 1);         \
@@ -55,22 +60,17 @@ extern size_t main_stacksize;
 /* Use pthread scheduler functions in tpp.  */
 #define TPP_PTHREAD_SCHED
 
-/* pthread_setXid not supported/needed.  */
-#define NO_SETXID_SUPPORT
-
-/* Disable robust list.  */
-#define NO_ROBUST_LIST_SUPPORT
-
-/* Disable futex support.  */
-#define NO_FUTEX_SUPPORT
-
-/* Make sure SIGCANCEL sanity check compiles.  */
-#define SI_TKILL SI_LWP
-#define __ASSUME_CORRECT_SI_PID
-
-/* We support tkill.  */
-#undef __NR_tgkill
-#undef __ASSUME_TGKILL
-
 /* pthread_ is unsigned.  */
 #define FREE_P(descr) ((descr)->tid == (pthread_t)-1)
+
+/* The first thread has a large (10M) stack so use the arch defaults.  */
+#define PTHREAD_USE_ARCH_STACK_DEFAULT_SIZE
+
+/* __exit_thread_inline is the same for all architectures.  */
+#include <inline-syscall.h>
+
+DECLARE_INLINE_SYSCALL (void, lwp_exit, void);
+
+#undef __exit_thread_inline
+#define __exit_thread_inline(val) \
+    INLINE_SYSCALL (lwp_exit, 0);
