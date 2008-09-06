@@ -32,8 +32,10 @@ libc {
 
     # p
     pc_sample; p_online; priocntl; priocntlset; processor_bind; processor_info;
-    pset_assign; pset_bind; pset_create; pset_destroy; pset_getattr;
-    pset_getloadavg; pset_info; pset_list; pset_setattr; putacct;
+    port_alert; port_associate; port_create; port_dissociate; port_get;
+    port_getn; port_send; port_sendn; pset_assign; pset_bind; pset_create;
+    pset_destroy; pset_getattr; pset_getloadavg; pset_info; pset_list;
+    pset_setattr; putacct;
 
     # r
     resolvepath;

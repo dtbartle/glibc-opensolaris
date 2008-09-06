@@ -232,4 +232,6 @@ struct str_list
     struct str_mlist *sl_modlist;
   };
 
+typedef __t_scalar_t t_scalar_t;
+
 #endif /* bits/stropts.h */
