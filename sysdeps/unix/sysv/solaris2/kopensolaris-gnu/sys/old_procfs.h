@@ -20,7 +20,6 @@
 #ifndef _SYS_OLD_PROCFS_H
 #define _SYS_OLD_PROCFS_H	1
 
-#include <sys/procfs_isa.h>
 #include <sys/types.h>
 #include <sys/procset.h>
 #include <sys/ucontext.h>
