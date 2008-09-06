@@ -25,12 +25,12 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     core_set_global_path core_set_options core_set_process_content \
     core_set_process_path getacct putacct wracct sysfs acct allocids \
     idmap_reg idmap_unreg acctctl pcsample settaskid gettaskid getprojid \
-    utssys zone
+    utssys zone port
 sysdep_routines += sys_fdsync sys_sysconfig sys_brk sys_fcntl sys_utssys \
     sys_lwp_private sys_uname sys_getloadavg sys_utimes sys_getpeerucred \
     sys_ucred_get sys_privsys sys_syslabeling sys_putmsg sys_putpmsg \
     sys_meminfo sys_pset_getloadavg sys_zone_create sys_allocids \
-    sys_settaskid sys_zone_lookup
+    sys_settaskid sys_zone_lookup sys_port
 sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/systeminfo.h sys/uadmin.h sys/utssys.h sys/fstyp.h sys/fsid.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/stream.h sys/synch.h \
@@ -41,9 +41,10 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/elf.h sys/rctl.h sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h \
     sys/time_impl.h sys/mutex.h sys/tsol/label.h sys/exacct.h sys/acct.h \
     sys/sid.h sys/siginfo.h sys/vm.h sys/vmparam.h sys/kd.h sys/filio.h \
-    sys/link.h sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h
+    sys/link.h sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h \
+    sys/port.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
-    rtld_db.h project.h pcsample.h
+    rtld_db.h project.h pcsample.h port.h
 endif
 ifeq ($(subdir),dirent)
 sysdep_routines += sys_getdents sys_getdents64

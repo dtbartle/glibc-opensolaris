@@ -169,6 +169,7 @@ sys_open64          - open64                i:pii       __syscall_open64
 sys_openat          - fsat:openat           i:isiv      __syscall_openat
 sys_openat64        - fsat:openat64         i:isiv      __syscall_openat64
 sys_pipe            - pipe                  i:          __syscall_pipe
+sys_port            - port                  i:i         __syscall_port
 sys_priocntlsys     - priocntlsys           i:ipiv      __syscall_priocntlsys
 sys_privsys         - privsys               i:iipii     __syscall_privsys
 sys_pset_getloadavg - pset:pset_getloadavg  i:ipi       __syscall_pset_getloadavg
