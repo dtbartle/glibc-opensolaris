@@ -35,13 +35,13 @@ __sendto (fd, buf, n, flags, addr, addr_len)
      socklen_t addr_len;
 {
   if (flags & MSG_NOSIGNAL)
-    SIGPIPE_DISABLE
+    SIGPIPE_DISABLE;
 
   int result = INLINE_SYSCALL (sendto, 6, fd, buf, n,
     (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2, addr, addr_len);
 
   if (flags & MSG_NOSIGNAL)
-    SIGPIPE_ENABLE
+    SIGPIPE_ENABLE;
 
   return result;
 }

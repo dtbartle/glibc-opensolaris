@@ -26,17 +26,10 @@
 /* Helper code to handle MSG_NOSIGNAL.  */
 
 #define SIGPIPE_DISABLE_DEFINE
-
-#define SIGPIPE_DISABLE                                     \
-    do {                                                    \
-      atomic_increment (&THREAD_SELF->sigpipe_disabled);    \
-    } while (0);
-
-#define SIGPIPE_ENABLE                                      \
-    do {                                                    \
-      atomic_decrement (&THREAD_SELF->sigpipe_disabled);    \
-    } while (0);
-
+#define SIGPIPE_DISABLE \
+    atomic_increment (&THREAD_SELF->sigpipe_disabled)
+#define SIGPIPE_ENABLE \
+    atomic_decrement (&THREAD_SELF->sigpipe_disabled)
 #define SIGPIPE_IS_DISABLED \
     (THREAD_GETMEM (THREAD_SELF, sigpipe_disabled) != 0)
 

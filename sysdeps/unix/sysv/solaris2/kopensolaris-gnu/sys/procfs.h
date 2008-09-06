@@ -30,7 +30,6 @@
 
 #else
 
-#include <sys/procfs_isa.h>
 #include <sys/types.h>
 #include <sys/signal.h>
 #include <sys/fault.h>
