@@ -239,3 +239,13 @@ struct flock64
 # define FIGNORECASE	0x80000
 # define FXATTRDIROPEN	0x100000
 #endif /* Use BSD.  */
+
+/* Advise to `posix_fadvise'.  */
+#ifdef __USE_XOPEN2K
+# define POSIX_FADV_NORMAL	0 /* No further special treatment.  */
+# define POSIX_FADV_RANDOM	1 /* Expect random page references.  */
+# define POSIX_FADV_SEQUENTIAL	2 /* Expect sequential page references.  */
+# define POSIX_FADV_WILLNEED	3 /* Will need these pages.  */
+# define POSIX_FADV_DONTNEED	4 /* Don't need these pages.  */
+# define POSIX_FADV_NOREUSE	5 /* Data will be accessed once.  */
+#endif

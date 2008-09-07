@@ -34,21 +34,18 @@ weak_alias (__syscall, syscall)
 
 	  .text;
 ENTRY (__systemcall)
-	popl %edx	/* Pop return address into %edx.  */
-	popl %ecx	/* Pop sysret_t into %ecx.  */
-	popl %eax	/* Load syscall number into %eax.  */
-	pushl %edx	/* Push return address onto stack.  */
+	popl %edx		/* Pop return address into %edx.  */
+	popl %ecx		/* Pop sysret_t into %ecx.  */
+	popl %eax		/* Load syscall number into %eax.  */
+	pushl %edx		/* Push return address onto stack.  */
 	int $0x91		/* Do the system call.  */
-	pushl %ecx	/* Restore sysret_t on stack.  */
+	pushl %ecx		/* Restore sysret_t on stack.  */
 	movl 4(%esp), %edx	/* Save return address into %edx.  */
-	pushl %edx	/* Restore return address on stack.  */
-	jb 1f	/* Jump to error handler if error.  */
+	pushl %edx		/* Restore return address on stack.  */
+	jb 1f			/* Jump to error handler if error.  */
 	movl %eax, 0(%ecx)	/* Set first 4 bytes of sysret_t.  */
 	movl %edx, 4(%ecx)	/* Set second 4 bytes of sysret_t.  */
 	xorl %eax, %eax		/* Set return to 0.  */
-	ret
 1:
-	orl $-1, 0(%ecx)	/* Set first 4 bytes of sysret_t.  */
-	orl $-1, 4(%ecx)	/* Set second 4 bytes of sysret_t.  */
 	ret
 PSEUDO_END (__syscall)

@@ -19,6 +19,7 @@
 
 #include <inline-syscall.h>
 #include <sys/types.h>
+#include <sys/param.h>
 #include <port.h>
 
 /* SYS_port returns a 64-bit int but the port_* calls return a 32-bit int, so
@@ -29,9 +30,10 @@
    some of the ports have been acted on before the timeout occured. In this
    case, the first 32-bits of the the return specify the number of acted on
    ports, and the second 32-bits specify the error that occured (currently
-   this is always ETIME). */
+   this is always ETIME).  */
 
 DECLARE_INLINE_SYSCALL (int64_t, port, int, ...);
+
 
 int port_create (void)
 {
@@ -64,16 +66,29 @@ int port_send (int port, int events, void *user)
   return ret.rval1;
 }
 
-// TODO
-#if 0
-int port_sendn (int ports[], int errors[], uint_t nent, int events, void *user)
+int port_sendn (int ports[], int errors[], unsigned int nent,
+      int events, void *user)
 {
   /* Note that we cannot have more than PORT_MAX_LIST ports in a single
      syscall so we may need to split ports across multiple syscalls.  */
 
-  // need PORT_SYS_NOPORT
+  rval_t ret;
+  int nevents = 0;
+  for (unsigned int i = 0; i < nent; i += PORT_MAX_LIST)
+    {
+      int errval = __systemcall (SYS_port, &ret, PORT_SENDN | PORT_SYS_NOPORT,
+        &ports[i], &errors[i], MIN (nent - i, PORT_MAX_LIST), events, user);
+      if (errval == 0 || errval == ETIME)
+          nevents += ret.rval1;
+      if (errval != 0)
+        {
+          __set_errno (errval);
+          break;
+        }
+    }
+
+  return nevents;
 }
-#endif
 
 int port_get (int port, port_event_t *pe, struct timespec *to)
 {
@@ -84,13 +99,22 @@ int port_get (int port, port_event_t *pe, struct timespec *to)
   return ret.rval1;
 }
 
-// TODO
-#if 0
-int port_getn (int port, port_event_t list[], uint_t max, uint_t *nget,
-      struct timespec *timeout)
+int port_getn (int port, port_event_t list[], unsigned int max,
+      unsigned int *nget, struct timespec *timeout)
 {
+  rval_t ret;
+  int errval = __systemcall (SYS_port, &ret, PORT_GETN, port, list, max,
+    *nget, timeout);
+  if (errval == 0 || errval == ETIME)
+    *nget = ret.rval1;
+
+  if (errval != 0)
+    {
+      __set_errno (errval);
+      return -1;
+    }
+  return 0;
 }
-#endif
 
 int port_alert (int port, int flags, int events, void *user)
 {
