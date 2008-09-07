@@ -1,6 +1,6 @@
 /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -21,29 +21,16 @@
 #include <sys/sendfile.h>
 #include <errno.h>
 
-DECLARE_INLINE_SYSCALL (ssize_t, sendfilev64, int fildes,
-    const struct sendfilevec64 *vec, int sfvcnt, size_t *xferred);
-
 ssize_t
 sendfile64 (int out_fd, int in_fd, off64_t *offset, size_t count)
 {
-  if (count > 0 && offset == NULL)
-    {
-      __set_errno (EINVAL);
-      return -1;
-    }
-
   sendfilevec64_t sfv;
   sfv.sfv_fd = in_fd;
   sfv.sfv_flag = 0;
   sfv.sfv_off = *offset;
   sfv.sfv_len = count;
+  int xferred = 0;
 
-  /* call sendfilev */
-  size_t xferred = 0;
-  int result = INLINE_SYSCALL (sendfilev64, 4, out_fd, &sfv, 1, &xferred);
-    return -1;
+  int res = sendfilev (out_fd, &sfv, 1, &xferred);
   *offset += xferred;
-
-  return result;
 }

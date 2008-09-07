@@ -23,6 +23,11 @@
 #include <features.h>
 #include <sys/types.h>
 
+#define SENDFILEV	0
+#define SENDFILEV64	1
+
+#define SFV_FD_SELF	(-2)
+
 typedef struct sendfilevec
 {
 	int sfv_fd;
@@ -63,6 +68,22 @@ extern ssize_t __REDIRECT_NTH (sendfile,
 #ifdef __USE_LARGEFILE64
 extern ssize_t sendfile64 (int __out_fd, int __in_fd, __off64_t *__offset,
 			   size_t __count) __THROW;
+#endif
+
+#ifndef __USE_FILE_OFFSET64
+extern ssize_t sendfilev (int, const sendfilevec_t *,
+			   int, size_t *) __THROW;
+#else
+# ifdef __REDIRECT_NTH
+extern ssize_t __REDIRECT_NTH (sendfilev,
+			       (int, const sendfilevec64_t *, int, size_t *), sendfilev64);
+# else
+#  define sendfilev sendfilev64
+# endif
+#endif
+#ifdef __USE_LARGEFILE64
+extern ssize_t sendfilev64 (int, const sendfilevec64_t *,
+			   int, size_t *) __THROW;
 #endif
 
 __END_DECLS
