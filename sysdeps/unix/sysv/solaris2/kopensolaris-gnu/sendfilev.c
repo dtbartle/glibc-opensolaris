@@ -21,16 +21,15 @@
 #include <sys/sendfile.h>
 #include <errno.h>
 
-ssize_t
-sendfile (int out_fd, int in_fd, off_t *offset, size_t count)
-{
-  sendfilevec_t sfv;
-  sfv.sfv_fd = in_fd;
-  sfv.sfv_flag = 0;
-  sfv.sfv_off = *offset;
-  sfv.sfv_len = count;
-  int xferred = 0;
+DECLARE_INLINE_SYSCALL (size_t, sendfilev, int fildes,
+    const sendfilevec_t *sfv, int count, size_t *xferred);
 
-  int res = sendfilev (out_fd, &sfv, 1, &xferred);
-  *offset += xferred;
+ssize_t
+sendfilev (int out_fd, const sendfilevec_t *sfv, int count, size_t *xferred)
+{
+  int res = INLINE_SYSCALL (sendfilev, 4, out_fd, sfv, 1, xferred);
+  if (res == -1 && errno == EINTR)
+    return *xferred;
+  else
+    return res;
 }

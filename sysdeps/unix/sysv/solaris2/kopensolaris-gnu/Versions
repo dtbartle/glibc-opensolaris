@@ -41,8 +41,8 @@ libc {
     resolvepath;
 
     # s
-    setpflags; setppriv; settaskid; setustack; strlcat; strlcpy; swapctl;
-    __systemcall; sysfs; systeminfo;
+    sendfilev; sendfilev64; setpflags; setppriv; settaskid; setustack; strlcat;
+    strlcpy; swapctl; __systemcall; sysfs; systeminfo;
 
     # u
     uadmin; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;
