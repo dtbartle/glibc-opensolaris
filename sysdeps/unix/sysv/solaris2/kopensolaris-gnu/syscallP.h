@@ -79,10 +79,11 @@
 #define SYS_SUB_getpagesizes2   1
 
 /* SYS_rctlsys */
-#define SYS_SUB_getrctl     0
-#define SYS_SUB_setrctl     1
-#define SYS_SUB_rctllist    2
-#define SYS_SUB_rctlctl     3
+#define SYS_SUB_rctlsys_get     0
+#define SYS_SUB_rctlsys_set     1
+#define SYS_SUB_rctlsys_list    2
+#define SYS_SUB_rctlsys_ctl     3
+#define SYS_SUB_rctlsys_projset 4
 
 /* SYS_sidsys */
 #define SYS_SUB_allocids        0
