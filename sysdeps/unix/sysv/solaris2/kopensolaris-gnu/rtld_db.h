@@ -24,6 +24,23 @@
 #include <features.h>
 #include <proc_service.h>
 
+#define RD_VERSION1	1
+#define RD_VERSION2	2
+#define RD_VERSION3	3
+#define RD_VERSION4	4
+#define RD_VERSION	RD_VERSION4
+
+typedef enum
+  {
+	RD_ERR,
+	RD_OK,
+	RD_NOCAPAB,
+	RD_DBERR,
+	RD_NOBASE,
+	RD_NODYNAM,
+	RD_NOMAPS
+  } rd_err_e;
+
 typedef unsigned long Lmid_t;
 
 typedef struct rd_agent rd_agent_t;

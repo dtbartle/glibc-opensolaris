@@ -22,6 +22,14 @@
 
 /* The definitions in this file must correspond to those in the debugger.  */
 #include <procfs.h>
+#include <elf.h>
+#include <sys/isa_defs.h>
+
+#ifdef _LP64
+typedef Elf64_Sym	ps_sym_t;
+#else
+typedef Elf32_Sym	ps_sym_t;
+#endif
 
 /* Functions in this interface return one of these status codes.  */
 typedef enum

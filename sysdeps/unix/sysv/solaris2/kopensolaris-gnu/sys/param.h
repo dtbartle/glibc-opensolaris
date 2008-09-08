@@ -59,4 +59,8 @@
 /* Maximum hostname length.  */
 #define MAXHOSTNAMELEN  256
 
+#include <unistd.h>
+
+#define PAGESIZE	sysconf(_SC_PAGESIZE)
+
 #endif	/* sys/param.h */

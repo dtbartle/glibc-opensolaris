@@ -42,7 +42,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/time_impl.h sys/mutex.h sys/tsol/label.h sys/exacct.h sys/acct.h \
     sys/sid.h sys/siginfo.h sys/vm.h sys/vmparam.h sys/kd.h sys/filio.h \
     sys/link.h sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h \
-    sys/port.h
+    sys/port.h sys/machelf.h sys/proc.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
     rtld_db.h pcsample.h port.h
 endif

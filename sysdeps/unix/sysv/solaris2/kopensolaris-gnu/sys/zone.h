@@ -42,6 +42,8 @@
 #define ZONE_ATTR_SCHED_CLASS	13
 #define ZONE_ATTR_FLAGS		14
 
+#define ZONENAME_MAX		64
+
 typedef struct
   {
 	const char *zone_name;

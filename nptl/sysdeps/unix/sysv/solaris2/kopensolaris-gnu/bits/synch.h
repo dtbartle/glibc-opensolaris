@@ -27,42 +27,50 @@ typedef struct
 # else
 typedef struct _lwp_mutex
 # endif
-{
-	struct {
-		uint16_t	flag1;
-		uint8_t		flag2;
-		uint8_t		ceiling;
-		union {
-			uint16_t bcptype;
-			struct {
-				uint8_t	count_type1;
-				uint8_t	count_type2;
-			} mtype_rcount;
-		} mbcp_type_un;
-		uint16_t	magic;
-	} flags;
-	union {
-		struct {
-			uint8_t	pad[8];
-		} lock64;
-		struct {
-			uint32_t ownerpid;
-			uint32_t lockword;
-		} lock32;
-		uint64_t owner64;
+  {
+	struct
+	  {
+		__uint16_t flag1;
+		__uint8_t flag2;
+		__uint8_t ceiling;
+		union
+		  {
+			__uint16_t bcptype;
+			struct
+			  {
+				__uint8_t count_type1;
+				__uint8_t count_type2;
+			  } mtype_rcount;
+		  } mbcp_type_un;
+		__uint16_t magic;
+	  } flags;
+	union
+	  {
+		struct
+		  {
+			__uint8_t pad[8];
+		  } lock64;
+		struct
+		  {
+			__uint32_t ownerpid;
+			__uint32_t lockword;
+		  } lock32;
+		__uint64_t owner64;
 	} lock;
 /* XXX: This is a non-standard use of data (see NOTES.opensolaris).  */
-	union {
-		uint64_t data64;
-		struct {
-			uint32_t owner;
-			uint32_t cond_waiters;
-		} data32;
-	} data;
+	union
+	  {
+		__uint64_t data64;
+		struct
+		  {
+			__uint32_t owner;
+			__uint32_t cond_waiters;
+		  } data32;
+	  } data;
 # ifdef __need_pthread_bits
-} pthread_mutex_t;
+  } pthread_mutex_t;
 # else
-} lwp_mutex_t;
+  } lwp_mutex_t;
 # endif
 
 # ifdef __need_pthread_bits
@@ -71,16 +79,17 @@ typedef struct
 typedef struct _lwp_cond
 # endif
 {
-	struct {
-		uint8_t		flag[4];
-		uint16_t	type;
-		uint16_t	magic;
-	} flags;
-	uint64_t data;
+	struct
+	  {
+		__uint8_t flag[4];
+		__uint16_t type;
+		__uint16_t magic;
+	  } flags;
+	__uint64_t data;
 # ifdef __need_pthread_bits
-} pthread_cond_t;
+  } pthread_cond_t;
 # else
-} lwp_cond_t;
+  } lwp_cond_t;
 # endif
 
 #endif /* defined __need_pthread_bits  && !defined ... */
@@ -94,10 +103,10 @@ typedef struct
 # else
 typedef struct _lwp_rwlock
 # endif
-{
-	int32_t readers;
-	uint16_t type;
-	uint16_t magic;
+  {
+	__int32_t readers;
+	__uint16_t type;
+	__uint16_t magic;
 # ifdef __need_pthread_bits
 	pthread_mutex_t mutex;
 	pthread_cond_t readercv;
@@ -108,11 +117,11 @@ typedef struct _lwp_rwlock
 	lwp_cond_t writercv;
 # endif
 /* XXX: These are non-standard additions (see NOTES.opensolaris).  */
-    uint64_t owner;
-	uint32_t ownerpid;
-	uint32_t pad;
+    __uint64_t owner;
+	__uint32_t ownerpid;
+	__uint32_t pad;
 # ifdef __need_pthread_bits
-} pthread_rwlock_t;
+  } pthread_rwlock_t;
 # else
 } lwp_rwlock_t;
 # endif
@@ -127,16 +136,16 @@ typedef struct
 #else
 typedef struct _lwp_sema
 #endif
-{
-	uint32_t	count;
-	uint16_t	type;
-	uint16_t	magic;
-	uint8_t		flags[8];
-	uint64_t	data;
+  {
+	__uint32_t count;
+	__uint16_t type;
+	__uint16_t magic;
+	__uint8_t flags[8];
+	__uint64_t data;
 #ifdef __need_semaphore_bits
-} sem_t;
+  } sem_t;
 #else
-} lwp_sema_t;
+  } lwp_sema_t;
 #endif
 
 #endif /* defined __need_semaphore_bits && !defined ... */

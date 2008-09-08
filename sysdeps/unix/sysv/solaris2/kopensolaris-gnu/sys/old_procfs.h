@@ -20,6 +20,8 @@
 #ifndef _SYS_OLD_PROCFS_H
 #define _SYS_OLD_PROCFS_H	1
 
+#if _STRUCTURED_PROC == 0
+
 #include <sys/types.h>
 #include <sys/procset.h>
 #include <sys/ucontext.h>
@@ -84,6 +86,8 @@
 #define PRCLSZ		8
 #define PRSYSARGS	8
 
+#endif /* _STRUCTURED_PROC == 0 */
+
 typedef struct prstatus
   {
 	int pr_flags;
@@ -121,6 +125,8 @@ typedef struct prstatus
 	prgregset_t pr_reg;
   } prstatus_t;
 
+#if _STRUCTURED_PROC == 0
+
 #define	PR_STOPPED	0x0001
 #define	PR_ISTOP	0x0002
 #define	PR_DSTOP	0x0004
@@ -149,6 +155,8 @@ typedef struct prstatus
 
 #define	PRFNSZ		16
 #define	PRARGSZ		80
+
+#endif /* _STRUCTURED_PROC == 0 */
 
 typedef struct prpsinfo
   {
@@ -195,6 +203,8 @@ typedef struct prpsinfo
 	char pr_pad[3];
 	int pr_filler[6];
   } prpsinfo_t;
+
+#if _STRUCTURED_PROC == 0
 
 typedef struct prrun
   {
@@ -322,5 +332,7 @@ typedef struct prasmap
 
 #define prismember(set, flag) \
 	((((uint32_t *)(set))[__prword (flag)] & __prmask (flag)) ? 1 : 0)
+
+#endif /* _STRUCTURED_PROC == 0 */
 
 #endif /* _SYS_OLD_PROCFS_H */
