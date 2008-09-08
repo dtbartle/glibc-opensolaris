@@ -44,8 +44,7 @@ static struct _siglist { int num; char name[8]; } siglist[] =
 
 #define SIGLIST_SIZE    (sizeof (siglist) / sizeof (siglist[0]))
 
-int
-sig2str (int signum, char *signame)
+int sig2str (int signum, char *signame)
 {
   for (int i = 0; i < SIGLIST_SIZE; i++)
     {
@@ -60,8 +59,7 @@ sig2str (int signum, char *signame)
 }
 
 
-int
-str2sig (char const *signame, int *signum)
+int str2sig (char const *signame, int *signum)
 {
   if (isdigit (signame[0]))
     {
