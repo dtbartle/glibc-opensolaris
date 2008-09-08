@@ -23,7 +23,7 @@
 #include <errno.h>
 #include <not-cancel.h>
 
-DECLARE_INLINE_SYSCALL (int, so_socketpair, int fds[2]);
+extern int _so_socketpair (int fds[2]);
 
 int
 socketpair (domain, type, protocol, fds)
@@ -34,7 +34,7 @@ socketpair (domain, type, protocol, fds)
 {
   int sock0 = -1;
   int sock1 = -1;
-  int result = -1;
+  int res = -1;
 
   if (fds == NULL)
     {
@@ -51,8 +51,8 @@ socketpair (domain, type, protocol, fds)
         {
           fds[0] = sock0;
           fds[1] = sock1;
-          result = INLINE_SYSCALL (so_socketpair, 1, fds);
-          if (result != -1)
+          res = _so_socketpair (fds);
+          if (res != -1)
             {
               /* check if new sockets were created */
               if (fds[0] == sock0)
@@ -69,5 +69,5 @@ socketpair (domain, type, protocol, fds)
   if (sock1 != -1)
       close_not_cancel_no_status (sock1);
 
-  return result;
+  return res;
 }

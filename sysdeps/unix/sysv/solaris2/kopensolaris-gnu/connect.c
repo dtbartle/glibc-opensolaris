@@ -21,7 +21,7 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, connect, int sock, __CONST_SOCKADDR_ARG addr,
+extern int _so_connect (int sock, __CONST_SOCKADDR_ARG addr,
     unsigned int addrlen, int version);
 
 int
@@ -30,7 +30,7 @@ __libc_connect (fd, addr, len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t len;
 {
-  return INLINE_SYSCALL (connect, 4, fd, addr, len, SOV_XPG4_2);
+  return _so_connect (fd, addr, len, SOV_DEFAULT);
 }
 
 weak_alias (__libc_connect, __connect)

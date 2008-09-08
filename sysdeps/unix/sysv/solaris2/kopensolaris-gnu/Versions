@@ -27,6 +27,9 @@ libc {
     # i
     idmap_reg; idmap_unreg; issetugid;
 
+    # l
+    llseek;
+
     # m
     memcntl; meminfo; mount;
 
@@ -44,8 +47,12 @@ libc {
     resolvepath;
 
     # s
-    sendfilev; sendfilev64; setpflags; setppriv; settaskid; setustack; strlcat;
-    strlcpy; swapctl; __systemcall; sysfs; systeminfo;
+    sendfilev; sendfilev64; setpflags; setppriv; settaskid; setustack; sig2str;
+    _so_accept; _so_bind; _so_connect; _so_getpeername; _so_getsockname;
+    _so_getsockopt; _so_listen; _so_recv; _so_recvfrom; _so_recvmsg; _so_send;
+    _so_sendmsg; _so_sendto; _so_setsockopt; _so_shutdown; _so_socket;
+    _so_socketpair; str2sig; strlcat; strlcpy; swapctl; __systemcall; sysfs;
+    systeminfo;
 
     # u
     uadmin; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;

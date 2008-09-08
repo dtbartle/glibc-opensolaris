@@ -17,29 +17,23 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sysdep-cancel.h>
-#include <inline-syscall.h>
-#include <sys/socket.h>
-#include <socketP.h>
+#ifndef _SYS_ZMOD_H
+#define _SYS_ZMOD_H
 
-extern ssize_t _so_sendmsg (int s, const struct msghdr *msg, int flags);
+#define Z_OK		0
+#define Z_STREAM_END	1
+#define Z_NEED_DICT	2
 
-ssize_t
-__sendmsg (fd, message, flags)
-     int fd;
-     const struct msghdr *message;
-     int flags;
-{
-  if (flags & MSG_NOSIGNAL)
-    SIGPIPE_DISABLE;
+#define Z_ERRNO		(-1)
+#define Z_STREAM_ERROR	(-2)
+#define Z_DATA_ERROR	(-3)
+#define Z_MEM_ERROR	(-4)
+#define Z_BUF_ERROR	(-5)
+#define Z_VERSION_ERROR	(-6)
 
-  int res = _so_sendmsg (fd, message, flags & ~MSG_NOSIGNAL);
+#define Z_NO_COMPRESSION	0
+#define Z_BEST_SPEED		1
+#define Z_BEST_COMPRESSION	9
+#define Z_DEFAULT_COMPRESSION	(-1)
 
-  if (flags & MSG_NOSIGNAL)
-    SIGPIPE_ENABLE;
-
-  return res;
-}
-
-weak_alias (__sendmsg, sendmsg)
-LIBC_CANCEL_HANDLED (); /* sys_sendmsg handles cancellation */
+#endif /* _SYS_ZMOD_H */

@@ -20,7 +20,7 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, getsockopt, int sock, int level, int option_name,
+extern int _so_getsockopt(int sock, int level, int option_name,
     void *option_value, socklen_t *option_lenp, int version);
 
 int
@@ -31,6 +31,5 @@ getsockopt (fd, level, optname, optval, optlen)
      void *optval;
      socklen_t *optlen;
 {
-  return INLINE_SYSCALL (getsockopt, 6, fd, level, optname,
-      optval, optlen, SOV_XPG4_2);
+  return _so_getsockopt (fd, level, optname, optval, optlen, SOV_DEFAULT);
 }

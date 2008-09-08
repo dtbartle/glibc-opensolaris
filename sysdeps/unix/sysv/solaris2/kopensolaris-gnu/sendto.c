@@ -22,8 +22,8 @@
 #include <sys/socket.h>
 #include <socketP.h>
 
-DECLARE_INLINE_SYSCALL (ssize_t, sendto, int s, const void *buf, size_t len,
-    int flags, __CONST_SOCKADDR_ARG to, socklen_t tolen);
+extern ssize_t _so_sendto (int s, const void *buf, size_t len, int flags,
+    __CONST_SOCKADDR_ARG to, socklen_t tolen);
 
 ssize_t
 __sendto (fd, buf, n, flags, addr, addr_len)
@@ -37,13 +37,12 @@ __sendto (fd, buf, n, flags, addr, addr_len)
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE;
 
-  int result = INLINE_SYSCALL (sendto, 6, fd, buf, n,
-    (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2, addr, addr_len);
+  int res = _so_sendto (fd, buf, n, flags & ~MSG_NOSIGNAL, addr, addr_len);
 
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_ENABLE;
 
-  return result;
+  return res;
 }
 
 weak_alias (__sendto, sendto)

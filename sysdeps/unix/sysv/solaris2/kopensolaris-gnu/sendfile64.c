@@ -33,4 +33,5 @@ sendfile64 (int out_fd, int in_fd, off64_t *offset, size_t count)
 
   int res = sendfilev (out_fd, &sfv, 1, &xferred);
   *offset += xferred;
+  return res;
 }

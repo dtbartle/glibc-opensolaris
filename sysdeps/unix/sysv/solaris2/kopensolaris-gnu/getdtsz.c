@@ -20,11 +20,11 @@
 #include <inline-syscall.h>
 #include <sys/sysconfig.h>
 
-DECLARE_INLINE_SYSCALL (long, sysconfig, int which);
+extern long sysconfig (int which);
 
 int
 __getdtablesize (void)
 {
-  return (int)INLINE_SYSCALL (sysconfig, 1, _CONFIG_OPEN_FILES);
+  return (int)_sysconfig (_CONFIG_OPEN_FILES);
 }
 weak_alias (__getdtablesize, getdtablesize)
