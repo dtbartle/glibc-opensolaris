@@ -44,4 +44,24 @@
 #define	SHT_SUNW_verneed	SHT_GNU_verneed
 #define	SHT_SUNW_versym		SHT_GNU_versym
 
+typedef struct
+  {
+	Elf32_Word c_tag;
+	union
+	  {
+		Elf32_Word c_val;
+		Elf32_Addr c_ptr;
+	  } c_un;
+  } Elf32_Cap;
+
+typedef struct
+  {
+	Elf64_Xword c_tag;
+	union
+	  {
+		Elf64_Xword c_val;
+		Elf64_Addr c_ptr;
+	  } c_un;
+  } Elf64_Cap;
+
 #endif /* _SYS_ELF_H */

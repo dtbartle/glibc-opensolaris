@@ -20,10 +20,10 @@
 #include <inline-syscall.h>
 #include <sys/sysconfig.h>
 
-DECLARE_INLINE_SYSCALL (long, sysconfig, int which);
+extern long _sysconfig (int which);
 
 long int
 __get_child_max (void)
 {
-  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_CHILD_MAX);
+  return _sysconfig (_CONFIG_CHILD_MAX);
 }

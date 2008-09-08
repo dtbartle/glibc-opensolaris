@@ -33,7 +33,7 @@ __new_sem_init (sem, pshared, value)
      unsigned int value;
 {
   int type = pshared ? PTHREAD_PROCESS_SHARED : PTHREAD_PROCESS_PRIVATE;
-  int errval = sema_init (sem, value, type, NULL);
+  int errval = sema_init ((sema_t *)sem, value, type, NULL);
   if (errval != 0)
     {
       __set_errno (errval);

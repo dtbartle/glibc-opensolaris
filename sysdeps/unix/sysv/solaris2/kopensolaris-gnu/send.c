@@ -22,8 +22,7 @@
 #include <sys/socket.h>
 #include <socketP.h>
 
-DECLARE_INLINE_SYSCALL (ssize_t, send, int s, const void *buf, size_t len,
-    int flags);
+extern ssize_t _so_send(int s, const void *buf, size_t len, int flags);
 
 SIGPIPE_DISABLE_DEFINE;
 
@@ -37,12 +36,12 @@ __send (fd, buf, n, flags)
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE;
 
-  int result = INLINE_SYSCALL (send, 4, fd, buf, n, flags & ~MSG_NOSIGNAL);
+  int res = _so_send (fd, buf, n, flags & ~MSG_NOSIGNAL);
 
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_ENABLE;
 
-  return result;
+  return res;
 }
 
 libc_hidden_def (__send)

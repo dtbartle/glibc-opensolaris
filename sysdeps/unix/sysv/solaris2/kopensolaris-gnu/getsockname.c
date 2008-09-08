@@ -20,8 +20,8 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, getsockname, int sock, __SOCKADDR_ARG name,
-    socklen_t *namelenp, int version);
+extern int _so_getsockname (int sock, __SOCKADDR_ARG name, socklen_t *namelenp,
+    int version);
 
 /* Put the local address of FD into *ADDR and its length in *LEN.  */
 int
@@ -30,7 +30,7 @@ __getsockname (fd, addr, len)
      __SOCKADDR_ARG addr;
      socklen_t *len;
 {
-  return INLINE_SYSCALL (getsockname, 4, fd, addr, len, SOV_DEFAULT);
+  return _so_getsockname (fd, addr, len, SOV_DEFAULT);
 }
 
 weak_alias (__getsockname, getsockname)

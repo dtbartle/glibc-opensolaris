@@ -18,14 +18,15 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
+#include <sys/sysinfo.h>
 #include <sys/sysconfig.h>
 
-DECLARE_INLINE_SYSCALL (long, sysconfig, int which);
+extern long _sysconfig (int which);
 
 int
 __get_nprocs ()
 {
-  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_NPROC_ONLN);
+  return (int)_sysconfig (_CONFIG_NPROC_ONLN);
 }
 weak_alias (__get_nprocs, get_nprocs)
 
@@ -33,7 +34,7 @@ weak_alias (__get_nprocs, get_nprocs)
 int
 __get_nprocs_conf ()
 {
-  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_NPROC_CONF);
+  return (int)_sysconfig (_CONFIG_NPROC_CONF);
 }
 weak_alias (__get_nprocs_conf, get_nprocs_conf)
 
@@ -41,7 +42,7 @@ weak_alias (__get_nprocs_conf, get_nprocs_conf)
 long int
 __get_phys_pages ()
 {
-  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_PHYS_PAGES);
+  return (int)_sysconfig (_CONFIG_PHYS_PAGES);
 }
 weak_alias (__get_phys_pages, get_phys_pages)
 
@@ -49,6 +50,6 @@ weak_alias (__get_phys_pages, get_phys_pages)
 long int
 __get_avphys_pages ()
 {
-  return INLINE_SYSCALL (sysconfig, 1, _CONFIG_AVPHYS_PAGES);
+  return (int)_sysconfig (_CONFIG_AVPHYS_PAGES);
 }
 weak_alias (__get_avphys_pages, get_avphys_pages)

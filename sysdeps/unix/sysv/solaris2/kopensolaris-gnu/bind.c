@@ -20,8 +20,8 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, bind, int sock, __CONST_SOCKADDR_ARG name,
-    socklen_t namelen, int version);
+extern int _so_bind (int sock, __CONST_SOCKADDR_ARG name, socklen_t namelen,
+    int version);
 
 int
 __bind (fd, addr, len)
@@ -29,7 +29,7 @@ __bind (fd, addr, len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t len;
 {
-  return INLINE_SYSCALL (bind, 4, fd, addr, len, SOV_XPG4_2);
+  return _so_bind (fd, addr, len, SOV_DEFAULT);
 }
 
 weak_alias (__bind, bind)

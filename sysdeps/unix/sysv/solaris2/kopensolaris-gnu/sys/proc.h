@@ -17,29 +17,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sysdep-cancel.h>
-#include <inline-syscall.h>
-#include <sys/socket.h>
-#include <socketP.h>
+#ifndef _SYS_PROC_H
+#define _SYS_PROC_H
 
-extern ssize_t _so_sendmsg (int s, const struct msghdr *msg, int flags);
+#define SSLEEP		1
+#define SRUN		2
+#define SZOMB		3
+#define SSTOP		4
+#define SIDL		5
+#define SONPROC		6
+#define SWAIT		7
 
-ssize_t
-__sendmsg (fd, message, flags)
-     int fd;
-     const struct msghdr *message;
-     int flags;
-{
-  if (flags & MSG_NOSIGNAL)
-    SIGPIPE_DISABLE;
-
-  int res = _so_sendmsg (fd, message, flags & ~MSG_NOSIGNAL);
-
-  if (flags & MSG_NOSIGNAL)
-    SIGPIPE_ENABLE;
-
-  return res;
-}
-
-weak_alias (__sendmsg, sendmsg)
-LIBC_CANCEL_HANDLED (); /* sys_sendmsg handles cancellation */
+#endif /* _SYS_PROC_H */

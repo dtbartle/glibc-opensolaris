@@ -23,7 +23,7 @@
 #include <inline-syscall.h>
 #include <sys/sysconfig.h>
 
-DECLARE_INLINE_SYSCALL (long, sysconfig, int which);
+extern long sysconfig (int which);
 
 /* Return frequency of times().  */
 int
@@ -35,5 +35,5 @@ __getclktck ()
     return GLRO(dl_pagesize);
 #endif
 
-  return (int)INLINE_SYSCALL (sysconfig, 1, _CONFIG_CLK_TCK);
+  return (int)_sysconfig (_CONFIG_CLK_TCK);
 }

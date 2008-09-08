@@ -20,8 +20,8 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, so_socket, int domain, int type, int protocol,
-    char *devpath, int version);
+extern int _so_socket (int domain, int type, int protocol, char *devpath,
+    int version);
 
 int
 __socket (domain, type, protocol)
@@ -29,8 +29,7 @@ __socket (domain, type, protocol)
      int type;
      int protocol;
 {
-  return INLINE_SYSCALL (so_socket, 5, domain, type, protocol,
-      NULL, SOV_XPG4_2);
+  return _so_socket (domain, type, protocol, NULL, SOV_DEFAULT);
 }
 
 weak_alias (__socket, socket)

@@ -41,7 +41,7 @@ makecontext (ucontext_t *ucp, void (*func) (void), int argc, ...)
   uint32_t *stack_ptr = (uint32_t *)((uint32_t)stack_addr &
     ~(STACK_ALIGN - 1));
   ucp->uc_mcontext.gregs[UESP] = (greg_t)stack_ptr;
-  *stack_ptr++ = __restorecontext; /* return addr */
+  *stack_ptr++ = (uint32_t)__restorecontext; /* return addr */
   va_list ap;
   va_start (ap, argc);
   while (argc--)

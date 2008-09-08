@@ -28,16 +28,16 @@ DECLARE_INLINE_SYSCALL (int64_t, forkx, int flags);
 pid_t
 __libc_fork (void)
 {
-  rval_t result;
-  result.rval64 = INLINE_SYSCALL (forkx, 1, 0);
-  if (result.rval64 == -1)
+  rval_t res;
+  res.rval64 = INLINE_SYSCALL (forkx, 1, 0);
+  if (res.rval64 == -1)
     return (pid_t)-1;
-  pid_t pid = (pid_t)result.rval1;
-  if (result.rval2 != 0)
-    pid = 0;
-
-  return pid;
+  else if (res.rval2 != 0)
+    return 0;
+  else
+    return (pid_t)res.rval1;
 }
 weak_alias (__libc_fork, __fork)
 libc_hidden_def (__fork)
 weak_alias (__libc_fork, fork)
+weak_alias (__libc_fork, fork1)

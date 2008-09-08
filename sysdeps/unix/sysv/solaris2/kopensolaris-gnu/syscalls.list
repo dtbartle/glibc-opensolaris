@@ -8,20 +8,6 @@ acct                - acct                  i:s         acct
 acctctl             - acctctl               i:ipi       acctctl
 acl                 - acl                   i:siip      acl
 clock_getres        - clock_getres          i:ip        clock_getres
-core_get_default_content    - corectl:core_get_default_content  i:p core_get_default_content
-core_get_default_path   - corectl:core_get_default_path i:pi    core_get_default_path
-core_get_global_content - corectl:core_get_global_content   i:p     core_get_global_content
-core_get_global_path    - corectl:core_get_global_path  i:pi    core_get_global_path
-core_get_options    - corectl:core_get_options  i:      core_get_options
-core_get_process_content    - corectl:core_get_process_content  i:pi    core_get_process_content
-core_get_process_path   - corectl:core_get_process_path i:pii   core_get_process_path
-core_set_default_content    - corectl:core_set_default_content  i:p core_set_default_content
-core_set_default_path   - corectl:core_set_default_path i:pi    core_set_default_path
-core_set_global_content - corectl:core_set_global_content   i:p core_set_global_content
-core_set_global_path    - corectl:core_set_global_path  i:pi    core_set_global_path
-core_set_options    - corectl:core_set_options  i:i     core_set_options
-core_set_process_content    - corectl:core_set_process_content  i:pi    core_set_process_content
-core_set_process_path   - corectl:core_set_process_path i:pii   core_set_process_path
 creat               - creat                 Ci:si       __libc_creat        creat
 faccessat           - fsat:accessat         i:isi       faccessat
 facl                - facl                  i:iiip      facl
@@ -66,17 +52,7 @@ p_online            - p_online              i:ii        p_online
 ppoll               - pollsys               Ci:pipp     ppoll
 pread               - pread                 Ci:iPii     __libc_pread        __pread pread
 pread64             - pread64               Ci:iPii     __libc_pread64      __pread64 pread64
-processor_bind      - processor_bind        i:iiip      processor_bind
-processor_info      - processor_info        i:ip        processor_info
 profil              - profil                :piii       __profil            profil
-pset_create         - pset:pset_create      i:p         pset_create
-pset_destroy        - pset:pset_destroy     i:i         pset_destroy
-pset_assign         - pset:pset_assign      i:iip       pset_assign
-pset_info           - pset:pset_info        i:ippp      pset_info
-pset_bind           - pset:pset_bind        i:iiip      pset_bind
-pset_list           - pset:pset_list        i:pp        pset_list
-pset_setattr        - pset:pset_setattr     i:ii        pset_setattr
-pset_getattr        - pset:pset_getattr     i:ip        pset_getattr
 putacct             - exacctsys:putacct     i:iipii     putacct
 pwrite              - pwrite                Ci:iPii     __libc_pwrite       __pwrite pwrite
 pwrite64            - pwrite64              Ci:iPii     __libc_pwrite64     __pwrite64 pwrite64
@@ -119,6 +95,24 @@ vhangup             - vhangup               i:          vhangup
 waitid              - waitid                Ci:iipi     __waitid            waitid
 wracct              - exacctsys             i:iii       wracct
 xmknod              - xmknod                i:isii      __xmknod            _xmknod
+
+# core_*
+core_get_default_content    - corectl:core_get_default_content  i:p core_get_default_content
+core_get_default_path   - corectl:core_get_default_path i:pi    core_get_default_path
+core_get_global_content - corectl:core_get_global_content   i:p     core_get_global_content
+core_get_global_path    - corectl:core_get_global_path  i:pi    core_get_global_path
+core_get_options    - corectl:core_get_options  i:      core_get_options
+core_get_process_content    - corectl:core_get_process_content  i:pi    core_get_process_content
+core_get_process_path   - corectl:core_get_process_path i:pii   core_get_process_path
+core_set_default_content    - corectl:core_set_default_content  i:p core_set_default_content
+core_set_default_path   - corectl:core_set_default_path i:pi    core_set_default_path
+core_set_global_content - corectl:core_set_global_content   i:p core_set_global_content
+core_set_global_path    - corectl:core_set_global_path  i:pi    core_set_global_path
+core_set_options    - corectl:core_set_options  i:i     core_set_options
+core_set_process_content    - corectl:core_set_process_content  i:pi    core_set_process_content
+core_set_process_path   - corectl:core_set_process_path i:pii   core_set_process_path
+
+# zone_*
 zone_add_datalink   - zone:zone_add_datalink i:is       zone_add_datalink
 zone_boot           - zone:zone_boot        i:i         zone_boot
 zone_check_datalink - zone:zone_check_datalink  i:ps    zone_check_datalink
@@ -132,15 +126,47 @@ zone_setattr        - zone:zone_setattr     i:iipi      zone_setattr
 zone_shutdown       - zone:zone_shutdown    i:i         zone_shutdown
 zone_version        - zone:zone_version     i:p         zone_version
 
+# processor_*, pset_*
+processor_bind      - processor_bind        i:iiip      processor_bind
+processor_info      - processor_info        i:ip        processor_info
+pset_create         - pset:pset_create      i:p         pset_create
+pset_destroy        - pset:pset_destroy     i:i         pset_destroy
+pset_assign         - pset:pset_assign      i:iip       pset_assign
+pset_info           - pset:pset_info        i:ippp      pset_info
+pset_bind           - pset:pset_bind        i:iiip      pset_bind
+pset_list           - pset:pset_list        i:pp        pset_list
+pset_setattr        - pset:pset_setattr     i:ii        pset_setattr
+pset_getattr        - pset:pset_getattr     i:ip        pset_getattr
+
+# sockets
+
+_so_accept          - accept                Ci:iBN      _so_accept
+_so_bind            - bind                  i:ipii      _so_bind
+_so_connect         - connect               Ci:ipi      _so_connect
+_so_getpeername     - getpeername           i:ibNi      _so_getpeername
+_so_getsockname     - getsockname           i:ibNi      _so_getsockname
+_so_getsockopt      - getsockopt            i:iiiBNi    _so_getsockopt
+_so_listen          - listen                i:iii       _so_listen
+recv                - recv                  Ci:ibni     __libc_recv         __recv recv _so_recv
+recvfrom            - recvfrom              Ci:ibniBN   __libc_recvfrom     __recvfrom recvfrom _so_recvfrom
+recvmsg             - recvmsg               Ci:ipi      __libc_recvmsg      __recvmsg recvmsg _so_recvmsg
+_so_send            - send                  Ci:ibni     _so_send
+_so_sendmsg         - sendmsg               Ci:ipi      _so_sendmsg
+_so_sendto          - sendto                Ci:ibnibn   _so_sendto
+_so_setsockopt      - setsockopt            i:iiibn     _so_setsockopt
+_so_shutdown        - shutdown              i:iii       _so_shutdown
+_so_socket          - so_socket             i:iiipi     _so_socket
+_so_socketpair      - so_socketpair         i:p         _so_socketpair
+
+# misc
+_sysconfig          - sysconfig             i:i         _sysconfig
+
 #
 # implement these in helper files
 #
 
-sys_accept          - accept                Ci:iBN      __syscall_accept
 sys_allocids        - sidsys:allocids       i:iii       __syscall_allocids
-sys_bind            - bind                  i:ipii      __syscall_bind
 sys_brk             - brk                   i:p         __syscall_brk
-sys_connect         - connect               Ci:ipi      __syscall_connect
 sys_fcntl           - fcntl                 i:iiF       __syscall_fcntl
 sys_fdsync          - fdsync                Ci:ii       __syscall_fdsync
 sys_forkx           - forksys:forkx         i:i         __syscall_forkx
@@ -153,12 +179,8 @@ sys_getcwd          - getcwd                i:pi        __syscall_getcwd
 sys_getdents        - getdents              i:ipi       __syscall_getdents
 sys_getdents64      - getdents64            i:ipi       __syscall_getdents64
 sys_getloadavg      - getloadavg            i:pi        __syscall_getloadavg
-sys_getpeername     - getpeername           i:ibNi      __syscall_getpeername
 sys_getpeerucred    - ucredsys:getpeerucred i:ip        __syscall_getpeerucred
-sys_getsockname     - getsockname           i:ibNi      __syscall_getsockname
-sys_getsockopt      - getsockopt            i:iiiBNi    __syscall_getsockopt
 sys_syslabeling     - labelsys              i:          __syscall_syslabeling
-sys_listen          - listen                i:iii       __syscall_listen
 sys_lstat           - lstat                 i:sp        __syscall_lstat
 sys_lstat64         - lstat64               i:sp        __syscall_lstat64
 sys_lwp_private     - lwp_private           i:iii       __syscall_lwp_private
@@ -175,25 +197,16 @@ sys_privsys         - privsys               i:iipii     __syscall_privsys
 sys_pset_getloadavg - pset:pset_getloadavg  i:ipi       __syscall_pset_getloadavg
 sys_putmsg          - putmsg                i:ippi      __syscall_putmsg
 sys_putpmsg         - putpmsg               i:ippii     __syscall_putpmsg
-sys_recvmsg         - recvmsg               Ci:ipi      __syscall_recvmsg
 sys_rusagesys       - rusagesys             i:ip        __syscall_rusagesys
-sys_send            - send                  Ci:ibni     __syscall_send
 sys_sendfilev       - sendfilev:sendfilev   i:ipip      __syscall_sendfilev
 sys_sendfilev64     - sendfilev:sendfilev64 i:ipip      __syscall_sendfilev64
-sys_sendmsg         - sendmsg               Ci:ipi      __syscall_sendmsg
-sys_sendto          - sendto                Ci:ibnibn   __syscall_sendto
-sys_setsockopt      - setsockopt            i:iiibn     __syscall_setsockopt
 sys_settaskid       - tasksys:settaskid     i:ii        __syscall_settaskid
-sys_shutdown        - shutdown              i:iii       __syscall_shutdown
 sys_sigaction       - sigaction             i:iPP       __syscall_sigaction
 sys_sigqueue        - sigqueue              i:iiPii     __syscall_sigqueue
 sys_sigtimedwait    - sigtimedwait          Ci:pPP      __syscall_sigtimedwait
-sys_so_socket       - so_socket             i:iiipi     __syscall_so_socket
-sys_so_socketpair   - so_socketpair         i:p         __syscall_so_socketpair
 sys_stat            - stat                  i:sp        __syscall_stat
 sys_stat64          - stat64                i:sp        __syscall_stat64
 sys_stime           - stime                 i:i         __syscall_stime
-sys_sysconfig       - sysconfig             i:i         __syscall_sysconfig
 sys_time            - time                  i:          __syscall_time
 sys_ucred_get       - ucredsys:ucred_get    i:ip        __syscall_ucred_get
 sys_uname           - uname                 i:p         __syscall_uname

@@ -25,12 +25,15 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     core_set_global_path core_set_options core_set_process_content \
     core_set_process_path getacct putacct wracct sysfs acct allocids \
     idmap_reg idmap_unreg acctctl pcsample settaskid gettaskid getprojid \
-    utssys zone port sendfilev sendfilev64
-sysdep_routines += sys_fdsync sys_sysconfig sys_brk sys_fcntl sys_utssys \
-    sys_lwp_private sys_uname sys_getloadavg sys_utimes sys_getpeerucred \
-    sys_ucred_get sys_privsys sys_syslabeling sys_putmsg sys_putpmsg \
-    sys_meminfo sys_pset_getloadavg sys_zone_create sys_allocids \
-    sys_settaskid sys_zone_lookup sys_port
+    utssys zone port sendfilev sendfilev64 sig2str _so_accept _so_bind \
+    _so_connect _so_getpeername _so_getsockname _so_getsockopt _so_listen \
+    _so_send _so_sendmsg _so_sendto _so_setsockopt _so_shutdown _so_socket \
+    _so_socketpair _sysconfig
+sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
+    sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
+    sys_privsys sys_syslabeling sys_putmsg sys_putpmsg sys_meminfo \
+    sys_pset_getloadavg sys_zone_create sys_allocids sys_settaskid \
+    sys_zone_lookup sys_port
 sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/systeminfo.h sys/uadmin.h sys/utssys.h sys/fstyp.h sys/fsid.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/stream.h sys/synch.h \
@@ -42,7 +45,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/time_impl.h sys/mutex.h sys/tsol/label.h sys/exacct.h sys/acct.h \
     sys/sid.h sys/siginfo.h sys/vm.h sys/vmparam.h sys/kd.h sys/filio.h \
     sys/link.h sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h \
-    sys/port.h
+    sys/port.h sys/machelf.h sys/proc.h sys/zmod.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
     rtld_db.h pcsample.h port.h
 endif
@@ -61,10 +64,7 @@ sysdep_routines += sys_lwp_sigmask sys_sigqueue sys_sigtimedwait \
     sys_sigaction
 endif
 ifeq ($(subdir),socket)
-sysdep_routines += sa_len sys_so_socket sys_so_socketpair sys_send \
-    sys_sendmsg sys_sendto sys_accept sys_bind \
-    sys_connect sys_getpeername sys_getsockname sys_getsockopt \
-    sys_setsockopt sys_shutdown sys_recvmsg sys_listen
+sysdep_routines += sa_len
 sysdep_routines += netmask
 endif
 ifeq ($(subdir),string)
@@ -79,13 +79,12 @@ endif
 # Additional sysdeps for ld.so
 #
 ifeq ($(subdir),elf)
-sysdep-rtld-routines += sys_sysconfig
+sysdep-rtld-routines += _sysconfig
 endif
 
 ifeq ($(subdir),nptl)
-libpthread-sysdep_routines += sys_fcntl sys_send sys_sendmsg sys_sendto \
-    sys_accept sys_connect sys_recvmsg sys_fdsync sys_open sys_open64 \
-    sys_sigaction sys_priocntlsys schedP priocntl syscall
+libpthread-sysdep_routines += sys_fcntl sys_fdsync sys_sigaction sys_open \
+    sys_open64 sys_priocntlsys schedP priocntl syscall
 endif
 
 CFLAGS-accept.c = -fexceptions -fasynchronous-unwind-tables

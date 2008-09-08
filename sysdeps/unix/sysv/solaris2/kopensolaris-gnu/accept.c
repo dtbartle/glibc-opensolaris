@@ -21,8 +21,8 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, accept, int sock, __SOCKADDR_ARG addr,
-    unsigned int *addrlen, int version);
+extern int _so_accept(int sock, __SOCKADDR_ARG addr, unsigned int *addrlen,
+    int version);
 
 int
 __libc_accept (fd, addr, addr_len)
@@ -30,7 +30,7 @@ __libc_accept (fd, addr, addr_len)
      __SOCKADDR_ARG addr;
      socklen_t *addr_len;
 {
-  return INLINE_SYSCALL (accept, 4, fd, addr, addr_len, SOV_DEFAULT);
+  return _so_accept (fd, addr, addr_len, SOV_DEFAULT);
 }
 
 weak_alias (__libc_accept, accept)

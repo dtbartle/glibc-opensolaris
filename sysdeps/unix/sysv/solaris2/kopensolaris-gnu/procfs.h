@@ -20,9 +20,10 @@
 #ifndef _PROCFS_H
 #define _PROCFS_H
 
-#ifndef _STRUCTURED_PROC
-# define _STRUCTURED_PROC	1
+#ifdef _STRUCTURED_PROC
+# undef _STRUCTURED_PROC
 #endif
+#define _STRUCTURED_PROC    1
 
 #include <sys/procfs.h>
 

@@ -20,12 +20,12 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, shutdown, int sock, int how, int version);
+extern int _so_shutdown (int sock, int how, int version);
 
 int
 shutdown (fd, how)
      int fd;
      int how;
 {
-  return INLINE_SYSCALL (shutdown, 3, fd, how, SOV_DEFAULT);
+  return _so_shutdown (fd, how, SOV_DEFAULT);
 }

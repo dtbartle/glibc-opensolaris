@@ -23,7 +23,7 @@
 #include <sys/sysconfig.h>
 #include <ldsodefs.h>
 
-DECLARE_INLINE_SYSCALL (long, sysconfig, int which);
+extern _sysconfig (int which);
 
 int
 __getpagesize ()
@@ -34,7 +34,7 @@ __getpagesize ()
     return GLRO(dl_pagesize);
 #endif
 
-  return (int)INLINE_SYSCALL (sysconfig, 1, _CONFIG_PAGESIZE);
+  return (int)_sysconfig (_CONFIG_PAGESIZE);
 }
 libc_hidden_def (__getpagesize)
 weak_alias (__getpagesize, getpagesize)

@@ -34,4 +34,6 @@
 
 #define makedev(x, y) (unsigned short)(((x) << O_BITSMINOR) | ((y) & O_MAXMIN))
 
+#define P2ROUNDUP(x, y)		(-(-(x) & -(y)))
+
 #endif /* _SYS_SYSMACROS_H */

@@ -20,8 +20,8 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, getpeername, int sock, __SOCKADDR_ARG name,
-    socklen_t *namelenp, int version);
+extern int _so_getpeername (int sock, __SOCKADDR_ARG name, socklen_t *namelenp,
+    int version);
 
 int
 __getpeername (fd, addr, len)
@@ -29,7 +29,7 @@ __getpeername (fd, addr, len)
      __SOCKADDR_ARG addr;
      socklen_t *len;
 {
-  return INLINE_SYSCALL (getpeername, 4, fd, addr, len, SOV_DEFAULT);
+  return _so_getpeername (fd, addr, len, SOV_DEFAULT);
 }
 
 weak_alias (__getpeername, getpeername)

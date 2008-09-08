@@ -20,14 +20,14 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (int, listen, int sock, int backlog, int version);
+extern int _so_listen (int sock, int backlog, int version);
 
 int
 __listen (fd, n)
      int fd;
      int n;
 {
-  return INLINE_SYSCALL (listen, 3, fd, n, SOV_XPG4_2);
+  return _so_listen (fd, n, SOV_DEFAULT);
 }
 
 weak_alias (__listen, listen)
