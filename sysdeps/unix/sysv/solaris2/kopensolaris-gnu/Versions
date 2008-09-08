@@ -16,6 +16,9 @@ libc {
     core_set_global_content; core_set_global_path; core_set_options;
     core_set_process_content; core_set_process_path;
 
+    # f
+    fork1;
+
     # g
     getacct; getcpuid; gethrtime; gethrvtime; getpagesizes; getpagesizes2;
     getpeerucred; getpflags; getppriv; getprojid; gettaskid; getustack;

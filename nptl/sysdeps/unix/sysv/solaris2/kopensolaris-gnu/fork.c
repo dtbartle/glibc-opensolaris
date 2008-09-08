@@ -27,16 +27,16 @@ DECLARE_INLINE_SYSCALL (int64_t, forkx, int flags);
 
 static inline pid_t ARCH_FORK()
 {
-  rval_t result;
-
-  result.rval64 = INLINE_SYSCALL (forkx, 1, 0);
-  if (result.rval64 == -1)
+  rval_t res;
+  res.rval64 = INLINE_SYSCALL (forkx, 1, 0);
+  if (res.rval64 == -1)
     return (pid_t)-1;
-  else if (result.rval2 != 0)
+  else if (res.rval2 != 0)
     return 0;
   else
-    return (pid_t)result.rval1;
+    return (pid_t)res.rval1;
 }
 #define ARCH_FORK	ARCH_FORK
 
 #include <nptl/sysdeps/unix/sysv/linux/fork.c>
+weak_alias (__libc_fork, fork1)
