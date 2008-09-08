@@ -50,8 +50,10 @@
 #define powerof2(x)	((((x)-1)&(x))==0)
 
 /* Macros for min/max.  */
-#define	MIN(a,b) (((a)<(b))?(a):(b))
-#define	MAX(a,b) (((a)>(b))?(a):(b))
+#define	MIN(a,b)	(((a)<(b))?(a):(b))
+#define	MAX(a,b)	(((a)>(b))?(a):(b))
+
+#define NODEV	(dev_t)-1
 
 /* Unit of `st_blocks'.  */
 #define DEV_BSIZE       512

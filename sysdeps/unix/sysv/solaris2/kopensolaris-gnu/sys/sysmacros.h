@@ -20,20 +20,49 @@
 #ifndef _SYS_SYSMACROS_H
 #define _SYS_SYSMACROS_H
 
-/* number of major/minor device bits */
-#define O_BITSMAJOR		7
-#define O_BITSMINOR		8
+#include <sys/isa_defs.h>
+#include <sys/param.h>
 
-/* maximum major/minor values */
-#define O_MAXMAJ		0x7f
-#define O_MAXMIN		0xff
+/* Number of major/minor device bits.  */
+#define O_BITSMAJOR	7
+#define O_BITSMINOR	8
+#ifdef _LP64
+# define L_BITSMAJOR	32
+# define L_BITSMINOR	32
+#else
+# define L_BITSMAJOR	14
+# define L_BITSMINOR	18
+#endif
 
-/* macros to get minor/major numbers */
+/* Maximum major/minor values.  */
+#define O_MAXMAJ	0x7F
+#define O_MAXMIN	0xFF
+#ifdef _LP64
+# define L_MAXMAJ	0xFFFFFFFF
+# define L_MAXMIN	0xFFFFFFFF
+#else
+# define L_MAXMAJ	0x3FFF
+# define L_MAXMIN	0x3FFFF
+#endif
+
+/* Macros to get minor/major numbers.  */
 #define major(x)	((((unsigned)(x)) >> O_BITSMINOR) & O_MAXMAJ)
 #define minor(x)	((x) & O_MAXMIN)
 
-#define makedev(x, y) (unsigned short)(((x) << O_BITSMINOR) | ((y) & O_MAXMIN))
+/* Make dev.  */
+#define makedev(x, y)	(unsigned short)(((x) << O_BITSMINOR) | \
+	((y) & O_MAXMIN))
 
+/* Convert new dev to old dev.  */
+#define cmpdev(x)	((((x) >> L_BITSMAJOR) > O_MAXMAJ) || \
+	(((x) & L_MAXMAJ) > O_MAXMAJ) ? NODEV : ((((x) >> L_BITSMAJOR) << \
+	O_BITSMINOR) | (x) & O_MAXMIN))
+
+/* Convert old dev to new dev.  */
+#define expdev(x)	((((x) >> O_BITSMINOR) << L_BITSMINOR) | \
+	((x) & O_MAXMIN))
+
+/* Round up assuming y is power-of-2 aligned.  */
 #define P2ROUNDUP(x, y)		(-(-(x) & -(y)))
 
 #endif /* _SYS_SYSMACROS_H */

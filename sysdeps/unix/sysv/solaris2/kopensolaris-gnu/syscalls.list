@@ -197,6 +197,7 @@ sys_privsys         - privsys               i:iipii     __syscall_privsys
 sys_pset_getloadavg - pset:pset_getloadavg  i:ipi       __syscall_pset_getloadavg
 sys_putmsg          - putmsg                i:ippi      __syscall_putmsg
 sys_putpmsg         - putpmsg               i:ippii     __syscall_putpmsg
+sys_rctlsys         - rctlsys               i:ipppii    __syscall_rctlsys
 sys_rusagesys       - rusagesys             i:ip        __syscall_rusagesys
 sys_sendfilev       - sendfilev:sendfilev   i:ipip      __syscall_sendfilev
 sys_sendfilev64     - sendfilev:sendfilev64 i:ipip      __syscall_sendfilev64
