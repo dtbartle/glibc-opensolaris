@@ -22,6 +22,7 @@
 #include <ucred.h>
 #include <errno.h>
 #include <ucredP.h>
+#include <priv.h>
 #include <assert.h>
 
 DECLARE_INLINE_SYSCALL (int, getpeerucred, int fd, ucred_t *ucred);
@@ -148,11 +149,9 @@ m_label_t *ucred_getlabel (const ucred_t *uc)
 
 size_t ucred_size (void)
 {
-    extern int __getprivimplinfo_cached (priv_impl_info_t **info);
-
     /* the docs don't say what to do in case of error */
-    priv_impl_info_t *info;
-    assert (__getprivimplinfo_cached (&info) == 0);
+    const priv_impl_info_t *info = getprivimplinfo ();
+    assert (info);
 
     /* XXX: We shouldn't use AUDITINFO64_ADDR_T_SIZE and BSLABEL_T_SIZE.  */
     return sizeof(ucred_t) + sizeof(prcred_t) + sizeof(prpriv_t) +

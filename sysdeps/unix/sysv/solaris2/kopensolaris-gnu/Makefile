@@ -13,7 +13,7 @@ endif
 ifeq ($(subdir),misc)
 sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     getpagesizes memcntl meminfo uadmin getpflags setpflags issetugid ucred \
-    privP processor_bind processor_info p_online pset_create pset_destroy \
+    priv processor_bind processor_info p_online pset_create pset_destroy \
     pset_assign pset_info pset_bind pset_getloadavg pset_list pset_setattr \
     pset_getattr swapctl getustack setustack gethrvtime uucopy uucopystr \
     zone_add_datalink zone_boot zone_check_datalink zone_destroy zone_enter \
