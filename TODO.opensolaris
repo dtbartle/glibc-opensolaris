@@ -13,9 +13,7 @@ ptrace details:
     write command (long) followed by struct
 
 These are solaris extensions that we should implement:
-  [gs]etrctl, rctl.h
   door_*
-  port_* (port.h)
   modctl
   _sharefs
   _cladm (sys/cladm.h)
@@ -31,6 +29,8 @@ Insert into headers:
   strlcpy, strlcat (string.h or strings.h)
   getvmusage (sys/vm_usage.h)
   uucopy, uucopystr (string.h or strings.h)
+  sysi86 (sys/sysi86.h - see below)
+  str2sig, sig2str (signal.h)
 
 INVALID_NOT_TERMINATED_TD_P expects to succeed on terminated threads
 
@@ -51,7 +51,12 @@ List of CDDL headers needed to compile random stuff:
   libproc.h [libproc]
   libelf.h [libelf]
   gelf.h [libelf; need to add Elf64_Cap]
-
+  sys/tiuser.h
+  sys/tpicommon.h
+  sys/timod.h
+  netconfig.h [libnsl]
+  sys/netconfig.h [libnsl]
+  netdir.h [libnsl]
 Use cond_t data field for broadcast seqence
 
 Use timer_* syscalls
@@ -59,3 +64,33 @@ Use timer_* syscalls
 Instead of AT_SECURE we can use AF_SUN_SETUGID [AT_SUN_AUXFLAGS]
 
 We can't _exit if the main thread goes away since we have daemon threaeds (THR_DAEMON)
+
+The following are needed by xorg:
+
+  sys/vuid_event.h
+  sys/vuid_queue.h
+  sys/vuid_state.h
+  sys/vuid_store.h
+  sys/vuid_wheel.h
+  sys/msio.h
+  sys/psw.h
+  sys/spl.h
+  sys/audio.h
+  sys/audioio.h
+  ia32/sys/asm_linkage.h
+  sys/sysi86.h
+  sys/kbd.h
+
+Implement libc-private __priv interface:
+
+    void __priv_free_info (void *data);
+
+    void * __priv_getbynum (priv_data_t *data, int num);
+
+    priv_data_t * __priv_getdata (void);
+
+    int __priv_getsetbyname (const char *name);
+
+    __priv_getsetbynum (priv_data_t *data, int num);
+
+    priv_data_t * __priv_parse_info (priv_impl_info_t *pii);

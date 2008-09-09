@@ -44,7 +44,12 @@ libc {
     pset_setattr; putacct;
 
     # r
-    rctllist; resolvepath;
+    rctlblk_get_firing_time; rctlblk_get_global_action;
+    rctlblk_get_global_flags; rctlblk_get_local_action;
+    rctlblk_get_local_flags; rctlblk_get_privilege; rctlblk_get_recipient_pid;
+    rctlblk_get_value; rctlblk_get_enforced_value; rctlblk_set_local_action;
+    rctlblk_set_local_flags; rctlblk_set_privilege; rctlblk_set_value;
+    rctlblk_set_recipient_pid; rctlblk_size; rctllist; resolvepath;
 
     # s
     sendfilev; sendfilev64; setpflags; setppriv; setprojrctl; setrctl;
