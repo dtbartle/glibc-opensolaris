@@ -1,0 +1,62 @@
+Sun docs:
+
+  http://docs.sun.com/app/docs/doc/819-2245/rtld-db-3ext
+  http://docs.sun.com/app/docs/doc/819-0690/6n33n7fbu
+
+The rtld_db library exports a number of functions:
+
+  rd_init
+
+  rd_new
+
+  rd_delete
+
+  rd_reset
+
+  rd_event_addr
+
+  rd_event_enable
+
+  rd_event_getmsg
+
+  rd_loadobj_iter
+
+  rd_log
+
+  rd_objpad_enable
+
+  rd_plt_resolution
+
+The rtld_db library expects library users to provide a number of functions:
+
+  ps_pread / pdread / ptread
+
+  ps_pwrite / pdwrite / ptwrite
+
+  ps_pdmodel
+
+  ps_pglobal_lookup
+
+  ps_pglobal_sym
+
+  ps_pstop / ps_lstop
+
+  ps_pcontinue / ps_lcontinue
+
+  ps_lgetregs
+
+  ps_lsetregs
+
+  ps_lgetfpregs
+
+  ps_lsetfpregs
+
+  ps_pauxv
+
+  ps_pbrandname
+
+  ps_kill
+
+  ps_lrolltoaddr
+
+  ps_plog
