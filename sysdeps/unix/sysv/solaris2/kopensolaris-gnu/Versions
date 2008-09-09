@@ -16,6 +16,11 @@ libc {
     core_set_global_content; core_set_global_path; core_set_options;
     core_set_process_content; core_set_process_path;
 
+    # d
+    door_bind; door_cred; door_call; door_create; door_getparam; door_info;
+    door_return; door_revoke; door_server_create; door_setparam; door_ucred;
+    door_unbind;
+
     # f
     fork1;
 
@@ -39,11 +44,12 @@ libc {
     ntp_adjtime; ntp_gettime;
 
     # p
-    pc_sample; p_online; priocntl; priocntlset; processor_bind; processor_info;
-    port_alert; port_associate; port_create; port_dissociate; port_get;
-    port_getn; port_send; port_sendn; pset_assign; pset_bind; pset_create;
-    pset_destroy; pset_getattr; pset_getloadavg; pset_info; pset_list;
-    pset_setattr; putacct;
+    pc_sample; p_online; priocntl; priocntlset; __priv_free_info;
+    __priv_getbynum; __priv_getdata; __priv_getsetbyname; __priv_getsetbynum;
+    __priv_parse_info; processor_bind; processor_info; port_alert;
+    port_associate; port_create; port_dissociate; port_get; port_getn;
+    port_send; port_sendn; pset_assign; pset_bind; pset_create; pset_destroy;
+    pset_getattr; pset_getloadavg; pset_info; pset_list; pset_setattr; putacct;
 
     # r
     rctlblk_get_firing_time; rctlblk_get_global_action;

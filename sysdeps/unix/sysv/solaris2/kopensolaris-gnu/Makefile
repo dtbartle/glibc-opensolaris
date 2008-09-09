@@ -28,12 +28,12 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     utssys zone port sendfilev sendfilev64 sig2str _so_accept _so_bind \
     _so_connect _so_getpeername _so_getsockname _so_getsockopt _so_listen \
     _so_send _so_sendmsg _so_sendto _so_setsockopt _so_shutdown _so_socket \
-    _so_socketpair _sysconfig rctl atomic
+    _so_socketpair _sysconfig rctl atomic door
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_syslabeling sys_putmsg sys_putpmsg sys_meminfo \
     sys_pset_getloadavg sys_zone_create sys_allocids sys_settaskid \
-    sys_zone_lookup sys_port
+    sys_zone_lookup sys_port sys_door
 sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/systeminfo.h sys/uadmin.h sys/utssys.h sys/fstyp.h sys/fsid.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/stream.h sys/synch.h \
