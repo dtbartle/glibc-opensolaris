@@ -25,7 +25,7 @@
 
 void membar_enter ()
 {
-  __member_enter ();
+  __membar_enter ();
 }
 
 
@@ -37,7 +37,7 @@ void membar_exit ()
 
 void membar_producer ()
 {
-  __member_producer ();
+  __membar_producer ();
 }
 
 
