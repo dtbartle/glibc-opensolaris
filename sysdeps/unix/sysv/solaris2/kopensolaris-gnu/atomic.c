@@ -17,11 +17,31 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _PRIV_PRIV_H
-#define _PRIV_PRIV_H
+/* We need the full patch to atomic.h or we'll get include/atomic.h.  */
+#include "sysdeps/unix/sysv/solaris2/kopensolaris-gnu/atomic.h"
+#include <membar.h>
 
-#include <priv.h>
+/* TODO */
 
-extern int __getprivimplinfo_cached (priv_impl_info_t **info);
+void membar_enter ()
+{
+  __member_enter ();
+}
 
-#endif /* _PRIV_PRIV_H */
+
+void membar_exit ()
+{
+  __membar_exit ();
+}
+
+
+void membar_producer ()
+{
+  __member_producer ();
+}
+
+
+void membar_consumer ()
+{
+  __membar_consumer ();
+}

@@ -47,7 +47,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
     sys/link.h sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h \
     sys/port.h sys/machelf.h sys/proc.h sys/zmod.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
-    rtld_db.h pcsample.h port.h
+    rtld_db.h pcsample.h port.h atomic.h
 endif
 ifeq ($(subdir),dirent)
 sysdep_routines += sys_getdents sys_getdents64
