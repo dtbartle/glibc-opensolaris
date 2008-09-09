@@ -21,8 +21,9 @@ libc {
 
     # g
     getacct; getcpuid; gethrtime; gethrvtime; getpagesizes; getpagesizes2;
-    getpeerucred; getpflags; getppriv; getprojid; getrctl; gettaskid;
-    getustack; getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
+    getpeerucred; getpflags; getppriv; getprivimplinfo; getprojid; getrctl;
+    gettaskid; getustack; getvmusage; getzoneid; getzoneidbyname;
+    getzonenamebyid;
 
     # i
     idmap_reg; idmap_unreg; issetugid;

@@ -48,6 +48,8 @@ extern const char *priv_getsetbynum (int privname);
 
 extern char *priv_gettext (const char *privname);
 
+extern const priv_impl_info_t * getprivimplinfo (void);
+
 __END_DECLS
 
 #endif /* _PRIV_H */
