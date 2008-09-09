@@ -174,6 +174,7 @@ sys_fstat           - fstat                 i:ip        __syscall_fstat
 sys_fstat64         - fstat64               i:ip        __syscall_fstat64
 sys_fstatat         - fsat:fstatat          i:ispi      __syscall_fstatat
 sys_fstatat64       - fsat:fstatat64        i:ispi      __syscall_fstatat64
+sys_door            - door                  i:iiiiii    __syscall_door
 sys_getcontext      - context:getcontext    i:p         __syscall_getcontext
 sys_getcwd          - getcwd                i:pi        __syscall_getcwd
 sys_getdents        - getdents              i:ipi       __syscall_getdents
@@ -215,4 +216,3 @@ sys_utimes          - utimes                i:sp        __syscall_utimes
 sys_utssys          - utssys                i:piiP      __syscall_utssys
 sys_zone_create     - zone:zone_create      i:p         __syscall_zone_create
 sys_zone_lookup     - zone:zone_lookup      i:p         __syscall_zone_lookup
-#sys_door
