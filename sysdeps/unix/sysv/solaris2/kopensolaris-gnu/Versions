@@ -16,6 +16,11 @@ libc {
     core_set_global_content; core_set_global_path; core_set_options;
     core_set_process_content; core_set_process_path;
 
+    # d
+    door_bind; door_cred; door_call; door_create; door_getparam; door_info;
+    door_return; door_revoke; door_server_create; door_setparam; door_ucred;
+    door_unbind;
+
     # f
     fork1;
 
