@@ -91,12 +91,14 @@ int ucred_getgroups (const ucred_t *uc, const gid_t **groups)
 }
 
 
+#if 0
 const priv_set_t *ucred_getprivset (const ucred_t *uc, const char *set)
 {
   // TODO
   __set_errno (ENOSYS);
   return NULL;
 }
+#endif
 
 
 pid_t ucred_getpid (const ucred_t *uc)
@@ -126,12 +128,14 @@ zoneid_t ucred_getzoneid (const ucred_t *uc)
 }
 
 
+#if 0
 unsigned int ucred_getpflags (const ucred_t *uc, unsigned int flags)
 {
   // TODO
   __set_errno (ENOSYS);
   return -1;
 }
+#endif
 
 
 m_label_t *ucred_getlabel (const ucred_t *uc)
@@ -149,8 +153,9 @@ m_label_t *ucred_getlabel (const ucred_t *uc)
 
 size_t ucred_size (void)
 {
-    /* the docs don't say what to do in case of error */
     const priv_impl_info_t *info = getprivimplinfo ();
+
+    /* ucred_size cannot fail.  */
     assert (info);
 
     /* XXX: We shouldn't use AUDITINFO64_ADDR_T_SIZE and BSLABEL_T_SIZE.  */

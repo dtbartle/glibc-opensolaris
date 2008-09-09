@@ -19,7 +19,6 @@
 
 #include <inline-syscall.h>
 #include <priv.h>
-#include <privP.h>
 #include <sys/priocntl.h>
 #include <alloca.h>
 #include <bits/libc-lock.h>
