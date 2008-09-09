@@ -20,8 +20,10 @@
 #include <inline-syscall.h>
 #include <syscallP.h>
 #include <sys/rctl.h>
+#include <sys/rctl_impl.h>
 
-/* Docs: http://docs.sun.com/app/docs/doc/816-5167/getrctl-2?a=view.  */
+/* Docs: http://docs.sun.com/app/docs/doc/816-5167/getrctl-2?a=view
+         http://docs.sun.com/app/docs/doc/816-5168/rctlblk-size-3c?a=view  */
 
 DECLARE_INLINE_SYSCALL (long, rctlsys, int code, const char *name, void *obuf,
     void *nbuf, size_t obufsz, int flags);
@@ -61,4 +63,110 @@ int setprojrctl (const char *name, rctlblk_t *blk, size_t size, int flags)
 {
   return (int)INLINE_SYSCALL (rctlsys, 6, SYS_SUB_rctlsys_projset, name,
     NULL, blk, size, flags);
+}
+
+
+hrtime_t rctlblk_get_firing_time (rctlblk_t *rblk)
+{
+  return ((rctl_opaque_t *)rblk)->rcq_firing_time;
+}
+
+
+int rctlblk_get_global_action (rctlblk_t *rblk)
+{
+  /* Note: rcq_global_flagaction contains both flags and action.  */
+  return ((rctl_opaque_t *)rblk)->rcq_global_flagaction &
+    ~RCTL_GLOBAL_ACTION_MASK;
+}
+
+
+int rctlblk_get_global_flags (rctlblk_t *rblk)
+{
+  /* Note: rcq_global_flagaction contains both flags and action.  */
+  return ((rctl_opaque_t *)rblk)->rcq_global_flagaction &
+    RCTL_GLOBAL_ACTION_MASK;
+}
+
+
+int rctlblk_get_local_action (rctlblk_t *rblk, int *signalp)
+{
+  /* Note: rcq_local_flagaction contains both flags and action.  */
+  return ((rctl_opaque_t *)rblk)->rcq_local_flagaction &
+    ~RCTL_LOCAL_ACTION_MASK;
+}
+
+
+int rctlblk_get_local_flags (rctlblk_t *rblk)
+{
+  /* Note: rcq_local_flagaction contains both flags and action.  */
+  return ((rctl_opaque_t *)rblk)->rcq_local_flagaction &
+    RCTL_LOCAL_ACTION_MASK;
+}
+
+
+rctl_priv_t rctlblk_get_privilege (rctlblk_t *rblk)
+{
+  return ((rctl_opaque_t *)rblk)->rcq_privilege;
+}
+
+
+id_t rctlblk_get_recipient_pid (rctlblk_t *rblk)
+{
+  return ((rctl_opaque_t *)rblk)->rcq_local_recipient_pid;
+}
+
+
+rctl_qty_t rctlblk_get_value (rctlblk_t *rblk)
+{
+  return ((rctl_opaque_t *)rblk)->rcq_value;
+}
+
+
+rctl_qty_t rctlblk_get_enforced_value (rctlblk_t *rblk)
+{
+  return ((rctl_opaque_t *)rblk)->rcq_enforced_value;
+}
+
+
+void rctlblk_set_local_action (rctlblk_t *rblk, unsigned int action,
+     int signal)
+{
+  /* Note: rcq_local_flagaction contains both flags and action.  */
+  rctl_opaque_t *_rblk = (rctl_opaque_t *)rblk;
+  _rblk->rcq_local_signal = signal;
+  _rblk->rcq_local_flagaction = (_rblk->rcq_local_flagaction &
+      RCTL_LOCAL_ACTION_MASK) | action;
+}
+
+
+void rctlblk_set_local_flags (rctlblk_t *rblk, int flags)
+{
+  /* Note: rcq_local_flagaction contains both flags and action.  */
+  rctl_opaque_t *_rblk = (rctl_opaque_t *)rblk;
+  _rblk->rcq_local_flagaction = (_rblk->rcq_local_flagaction &
+      ~RCTL_LOCAL_ACTION_MASK) | flags;
+}
+
+
+void rctlblk_set_privilege (rctlblk_t *rblk, rctl_priv_t privilege)
+{
+  ((rctl_opaque_t *)rblk)->rcq_privilege = privilege;
+}
+
+
+void rctlblk_set_value (rctlblk_t *rblk, rctl_qty_t value)
+{
+  ((rctl_opaque_t *)rblk)->rcq_value = value;
+}
+
+
+void  rctlblk_set_recipient_pid (rctlblk_t *rblk, id_t pid)
+{
+  ((rctl_opaque_t *)rblk)->rcq_local_recipient_pid = pid;
+}
+
+
+size_t rctlblk_size (void)
+{
+  return sizeof (rctl_opaque_t);
 }
