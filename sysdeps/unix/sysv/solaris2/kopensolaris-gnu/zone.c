@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <privP.h>
+#include <priv.h>
 #include <zone.h>
 #include <dlfcn.h>
 
@@ -49,9 +49,8 @@ zoneid_t zone_create (const char *name, const char *root,
       const char *zfsbuf, size_t zfsbufsz, int *extended_error, int match,
       int doi, const bslabel_t *label, int flags)
 {
-  priv_impl_info_t *info;
-  int res = __getprivimplinfo_cached (&info);
-  if (res != 0)
+  const priv_impl_info_t *info = getprivimplinfo ();
+  if (info == NULL)
     return -1;
 
   zone_def def;

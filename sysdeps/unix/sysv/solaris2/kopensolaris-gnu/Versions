@@ -32,7 +32,8 @@ libc {
     llseek;
 
     # m
-    memcntl; meminfo; mount;
+    membar_enter; membar_exit; membar_producer; membar_consumer; memcntl;
+    meminfo; mount;
 
     # n
     ntp_adjtime; ntp_gettime;
