@@ -17,10 +17,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#define __membar_enter		__asm ("lock")
+#define __membar_enter()	__asm ("lock")
 
-#define __membar_exit		__asm ("lock")
+#define __membar_exit()		__asm ("lock")
 
-#define __membar_producer	__asm ("lock")
+#define __membar_producer()	__asm ("lock")
 
-#define __membar_consumer	__asm ("lock")
+#define __membar_consumer()	__asm ("lock")
