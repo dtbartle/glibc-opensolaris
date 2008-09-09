@@ -125,3 +125,6 @@ libanl {
 libcidn {
   GLIBC_PRIVATE
 }
+librtld_db {
+  GLIBC_2.7
+}
