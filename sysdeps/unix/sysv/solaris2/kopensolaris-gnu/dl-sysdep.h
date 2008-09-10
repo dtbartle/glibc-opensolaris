@@ -1,6 +1,6 @@
-/* Run-time dynamic linker data structures for loaded ELF shared objects.
-   Copyright (C) 2001, 2002, 2003, 2006, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,27 +17,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef	_LDSODEFS_H
+#include <sys/auxv.h>
+#include_next <dl-sysdep.h>
 
-#include <kernel-features.h>
-
-/* Copy of AT_SUN_EXECNAME.  */
-#define PLATFORM_RTLD_GLOBAL_RO_FIELDS \
-    EXTERN const char * _dl_sun_execname;
-extern const char * _dl_sun_execname;
-
-/* Get the real definitions.  */
-#include_next <ldsodefs.h>
-
-/* Now define our stuff.  */
-
-/* OpenSolaris provides an auxv_t only for dynamic executables.  */
-#if defined SHARED || defined IS_IN_rtld
-# define HAVE_AUX_VECTOR
-# define HAVE_AUX_PAGESIZE
-#endif
-
-/* Initialization which is normally done by the dynamic linker.  */
-extern void _dl_non_dynamic_init (void) internal_function;
-
-#endif /* ldsodefs.h */
+#define DL_PLATFORM_AUXV                                    \
+      case AT_SUN_EXECNAME:                                 \
+	GLRO(dl_sun_execname) = (void *) av->a_un.a_val;        \
+	break;

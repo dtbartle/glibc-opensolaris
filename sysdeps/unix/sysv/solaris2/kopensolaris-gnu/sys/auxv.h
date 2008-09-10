@@ -19,6 +19,7 @@
 #ifndef _SYS_AUXV_H
 #define _SYS_AUXV_H
 
+#ifndef __ASSEMBLER__
 typedef struct
   {
 	int a_type;
@@ -26,9 +27,10 @@ typedef struct
 	  {
 		long a_val;
 		void *a_ptr;
-		void (*a_fcn)();
+		void (*a_fcn)(void);
 	} a_un;
   } auxv_t;
+#endif
 
 #define AT_SUN_IFLUSH		2010
 #define AT_SUN_CPU		2011
