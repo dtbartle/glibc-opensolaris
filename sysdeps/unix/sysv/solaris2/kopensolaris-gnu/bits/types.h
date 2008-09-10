@@ -212,6 +212,11 @@ typedef unsigned long long	u_longlong_t;
 typedef unsigned long	psaddr_t;
 typedef unsigned int	lwpid_t;
 typedef long long	hrtime_t;
+typedef enum
+  {
+	B_FALSE,
+	B_TRUE
+  } boolean_t;
 
 /* OpenSolaris compatibility types.  */
 typedef unsigned short	o_mode_t;

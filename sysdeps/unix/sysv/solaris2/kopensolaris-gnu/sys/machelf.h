@@ -24,7 +24,7 @@
 #include <sys/elf.h>
 #include <link.h>
 
-#ifdef _LP64
+#if defined (_ELF64) && !defined (_ELF32_COMPAT)
 
 typedef Elf64_Xword	Xword;
 typedef Elf64_Lword	Lword;
@@ -83,6 +83,6 @@ typedef Elf32_Versym	Versym;
 typedef Elf32_Move	Move;
 typedef Elf32_Cap	Cap;
 
-#endif /* _LP64 */
+#endif /* _ELF64 */
 
 #endif /* _SYS_MACHELF_H */

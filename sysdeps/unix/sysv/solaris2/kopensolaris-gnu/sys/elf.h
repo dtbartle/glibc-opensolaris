@@ -24,20 +24,20 @@
 
 #define PF_SUNW_FAILURE	0x00100000
 
-#define PN_XNUM	0xffff
+#define PN_XNUM	0xFFFF
 
-#define	SHT_SUNW_symsort	0x6ffffff1
-#define	SHT_SUNW_tlssort	0x6ffffff2
-#define	SHT_SUNW_LDYNSYM	0x6ffffff3
-#define	SHT_SUNW_dof		0x6ffffff4
-#define	SHT_SUNW_cap		0x6ffffff5
+#define	SHT_SUNW_symsort	0x6FFFFFF1
+#define	SHT_SUNW_tlssort	0x6FFFFFF2
+#define	SHT_SUNW_LDYNSYM	0x6FFFFFF3
+#define	SHT_SUNW_dof		0x6FFFFFF4
+#define	SHT_SUNW_cap		0x6FFFFFF5
 
 /* TODO: these collide with GNU definitions.  */
 #if 0
-#define	SHT_SUNW_SIGNATURE	0x6ffffff6
-#define	SHT_SUNW_ANNOTATE	0x6ffffff7
-#define	SHT_SUNW_DEBUGSTR	0x6ffffff8
-#define	SHT_SUNW_DEBUG		0x6ffffff9
+#define	SHT_SUNW_SIGNATURE	0x6FFFFFF6
+#define	SHT_SUNW_ANNOTATE	0x6FFFFFF7
+#define	SHT_SUNW_DEBUGSTR	0x6FFFFFF8
+#define	SHT_SUNW_DEBUG		0x6FFFFFF9
 #endif
 
 #define	SHT_SUNW_verdef		SHT_GNU_verdef

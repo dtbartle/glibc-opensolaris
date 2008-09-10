@@ -24,6 +24,7 @@
 #include <procfs.h>
 #include <elf.h>
 #include <sys/isa_defs.h>
+#include <features.h>
 
 #ifdef _LP64
 typedef Elf64_Sym	ps_sym_t;
@@ -43,13 +44,20 @@ typedef enum
   PS_NOFREGS		/* FPU register set not available for given LWP.  */
 } ps_err_e;
 
+#define PS_OBJ_EXEC	((const char *)0x0)
+#define PS_OBJ_LDSO	((const char *)0x1)
 
 /* This type is opaque in this interface.
    It's defined by the user of libthread_db.  */
 struct ps_prochandle;
 
+__BEGIN_DECLS
 
 /* Read or write process memory at the given address.  */
+extern ps_err_e ps_pread(struct ps_prochandle *,
+			   psaddr_t, void *, size_t);
+extern ps_err_e ps_pwrite(struct ps_prochandle *,
+			   psaddr_t, void *, size_t);
 extern ps_err_e ps_pdread (struct ps_prochandle *,
 			   psaddr_t, void *, size_t);
 extern ps_err_e ps_pdwrite (struct ps_prochandle *,
@@ -96,5 +104,7 @@ extern ps_err_e ps_pcontinue (const struct ps_prochandle *);
 /* Stop or continue the given LWP alone.  */
 extern ps_err_e ps_lstop (const struct ps_prochandle *, lwpid_t);
 extern ps_err_e ps_lcontinue (const struct ps_prochandle *, lwpid_t);
+
+__END_DECLS
 
 #endif /* _PROC_SERVICE_H */
