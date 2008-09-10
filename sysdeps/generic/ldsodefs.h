@@ -589,6 +589,11 @@ struct rtld_global_ro
 #endif
 #include <dl-procinfo.c>
 
+  /* Platform-specific definitions.  */
+#ifdef PLATFORM_RTLD_GLOBAL_RO_FIELDS
+PLATFORM_RTLD_GLOBAL_RO_FIELDS
+#endif
+
   /* Names of shared object for which the RPATH should be ignored.  */
   EXTERN const char *_dl_inhibit_rpath;
 
