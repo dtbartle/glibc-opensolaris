@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <features.h>
 #include <proc_service.h>
+#include <dlfcn.h>
 
 #define RD_VERSION1	1
 #define RD_VERSION2	2
@@ -40,8 +41,6 @@ typedef enum
 	RD_NODYNAM,
 	RD_NOMAPS
   } rd_err_e;
-
-typedef unsigned long Lmid_t;
 
 typedef struct rd_agent rd_agent_t;
 
@@ -61,6 +60,9 @@ typedef struct rd_loadobj
 	psaddr_t rl_dynamic;
 	unsigned long rl_tlsmodid;
   } rd_loadobj_t;
+
+/* r_flags values.  */
+#define RD_FLG_MEM_OBJECT	0x0001
 
 typedef int rl_iter_f (const rd_loadobj_t *, void *);
 

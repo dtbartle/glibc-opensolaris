@@ -17,9 +17,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-
 #include <rtld_db.h>
 
 rd_err_e rd_init (int version)
 {
+  if (version > RD_VERSION || version < RD_VERSION1)
+    return RD_NOCAPAB;
+
+  return RD_OK;
 }

@@ -25,10 +25,10 @@ libc {
     fork1;
 
     # g
-    getacct; getcpuid; gethrtime; gethrvtime; getpagesizes; getpagesizes2;
-    getpeerucred; getpflags; getppriv; getprivimplinfo; getprojid; getrctl;
-    gettaskid; getustack; getvmusage; getzoneid; getzoneidbyname;
-    getzonenamebyid;
+    getacct; getcpuid; getexecname; gethrtime; gethrvtime; getpagesizes;
+    getpagesizes2; getpeerucred; getpflags; getppriv; getprivimplinfo;
+    getprojid; getrctl; gettaskid; getustack; getvmusage; getzoneid;
+    getzoneidbyname; getzonenamebyid;
 
     # i
     idmap_reg; idmap_unreg; issetugid;

@@ -20,6 +20,8 @@
 #ifndef _SYS_LINK_H
 #define _SYS_LINK_H
 
+#include <sys/link.h>
+
 #define LM_ID_BASE	0x00
 #define LM_ID_LDSO	0x01
 #define LM_ID_NUM	2

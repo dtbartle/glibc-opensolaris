@@ -1,17 +1,27 @@
 Sun docs:
 
   http://docs.sun.com/app/docs/doc/819-2245/rtld-db-3ext
-  http://docs.sun.com/app/docs/doc/819-0690/6n33n7fbu
+  http://docs.sun.com/app/docs/doc/819-0690/chapter6-12
 
 The rtld_db library exports a number of functions:
 
-  rd_init
+  rd_err_e rd_init (int version)
 
-  rd_new
+    Initializes rtld_db.
 
-  rd_delete
+  rd_agent_t * rd_new (struct ps_prochandle *php)
 
-  rd_reset
+    Creates a new agent. The php value is a user-defined context that will be
+    passed to all ps_* calls (see below).
+
+  void rd_delete (struct rd_agent *rdap)
+
+    Deletes agent rdap.
+
+  rd_err_e rd_reset (struct rd_agent *rdap)
+
+    Resets agent rdap back to its initial state; generally called when a
+    process is restarted.
 
   rd_event_addr
 
@@ -19,44 +29,24 @@ The rtld_db library exports a number of functions:
 
   rd_event_getmsg
 
-  rd_loadobj_iter
+  rd_err_e rd_loadobj_iter (rd_agent_t *rdap, rl_iter_f *cb, void *clnt_data)
 
-  rd_log
+    Calls cb for each loaded object/module in a process agent rdap. clnt_data
+    is passed to the callback cb.
+
+  void rd_log (const int onoff)
+
+    Enables or disable rtld_db logging.
 
   rd_objpad_enable
 
   rd_plt_resolution
 
-The rtld_db library expects library users to provide a number of functions:
+  rd_err_e rd_get_dyns (rd_agent_t *rdap, psaddr_t addr, void **dynpp, size_t *dynpp_sz)
 
-  ps_pread / pdread / ptread
+    Gets the dynamic section at Ehdr addr and copies the data and size into
+    *dynpp and *dynpp_sz.
 
-  ps_pwrite / pdwrite / ptwrite
-
-  ps_pdmodel
-
-  ps_pglobal_lookup
-
-  ps_pglobal_sym
-
-  ps_pstop / ps_lstop
-
-  ps_pcontinue / ps_lcontinue
-
-  ps_lgetregs
-
-  ps_lsetregs
-
-  ps_lgetfpregs
-
-  ps_lsetfpregs
-
-  ps_pauxv
-
-  ps_pbrandname
-
-  ps_kill
-
-  ps_lrolltoaddr
-
-  ps_plog
+The rtld_db library expects those functions found in proc_service.h to be
+defined and exported by the user of rtld_db. It's expected that a 64-bit
+librtld_db be able to handle debugging of both 64-bit and 32-bit executables.
