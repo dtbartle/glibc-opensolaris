@@ -17,6 +17,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+/* Docs: http://docs.sun.com/app/docs/doc/816-5168/getexecname-3c  */
+
 #include <stdlib.h>
 #include <ldsodefs.h>
 
