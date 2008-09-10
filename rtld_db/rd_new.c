@@ -17,53 +17,21 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _RTLD_DB_H
-#define _RTLD_DB_H
+#include <rtld_db.h>
+#include <rtld_dbP.h>
 
-#include <sys/types.h>
-#include <features.h>
-#include <proc_service.h>
-#include <dlfcn.h>
+rd_agent_t * rd_new (struct ps_prochandle *php)
+{
+  struct rd_agent *agent = malloc (sizeof (struct rd_agent));
+  if (!agent)
+    return NULL;
 
-#define RD_VERSION1	1
-#define RD_VERSION2	2
-#define RD_VERSION3	3
-#define RD_VERSION4	4
-#define RD_VERSION	RD_VERSION4
+  agent->rd_php = php;
+  if (rd_reset (agent) != RD_OK)
+    {
+      free (agent);
+      return NULL;
+    }
 
-typedef enum
-  {
-	RD_ERR,
-	RD_OK,
-	RD_NOCAPAB,
-	RD_DBERR,
-	RD_NOBASE,
-	RD_NODYNAM,
-	RD_NOMAPS
-  } rd_err_e;
-
-typedef struct rd_agent rd_agent_t;
-
-typedef struct rd_loadobj
-  {
-	psaddr_t rl_nameaddr;
-	unsigned int rl_flags;
-	psaddr_t rl_base;
-	psaddr_t rl_data_base;
-	Lmid_t rl_lmident;
-	psaddr_t rl_refnameaddr;
-	psaddr_t rl_plt_base;
-	unsigned int rl_plt_size;
-	psaddr_t rl_bend;
-	psaddr_t rl_padstart;
-	psaddr_t rl_padend;
-	psaddr_t rl_dynamic;
-	unsigned long rl_tlsmodid;
-  } rd_loadobj_t;
-
-/* r_flags values.  */
-#define RD_FLG_MEM_OBJECT	0x0001
-
-typedef int rl_iter_f (const rd_loadobj_t *, void *);
-
-#endif /* _RTLD_DB_H */
+  return agent;
+}

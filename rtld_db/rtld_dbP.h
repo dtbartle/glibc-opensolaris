@@ -17,53 +17,13 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _RTLD_DB_H
-#define _RTLD_DB_H
-
-#include <sys/types.h>
-#include <features.h>
 #include <proc_service.h>
-#include <dlfcn.h>
+#include <link.h>
 
-#define RD_VERSION1	1
-#define RD_VERSION2	2
-#define RD_VERSION3	3
-#define RD_VERSION4	4
-#define RD_VERSION	RD_VERSION4
-
-typedef enum
+struct rd_agent
   {
-	RD_ERR,
-	RD_OK,
-	RD_NOCAPAB,
-	RD_DBERR,
-	RD_NOBASE,
-	RD_NODYNAM,
-	RD_NOMAPS
-  } rd_err_e;
+	struct ps_prochandle *rd_php;
+	struct r_debug *rd_r_debug;
+  };
 
-typedef struct rd_agent rd_agent_t;
-
-typedef struct rd_loadobj
-  {
-	psaddr_t rl_nameaddr;
-	unsigned int rl_flags;
-	psaddr_t rl_base;
-	psaddr_t rl_data_base;
-	Lmid_t rl_lmident;
-	psaddr_t rl_refnameaddr;
-	psaddr_t rl_plt_base;
-	unsigned int rl_plt_size;
-	psaddr_t rl_bend;
-	psaddr_t rl_padstart;
-	psaddr_t rl_padend;
-	psaddr_t rl_dynamic;
-	unsigned long rl_tlsmodid;
-  } rd_loadobj_t;
-
-/* r_flags values.  */
-#define RD_FLG_MEM_OBJECT	0x0001
-
-typedef int rl_iter_f (const rd_loadobj_t *, void *);
-
-#endif /* _RTLD_DB_H */
+extern int __rtld_logging;
