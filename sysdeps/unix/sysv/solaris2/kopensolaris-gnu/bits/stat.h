@@ -125,6 +125,9 @@ struct stat64
 };
 #endif
 
+/* Tell code we have these members.  */
+#define	_STATBUF_ST_BLKSIZE
+#define _STATBUF_ST_RDEV
 
 /* Encoding of the file mode.  */
 

@@ -57,6 +57,12 @@ enum
 #define P_FORCED	P_FORCED
 };
 
+#define PBIND_NONE	-1
+#define PBIND_QUERY	-2
+#define PBIND_HARD	-3
+#define PBIND_SOFT	-4
+#define PBIND_QUERY_TYPE	-5
+
 __BEGIN_DECLS
 
 extern int processor_info (processorid_t processorid, processor_info_t *infop);
