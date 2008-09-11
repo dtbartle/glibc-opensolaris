@@ -17,42 +17,37 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_PROC_H
-#define _SYS_PROC_H
+#ifndef _BITS_MACHTYPES_H
+#define _BITS_MACHTYPES_H
 
-#define SSLEEP	1
-#define SRUN	2
-#define SZOMB	3
-#define SSTOP	4
-#define SIDL	5
-#define SONPROC	6
-#define SWAIT	7
+#include <features.h>
 
-#define SSYS		0x00000001
-#define SEXITING	0x00000002
-#define SITBUSY		0x00000004
-#define SFORKING	0x00000008
-#define SWATCHOK	0x00000010
-#define SKILLED		0x00000100
-#define SSCONT		0x00000200
-#define SZONETOP	0x00000400
-#define SEXTKILLED	0x00000800
-#define SUGID		0x00002000
-#define SEXECED		0x00004000
-#define SJCTL		0x00010000
-#define SNOWAIT		0x00020000
-#define SVFORK		0x00040000
-#define SVFWAIT		0x00080000
-#define SEXITLWPS	0x00100000
-#define SHOLDFORK	0x00200000
-#define SHOLDFORK1	0x00800000
-#define SCOREDUMP	0x01000000
-#define SMSACCT		0x02000000
-#define SLWPWRAP	0x04000000
-#define SAUTOLPG	0x08000000
-#define SNOCD		0x10000000
-#define SHOLDWATCH	0x20000000
-#define SMSFORK		0x40000000
-#define SDOCORE		0x80000000
+#ifdef __USE_MISC
 
-#endif /* _SYS_PROC_H */
+#define REG_LABEL_PC    0
+#define REG_LABEL_SP    1
+#define REG_LABEL_BP    2
+#ifdef __i386__
+# define REG_LABEL_EBX	3
+# define REG_LABEL_ESI	4
+# define REG_LABEL_EDI	5
+# define REG_LABEL_MAX	6
+#else
+# define REG_LABEL_RBX	3
+# define REG_LABEL_R12	4
+# define REG_LABEL_R13	5
+# define REG_LABEL_R14	6
+# define REG_LABEL_R15	7
+# define REG_LABEL_MAX	8
+#endif
+
+typedef struct _label_t
+  {
+	long val[REG_LABEL_MAX];
+  } label_t;
+
+#endif /* __USE_MISC */
+
+typedef unsigned char	lock_t;
+
+#endif /* _BITS_MACHTYPES_H */

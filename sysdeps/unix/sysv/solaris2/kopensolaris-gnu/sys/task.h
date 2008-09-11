@@ -20,4 +20,23 @@
 #ifndef _SYS_TASK_H
 #define _SYS_TASK_H
 
+#include <sys/types.h>
+#include <features.h>
+
+#define TASK_NORMAL	0x00
+#define TASK_FINAL	0x01
+#define TASK_MASK	0x01
+
+#define TASK_PROJ_PURGE	0x00100000
+#define TASK_PROJ_MASK	0x00100000
+
+struct task;
+
+__BEGIN_DECLS
+
+extern taskid_t settaskid (projid_t, unsigned int);
+extern taskid_t gettaskid (void);
+
+__END_DECLS
+
 #endif /* _SYS_TASK_H */

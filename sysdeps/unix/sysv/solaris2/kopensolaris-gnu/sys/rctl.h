@@ -22,10 +22,6 @@
 
 #include <features.h>
 
-typedef unsigned long long rctl_qty_t;
-typedef int rctl_priv_t;
-typedef struct rctlblk rctlblk_t;
-
 #define RCTL_LOCAL_NOACTION	0x00000000
 #define RCTL_LOCAL_SIGNAL	0x00000001
 #define RCTL_LOCAL_DENY		0x00000002
@@ -52,6 +48,28 @@ typedef struct rctlblk rctlblk_t;
 #define RCTL_GLOBAL_COUNT		0x00100000
 #define RCTL_GLOBAL_ACTION_MASK		0xffff0000
 #define RCTL_GLOBAL_MASK		0xfff80001
+
+#define RCTL_FIRST	0x00000000
+#define RCTL_NEXT	0x00000001
+#define RCTL_USAGE	0x00000002
+
+#define RCTL_INSERT	0x00000000
+#define RCTL_DELETE	0x00000001
+#define RCTL_REPLACE	0x00000002
+
+#define RCTL_USE_RECIPIENT_PID  0x10000000
+
+#define RCTLSYS_ACTION_MASK	0xffff0000
+#define RCTLSYS_MASK		0x10000003
+
+#define RCPRIV_BASIC		0x01000000
+#define RCPRIV_PRIVILEGED	0x04000000
+#define RCPRIV_SYSTEM		0x07000000
+
+typedef unsigned long long rctl_qty_t;
+typedef int rctl_priv_t;
+typedef struct rctlblk rctlblk_t;
+typedef struct rctl_set rctl_set_t;
 
 __BEGIN_DECLS
 

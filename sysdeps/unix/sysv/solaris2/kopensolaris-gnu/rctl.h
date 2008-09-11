@@ -17,22 +17,32 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_LINK_H
-#define _SYS_LINK_H
+#ifndef _RCTL_H
+#define _RCTL_H
 
-#include <link.h>
+#include <sys/rctl.h>
+#include <sys/types.h>
+#include <features.h>
 
-/* XXX: These are different from OpenSolaris.  */
-#define LM_ID_BRAND	-3
-#define LM_ID_NONE	-2
-#define LM_ID_NEWLM	-1
+__BEGIN_DECLS
 
-typedef enum
-  {
-	RD_NONE = 0,
-	RD_PREINIT,
-	RD_POSTINIT,
-	RD_DLACTIVITY
-  } rd_event_e;
+int rctl_walk(int (*)(const char *, void *), void *);
 
-#endif /* _SYS_LINK_H */
+hrtime_t rctlblk_get_firing_time (rctlblk_t *);
+unsigned int rctlblk_get_global_action (rctlblk_t *);
+unsigned int rctlblk_get_global_flags (rctlblk_t *);
+unsigned int rctlblk_get_local_action (rctlblk_t *, int *);
+unsigned int rctlblk_get_local_flags (rctlblk_t *);
+rctl_priv_t rctlblk_get_privilege (rctlblk_t *);
+id_t rctlblk_get_recipient_pid (rctlblk_t *);
+rctl_qty_t rctlblk_get_value(rctlblk_t *);
+rctl_qty_t rctlblk_get_enforced_value (rctlblk_t *);
+void rctlblk_set_local_action (rctlblk_t *, unsigned int, int);
+void rctlblk_set_local_flags (rctlblk_t *, unsigned int);
+void rctlblk_set_privilege (rctlblk_t *, rctl_priv_t);
+void rctlblk_set_recipient_pid (rctlblk_t *, id_t);
+size_t rctlblk_size (void);
+
+__END_DECLS
+
+#endif /* _RCTL_H */

@@ -26,6 +26,7 @@
 #include <stdint.h>
 #define __need_timespec
 #include <time.h>
+#include <features.h>
 
 #if (!defined __have_sigval_t \
      && (defined _SIGNAL_H || defined __need_siginfo_t \
@@ -39,6 +40,19 @@ union sigval
     void *sival_ptr;
 };
 typedef union sigval sigval_t;
+
+# ifdef _SYSCALL32
+
+# include <sys/types32.h>
+
+union sigval32
+  {
+	__int32_t sival_int;
+	caddr32_t sival_ptr;
+  };
+
+# endif
+
 #endif
 
 #if (!defined __have_siginfo_t \
@@ -115,6 +129,80 @@ typedef struct siginfo
         } __rctl;
     } __data;
 } siginfo_t;
+
+#ifdef __USE_MISC
+
+typedef struct k_siginfo
+{
+	int si_signo;
+	int si_code;
+	int si_errno;
+# if __WORDSIZE == 64
+	int si_pad;
+# endif
+	union
+	  {
+		struct
+		  {
+			pid_t __pid;
+			union
+			  {
+				struct
+				  {
+					uid_t __uid;
+                    union sigval __value;
+				  } __kill;
+                struct
+				  {
+					__clock_t __utime;
+					int __status;
+					__clock_t __stime;
+				  } __cld;
+			  } __pdata;
+			ctid_t __ctid;
+			zoneid_t __zoneid;
+		  } __proc;
+
+		struct
+		  {
+			void *__addr;
+			int __trapno;
+            char *__pc;
+		  } __fault;
+
+		struct
+		  {
+			int __fd;
+			long __band;
+		  } __file;
+
+		struct
+		  {
+			char *__faddr;
+
+            struct timespec __tstamp;
+            short __syscall;
+            char __nsysarg;
+            char __fault;
+		  } __prof;
+
+		struct
+		  {
+			int32_t __entity;
+		  } __rctl;
+	  } __data;
+  } k_siginfo_t;
+
+typedef struct sigqueue
+  {
+	struct sigqueue *sq_next;
+	k_siginfo_t sq_info;
+	void (*sq_func)(struct sigqueue *);
+	void *sq_backptr;
+	int sq_external;
+  } sigqueue_t;
+
+#endif /* __USE_MISC */
 
 #define SI_FROMUSER(sip)  ((sip)->si_code <= 0)
 #define SI_FROMKERNEL(sip)  ((sip)->si_code > 0)
@@ -221,6 +309,22 @@ typedef struct sigevent
     /*pthread_attr_t*/ void *sigev_notify_attributes;
     int  __sigev_pad2;
 } sigevent_t;
+
+#ifdef _SYSCALL32
+
+#include <sys/types32.h>
+
+struct sigevent32
+  {
+	__int32_t sigev_notify;
+	__int32_t sigev_signo;
+	union sigval32 sigev_value;
+	caddr32_t sigev_notify_function;
+	caddr32_t sigev_notify_attributes;
+	__int32_t __sigev_pad2;
+};
+
+#endif
 
 /* `sigev_notify' values.  */
 enum

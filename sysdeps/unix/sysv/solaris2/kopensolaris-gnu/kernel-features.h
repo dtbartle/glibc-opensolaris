@@ -33,3 +33,6 @@
 /* We support tkill.  */
 #undef __NR_tgkill
 #undef __ASSUME_TGKILL
+
+/* We don't have set_thread_area.  */
+#define NO_SET_THREAD_AREA

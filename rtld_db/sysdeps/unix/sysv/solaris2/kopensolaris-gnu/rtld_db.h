@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <features.h>
 #include <proc_service.h>
+#include <sys/link.h>
 #include <dlfcn.h>
 
 #define RD_VERSION1	1
@@ -65,5 +66,39 @@ typedef struct rd_loadobj
 #define RD_FLG_MEM_OBJECT	0x0001
 
 typedef int rl_iter_f (const rd_loadobj_t *, void *);
+
+typedef enum
+  {
+	RD_NOTIFY_BPT,
+	RD_NOTIFY_AUTOBPT,
+	RD_NOTIFY_SYSCALL
+  } rd_notify_e;
+
+typedef struct rd_notify
+  {
+	rd_notify_e type;
+	union
+	  {
+		psaddr_t bptaddr;
+		long syscallno;
+	  } u;
+  } rd_notify_t;
+
+typedef enum
+  {
+	RD_NOSTATE = 0,
+	RD_CONSISTENT,
+	RD_ADD,
+	RD_DELETE
+  } rd_state_e;
+
+typedef struct rd_event_msg
+  {
+	rd_event_e type;
+	union
+	  {
+		rd_state_e state;
+	  } u;
+  } rd_event_msg_t;
 
 #endif /* _RTLD_DB_H */

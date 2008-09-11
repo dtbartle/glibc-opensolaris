@@ -54,6 +54,11 @@ typedef struct __fpu
 
 typedef int greg_t;
 
+#if defined (_SYSCALL32)
+typedef int32_t greg32_t;
+typedef int64_t greg64_t;
+#endif
+
 #define prgregset_t	gregset_t
 #define prfpregset_t	fpregset_t
 #define prgreg_t	greg_t
@@ -66,5 +71,72 @@ typedef struct
     gregset_t gregs;
     fpregset_t fpregs;
   } mcontext_t;
+
+struct fxsave_state
+  {
+	uint16_t fx_fcw;
+	uint16_t fx_fsw;
+	uint16_t fx_fctw;
+	uint16_t fx_fop;
+#ifdef __amd64__
+	uint64_t fx_rip;
+	uint64_t fx_rdp;
+#else
+	uint32_t fx_eip;
+	uint16_t fx_cs;
+	uint16_t __fx_ign0;
+	uint32_t fx_dp;
+	uint16_t fx_ds;
+	uint16_t __fx_ign1;
+#endif
+	uint32_t fx_mxcsr;
+	uint32_t fx_mxcsr_mask;
+	union
+	  {
+		uint16_t fpr_16[5];
+		unsigned long long fpr_mmx;
+        uint32_t __fpr_pad[4];
+	  } fx_st[8];
+#if defined(__amd64)
+	upad128_t fx_xmm[16]; /* 128-bit registers */
+	upad128_t __fx_ign2[6];
+#else
+	upad128_t fx_xmm[8];  /* 128-bit registers */
+	upad128_t __fx_ign2[14];
+#endif
+  };
+
+struct fnsave_state
+  {
+	uint16_t f_fcw;
+	uint16_t __f_ign0;
+	uint16_t f_fsw;
+	uint16_t __f_ign1;
+	uint16_t f_ftw;
+	uint16_t __f_ign2;
+	uint32_t f_eip;
+	uint16_t f_cs;
+	uint16_t f_fop;
+	uint32_t f_dp;
+	uint16_t f_ds;
+	uint16_t __f_ign3;
+	union
+	  {
+		uint16_t fpr_16[5];
+	  } f_st[8];
+  };
+
+typedef struct
+  {
+	union _kfpu_u
+	  {
+		struct fxsave_state kfpu_fx;
+#ifdef __i386__
+		struct fnsave_state kfpu_fn;
+#endif
+	  } kfpu_u;
+	uint32_t kfpu_status;
+	uint32_t kfpu_xstatus;
+  } kfpu_t;
 
 #endif /* _SYS_REGSET_H */

@@ -20,6 +20,7 @@
 #include <inline-syscall.h>
 #include <sys/types.h>
 #include <sys/param.h>
+#include <sys/port_impl.h>
 #include <port.h>
 
 /* SYS_port returns a 64-bit int but the port_* calls return a 32-bit int, so

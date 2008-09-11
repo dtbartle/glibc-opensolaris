@@ -20,7 +20,6 @@
 #ifndef _SYS_TTY_H
 #define _SYS_TTY_H
 
-#include <sys/stream.h>
 #include <sys/termios.h>
 
 #endif /* _SYS_TTY_H */

@@ -22,6 +22,12 @@
 # error "Never use <bits/in.h> directly; include <netinet/in.h> instead."
 #endif
 
+/* Really these belong in the enum in netinet/in.h.  */
+#define IPPROTO_GGP	3
+#define IPPROTO_HELLO	63
+#define IPPROTO_ND	77
+#define IPPROTO_EON	80
+
 /* Options for use with `getsockopt' and `setsockopt' at the IP level.
    The first word in the comment at the right is the data type used;
    "bool" means a boolean value stored in an `int'.  */
@@ -158,3 +164,6 @@ struct in_pktinfo
 #define IPV6_DONTFAILOVER_IF	68
 
 #define IPV6_RTHDR_TYPE_0   0
+
+typedef __uint32_t	ipaddr_t;
+typedef struct in6_addr in6_addr_t;

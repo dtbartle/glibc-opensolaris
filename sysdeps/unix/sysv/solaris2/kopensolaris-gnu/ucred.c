@@ -21,7 +21,8 @@
 #include <unistd.h>
 #include <ucred.h>
 #include <errno.h>
-#include <ucredP.h>
+#define _STRUCTURED_PROC 1
+#include <sys/ucred.h>
 #include <priv.h>
 #include <assert.h>
 
@@ -159,10 +160,7 @@ size_t ucred_size (void)
     assert (info);
 
     /* XXX: We shouldn't use AUDITINFO64_ADDR_T_SIZE and BSLABEL_T_SIZE.  */
-    return sizeof(ucred_t) + sizeof(prcred_t) + sizeof(prpriv_t) +
-        ((int)sysconf (_SC_NGROUPS_MAX) - 1) * sizeof(gid_t) +
-        sizeof(priv_chunk_t) * (info->priv_setsize * info->priv_nsets - 1) +
-        info->priv_infosize + AUDITINFO64_ADDR_T_SIZE + BSLABEL_T_SIZE;
+    return UCRED_SIZE (info);
 }
 
 

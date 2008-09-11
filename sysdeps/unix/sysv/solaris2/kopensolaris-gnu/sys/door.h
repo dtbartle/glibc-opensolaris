@@ -35,6 +35,37 @@
 #define DOOR_GETPARAM	11
 #define DOOR_SETPARAM	12
 
+#define DOOR_INVAL	-1
+#define DOOR_UNREF_DATA	((void *)1)
+
+#define DOOR_QUERY	-2
+
+#define DOOR_UNREF		0x01
+#define DOOR_PRIVATE		0x02
+#define DOOR_UNREF_MULTI	0x10
+#define DOOR_REFUSE_DESC	0x40
+#define DOOR_NO_CANCEL		0x80
+
+#define DOOR_LOCAL	0x04
+#define DOOR_REVOKED	0x08
+#define DOOR_IS_UNREF	0x20
+
+#define DOOR_CREATE_MASK	(DOOR_UNREF | DOOR_PRIVATE | \
+	DOOR_UNREF_MULTI | DOOR_REFUSE_DESC | DOOR_NO_CANCEL)
+#define DOOR_KI_CREATE_MASK	(DOOR_UNREF | DOOR_UNREF_MULTI)
+
+#define DOOR_ATTR_MASK	(DOOR_CREATE_MASK | DOOR_LOCAL | DOOR_REVOKED | \
+	DOOR_IS_UNREF)
+
+#define DOOR_DESCRIPTOR	0x10000
+#define DOOR_RELEASE	0x40000
+#define DOOR_DELAY	0x80000
+#define DOOR_UNREF_ACTIVE	0x100000
+
+#define DOOR_PARAM_DESC_MAX	1
+#define DOOR_PARAM_DATA_MAX	2
+#define DOOR_PARAM_DATA_MIN	3
+
 typedef unsigned long long door_ptr_t;
 typedef unsigned int door_attr_t;
 typedef unsigned long long door_id_t;

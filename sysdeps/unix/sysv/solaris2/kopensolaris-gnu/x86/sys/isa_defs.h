@@ -20,6 +20,8 @@
 #ifndef _SYS_ISA_DEFS_H
 #define _SYS_ISA_DEFS_H
 
+#define __x86
+
 #define _LITTLE_ENDIAN
 #define _STACK_GROWS_DOWNWARD
 #define _LONG_LONG_LTOH

@@ -17,15 +17,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_KD_H
-#define _SYS_KD_H
+#ifndef _SYS_FORK_H
+#define _SYS_FORK_H
 
-#define KDIOC		('K'<<8)
+#include <features.h>
 
-#define KDGETMODE	(KDIOC|9)
-#define KDSETMODE	(KDIOC|10)
+#define FORK_NOSIGCHLD	0x01
+#define FORK_WAITPID	0x02
 
-#define KD_TEXT		0
-#define KD_GRAPHICS	1
+__BEGIN_DECLS
 
-#endif /* _SYS_KD_H */
+extern pid_t forkx (int);
+extern pid_t forkallx (int);
+extern pid_t vforkx (int);
+
+__END_DECLS
+
+#endif /* _SYS_FORK_H */

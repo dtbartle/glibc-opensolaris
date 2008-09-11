@@ -216,3 +216,21 @@ struct termios
 
 #define _IOT_termios /* Hurd ioctl type field.  */ \
   _IOT (_IOTS (cflag_t), 4, _IOTS (cc_t), NCCS, _IOTS (speed_t), 2)
+
+#define LDIOC		('D'<<8)
+#define LDOPEN		(LDIOC|0)
+#define LDCLOSE		(LDIOC|1)
+#define LDCHG		(LDIOC|2)
+#define LDGETT		(LDIOC|8)
+#define LDSETT		(LDIOC|9)
+#define LDSMAP		(LDIOC|110)
+#define LDGMAP		(LDIOC|111)
+#define LDNMAP		(LDIOC|112)
+#define LDEMAP		(LDIOC|113)
+#define LDDMAP		(LDIOC|114)
+
+#define DIOC		('d'<<8)
+#define DIOCGETP	(DIOC|8)
+#define DIOCSETP	(DIOC|9)
+
+#define FIORDCHK	(('f'<<8)|3)

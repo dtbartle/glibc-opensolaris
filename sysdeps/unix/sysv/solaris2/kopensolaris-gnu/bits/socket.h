@@ -90,7 +90,7 @@ enum __socket_type
 #define	PF_NCA		28	/* NCA socket.  */
 #define	PF_POLICY	29	/* Security Policy DB socket.  */
 #define	PF_INET_OFFLOAD	30	/* Sun private; do not use.  */
-#define	PF_MAX		31	/* For now..  */
+#define	PF_MAX		30	/* For now..  */
 
 /* Address families.  */
 #define	AF_UNSPEC	PF_UNSPEC

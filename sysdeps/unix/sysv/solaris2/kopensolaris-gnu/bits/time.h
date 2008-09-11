@@ -62,6 +62,12 @@ extern long int __sysconf (int);
 #   define TIMER_RELTIME		0
 /* Flag to indicate time is absolute.  */
 #   define TIMER_ABSTIME		1
+
+#define SEC		1
+#define MILLISEC	1000
+#define MICROSEC	1000000
+#define NANOSEC		1000000000
+
 #  endif
 
 # endif	/* bits/time.h */
@@ -82,3 +88,29 @@ struct timeval
   };
 # endif	/* struct timeval */
 #endif	/* need timeval */
+
+#ifdef _SYSCALL32
+
+# include <sys/types32.h>
+
+# if defined (_SYS_TIME_H) && !defined (__itimerval32_defined)
+struct itimerval32
+  {
+	struct timeval32 it_interval;
+	struct timeval32 it_value;
+  };
+#  define __itimerval32_defined
+# endif
+
+# if defined (_TIME_H) && !defined (__tms32_defined)
+struct tms32
+  {
+	clock32_t tms_utime;
+	clock32_t tms_stime;
+	clock32_t tms_cutime;
+	clock32_t tms_cstime;
+  };
+#  define __tms32_defined
+# endif
+
+#endif /* _SYSCALL32 */

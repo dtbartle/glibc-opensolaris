@@ -1,5 +1,6 @@
 /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -16,12 +17,19 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_TSOL_LABEL_H
-#define _SYS_TSOL_LABEL_H
+#ifndef _SYS_TTOLD_H
+#define _SYS_TTOLD_H
 
-typedef struct _mac_label_impl m_label_t;
-typedef m_label_t blevel_t;
-typedef m_label_t bslabel_t;
-typedef m_label_t bclear_t;
+#include <sys/ioctl.h>
 
-#endif /* _SYS_TSOL_LABEL_H */
+struct tc
+  {
+	char t_intrc;
+	char t_quitc;
+	char t_startc;
+	char t_stopc;
+	char t_eofc;
+	char t_brkc;
+  };
+
+#endif /* _SYS_TTOLD_H */

@@ -1,5 +1,6 @@
 /* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -16,10 +17,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef	_SYS_PTYVAR_H
-#define	_SYS_PTYVAR_H
+#ifndef _SYS_ULIMIT_H
+#define _SYS_ULIMIT_H
 
-#include <sys/tty.h>
-#include <sys/ioctl.h>
+#include <features.h>
+#include <ulimit.h>
 
-#endif /* _SYS_PTYVAR_H */
+#ifdef __USE_MISC
+#define UL_GFILLIM	UL_GETFSIZE
+#define UL_SFILLIM	UL_SETFSIZE
+#define UL_GMEMLIM	3
+#define UL_GDESLIM	4
+#endif
+
+#endif /* _SYS_ULIMIT_H */

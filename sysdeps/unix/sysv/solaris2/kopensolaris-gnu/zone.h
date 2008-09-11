@@ -21,7 +21,6 @@
 #define _ZONE_H
 
 #include <features.h>
-#include <sys/tsol/label.h>
 #include <sys/types.h>
 #include <sys/zone.h>
 

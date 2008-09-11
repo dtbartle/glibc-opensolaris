@@ -1,15 +1,18 @@
 #
 # additional routines and headers for libc
 #
+
 ifeq ($(subdir),csu)
 sysdep_routines += errno-loc
 endif
+
 ifeq ($(subdir),io)
 sysdep_routines += sys_open sys_open64 sys_openat sys_openat64 \
     sys_fstat sys_fstat64 sys_fstatat sys_fstatat64 sys_lstat \
     sys_lstat64 sys_stat sys_stat64 sys_sendfilev sys_sendfilev64 \
     sys_getcwd sys_pipe
 endif
+
 ifeq ($(subdir),misc)
 sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     getpagesizes memcntl meminfo uadmin getpflags setpflags issetugid ucred \
@@ -34,42 +37,51 @@ sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_privsys sys_syslabeling sys_putmsg sys_putpmsg sys_meminfo \
     sys_pset_getloadavg sys_zone_create sys_allocids sys_settaskid \
     sys_zone_lookup sys_port sys_door
-sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h \
+sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h sys/ulimit.h \
     sys/systeminfo.h sys/uadmin.h sys/utssys.h sys/fstyp.h sys/fsid.h \
-    sys/priocntl.h sys/procset.h sys/ptyvar.h sys/stream.h sys/synch.h \
+    sys/priocntl.h sys/procset.h sys/ptyvar.h sys/synch.h sys/fork.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
     sys/pset.h sys/priv.h sys/acl.h sys/procfs.h sys/reg.h sys/bufmod.h \
-    sys/types32.h sys/task.h sys/isa_defs.h sys/door.h sys/corectl.h \
-    sys/elf.h sys/rctl.h sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h \
-    sys/time_impl.h sys/mutex.h sys/tsol/label.h sys/exacct.h sys/acct.h \
-    sys/sid.h sys/siginfo.h sys/vm.h sys/vmparam.h sys/kd.h sys/filio.h \
-    sys/link.h sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h \
-    sys/port.h sys/machelf.h sys/proc.h sys/zmod.h sys/inttypes.h
+    sys/types32.h sys/task.h sys/isa_defs.h sys/door.h sys/elf.h sys/rctl.h \
+    sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h sys/time_impl.h \
+    sys/mutex.h sys/exacct.h sys/acct.h sys/sid.h sys/siginfo.h sys/link.h \
+    sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h sys/port.h \
+    sys/machelf.h sys/zmod.h sys/inttypes.h sys/atomic.h sys/termio.h \
+    sys/port_impl.h sys/ttold.h sys/machtypes.h sys/dirent.h sys/utime.h \
+    sys/ucred.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
-    rtld_db.h pcsample.h port.h atomic.h
+    rtld_db.h pcsample.h port.h atomic.h bits/machtypes.h
+headers := $(filter-out sys/sysinfo.h,$(headers))
 endif
+
 ifeq ($(subdir),dirent)
 sysdep_routines += sys_getdents sys_getdents64
 endif
+
 ifeq ($(subdir),posix)
 sysdep_routines += exit-thread schedP
 endif
+
 ifeq ($(subdir),resource)
 sysdep_routines += priocntl getvmusage
 sysdep_routines += sys_rusagesys sys_priocntlsys sys_rctlsys
 endif
+
 ifeq ($(subdir),signal)
 sysdep_routines += sys_lwp_sigmask sys_sigqueue sys_sigtimedwait \
     sys_sigaction
 endif
+
 ifeq ($(subdir),socket)
 sysdep_routines += sa_len
 sysdep_routines += netmask
 endif
+
 ifeq ($(subdir),string)
 sysdep_routines += strlcpy strlcat
 endif
+
 ifeq ($(subdir),time)
 sysdep_routines += ntp_adjtime ntp_gettime sys_time sys_stime
 sysdep_headers += sys/timex.h

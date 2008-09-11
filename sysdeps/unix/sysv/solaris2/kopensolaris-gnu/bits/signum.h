@@ -23,9 +23,7 @@
 #define	SIG_ERR	((__sighandler_t) -1) /* Error return.  */
 #define	SIG_DFL	((__sighandler_t) 0) /* Default action.  */
 #define	SIG_IGN	((__sighandler_t) 1) /* Ignore signal.  */
-#ifdef __USE_UNIX98
-# define SIG_HOLD ((__sighandler_t) 2) /* Add signal to hold mask.  */
-#endif
+#define SIG_HOLD ((__sighandler_t) 2) /* Add signal to hold mask.  */
 
 
 /* Signals.  */
@@ -82,11 +80,8 @@
 
 #endif	/* <signal.h> included.  */
 
-/* descr.h needs _NSIG */
-#if defined(_SIGNAL_H) || defined(__need_NSIG)
-#undef __need_NSIG
-# define _NSIG		49	/* Biggest signal number + 1 */
-#endif
+#define _NSIG		49	/* Biggest signal number + 1 */
+#define MAXSIG		48	/* Biggest signal number */
 
 /* This is here for lack of a better location.  */
 #define SIG2STR_MAX	32

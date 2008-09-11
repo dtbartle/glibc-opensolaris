@@ -17,9 +17,21 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_VM_H
-#define _SYS_VM_H
+#ifndef _SYS_UTIME_H
+#define _SYS_UTIME_H
 
-#include <sys/vmparam.h>
+#include <utime.h>
 
-#endif /* _SYS_VM_H */
+#ifdef _SYSCALL32
+
+# include <sys/types32.h>
+
+struct utimbuf32
+  {
+	time32_t actime;
+	time32_t modtime;
+  };
+
+#endif
+
+#endif /* _SYS_UTIME_H */
