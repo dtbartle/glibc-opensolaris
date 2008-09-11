@@ -375,6 +375,7 @@ __pthread_initialize_minimal_internal (void)
 
   __static_tls_size = roundup (__static_tls_size, static_tls_align);
 
+#ifndef PTHREAD_USE_ARCH_STACK_DEFAULT_SIZE
   /* Determine the default allowed stack size.  This is the size used
      in case the user does not specify one.  */
   struct rlimit limit;
@@ -398,6 +399,10 @@ __pthread_initialize_minimal_internal (void)
   /* Round the resource limit up to page size.  */
   limit.rlim_cur = (limit.rlim_cur + pagesz - 1) & -pagesz;
   __default_stacksize = limit.rlim_cur;
+#else
+  /* Don't dynamically compute stack size.  */
+  __default_stacksize = ARCH_STACK_DEFAULT_SIZE;
+#endif /* PTHREAD_USE_ARCH_STACK_DEFAULT_SIZE */
 
 #ifdef SHARED
   /* Transfer the old value from the dynamic linker's internal location.  */
