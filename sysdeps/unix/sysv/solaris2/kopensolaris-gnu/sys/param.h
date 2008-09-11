@@ -64,5 +64,7 @@
 #include <unistd.h>
 
 #define PAGESIZE	sysconf(_SC_PAGESIZE)
+#define MAXPID		(pid_t)sysconf(_SC_MAXPID)
+#define MAXEPHUID	(uid_t)sysconf(_SC_EPHID_MAX)
 
 #endif	/* sys/param.h */

@@ -20,12 +20,39 @@
 #ifndef _SYS_PROC_H
 #define _SYS_PROC_H
 
-#define SSLEEP		1
-#define SRUN		2
-#define SZOMB		3
-#define SSTOP		4
-#define SIDL		5
-#define SONPROC		6
-#define SWAIT		7
+#define SSLEEP	1
+#define SRUN	2
+#define SZOMB	3
+#define SSTOP	4
+#define SIDL	5
+#define SONPROC	6
+#define SWAIT	7
+
+#define SSYS		0x00000001
+#define SEXITING	0x00000002
+#define SITBUSY		0x00000004
+#define SFORKING	0x00000008
+#define SWATCHOK	0x00000010
+#define SKILLED		0x00000100
+#define SSCONT		0x00000200
+#define SZONETOP	0x00000400
+#define SEXTKILLED	0x00000800
+#define SUGID		0x00002000
+#define SEXECED		0x00004000
+#define SJCTL		0x00010000
+#define SNOWAIT		0x00020000
+#define SVFORK		0x00040000
+#define SVFWAIT		0x00080000
+#define SEXITLWPS	0x00100000
+#define SHOLDFORK	0x00200000
+#define SHOLDFORK1	0x00800000
+#define SCOREDUMP	0x01000000
+#define SMSACCT		0x02000000
+#define SLWPWRAP	0x04000000
+#define SAUTOLPG	0x08000000
+#define SNOCD		0x10000000
+#define SHOLDWATCH	0x20000000
+#define SMSFORK		0x40000000
+#define SDOCORE		0x80000000
 
 #endif /* _SYS_PROC_H */

@@ -37,6 +37,17 @@ typedef int psetid_t;
 #define PSET_GETATTR		8
 #define PSET_ASSIGN_FORCED	9
 
+#define PS_NONE		-1
+#define PS_QUERY	-2
+#define PS_MYID		-3
+#define PS_SOFT		-4
+#define PS_HARD		-5
+#define PS_QUERY_TYPE	-6
+
+/* types of processor sets */
+#define PS_SYSTEM	1
+#define PS_PRIVATE	2
+
 __BEGIN_DECLS
 
 extern int  pset_create (psetid_t *newpset);

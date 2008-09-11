@@ -46,7 +46,8 @@
 #define DELAYTIMER_MAX	2147483647
 
 /* Maximum tty name length.  */
-#define TTY_NAME_MAX		32
+#define TTY_NAME_MAX		128
+#define TTYNAME_MAX			TTY_NAME_MAX
 
 /* Maximum login name length.  This is arbitrary.  */
 #define LOGIN_NAME_MAX		256
