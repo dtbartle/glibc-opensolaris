@@ -22,25 +22,6 @@
 
 #include <sys/types.h>
 
-#define PORT_CREATE	0
-#define PORT_ASSOCIATE	1
-#define PORT_DISSOCIATE	2
-#define PORT_SEND	3
-#define PORT_SENDN	4
-#define PORT_GET	5
-#define PORT_GETN	6
-#define PORT_ALERT	7
-#define PORT_DISPATCH	8
-
-#define PORT_SYS_NOPORT		0x100
-#define PORT_SYS_NOSHARE	0x200
-
-#define PORT_CODE_MASK		0xFF
-
-#define PORT_SHARE_EVENT	0x01
-
-#define PORT_MAX_LIST		8192
-
 #define PORT_SOURCE_AIO		1
 #define PORT_SOURCE_TIMER	2
 #define PORT_SOURCE_USER	3

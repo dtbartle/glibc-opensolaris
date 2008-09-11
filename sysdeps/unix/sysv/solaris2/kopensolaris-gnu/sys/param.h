@@ -27,7 +27,7 @@
 #ifndef	NGROUPS
 # define NGROUPS		NGROUPS_MAX
 #endif
-#define	MAXSYMLINKS	5
+#define	MAXSYMLINKS	20
 #define	CANBSIZ		MAX_CANON
 #define	NCARGS		ARG_MAX
 #define MAXPATHLEN      PATH_MAX
@@ -66,5 +66,8 @@
 #define PAGESIZE	sysconf(_SC_PAGESIZE)
 #define MAXPID		(pid_t)sysconf(_SC_MAXPID)
 #define MAXEPHUID	(uid_t)sysconf(_SC_EPHID_MAX)
+#define MAXNAMELEN	256
+#define TYPICALMAXPATHLEN	64
+#define MAXLINKNAMELEN	32
 
 #endif	/* sys/param.h */

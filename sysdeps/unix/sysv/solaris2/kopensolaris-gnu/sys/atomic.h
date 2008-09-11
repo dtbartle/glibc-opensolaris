@@ -17,16 +17,18 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_VMPARAM_H
-#define _SYS_VMPARAM_H
+#ifndef _ATOMIC_H
+#define _ATOMIC_H
 
-#define SSIZE	4096
-#define SINCR	4096
+#include <features.h>
 
-#if defined(__i386__)
-# define USRSTACK	0x8048000
-#elif defined(__amd64__)
-# define USRSTACK	USERLIMIT
-#endif
+__BEGIN_DECLS
 
-#endif /* _SYS_VMPARAM_H */
+extern void membar_enter (void);
+extern void membar_exit (void);
+extern void membar_producer (void);
+extern void membar_consumer (void);
+
+__END_DECLS
+
+#endif /* _ATOMIC_H */

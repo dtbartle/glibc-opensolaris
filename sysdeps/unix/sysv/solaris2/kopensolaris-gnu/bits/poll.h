@@ -26,20 +26,12 @@
 #define POLLIN		0x001		/* There is data to read.  */
 #define POLLPRI		0x002		/* There is urgent data to read.  */
 #define POLLOUT		0x004		/* Writing now will not block.  */
-
-#ifdef __USE_XOPEN
-/* These values are defined in XPG4.2.  */
-# define POLLRDNORM	0x040		/* Normal data may be read.  */
-# define POLLRDBAND	0x080		/* Priority data may be read.  */
-# define POLLWRNORM	POLLOUT		/* Writing now will not block.  */
-# define POLLWRBAND	0x100		/* Priority data may be written.  */
-#endif
-
-#ifdef __USE_GNU
-/* These are extensions for Solaris.  */
-# define POLLNORM	POLLRDNORM
-# define POLLREMOVE	0x800
-#endif
+#define POLLRDNORM	0x040		/* Normal data may be read.  */
+#define POLLRDBAND	0x080		/* Priority data may be read.  */
+#define POLLWRNORM	POLLOUT		/* Writing now will not block.  */
+#define POLLWRBAND	0x100		/* Priority data may be written.  */
+#define POLLNORM	POLLRDNORM
+#define POLLREMOVE	0x800
 
 /* Event types always implicitly polled for.  These bits need not be set in
    `events', but they will appear in `revents' to indicate the status of

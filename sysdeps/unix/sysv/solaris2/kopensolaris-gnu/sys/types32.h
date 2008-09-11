@@ -19,28 +19,40 @@
 #ifndef _SYS_TYPES32_H
 #define _SYS_TYPES32_H
 
-#include <sys/types.h>
+#include <bits/types.h>
 
-typedef uint32_t	caddr32_t;
-typedef int32_t		daddr32_t;
-typedef int32_t		off32_t;
-typedef uint32_t	ino32_t;
-typedef int32_t		blkcnt32_t;
-typedef uint32_t	fsblkcnt32_t;
-typedef uint32_t	fsfilcnt32_t;
-typedef int32_t		id32_t;
-typedef uint32_t	major32_t;
-typedef uint32_t	minor32_t;
-typedef int32_t		key32_t;
-typedef uint32_t	mode32_t;
-typedef uint32_t	uid32_t;
-typedef uint32_t	gid32_t;
-typedef uint32_t	nlink32_t;
-typedef uint32_t	dev32_t;
-typedef int32_t		pid32_t;
-typedef uint32_t	size32_t;
-typedef int32_t		ssize32_t;
-typedef int32_t		time32_t;
-typedef int32_t		clock32_t;
+typedef __uint32_t	caddr32_t;
+typedef __int32_t	daddr32_t;
+typedef __int32_t	off32_t;
+typedef __uint32_t	ino32_t;
+typedef __int32_t	blkcnt32_t;
+typedef __uint32_t	fsblkcnt32_t;
+typedef __uint32_t	fsfilcnt32_t;
+typedef __int32_t	id32_t;
+typedef __uint32_t	major32_t;
+typedef __uint32_t	minor32_t;
+typedef __int32_t	key32_t;
+typedef __uint32_t	mode32_t;
+typedef __uint32_t	uid32_t;
+typedef __uint32_t	gid32_t;
+typedef __uint32_t	nlink32_t;
+typedef __uint32_t	dev32_t;
+typedef __int32_t	pid32_t;
+typedef __uint32_t	size32_t;
+typedef __int32_t	ssize32_t;
+typedef __int32_t	time32_t;
+typedef __int32_t	clock32_t;
+
+struct timeval32
+  {
+	time32_t tv_sec;
+	__int32_t tv_usec;
+  };
+
+struct timespec32
+  {
+	time32_t tv_sec;
+	__int32_t tv_nsec;
+  };
 
 #endif /* _SYS_TYPES32_H */

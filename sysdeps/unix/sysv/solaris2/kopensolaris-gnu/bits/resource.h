@@ -73,24 +73,32 @@ typedef __rlim_t rlim_t;
 #else
 typedef __rlim64_t rlim_t;
 #endif
+#ifdef _SYSCALL32
+typedef __uint32_t rlim32_t;
+#endif
 #ifdef __USE_LARGEFILE64
 typedef __rlim64_t rlim64_t;
 #endif
 
 /* Value to indicate that there is no limit.  */
 #ifdef __USE_LARGEFILE64
-# define RLIM64_INFINITY    ((rlim64_t)-3)
-# define RLIM64_SAVED_MAX   ((rlim64_t)-2)
-# define RLIM64_SAVED_CUR   ((rlim64_t)-1)
+# define RLIM64_INFINITY	((rlim64_t)-3)
+# define RLIM64_SAVED_MAX	((rlim64_t)-2)
+# define RLIM64_SAVED_CUR	((rlim64_t)-1)
 #endif
-#if defined(__USE_FILE_OFFSET64)
-# define RLIM_INFINITY      ((rlim_t)-3l)
-# define RLIM_SAVED_MAX     ((rlim_t)-2l)
-# define RLIM_SAVED_CUR     ((rlim_t)-1l)
+#if __WORDSIZE == 64
+# define RLIM_INFINITY		((rlim_t)-3l)
+# define RLIM_SAVED_MAX		((rlim_t)-2l)
+# define RLIM_SAVED_CUR		((rlim_t)-1l)
 #else
-# define RLIM_INFINITY     0x7fffffff
-# define RLIM_SAVED_MAX    0x7fffffff
-# define RLIM_SAVED_CUR    0x7fffffff
+# define RLIM_INFINITY		0x7FFFFFFF
+# define RLIM_SAVED_MAX		0x7FFFFFFE
+# define RLIM_SAVED_CUR		0x7FFFFFFD
+#endif
+#ifdef _SYSCALL32
+# define RLIM32_INFINITY	0x7FFFFFFF
+# define RLIM32_SAVED_MAX	0x7FFFFFFE
+# define RLIM32_SAVED_CUR	0x7FFFFFFD
 #endif
 
 struct rlimit
@@ -100,6 +108,14 @@ struct rlimit
     /* The hard limit.  */
     rlim_t rlim_max;
   };
+
+#ifdef _SYSCALL32
+struct rlimit32
+  {
+	rlim32_t rlim_cur;
+	rlim32_t rlim_max;
+};
+#endif
 
 #ifdef __USE_LARGEFILE64
 struct rlimit64
@@ -197,4 +213,16 @@ enum __priority_which
 #define PRIO_ZONE PRIO_ZONE
   PRIO_CONTRACT = 9,
 #define PRIO_CONTRACT PRIO_CONTRACT
+};
+
+enum
+{
+	_RUSAGESYS_GETRUSAGE = 0,
+#define _RUSAGESYS_GETRUSAGE	_RUSAGESYS_GETRUSAGE
+	_RUSAGESYS_GETRUSAGE_CHLD = 1,
+#define _RUSAGESYS_GETRUSAGE_CHLD	_RUSAGESYS_GETRUSAGE_CHLD
+	_RUSAGESYS_GETRUSAGE_LWP = 2,
+#define _RUSAGESYS_GETRUSAGE_LWP	_RUSAGESYS_GETRUSAGE_LWP
+	_RUSAGESYS_GETVMUSAGE = 3
+#define _RUSAGESYS_GETVMUSAGE	_RUSAGESYS_GETVMUSAGE
 };

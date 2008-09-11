@@ -152,6 +152,17 @@ typedef struct meminfo
 # define POSIX_MADV_DONTNEED	4 /* Don't need these pages.  */
 #endif
 
+#ifdef __USE_MISC
+# define PROC_TEXT	(PROT_EXEC | PROT_READ)
+# define PROC_DATA	(PROT_READ | PROT_WRITE | PROT_EXEC)
+/* GNU lbc (and probably others) use SHARED internally.  */
+# ifndef _GNU_SOURCE
+#  define SHARED		0x10
+#  define PRIVATE		0x20
+# endif
+# define VALID_ATTR	(PROT_READ | PROT_WRITE | PROT_EXEC | SHARED | PRIVATE)
+#endif
+
 struct memcntl_mha
   {
 	unsigned int mha_cmd;

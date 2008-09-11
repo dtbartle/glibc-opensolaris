@@ -22,9 +22,32 @@
 
 #include <sys/types.h>
 #include <sys/priv.h>
-#include <sys/tsol/label.h>
+
+typedef struct _mac_label_impl m_label_t;
+typedef m_label_t bslabel_t;
+
+/* Subcall numbers.  */
+#define ZONE_CREATE	0
+#define ZONE_DESTROY	1
+#define ZONE_GETATTR	2
+#define ZONE_ENTER	3
+#define ZONE_LIST	4
+#define ZONE_SHUTDOWN	5
+#define ZONE_LOOKUP	6
+#define ZONE_BOOT	7
+#define ZONE_VERSION	8
+#define ZONE_SETATTR	9
+#define ZONE_ADD_DATALINK	10
+#define ZONE_DEL_DATALINK	11
+#define ZONE_CHECK_DATALINK	12
+#define ZONE_LIST_DATALINK	13
 
 #define GLOBAL_ZONEID	0
+#define MIN_ZONEID	0
+#define MIN_USERZONEID	1
+#define MAX_ZONEID	9999
+#define ZONEID_WIDTH	4
+#define ALL_ZONES	(-1)
 
 /* Zone attributes.  */
 #define ZONE_ATTR_ROOT		1

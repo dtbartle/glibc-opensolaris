@@ -128,8 +128,8 @@
 #define SYS_waitsys         SYS_waitid
 #define SYS_sigsendsys      108
 #define SYS_hrtsys          109
-#define SYS_acancel         110
-#define SYS_async           111
+/* 110 unused */
+#define SYS_sigresend       111
 #define SYS_priocntlsys     112
 #define SYS_pathconf        113
 #define SYS_mincore         114
@@ -145,7 +145,7 @@
 #define SYS_lxstat          124
 #define SYS_fxstat          125
 #define SYS_xmknod          126
-#define SYS_clocal          127
+/* 127 unused */
 #define SYS_setrlimit       128
 #define SYS_getrlimit       129
 #define SYS_lchown          130

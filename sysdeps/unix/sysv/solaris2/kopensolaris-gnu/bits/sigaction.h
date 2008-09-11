@@ -58,3 +58,10 @@ struct sigaction
 #define SIG_BLOCK	1	/* Block signals.  */
 #define SIG_UNBLOCK	2	/* Unblock signals.  */
 #define SIG_SETMASK	3	/* Set the set of blocked signals.  */
+
+#define SIGNO_MASK	0xFF
+#define SIGDEFER	0x100
+#define SIGHOLD		0x200
+#define SIGRELSE	0x400
+#define SIGIGNORE	0x800
+#define SIGPAUSE	0x1000

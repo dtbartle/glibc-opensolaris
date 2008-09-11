@@ -20,7 +20,7 @@
 #ifndef _SYS_FSTYP_H
 #define	_SYS_FSTYP_H
 
-#include <features.>
+#include <features.h>
 
 #define	FSTYPSZ		16
 

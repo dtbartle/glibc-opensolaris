@@ -83,6 +83,32 @@ struct stat
 #endif
   };
 
+#ifdef _SYSCALL32
+#include <sys/types32.h>
+
+struct stat32
+  {
+	__dev_t st_dev;
+	__int32_t st_pad1[3];
+	__ino_t st_ino;
+	__mode_t st_mode;
+	__nlink_t st_nlink;
+	__uid_t st_uid;
+	__gid_t st_gid;
+	__dev_t st_rdev;
+	__int_t st_pad2[2];
+	__off_t st_size;
+	__int32_t st_pad3;
+	struct timespec32 st_atim;
+	struct timespec32 st_mtim;
+	struct timespec32 st_ctim;
+	__int32_t st_blksize;
+	__blkcnt_t st_blocks;
+	char st_fstype[_ST_FSTYPSZ];
+	__int32_t st_pad4[8];
+  };
+#endif /* _SYSCALL32 */
+
 #ifdef __USE_LARGEFILE64
 /* struct stat64 has the shape as stat */
 struct stat64
@@ -124,6 +150,41 @@ struct stat64
 #endif
 };
 #endif
+
+#ifdef _SYSCALL32
+
+#include <sys/isa_defs.h>
+
+#if _LONG_LONG_ALIGNMENT == 8 && _LONG_LONG_ALIGNMENT_32 == 4
+# pragma pack(4)
+#endif
+
+struct stat64_32
+  {
+	dev32_t st_dev;
+	int32_t st_pad1[3];
+	ino64_t st_ino;
+	mode32_t st_mode;
+	nlink32_t st_nlink;
+	uid32_t st_uid;
+	gid32_t st_gid;
+	dev32_t st_rdev;
+	int32_t st_pad2[2];
+	off64_t st_size;
+	struct timespec32 st_atim;
+	struct timespec32 st_mtim;
+	struct timespec32 st_ctim;
+	int32_t st_blksize;
+	blkcnt64_t st_blocks;
+	char st_fstype[_ST_FSTYPSZ];
+	int32_t st_pad4[8];
+  };
+
+#if _LONG_LONG_ALIGNMENT == 8 && _LONG_LONG_ALIGNMENT_32 == 4
+# pragma pack()
+#endif
+
+#endif /* _SYSCALL32 */
 
 /* Tell code we have these members.  */
 #define	_STATBUF_ST_BLKSIZE

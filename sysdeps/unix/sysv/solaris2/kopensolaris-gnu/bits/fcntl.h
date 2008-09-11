@@ -85,7 +85,7 @@
 # define F_SETLKW64	F_SETLKW	/* Set record locking info (blocking).  */
 # define F_ALLOCSP64	F_ALLOCSP	/* Allocate file space.  */
 # define F_FREESP64	F_FREESP	/* Free file space.  */
-# define F_SETLK6464_NBMAND	F_SETLK64_NBMAND	/* Private.  */
+# define F_SETLK64_NBMAND	F_SETLK_NBMAND	/* Private.  */
 #else
 # ifndef __USE_FILE_OFFSET64
 #  define F_GETLK	14	/* Get record locking info.  */
@@ -100,14 +100,14 @@
 #  define F_SETLKW	F_SETLKW64	/* Set record locking info (blocking).  */
 #  define F_ALLOCSP	F_ALLOCSP64	/* Allocate file space.  */
 #  define F_FREESP	F_FREESP64	/* Free file space.  */
-#  define F_SETLK_NBMAND	F_SETLK_NBMAND64	/* Private.  */
+#  define F_SETLK_NBMAND	F_SETLK64_NBMAND	/* Private.  */
 # endif
 # define F_GETLK64	33	/* Get record locking info.  */
 # define F_SETLK64	34	/* Set record locking info (non-blocking).  */
 # define F_SETLKW64	35	/* Set record locking info (blocking).  */
 # define F_ALLOCSP64	28	/* Allocate file space.  */
 # define F_FREESP64	27	/* Free file space.  */
-# define F_SETLK6464_NBMAND	44	/* Private.  */
+# define F_SETLK64_NBMAND	44	/* Private.  */
 #endif
 
 /* OpenSolaris-specific */
@@ -179,6 +179,19 @@ struct flock
     __pid_t l_pid;	/* Process holding the lock.  */
     long l_pad[4];
   };
+
+#ifdef _SYSCALL32
+typedef struct flock32
+  {
+	__int16_t l_type;
+	__int16_t l_whence;
+	__off_t l_start;
+	__off_t l_len;
+	__int32_t l_sysid;
+	__pid_t l_pid;
+	__int32_t l_pad[4];
+  } flock32_t;
+#endif
 
 #ifdef __USE_LARGEFILE64
 struct flock64

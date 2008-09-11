@@ -27,7 +27,7 @@
 #define GETACL		1
 #define SETACL		2
 #define GETACLCNT	3
-#define ACL_GETACL	4
+#define ACE_GETACL	4
 #define ACE_SETACL	5
 #define ACE_GETACLCNT	6
 

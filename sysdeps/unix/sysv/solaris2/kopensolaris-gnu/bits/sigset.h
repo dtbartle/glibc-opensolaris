@@ -25,9 +25,15 @@ typedef int __sig_atomic_t;
 
 #define _SIGSET_NWORDS  4
 
-typedef struct {
-    unsigned int	__sigbits[_SIGSET_NWORDS];
-} __sigset_t;
+typedef struct
+  {
+	unsigned int __sigbits[_SIGSET_NWORDS];
+  } __sigset_t;
+
+typedef struct
+  {
+	unsigned int __sigbits[2];
+  } k_sigset_t;
 
 #endif /* _SIGSET_H_types */
 

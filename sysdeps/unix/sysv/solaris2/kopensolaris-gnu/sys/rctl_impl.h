@@ -23,6 +23,9 @@
 #include <sys/rctl.h>
 #include <sys/resource.h>
 
+#define RCTLCTL_GET	0
+#define RCTLCTL_SET	1
+
 typedef struct rctl_opaque
   {
 	rctl_qty_t rcq_value;
@@ -35,5 +38,8 @@ typedef struct rctl_opaque
 	id_t rcq_local_recipient_pid;
 	hrtime_t rcq_firing_time;
   } rctl_opaque_t;
+
+#define RCTLBLK_INC(blk, n)	\
+	(rctlblk_t *)((char *)(blk) + ((n) * rctlblk_size ()))
 
 #endif /* _SYS_RCTL_IMPL_H */

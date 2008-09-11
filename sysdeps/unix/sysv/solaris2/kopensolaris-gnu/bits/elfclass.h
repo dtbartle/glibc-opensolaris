@@ -73,3 +73,7 @@ typedef uint64_t	Elf64_Lword;
 #define NT_CONTENT	20
 #define NT_ZONENAME	21
 #define NT_NUM		21
+
+#define LM_ID_BASE	0
+#define LM_ID_LDSO	1
+#define LM_ID_NUM	2

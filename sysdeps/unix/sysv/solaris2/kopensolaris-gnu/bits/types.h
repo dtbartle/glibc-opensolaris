@@ -201,6 +201,7 @@ typedef __id_t	projid_t;
 typedef __id_t	poolid_t;
 typedef __id_t	zoneid_t;
 typedef __id_t	ctid_t;
+typedef __id_t	lgrp_id_t;
 typedef short	pri_t;
 typedef long long	offset_t;
 typedef long long	longlong_t;
@@ -209,14 +210,87 @@ typedef unsigned int	uint_t;
 typedef unsigned short	ushort_t;
 typedef unsigned long	ulong_t;
 typedef unsigned long long	u_longlong_t;
+typedef unsigned long long	diskaddr_t;
 typedef unsigned long	psaddr_t;
 typedef unsigned int	lwpid_t;
 typedef long long	hrtime_t;
+typedef unsigned int	major_t;
+typedef unsigned int	minor_t;
+typedef unsigned short	cpu_flag_t;
+typedef unsigned long	pgcnt_t;
+typedef long		spgcnt_t;
+typedef unsigned long long	u_offset_t;
+typedef unsigned long	pfn_t;
+typedef unsigned int	k_fltset_t;
+typedef void		*timeout_id_t;
+
 typedef enum
   {
 	B_FALSE,
 	B_TRUE
   } boolean_t;
+
+typedef union
+  {
+	long double _q;
+	__int32_t _l[4];
+  } pad128_t;
+
+typedef union
+  {
+	long double _q;
+	__uint32_t _l[4];
+  } upad128_t;
+
+#include <endian.h>
+
+#if __BYTE_ORDER == __BIG_ENDIAN
+
+typedef union
+  {
+	offset_t _f;
+	struct
+	  {
+		__int32_t _u;
+		__int32_t _l;
+	  } _p;
+  } lloff_t;
+
+typedef union
+  {
+	long long _f;
+    struct
+	  {
+		__int32_t _u;
+		__int32_t _l;
+	  } _p;
+  } lldaddr_t;
+
+#else
+
+typedef union
+  {
+	offset_t _f;
+	struct
+	  {
+		__int32_t _l;
+		__int32_t _u;
+	  } _p;
+  } lloff_t;
+
+typedef union
+  {
+	long long _f;
+    struct
+	  {
+		__int32_t _l;
+		__int32_t _u;
+	  } _p;
+  } lldaddr_t;
+
+#endif /* __BYTE_ORDER == __BIG_ENDIAN */
+
+#include <bits/machtypes.h>
 
 /* OpenSolaris compatibility types.  */
 typedef unsigned short	o_mode_t;

@@ -30,8 +30,19 @@ struct dirent
     __off64_t d_off;
 #endif
     unsigned short int d_reclen;
-    char d_name[256];		/* We must not include limits.h! */
+    char d_name[1];		/* We must not include limits.h! */
   };
+
+#ifdef _SYSCALL32
+
+typedef struct dirent32 {
+    __ino_t d_ino;
+    __off_t d_off;
+    __uint16_t d_reclen;
+    char d_name[1];
+} dirent32_t;
+
+#endif
 
 #ifdef __USE_LARGEFILE64
 struct dirent64
@@ -39,7 +50,7 @@ struct dirent64
     __ino64_t d_ino;
     __off64_t d_off;
     unsigned short int d_reclen;
-    char d_name[256];		/* We must not include limits.h! */
+    char d_name[1];		/* We must not include limits.h! */
   };
 #endif
 

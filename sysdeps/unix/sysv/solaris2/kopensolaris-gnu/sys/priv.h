@@ -55,6 +55,16 @@ typedef struct priv_impl_info
 	uint32_t priv_globalinfosize;
 } priv_impl_info_t;
 
+#define PRIV_DEBUG		0x0001
+#define PRIV_AWARE		0x0002
+#define PRIV_AWARE_INHERIT	0x0004
+#define __PROC_PROTECT		0x0008
+#define NET_MAC_AWARE		0x0010
+#define NET_MAC_AWARE_INHERIT	0x0020
+#define PRIV_XPOLICY		0x0080
+#define PRIV_USER		(PRIV_DEBUG | NET_MAC_AWARE | \
+	NET_MAC_AWARE_INHERIT |  PRIV_XPOLICY)
+
 #define PRIV_IMPL_INFO_SIZE(p) \
 	((p)->priv_headersize + (p)->priv_globalinfosize)
 
@@ -83,5 +93,11 @@ typedef struct priv_info_names
 
 #define PRIV_PRPRIV_SIZE(p) \
 	(PRIV_PRPRIV_INFO_OFFSET(p) + (p)->pr_infosize)
+
+#define PRIV_ALL	(-1)
+#define PRIV_MULTIPLE	(-2)
+#define PRIV_NONE	(-3)
+#define PRIV_ALLZONE	(-4)
+#define PRIV_GLOBAL	(-5)
 
 #endif /* _SYS_PRIV_H */
