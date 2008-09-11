@@ -67,6 +67,9 @@ libc {
     _so_setsockopt; _so_shutdown; _so_socket; _so_socketpair; str2sig; strlcat;
     strlcpy; swapctl; __systemcall; sysfs; systeminfo;
 
+    # t
+    _ttyname_dev;
+
     # u
     uadmin; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;
     ucred_getgroups; ucred_getlabel; ucred_getpflags; ucred_getpid;
