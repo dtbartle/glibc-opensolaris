@@ -66,17 +66,17 @@ union sigval32
 # define __SI_MAX_SIZE     128
 # define __SI_PAD_SIZE     ((__SI_MAX_SIZE / sizeof (int)) - 3)
 # endif
-#define SI_MAXSZ           __SI_MAX_SIZE
-#define SI_PAD             __SI_PAD_SIZE
+# define SI_MAXSZ          __SI_MAX_SIZE
+# define SI_PAD            __SI_PAD_SIZE
 
 typedef struct siginfo
 {
     int si_signo;
     int si_code;
     int si_errno;
-#if __WORDSIZE == 64
+# if __WORDSIZE == 64
     int si_pad;
-#endif
+# endif
     union
     {
         int _pad[__SI_PAD_SIZE];
@@ -130,16 +130,16 @@ typedef struct siginfo
     } __data;
 } siginfo_t;
 
-#ifdef __USE_MISC
+# ifdef __USE_MISC
 
 typedef struct k_siginfo
 {
 	int si_signo;
 	int si_code;
 	int si_errno;
-# if __WORDSIZE == 64
+#  if __WORDSIZE == 64
 	int si_pad;
-# endif
+#  endif
 	union
 	  {
 		struct
@@ -202,88 +202,165 @@ typedef struct sigqueue
 	int sq_external;
   } sigqueue_t;
 
-#endif /* __USE_MISC */
+# endif /* __USE_MISC */
 
-#define SI_FROMUSER(sip)  ((sip)->si_code <= 0)
-#define SI_FROMKERNEL(sip)  ((sip)->si_code > 0)
+# define SI_FROMUSER(sip)  ((sip)->si_code <= 0)
+# define SI_FROMKERNEL(sip)  ((sip)->si_code > 0)
 
 /* Values for `si_code'.  Positive values are reserved for kernel-generated
    signals.  */
 enum
 {
     SI_NOINFO = 32767, /* no signal information */
-#define SI_NOINFO SI_NOINFO
+# define SI_NOINFO SI_NOINFO
     SI_DTRACE = 2050, /* kernel generated signal via DTrace action */
-#define SI_DTRACE SI_DTRACE
+# define SI_DTRACE SI_DTRACE
     SI_RCTL = 2049, /* kernel generated signal via rctl action */
-#define SI_RCTL SI_RCTL
+# define SI_RCTL SI_RCTL
     SI_USER = 0, /* user generated signal via kill() */
-#define SI_USER SI_USER
+# define SI_USER SI_USER
     SI_LWP = -1, /* user generated signal via lwp_kill() */
-#define SI_LWP SI_LWP
+# define SI_LWP SI_LWP
     SI_QUEUE = -2, /* user generated signal via sigqueue() */
-#define SI_QUEUE SI_QUEUE
+# define SI_QUEUE SI_QUEUE
     SI_TIMER = -3, /* from timer expiration */
-#define SI_TIMER SI_TIMER
+# define SI_TIMER SI_TIMER
     SI_ASYNCIO = -4, /* from asynchronous I/O completion */
-#define SI_ASYNCIO SI_ASYNCIO
+# define SI_ASYNCIO SI_ASYNCIO
     SI_MESGQ = -5 /* from message arrival */
 };
 
+/* `si_code' values for SIGILL signal.  */
+enum
+{
+  ILL_ILLOPC = 1,		/* Illegal opcode.  */
+# define ILL_ILLOPC	ILL_ILLOPC
+  ILL_ILLOPN = 2,		/* Illegal operand.  */
+# define ILL_ILLOPN	ILL_ILLOPN
+  ILL_ILLADR = 3,		/* Illegal addressing mode.  */
+# define ILL_ILLADR	ILL_ILLADR
+  ILL_ILLTRP = 4,		/* Illegal trap. */
+# define ILL_ILLTRP	ILL_ILLTRP
+  ILL_PRVOPC = 5,		/* Privileged opcode.  */
+# define ILL_PRVOPC	ILL_PRVOPC
+  ILL_PRVREG = 6,		/* Privileged register.  */
+# define ILL_PRVREG	ILL_PRVREG
+  ILL_COPROC = 7,		/* Coprocessor error.  */
+# define ILL_COPROC	ILL_COPROC
+  ILL_BADSTK = 8		/* Internal stack error.  */
+# define ILL_BADSTK	ILL_BADSTK
+};
+# define NSIGILL	8
+
+/* `si_code' values for SIGFPE signal.  */
+enum
+{
+  FPE_INTDIV = 1,		/* Integer divide by zero.  */
+# define FPE_INTDIV	FPE_INTDIV
+  FPE_INTOVF = 2,		/* Integer overflow.  */
+# define FPE_INTOVF	FPE_INTOVF
+  FPE_FLTDIV = 3,		/* Floating point divide by zero.  */
+# define FPE_FLTDIV	FPE_FLTDIV
+  FPE_FLTOVF = 4,		/* Floating point overflow.  */
+# define FPE_FLTOVF	FPE_FLTOVF
+  FPE_FLTUND = 5,		/* Floating point underflow.  */
+# define FPE_FLTUND	FPE_FLTUND
+  FPE_FLTRES = 6,		/* Floating point inexact result.  */
+# define FPE_FLTRES	FPE_FLTRES
+  FPE_FLTINV = 7,		/* Floating point invalid operation.  */
+# define FPE_FLTINV	FPE_FLTINV
+  FPE_FLTSUB = 8,		/* Subscript out of range.  */
+# define FPE_FLTSUB	FPE_FLTSUB
+  FPE_FLTDEN = 9
+# define FPE_FLTDEN	FPE_FLTDEN
+};
+# define NSIGFPE	9
+
+/* `si_code' values for SIGSEGV signal.  */
+enum
+{
+  SEGV_MAPERR = 1,		/* Address not mapped to object.  */
+# define SEGV_MAPERR	SEGV_MAPERR
+  SEGV_ACCERR = 2		/* Invalid permissions for mapped object.  */
+# define SEGV_ACCERR	SEGV_ACCERR
+};
+# define NSIGSEGV	2
+
+/* `si_code' values for SIGBUS signal.  */
+enum
+{
+  BUS_ADRALN = 1,		/* Invalid address alignment.  */
+# define BUS_ADRALN	BUS_ADRALN
+  BUS_ADRERR = 2,		/* Non-existant physical address.  */
+# define BUS_ADRERR	BUS_ADRERR
+  BUS_OBJERR = 3		/* Object specific hardware error.  */
+# define BUS_OBJERR	BUS_OBJERR
+};
+# define NSIGBUS	3
+
+/* `si_code' values for SIGEMT signal.  */
+enum
+{
+  EMT_CPCOVF = 1
+# define EMT_CPCOVF	EMT_CPCOVF
+};
+# define NSIGEMT	1
+
+
 /* `si_code' values for SIGTRAP signal.  */
-#define TRAP_BRKPT  1 /* breakpoint trap */
-#define TRAP_TRACE  2 /* trace trap */
-#define TRAP_RWATCH 3 /* read access watchpoint trap */
-#define TRAP_WWATCH 4 /* write access watchpoint trap */
-#define TRAP_XWATCH 5 /* execute access watchpoint trap */
-#define TRAP_DTRACE 6 /* problem with fasttrap DTrace provider */
-#define NSIGTRAP  6
+# define TRAP_BRKPT  1 /* breakpoint trap */
+# define TRAP_TRACE  2 /* trace trap */
+# define TRAP_RWATCH 3 /* read access watchpoint trap */
+# define TRAP_WWATCH 4 /* write access watchpoint trap */
+# define TRAP_XWATCH 5 /* execute access watchpoint trap */
+# define TRAP_DTRACE 6 /* problem with fasttrap DTrace provider */
+# define NSIGTRAP  6
 
 /* `si_code' values for SIGCHLD signal.  */
-#define CLD_EXITED  1 /* child has exited */
-#define CLD_KILLED  2 /* child was killed */
-#define CLD_DUMPED  3 /* child has coredumped */
-#define CLD_TRAPPED 4 /* traced child has stopped */
-#define CLD_STOPPED 5 /* child has stopped on signal */
-#define CLD_CONTINUED 6 /* stopped child has continued */
-#define NSIGCLD   6
+# define CLD_EXITED  1 /* child has exited */
+# define CLD_KILLED  2 /* child was killed */
+# define CLD_DUMPED  3 /* child has coredumped */
+# define CLD_TRAPPED 4 /* traced child has stopped */
+# define CLD_STOPPED 5 /* child has stopped on signal */
+# define CLD_CONTINUED 6 /* stopped child has continued */
+# define NSIGCLD   6
 
 /* `si_code' values for SIGPOLL signal.  */
-#define POLL_IN   1 /* input available */
-#define POLL_OUT  2 /* output possible */
-#define POLL_MSG  3 /* message available */
-#define POLL_ERR  4 /* I/O error */
-#define POLL_PRI  5 /* high priority input available */
-#define POLL_HUP  6 /* device disconnected */
-#define NSIGPOLL  6
+# define POLL_IN   1 /* input available */
+# define POLL_OUT  2 /* output possible */
+# define POLL_MSG  3 /* message available */
+# define POLL_ERR  4 /* I/O error */
+# define POLL_PRI  5 /* high priority input available */
+# define POLL_HUP  6 /* device disconnected */
+# define NSIGPOLL  6
 
 /* SIGPROF signal codes */
-#define PROF_SIG  1 /* have to set code non-zero */
-#define NSIGPROF  1
+# define PROF_SIG  1 /* have to set code non-zero */
+# define NSIGPROF  1
 
 /* X/Open requires some more fields with fixed names.  */
-#define si_pid    __data.__proc.__pid
-#define si_ctid   __data.__proc.__ctid
-#define si_zoneid __data.__proc.__zoneid
-#define si_status __data.__proc.__pdata.__cld.__status
-#define si_stime  __data.__proc.__pdata.__cld.__stime
-#define si_utime  __data.__proc.__pdata.__cld.__utime
-#define si_uid    __data.__proc.__pdata.__kill.__uid
-#define si_value  __data.__proc.__pdata.__kill.__value
-#define si_addr   __data.__fault.__addr
-#define si_trapno __data.__fault.__trapno
-#define si_trapafter  __data.__fault.__trapno
-#define si_pc   __data.__fault.__pc
-#define si_fd   __data.__file.__fd
-#define si_band   __data.__file.__band
-#define si_tstamp __data.__prof.__tstamp
-#define si_syscall  __data.__prof.__syscall
-#define si_nsysarg  __data.__prof.__nsysarg
-#define si_sysarg __data.__prof.__sysarg
-#define si_fault  __data.__prof.__fault
-#define si_faddr  __data.__prof.__faddr
-#define si_mstate __data.__prof.__mstate
-#define si_entity __data.__rctl.__entity
+# define si_pid    __data.__proc.__pid
+# define si_ctid   __data.__proc.__ctid
+# define si_zoneid __data.__proc.__zoneid
+# define si_status __data.__proc.__pdata.__cld.__status
+# define si_stime  __data.__proc.__pdata.__cld.__stime
+# define si_utime  __data.__proc.__pdata.__cld.__utime
+# define si_uid    __data.__proc.__pdata.__kill.__uid
+# define si_value  __data.__proc.__pdata.__kill.__value
+# define si_addr   __data.__fault.__addr
+# define si_trapno __data.__fault.__trapno
+# define si_trapafter  __data.__fault.__trapno
+# define si_pc   __data.__fault.__pc
+# define si_fd   __data.__file.__fd
+# define si_band   __data.__file.__band
+# define si_tstamp __data.__prof.__tstamp
+# define si_syscall  __data.__prof.__syscall
+# define si_nsysarg  __data.__prof.__nsysarg
+# define si_sysarg __data.__prof.__sysarg
+# define si_fault  __data.__prof.__fault
+# define si_faddr  __data.__prof.__faddr
+# define si_mstate __data.__prof.__mstate
+# define si_entity __data.__rctl.__entity
 
 # undef __need_siginfo_t
 #endif	/* !have siginfo_t && (have _SIGNAL_H || need siginfo_t).  */

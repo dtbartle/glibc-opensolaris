@@ -32,6 +32,9 @@
 #include <limits.h>
 #include <sys/types.h>
 
+#define __SOCKADDR_IN6_EXTRA_FIELDS \
+	__uint32_t __sin6_src_id;
+
 /* Type for length arguments in socket calls.  */
 #ifndef __socklen_t_defined
 typedef __socklen_t socklen_t;

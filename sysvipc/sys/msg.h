@@ -48,7 +48,7 @@ typedef __ssize_t ssize_t;
 /* The following System V style IPC functions implement a message queue
    system.  The definition is found in XPG2.  */
 
-#ifdef __USE_GNU
+#ifdef __USE_MISC
 /* Template for struct to be used as argument for `msgsnd' and `msgrcv'.  */
 struct msgbuf
   {

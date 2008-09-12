@@ -93,12 +93,64 @@ struct timeval
 
 # include <sys/types32.h>
 
+# if defined (_TIME_H) && !defined (__time32_macros_defined)
+
+#  define TIMEVAL32_TO_TIMEVAL(tv, tv32)            \
+{                                                   \
+	(tv)->tv_sec = (time_t)(tv32)->tv_sec;          \
+	(tv)->tv_usec = (tv32)->tv_usec;                \
+}
+
+#  define TIMEVAL_TO_TIMEVAL32(tv32, tv)            \
+{                                                   \
+	(tv32)->tv_sec = (time32_t)(tv)->tv_sec;        \
+	(tv32)->tv_usec = (tv)->tv_usec;                \
+}
+
+#  define TIMESPEC32_TO_TIMESPEC(ts, ts32)          \
+	{                                               \
+		(ts)->tv_sec = (time_t)(ts32)->tv_sec;      \
+		(ts)->tv_nsec = (ts32)->tv_nsec;            \
+	}
+
+#  define TIMESPEC_TO_TIMESPEC32(ts32, ts)          \
+	{                                               \
+	    (ts32)->tv_sec = (time32_t)(ts)->tv_sec;    \
+		(ts32)->tv_nsec = (ts)->tv_nsec;            \
+	}
+
+#  define TIME32_MAX	INT32_MAX
+#  define TIME32_MIN	INT32_MIN
+
+#  define TIMESPEC_OVERFLOW(ts) \
+	((ts)->tv_sec < TIME32_MIN || (ts)->tv_sec > TIME32_MAX)
+
+#  define __time32_macros_defined
+# endif
+
 # if defined (_SYS_TIME_H) && !defined (__itimerval32_defined)
 struct itimerval32
   {
 	struct timeval32 it_interval;
 	struct timeval32 it_value;
   };
+
+#  define ITIMERVAL32_TO_ITIMERVAL(itv, itv32)                          \
+{                                                                       \
+	TIMEVAL32_TO_TIMEVAL(&(itv)->it_interval, &(itv32)->it_interval);   \
+	TIMEVAL32_TO_TIMEVAL(&(itv)->it_value, &(itv32)->it_value);         \
+}
+
+#  define ITIMERVAL_TO_ITIMERVAL32(itv32, itv)                          \
+{                                                                       \
+	TIMEVAL_TO_TIMEVAL32(&(itv32)->it_interval, &(itv)->it_interval);   \
+	TIMEVAL_TO_TIMEVAL32(&(itv32)->it_value, &(itv)->it_value);         \
+}
+
+#  define ITIMERVAL_OVERFLOW(itv)               \
+	(TIMEVAL_OVERFLOW(&(itv)->it_interval) ||   \
+	 TIMEVAL_OVERFLOW(&(itv)->it_value))
+
 #  define __itimerval32_defined
 # endif
 

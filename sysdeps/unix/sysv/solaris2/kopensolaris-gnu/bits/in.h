@@ -165,5 +165,15 @@ struct in_pktinfo
 
 #define IPV6_RTHDR_TYPE_0   0
 
+#include <endian.h>
+
+#if __BYTE_ORDER == __BIG_ENDIAN
+# define IPV6_FLOWINFO_FLOWLABEL	0x000fffffU
+# define IPV6_FLOWINFO_TCLASS		0x0ff00000U
+#else
+# define IPV6_FLOWINFO_FLOWLABEL	0xffff0f00U
+# define IPV6_FLOWINFO_TCLASS		0x0000f00fU
+#endif
+
 typedef __uint32_t	ipaddr_t;
 typedef struct in6_addr in6_addr_t;
