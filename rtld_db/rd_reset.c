@@ -38,5 +38,8 @@ rd_err_e rd_reset (struct rd_agent *rdap)
       return res;
     }
 
+  /* TODO: lookup symbol for rtld_db_preinit, rtld_db_postinit,
+     rtld_db_dlactivity.  */
+
   return RD_OK;
 }

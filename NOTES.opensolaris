@@ -23,6 +23,13 @@ scheduling:
   a class id with a posix scheduler (i.e. SCHED_*). The only exception is
   SCHED_SYS, which is guaranteed to have cid == 0.
 
+privileges:
+
+  Each process has a set of privileges, represented by a prpriv_t. This struct
+  contains a header, followed by a number of priv_chunk_t blocks (the priv
+  sets), and finally followed by a number of priv_info_t blocks (per process
+  additional info).
+
 threads:
 
   The sun libpthread/libthread implementation assumes a 1:1 mapping between
