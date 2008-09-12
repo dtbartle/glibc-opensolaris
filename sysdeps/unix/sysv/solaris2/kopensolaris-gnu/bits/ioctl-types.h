@@ -64,6 +64,28 @@ struct winsize
   unsigned short int ws_ypixel;	/* Vertical pixels.  */
 };
 
+#define NCC 8
+#define _NCC NCC
+struct termio
+{
+  unsigned short int c_iflag;
+  unsigned short int c_oflag;
+  unsigned short int c_cflag;
+  unsigned short int c_lflag;
+  char c_line;
+  unsigned char c_cc[NCC];
+};
+
+struct termcb
+{
+  char st_flgs;
+  char st_termt;
+  char st_crow;
+  char st_ccol;
+  char st_vrow;
+  char st_lrow;
+};
+
 /* Suns use a different layout for `struct ttysize', and TIOCGSIZE and
    TIOCGWINSZ are separate commands that do the same thing with different
    structures (likewise TIOCSSIZE and TIOCSWINSZ).  */

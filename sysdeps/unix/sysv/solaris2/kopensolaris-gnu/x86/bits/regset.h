@@ -74,28 +74,28 @@ typedef struct
 
 struct fxsave_state
   {
-	uint16_t fx_fcw;
-	uint16_t fx_fsw;
-	uint16_t fx_fctw;
-	uint16_t fx_fop;
+	__uint16_t fx_fcw;
+	__uint16_t fx_fsw;
+	__uint16_t fx_fctw;
+	__uint16_t fx_fop;
 #ifdef __amd64__
-	uint64_t fx_rip;
-	uint64_t fx_rdp;
+	__uint64_t fx_rip;
+	__uint64_t fx_rdp;
 #else
-	uint32_t fx_eip;
-	uint16_t fx_cs;
-	uint16_t __fx_ign0;
-	uint32_t fx_dp;
-	uint16_t fx_ds;
-	uint16_t __fx_ign1;
+	__uint32_t fx_eip;
+	__uint16_t fx_cs;
+	__uint16_t __fx_ign0;
+	__uint32_t fx_dp;
+	__uint16_t fx_ds;
+	__uint16_t __fx_ign1;
 #endif
-	uint32_t fx_mxcsr;
-	uint32_t fx_mxcsr_mask;
+	__uint32_t fx_mxcsr;
+	__uint32_t fx_mxcsr_mask;
 	union
 	  {
-		uint16_t fpr_16[5];
+		__uint16_t fpr_16[5];
 		unsigned long long fpr_mmx;
-        uint32_t __fpr_pad[4];
+        __uint32_t __fpr_pad[4];
 	  } fx_st[8];
 #if defined(__amd64)
 	upad128_t fx_xmm[16]; /* 128-bit registers */
@@ -108,21 +108,21 @@ struct fxsave_state
 
 struct fnsave_state
   {
-	uint16_t f_fcw;
-	uint16_t __f_ign0;
-	uint16_t f_fsw;
-	uint16_t __f_ign1;
-	uint16_t f_ftw;
-	uint16_t __f_ign2;
-	uint32_t f_eip;
-	uint16_t f_cs;
-	uint16_t f_fop;
-	uint32_t f_dp;
-	uint16_t f_ds;
-	uint16_t __f_ign3;
+	__uint16_t f_fcw;
+	__uint16_t __f_ign0;
+	__uint16_t f_fsw;
+	__uint16_t __f_ign1;
+	__uint16_t f_ftw;
+	__uint16_t __f_ign2;
+	__uint32_t f_eip;
+	__uint16_t f_cs;
+	__uint16_t f_fop;
+	__uint32_t f_dp;
+	__uint16_t f_ds;
+	__uint16_t __f_ign3;
 	union
 	  {
-		uint16_t fpr_16[5];
+		__uint16_t fpr_16[5];
 	  } f_st[8];
   };
 
@@ -135,8 +135,8 @@ typedef struct
 		struct fnsave_state kfpu_fn;
 #endif
 	  } kfpu_u;
-	uint32_t kfpu_status;
-	uint32_t kfpu_xstatus;
+	__uint32_t kfpu_status;
+	__uint32_t kfpu_xstatus;
   } kfpu_t;
 
 #endif /* _SYS_REGSET_H */

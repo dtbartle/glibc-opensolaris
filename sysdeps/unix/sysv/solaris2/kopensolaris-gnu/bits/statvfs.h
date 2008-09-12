@@ -55,6 +55,26 @@ typedef struct statvfs
 #endif
 } statvfs_t;
 
+#ifdef _SYSCALL32
+typedef struct statvfs32
+{
+	__uint32_t f_bsize;
+	__uint32_t f_frsize;
+	__fsblkcnt_t f_blocks;
+	__fsblkcnt_t f_bfree;
+	__fsblkcnt_t f_bavail;
+	__fsfilcnt_t f_files;
+	__fsfilcnt_t f_ffree;
+	__fsfilcnt_t f_favail;
+	__uint32_t f_fsid;
+	char f_basetype[_FSTYPSZ];
+	__uint32_t f_flag;
+	__uint32_t f_namemax;
+	char f_fstr[32];
+	__uint32_t f_filler[16];
+} statvfs32_t;
+#endif
+
 #ifdef __USE_LARGEFILE64
 typedef struct statvfs64
 {
@@ -75,6 +95,26 @@ typedef struct statvfs64
     unsigned long f_filler[16];
 #endif
 } statvfs64_t;
+#endif
+
+#ifdef _SYSCALL32
+typedef struct statvfs64_32
+{
+	__uint32_t f_bsize;
+	__uint32_t f_frsize;
+	__fsblkcnt64_t f_blocks;
+	__fsblkcnt64_t f_bfree;
+	__fsblkcnt64_t f_bavail;
+	__fsfilcnt64_t f_files;
+	__fsfilcnt64_t f_ffree;
+	__fsfilcnt64_t f_favail;
+	__uint32_t f_fsid;
+	char f_basetype[_FSTYPSZ];
+	__uint32_t f_flag;
+	__uint32_t f_namemax;
+	char f_fstr[32];
+	__uint32_t f_filler[16];
+} statvfs64_32_t;
 #endif
 
 /* Definitions for the flag in `f_flag'.  These definitions should be

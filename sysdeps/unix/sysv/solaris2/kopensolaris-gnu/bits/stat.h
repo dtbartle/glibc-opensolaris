@@ -96,7 +96,7 @@ struct stat32
 	__uid_t st_uid;
 	__gid_t st_gid;
 	__dev_t st_rdev;
-	__int_t st_pad2[2];
+	__int32_t st_pad2[2];
 	__off_t st_size;
 	__int32_t st_pad3;
 	struct timespec32 st_atim;

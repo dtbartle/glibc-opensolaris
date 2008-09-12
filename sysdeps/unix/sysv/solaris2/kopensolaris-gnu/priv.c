@@ -18,6 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
+#include <privP.h>
 #include <priv.h>
 #include <sys/priocntl.h>
 #include <alloca.h>
@@ -60,4 +61,17 @@ const priv_impl_info_t * getprivimplinfo (void)
 
   __libc_lock_unlock (privimplinfo_lock);
   return __info;
+}
+
+
+priv_data_t * __priv_parse_info (priv_impl_info_t *ip)
+{
+  /* TODO */
+  return NULL;
+}
+
+
+void __priv_free_info (priv_data_t *d)
+{
+  /* TODO */
 }

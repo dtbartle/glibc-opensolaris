@@ -20,7 +20,7 @@
 # error "Never use <bits/dirent.h> directly; include <dirent.h> instead."
 #endif
 
-struct dirent
+typedef struct dirent
   {
 #ifndef __USE_FILE_OFFSET64
     __ino_t d_ino;
@@ -31,27 +31,26 @@ struct dirent
 #endif
     unsigned short int d_reclen;
     char d_name[1];		/* We must not include limits.h! */
-  };
+  } dirent_t;
 
 #ifdef _SYSCALL32
-
-typedef struct dirent32 {
-    __ino_t d_ino;
-    __off_t d_off;
-    __uint16_t d_reclen;
-    char d_name[1];
-} dirent32_t;
-
+typedef struct dirent32
+  {
+	__ino_t d_ino;
+	__off_t d_off;
+	__uint16_t d_reclen;
+	char d_name[1];
+  } dirent32_t;
 #endif
 
 #ifdef __USE_LARGEFILE64
-struct dirent64
+typedef struct dirent64
   {
     __ino64_t d_ino;
     __off64_t d_off;
     unsigned short int d_reclen;
     char d_name[1];		/* We must not include limits.h! */
-  };
+  } dirent64_t;
 #endif
 
 #define d_fileno	d_ino	/* Backwards compatibility.  */

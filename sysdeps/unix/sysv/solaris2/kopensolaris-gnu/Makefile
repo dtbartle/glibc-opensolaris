@@ -44,10 +44,10 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h sys/ulimit.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
     sys/pset.h sys/priv.h sys/acl.h sys/procfs.h sys/reg.h sys/bufmod.h \
     sys/types32.h sys/task.h sys/isa_defs.h sys/door.h sys/elf.h sys/rctl.h \
-    sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h sys/time_impl.h \
+    sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h \
     sys/mutex.h sys/exacct.h sys/acct.h sys/sid.h sys/siginfo.h sys/link.h \
     sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h sys/port.h \
-    sys/machelf.h sys/zmod.h sys/inttypes.h sys/atomic.h sys/termio.h \
+    sys/machelf.h sys/zmod.h sys/inttypes.h sys/atomic.h \
     sys/port_impl.h sys/ttold.h sys/machtypes.h sys/dirent.h sys/utime.h \
     sys/ucred.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
@@ -84,7 +84,12 @@ endif
 
 ifeq ($(subdir),time)
 sysdep_routines += ntp_adjtime ntp_gettime sys_time sys_stime
-sysdep_headers += sys/timex.h
+sysdep_headers += sys/timex.h sys/time_impl.h
+endif
+
+ifeq ($(subdir),termios)
+sysdep_headers += termio.h
+sysdep_headers += sys/termio.h
 endif
 
 #

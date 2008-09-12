@@ -30,6 +30,16 @@ struct ntptimeval
   int32_t esterror;	/* estimated error (us) (ro) */
 };
 
+#ifdef _SYSCALL32
+# include <sys/types32.h>
+struct ntptimeval32
+{
+  struct timeval32 time;
+  int32_t maxerror;
+  int32_t esterror;
+};
+#endif
+
 struct timex
 {
   uint32_t modes;	/* mode selector */

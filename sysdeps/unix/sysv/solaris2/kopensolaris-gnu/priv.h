@@ -23,6 +23,12 @@
 #include <sys/priv.h>
 #include <features.h>
 
+#define PRIV_STR_PORT	0x00
+#define PRIV_STR_LIT	0x01
+#define PRIV_STR_SHORT	0x02
+
+#define PRIV_ALLSETS	(priv_ptype_t)0
+
 __BEGIN_DECLS
 
 extern int getppriv (priv_ptype_t which, priv_set_t *set);
