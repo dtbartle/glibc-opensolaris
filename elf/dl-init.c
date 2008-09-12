@@ -19,6 +19,9 @@
 
 #include <stddef.h>
 #include <ldsodefs.h>
+#ifdef ENABLE_RTLD_DB
+# include "dl-rtld_db.h"
+#endif
 
 
 /* Type of the initializer.  */
@@ -95,6 +98,10 @@ _dl_init (struct link_map *main_map, int argc, char **argv, char **env)
   ElfW(Dyn) *preinit_array_size = main_map->l_info[DT_PREINIT_ARRAYSZ];
   unsigned int i;
 
+#ifdef ENABLE_RTLD_DB
+  rtld_db_preinit (NULL);
+#endif
+
   if (__builtin_expect (GL(dl_initfirst) != NULL, 0))
     {
       call_init (GL(dl_initfirst), argc, argv, env);
@@ -132,6 +139,10 @@ _dl_init (struct link_map *main_map, int argc, char **argv, char **env)
   i = main_map->l_searchlist.r_nlist;
   while (i-- > 0)
     call_init (main_map->l_initfini[i], argc, argv, env);
+
+#ifdef ENABLE_RTLD_DB
+  rtld_db_postinit (NULL);
+#endif
 
 #ifndef HAVE_INLINED_SYSCALLS
   /* Finished starting up.  */

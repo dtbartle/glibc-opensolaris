@@ -22,6 +22,8 @@ These are solaris extensions that we should implement:
   gethomelgroup
   atomic_*
   membar_*
+  defopen, defread
+  _ttyname_dev
 
 Insert into headers:
   resolvpath (unistd.h)
@@ -31,6 +33,7 @@ Insert into headers:
   uucopy, uucopystr (string.h or strings.h)
   sysi86 (sys/sysi86.h - see below)
   str2sig, sig2str (signal.h)
+  getexecname (stdlib.h)
 
 INVALID_NOT_TERMINATED_TD_P expects to succeed on terminated threads
 
@@ -57,6 +60,21 @@ List of CDDL headers needed to compile random stuff:
   netconfig.h [libnsl]
   sys/netconfig.h [libnsl]
   netdir.h [libnsl]
+  libuutil.h [libuutil]
+  libuutil_impl.h [libuutil]
+  sys/avl.h [libavl]
+  sys/avl_impl.h [libavl]
+  auth_attr.h [libsecdb]
+  user_attr.h [libsecdb]
+  prof_attr.h [libsecdb]
+  secdb.h [libsecdb]
+  libnvpair.h [libnvpair]
+  sys/nvpair.h [libnvpair]
+  sys/nvpair_impl.h [libnvpair]
+  project.h [libproject]
+  sys/aio.h
+  sys/aio_impl.h
+
 Use cond_t data field for broadcast seqence
 
 Use timer_* syscalls

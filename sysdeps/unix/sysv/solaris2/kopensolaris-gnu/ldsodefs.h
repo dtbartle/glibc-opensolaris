@@ -40,4 +40,7 @@ extern const char * _dl_sun_execname;
 /* Initialization which is normally done by the dynamic linker.  */
 extern void _dl_non_dynamic_init (void) internal_function;
 
+/* We want to enable th rtld_db hooks.  */
+#define ENABLE_RTLD_DB
+
 #endif /* ldsodefs.h */
