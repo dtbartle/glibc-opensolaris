@@ -98,7 +98,11 @@ td_thr_get_info (const td_thrhandle_t *th, td_thrinfo_t *infop)
 
   /* Initialization which are the same in both cases.  */
   infop->ti_ta_p = th->th_ta_p;
+#ifndef PTHREAD_T_IS_TID
   infop->ti_lid = tid == 0 ? ps_getpid (th->th_ta_p->ph) : (uintptr_t) tid;
+#else
+  infop->ti_lid = tid == 0 ? FIRST_THREAD_TID : (uintptr_t) tid;
+#endif
   infop->ti_traceme = report_events != 0;
 
   if (copy != NULL)

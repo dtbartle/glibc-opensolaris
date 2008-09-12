@@ -21,8 +21,7 @@
 #include <privP.h>
 #include <priv.h>
 #include <sys/priocntl.h>
-#include <alloca.h>
-#include <bits/libc-lock.h>
+#include <string.h>
 
 DECLARE_INLINE_SYSCALL (int, privsys, int code, priv_op_t op,
     priv_ptype_t type, void *buf, size_t bufsize, int itype);
@@ -30,8 +29,7 @@ DECLARE_INLINE_SYSCALL (int, privsys, int code, priv_op_t op,
 /* Docs: http://docs.sun.com/app/docs/doc/816-5168/6mbb3hrjc?a=view
          http://docs.sun.com/app/docs/doc/816-5167/setppriv-2?a=view */
 
-__libc_lock_define (static, privimplinfo_lock);
-
+__libc_lock_define_initialized_recursive (, __priv_lock);
 libc_freeres_ptr (static priv_impl_info_t *__info);
 
 const priv_impl_info_t * getprivimplinfo (void)
@@ -39,7 +37,7 @@ const priv_impl_info_t * getprivimplinfo (void)
   if (__info)
     return __info;
 
-  __libc_lock_lock (privimplinfo_lock);
+  __libc_lock_lock_recursive (__priv_lock);
 
   /* First call: get header.  */
   priv_impl_info_t _info;
@@ -59,19 +57,88 @@ const priv_impl_info_t * getprivimplinfo (void)
         }
     }
 
-  __libc_lock_unlock (privimplinfo_lock);
+  __libc_lock_unlock_recursive (__priv_lock);
   return __info;
 }
 
 
-priv_data_t * __priv_parse_info (priv_impl_info_t *ip)
+priv_set_t *priv_allocset (void)
 {
-  /* TODO */
-  return NULL;
+  const priv_impl_info_t *pii = getprivimplinfo ();
+  if (!pii)
+    return NULL;
+
+  return malloc (pii->priv_setsize * sizeof (priv_chunk_t));
 }
 
 
-void __priv_free_info (priv_data_t *d)
+void priv_freeset (priv_set_t *sp)
 {
-  /* TODO */
+  free (sp);
+}
+
+
+int priv_getbyname (const char *privname)
+{
+  const priv_data_t *pd = __priv_parse_data_cached ();
+  if (!pd)
+    return -1;
+
+  for (uint32_t i = 0; i < pd->pd_privnames_cnt; i++)
+    {
+      if (strcasecmp (pd->pd_privnames[i], privname) == 0)
+        return i;
+    }
+
+  __set_errno (EINVAL);
+  return -1;
+}
+
+
+const char *priv_getbynum (int privnum)
+{
+  const priv_data_t *pd = __priv_parse_data_cached ();
+  if (!pd)
+    return NULL;
+
+  if (privnum < 0 || privnum >= pd->pd_privnames_cnt)
+    {
+      __set_errno (EINVAL);
+      return NULL;
+    }
+
+  return pd->pd_privnames[privnum];
+}
+
+
+int priv_getsetbyname (const char *privsetname)
+{
+  const priv_data_t *pd = __priv_parse_data_cached ();
+  if (!pd)
+    return -1;
+
+  for (uint32_t i = 0; i < pd->pd_setnames_cnt; i++)
+    {
+      if (strcasecmp (pd->pd_setnames[i], privsetname) == 0)
+        return i;
+    }
+
+  __set_errno (EINVAL);
+  return -1;
+}
+
+
+const char *priv_getsetbynum (int privsetnum)
+{
+  const priv_data_t *pd = __priv_parse_data_cached ();
+  if (!pd)
+    return NULL;
+
+  if (privsetnum < 0 || privsetnum >= pd->pd_setnames_cnt)
+    {
+      __set_errno (EINVAL);
+      return NULL;
+    }
+
+  return pd->pd_setnames[privsetnum];
 }

@@ -74,6 +74,12 @@ typedef struct priv_info
 	uint32_t priv_info_size;
 } priv_info_t;
 
+typedef struct priv_info_uint
+{
+	priv_info_t info;
+	uint_t val;
+} priv_info_uint_t;
+
 typedef struct priv_info_set
 {
 	priv_info_t info;
@@ -99,5 +105,12 @@ typedef struct priv_info_names
 #define PRIV_NONE	(-3)
 #define PRIV_ALLZONE	(-4)
 #define PRIV_GLOBAL	(-5)
+
+#define PRIV_INFO_SETNAMES	1
+#define PRIV_INFO_PRIVNAMES	2
+#define PRIV_INFO_BASICPRIVS	3
+#define PRIV_INFO_FLAGS		4
+
+
 
 #endif /* _SYS_PRIV_H */

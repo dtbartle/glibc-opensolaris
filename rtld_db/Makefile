@@ -23,9 +23,11 @@ subdir          := rtld_db
 extra-libs = librtld_db
 extra-libs-others := $(extra-libs)
 
-headers         = rtld_db.h
+headers         := rtld_db.h
 
 librtld_db-routines = rd_init rd_new rd_reset rd_delete rd_loadobj_iter \
     rd_log rd_get_dyns
+
+include ../Makeconfig
 
 include ../Rules

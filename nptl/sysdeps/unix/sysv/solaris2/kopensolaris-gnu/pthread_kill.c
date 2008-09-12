@@ -55,3 +55,4 @@ __pthread_kill (threadid, signo)
 }
 strong_alias (__pthread_kill, pthread_kill)
 weak_alias (__pthread_kill, _lwp_kill)
+weak_alias (__pthread_kill, thr_kill)

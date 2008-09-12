@@ -31,8 +31,13 @@ td_thr_setfpregs (const td_thrhandle_t *th, const prfpregset_t *fpregs)
 
   if (th->th_unique == 0)
     /* Special case for the main thread before initialization.  */
+#ifndef PTHREAD_T_IS_TID
     return ps_lsetfpregs (th->th_ta_p->ph, ps_getpid (th->th_ta_p->ph),
 			  fpregs) != PS_OK ? TD_ERR : TD_OK;
+#else
+    return ps_lsetfpregs (th->th_ta_p->ph, FIRST_THREAD_TID,
+			  fpregs) != PS_OK ? TD_ERR : TD_OK;
+#endif
 
   /* We have to get the state and the PID for this thread.  */
   err = DB_GET_FIELD (cancelhandling, th->th_ta_p, th->th_unique, pthread,

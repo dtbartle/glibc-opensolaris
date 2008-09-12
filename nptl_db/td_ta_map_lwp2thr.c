@@ -198,7 +198,11 @@ td_ta_map_lwp2thr (const td_thragent_t *ta_arg,
 
   if (list == 0)
     {
+#ifndef PTHREAD_T_IS_TID
       if (ps_getpid (ta->ph) != lwpid)
+#else
+      if (FIRST_THREAD_TID != lwpid)
+#endif
 	return TD_ERR;
       th->th_ta_p = ta;
       th->th_unique = 0;

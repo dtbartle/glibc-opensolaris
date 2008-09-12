@@ -17,8 +17,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <priv.h>
+#include <sys/priv.h>
 
 typedef struct priv_data
-{
-} priv_data_t;
+  {
+	size_t pd_setsize;
+	uint32_t pd_setnames_cnt;
+	char **pd_setnames;
+	uint32_t pd_privnames_cnt;
+	char **pd_privnames;
+	priv_chunk_t *pd_basicprivs;
+  } priv_data_t;
+
+
+extern const priv_data_t * __priv_parse_data_cached (void);

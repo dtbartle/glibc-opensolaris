@@ -20,9 +20,6 @@
 #ifndef _OPENSOLARIS_PTHREADP_H
 #define _OPENSOLARIS_PTHREADP_H
 
-/* It is known that the first lwpid is 1.  */
-#define FIRST_THREAD_TID	1
-
 /* rwlock macros.  */
 #define _RWLOCK_WR_LOCK		0x80000000
 #define _RWLOCK_RD_MASK		0x7FFFFFFF

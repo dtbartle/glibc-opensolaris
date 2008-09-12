@@ -216,4 +216,12 @@
 #define SYS_SUB_zone_check_datalink 12
 #define SYS_SUB_zone_list_datalink  13
 
+/* SYS_labelsys */
+#define SYS_SUB_syslabeling         1
+#define SYS_SUB_tnrh                2
+#define SYS_SUB_tnrhtp              3
+#define SYS_SUB_tnmlp               4
+#define SYS_SUB_getlabel            5
+#define SYS_SUB_pgetlabel           6
+
 #endif /* _SYSCALL_PRIV_H */
