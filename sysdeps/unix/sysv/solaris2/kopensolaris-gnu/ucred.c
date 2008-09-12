@@ -28,20 +28,30 @@
 
 DECLARE_INLINE_SYSCALL (int, getpeerucred, int fd, ucred_t *ucred);
 DECLARE_INLINE_SYSCALL (int, ucred_get, pid_t pid, ucred_t *ucred);
-DECLARE_INLINE_SYSCALL (int, syslabeling, void);
 
 /* Docs: http://docs.sun.com/app/docs/doc/816-5168/ucred-get-3c?a=view
          http://docs.sun.com/app/docs/doc/816-5168/getpeerucred-3c?l=ru&a=view */
 
-ucred_t *ucred_get (pid_t pid)
+
+ucred_t *_ucred_alloc (void)
 {
   size_t uc_size = ucred_size ();
   ucred_t *uc = malloc (uc_size);
+  if (uc)
+    uc->uc_size = uc_size;
+  return uc;
+}
+
+
+ucred_t *ucred_get (pid_t pid)
+{
+  ucred_t *uc = _ucred_alloc ();
   if (!uc)
     return NULL;
-  uc->uc_size = uc_size;
 
-  INLINE_SYSCALL (ucred_get, 2, pid, uc);
+  int res = INLINE_SYSCALL (ucred_get, 2, pid, uc);
+  if (res != 0)
+    return NULL;
 
   return uc;
 }
@@ -76,7 +86,7 @@ int ucred_getgroups (const ucred_t *uc, const gid_t **groups)
 {
   if (uc->uc_credoff == 0 || groups == NULL)
     {
-      __set_errno(EINVAL);
+      __set_errno (EINVAL);
       return -1;
     }
 
@@ -92,14 +102,23 @@ int ucred_getgroups (const ucred_t *uc, const gid_t **groups)
 }
 
 
-#if 0
 const priv_set_t *ucred_getprivset (const ucred_t *uc, const char *set)
 {
-  // TODO
-  __set_errno (ENOSYS);
-  return NULL;
+  /* Get prpriv_t.  */
+  if (uc->uc_privoff == 0)
+    {
+      __set_errno (EINVAL);
+      return NULL;
+    }
+  prpriv_t * pr = (prpriv_t *)((char *)uc + uc->uc_privoff);
+
+  /* Get priv set number.  */
+  int setnum = priv_getsetbyname (set);
+  if (setnum == -1)
+    return NULL;
+
+  return (priv_set_t *)&pr->pr_sets[setnum * pr->pr_setsize];
 }
-#endif
 
 
 pid_t ucred_getpid (const ucred_t *uc)
@@ -129,20 +148,40 @@ zoneid_t ucred_getzoneid (const ucred_t *uc)
 }
 
 
-#if 0
 unsigned int ucred_getpflags (const ucred_t *uc, unsigned int flags)
 {
-  // TODO
-  __set_errno (ENOSYS);
-  return -1;
+  /* Get prpriv_t.  */
+  if (uc->uc_privoff == 0)
+    {
+      __set_errno (EINVAL);
+      return (unsigned int)-1;
+    }
+  prpriv_t *pr = (prpriv_t *)((char *)uc + uc->uc_privoff);
+
+  /* Iterate over all priv_info_t's. Note that the first priv_info_t follows
+     the list of priv sets.  */
+  priv_info_t * pi = (priv_info_t *)&pr->pr_sets[pr->pr_nsets * pr->pr_setsize];
+  uint32_t left = pr->pr_infosize;
+  while (left)
+    {
+      if (pi->priv_info_type == PRIV_INFO_FLAGS)
+        return ((priv_info_uint_t *)pi)->val & flags;
+
+      left -= pi->priv_info_size;
+      pi = (priv_info_t *)((char *)pi + pi->priv_info_size);
+    }
+
+  /* We didn't find PRIV_INFO_FLAGS.  */
+  __set_errno (EINVAL);
+  return (unsigned int)-1;
 }
-#endif
 
 
 m_label_t *ucred_getlabel (const ucred_t *uc)
 {
-  int syslabeling = INLINE_SYSCALL (syslabeling, 0);
-  if (!syslabeling || uc->uc_labeloff == 0)
+  extern int is_system_labeled (void);
+
+  if (!is_system_labeled () || uc->uc_labeloff == 0)
     {
       __set_errno (EINVAL);
       return NULL;
@@ -159,7 +198,6 @@ size_t ucred_size (void)
     /* ucred_size cannot fail.  */
     assert (info);
 
-    /* XXX: We shouldn't use AUDITINFO64_ADDR_T_SIZE and BSLABEL_T_SIZE.  */
     return UCRED_SIZE (info);
 }
 
@@ -171,19 +209,17 @@ int getpeerucred (int fd, ucred_t **ucred)
   /* alloc ucred if needed */
   if(*ucred == NULL)
     {
-      size_t uc_size = ucred_size ();
-      ucred_t *uc = malloc (uc_size);
+      ucred_t *uc = _ucred_alloc ();
       if (!uc)
         return -1;
-      uc->uc_size = uc_size;
       *ucred = uc;
     }
 
-  int result = INLINE_SYSCALL (getpeerucred, 2, fd, uc);
-  if (result == -1 && *ucred == NULL)
+  int res = INLINE_SYSCALL (getpeerucred, 2, fd, uc);
+  if (res == -1 && *ucred == NULL)
       free (uc);
-  else if (result == 0 && *ucred == NULL)
+  else if (res == 0 && *ucred == NULL)
       *ucred = uc;
 
-  return result;
+  return res;
 }

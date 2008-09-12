@@ -66,6 +66,9 @@ extern size_t main_stacksize;
 /* The first thread has a large (10M) stack so use the arch defaults.  */
 #define PTHREAD_USE_ARCH_STACK_DEFAULT_SIZE
 
+/* It is known that the first lwpid is 1.  */
+#define FIRST_THREAD_TID	1
+
 /* __exit_thread_inline is the same for all architectures.  */
 #include <inline-syscall.h>
 

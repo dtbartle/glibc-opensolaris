@@ -43,8 +43,13 @@ td_thr_tlsbase (const td_thrhandle_t *th,
 	 attempted too early.  Tough.  */
 
       td_thrhandle_t main_th;
+#ifndef PTHREAD_T_IS_TID
       err = __td_ta_lookup_th_unique (th->th_ta_p, ps_getpid (th->th_ta_p->ph),
 				      &main_th);
+#else
+      err = __td_ta_lookup_th_unique (th->th_ta_p, FIRST_THREAD_TID,
+				      &main_th);
+#endif
       if (err == 0)
 	pd = main_th.th_unique;
       if (pd == 0)

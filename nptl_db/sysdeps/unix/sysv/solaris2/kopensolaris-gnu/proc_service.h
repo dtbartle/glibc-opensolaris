@@ -57,7 +57,7 @@ __BEGIN_DECLS
 extern ps_err_e ps_pread(struct ps_prochandle *,
 			   psaddr_t, void *, size_t);
 extern ps_err_e ps_pwrite(struct ps_prochandle *,
-			   psaddr_t, void *, size_t);
+			   psaddr_t, const void *, size_t);
 extern ps_err_e ps_pdread (struct ps_prochandle *,
 			   psaddr_t, void *, size_t);
 extern ps_err_e ps_pdwrite (struct ps_prochandle *,
@@ -77,9 +77,6 @@ extern ps_err_e ps_lgetfpregs (struct ps_prochandle *,
 			       lwpid_t, prfpregset_t *);
 extern ps_err_e ps_lsetfpregs (struct ps_prochandle *,
 			       lwpid_t, const prfpregset_t *);
-
-/* Return the PID of the process.  */
-extern pid_t ps_getpid (struct ps_prochandle *);
 
 /* Fetch the special per-thread address associated with the given LWP.
    This call is only used on a few platforms (most use a normal register).

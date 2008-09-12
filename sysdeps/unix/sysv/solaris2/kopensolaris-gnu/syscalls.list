@@ -9,14 +9,10 @@ acctctl             - acctctl               i:ipi       acctctl
 acl                 - acl                   i:siip      acl
 clock_getres        - clock_getres          i:ip        clock_getres
 creat               - creat                 Ci:si       __libc_creat        creat
-faccessat           - fsat:accessat         i:isi       faccessat
 facl                - facl                  i:iiip      facl
-fchownat            - fsat:fchownat         i:isiii     fchownat
 fpathconf           - fpathconf             i:ii        __fpathcon          fpathconf
 fstatvfs            - fstatvfs              i:ip        __fstatvfs          fstatvfs
 fstatvfs64          - fstatvfs64            i:ip        __fstatvfs64        fstatvfs64
-futimesat           - fsat:futimesat        i:isi       futimesat
-getacct             - exacctsys:getacct     i:iipi      getacct
 getcpuid            - getcpuid              i:          getcpuid
 getpflags           - privsys:getpflags     i:i         getpflags
 getmsg              - getmsg                i:ppp       getmsg
@@ -39,30 +35,17 @@ memcntl             - memcntl               i:piiiii    memcntl
 mincore             - mincore               i:anV       mincore
 mmap64              - mmap64                i:piiiii    __mmap64            mmap64
 mount               - mount                 i:ppippipi  __mount             mount
-msgctl              - msgsys:msgctl         i:iip       __msgctl            msgctl
-msgget              - msgsys:msgget         i:ii        __msgget            msgget
-msgrcv              - msgsys:msgrcv         Ci:ipiii    __libc_msgrcv       msgrcv
-msgsnd              - msgsys:msgsnd         Ci:ipii     __msgsnd            msgsnd
 nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __nanosleep nanosleep
-ntp_adjtime         - ntp_adjtime           i:p         __adjtimex          adjtimex ntp_adjtime __adjtimex_internal
-ntp_gettime         - ntp_gettime           i:p         ntp_gettime
 pathconf            - pathconf              i:pi        __pathconf          pathconf
 pcsample            - pcsample              i:pi        pcsample
-p_online            - p_online              i:ii        p_online
 ppoll               - pollsys               Ci:pipp     ppoll
 pread               - pread                 Ci:iPii     __libc_pread        __pread pread
 pread64             - pread64               Ci:iPii     __libc_pread64      __pread64 pread64
 profil              - profil                :piii       __profil            profil
-putacct             - exacctsys:putacct     i:iipii     putacct
 pwrite              - pwrite                Ci:iPii     __libc_pwrite       __pwrite pwrite
 pwrite64            - pwrite64              Ci:iPii     __libc_pwrite64     __pwrite64 pwrite64
-renameat            - fsat:renameat         i:isis      renameat
 resolvepath         - resolvepath           i:spi       resolvepath
 sched_yield         - yield                 i:          __sched_yield       sched_yield
-semctl              - semsys:semctl         i:iiiv      semctl
-semget              - semsys:semget         i:iii       semget
-semop               - semsys:semop          i:ipi       semop
-semtimedop          - semsys:semtimedop     i:ipip      semtimedop
 setcontext          - context:setcontext    i:p         __setcontext        setcontext
 setpgid             - pgrpsys:setpgid       i:ii        __setpgid           setpgid
 setpgrp             - pgrpsys:setpgrp       i:          __setpgrp           setpgrp
@@ -87,16 +70,42 @@ systeminfo          - systeminfo            i:ipi       sysinfo
 swapctl             - uadmin:swapctl        i:ip        swapctl
 uadmin              - uadmin                i:iii       __uadmin            uadmin
 umount2             - umount2               i:si        umount2
-unlinkat            - fsat:unlinkat         i:isi       unlinkat
 utssys              - utssys                i:piip      utssys
 uucopy              - uucopy                i:ppi       uucopy
 uucopystr           - uucopystr             i:ppi       uucopystr
 vhangup             - vhangup               i:          vhangup
 waitid              - waitid                Ci:iipi     __waitid            waitid
-wracct              - exacctsys             i:iii       wracct
 xmknod              - xmknod                i:isii      __xmknod            _xmknod
 
-# core_*
+# msg
+msgctl              - msgsys:msgctl         i:iip       __msgctl            msgctl
+msgget              - msgsys:msgget         i:ii        __msgget            msgget
+msgrcv              - msgsys:msgrcv         Ci:ipiii    __libc_msgrcv       msgrcv
+msgsnd              - msgsys:msgsnd         Ci:ipii     __msgsnd            msgsnd
+
+# exacctsys
+getacct             - exacctsys:getacct     i:iipi      getacct
+putacct             - exacctsys:putacct     i:iipii     putacct
+wracct              - exacctsys:wracct      i:iii       wracct
+
+# *at
+faccessat           - fsat:accessat         i:isi       faccessat
+fchownat            - fsat:fchownat         i:isiii     fchownat
+futimesat           - fsat:futimesat        i:isi       futimesat
+renameat            - fsat:renameat         i:isis      renameat
+unlinkat            - fsat:unlinkat         i:isi       unlinkat
+
+# ntp
+ntp_adjtime         - ntp_adjtime           i:p         __adjtimex          adjtimex ntp_adjtime __adjtimex_internal
+ntp_gettime         - ntp_gettime           i:p         ntp_gettime
+
+# sem
+semctl              - semsys:semctl         i:iiiv      semctl
+semget              - semsys:semget         i:iii       semget
+semop               - semsys:semop          i:ipi       semop
+semtimedop          - semsys:semtimedop     i:ipip      semtimedop
+
+# corectl
 core_get_default_content    - corectl:core_get_default_content  i:p core_get_default_content
 core_get_default_path   - corectl:core_get_default_path i:pi    core_get_default_path
 core_get_global_content - corectl:core_get_global_content   i:p     core_get_global_content
@@ -112,7 +121,7 @@ core_set_options    - corectl:core_set_options  i:i     core_set_options
 core_set_process_content    - corectl:core_set_process_content  i:pi    core_set_process_content
 core_set_process_path   - corectl:core_set_process_path i:pii   core_set_process_path
 
-# zone_*
+# zones
 zone_add_datalink   - zone:zone_add_datalink i:is       zone_add_datalink
 zone_boot           - zone:zone_boot        i:i         zone_boot
 zone_check_datalink - zone:zone_check_datalink  i:ps    zone_check_datalink
@@ -126,7 +135,8 @@ zone_setattr        - zone:zone_setattr     i:iipi      zone_setattr
 zone_shutdown       - zone:zone_shutdown    i:i         zone_shutdown
 zone_version        - zone:zone_version     i:p         zone_version
 
-# processor_*, pset_*
+# processor
+p_online            - p_online              i:ii        p_online
 processor_bind      - processor_bind        i:iiip      processor_bind
 processor_info      - processor_info        i:ip        processor_info
 pset_create         - pset:pset_create      i:p         pset_create
@@ -139,7 +149,6 @@ pset_setattr        - pset:pset_setattr     i:ii        pset_setattr
 pset_getattr        - pset:pset_getattr     i:ip        pset_getattr
 
 # sockets
-
 _so_accept          - accept                Ci:iBN      _so_accept
 _so_bind            - bind                  i:ipii      _so_bind
 _so_connect         - connect               Ci:ipi      _so_connect
@@ -160,6 +169,7 @@ _so_socketpair      - so_socketpair         i:p         _so_socketpair
 
 # misc
 _sysconfig          - sysconfig             i:i         _sysconfig
+is_system_labeled   - labelsys:syslabeling  i:          is_system_labeled
 
 #
 # implement these in helper files
@@ -181,7 +191,6 @@ sys_getdents        - getdents              i:ipi       __syscall_getdents
 sys_getdents64      - getdents64            i:ipi       __syscall_getdents64
 sys_getloadavg      - getloadavg            i:pi        __syscall_getloadavg
 sys_getpeerucred    - ucredsys:getpeerucred i:ip        __syscall_getpeerucred
-sys_syslabeling     - labelsys              i:          __syscall_syslabeling
 sys_lstat           - lstat                 i:sp        __syscall_lstat
 sys_lstat64         - lstat64               i:sp        __syscall_lstat64
 sys_lwp_private     - lwp_private           i:iii       __syscall_lwp_private

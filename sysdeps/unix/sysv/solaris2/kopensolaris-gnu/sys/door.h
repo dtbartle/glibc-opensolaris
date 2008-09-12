@@ -129,7 +129,7 @@ struct door_results
 	size_t data_size;
 	door_desc_t *desc_ptr;
 	size_t desc_num;
-	void (*pc)();
+	void (*pc)(void);
 	int nservers;
 	door_info_t *door_info;
   };

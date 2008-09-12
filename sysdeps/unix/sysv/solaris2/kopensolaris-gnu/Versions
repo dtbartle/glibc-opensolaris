@@ -31,7 +31,7 @@ libc {
     getzoneidbyname; getzonenamebyid;
 
     # i
-    idmap_reg; idmap_unreg; issetugid;
+    idmap_reg; idmap_unreg; issetugid; is_system_labeled;
 
     # l
     llseek;
@@ -45,10 +45,15 @@ libc {
 
     # p
     pc_sample; p_online; priocntl; priocntlset; __priv_free_info;
-    __priv_getbynum; __priv_getdata; __priv_getsetbyname; __priv_getsetbynum;
     __priv_parse_info; processor_bind; processor_info; port_alert;
     port_associate; port_create; port_dissociate; port_get; port_getn;
-    port_send; port_sendn; pset_assign; pset_bind; pset_create; pset_destroy;
+    port_send; port_sendn; priv_allocset; priv_addset; priv_copyset;
+    priv_delset; priv_emptyset; priv_fillset;
+    priv_freeset; priv_getbyname; priv_getbynum; priv_getsetbyname;
+    priv_getsetbynum; priv_gettext; priv_ineffect; priv_intersect;
+    priv_inverse; priv_isemptyset; priv_isequalset; priv_isfullset;
+    priv_ismember; priv_issubset; priv_set; priv_set_to_str; priv_str_to_set;
+    priv_union; pset_assign; pset_bind; pset_create; pset_destroy;
     pset_getattr; pset_getloadavg; pset_info; pset_list; pset_setattr; putacct;
 
     # r
@@ -71,7 +76,7 @@ libc {
     _ttyname_dev;
 
     # u
-    uadmin; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;
+    uadmin; _ucred_alloc; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;
     ucred_getgroups; ucred_getlabel; ucred_getpflags; ucred_getpid;
     ucred_getprivset; ucred_getprojid; ucred_getrgid; ucred_getruid;
     ucred_getsgid; ucred_getsuid; ucred_getzoneid; ucred_size; umount;
