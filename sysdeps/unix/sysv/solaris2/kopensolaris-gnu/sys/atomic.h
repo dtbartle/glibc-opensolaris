@@ -17,8 +17,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _ATOMIC_H
-#define _ATOMIC_H
+#ifndef _SYS_ATOMIC_H
+#define _SYS_ATOMIC_H
 
 #include <features.h>
 
@@ -31,4 +31,4 @@ extern void membar_consumer (void);
 
 __END_DECLS
 
-#endif /* _ATOMIC_H */
+#endif /* _SYS_ATOMIC_H */

@@ -17,31 +17,26 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-/* We need the full patch to atomic.h or we'll get include/atomic.h.  */
-#include "sysdeps/unix/sysv/solaris2/kopensolaris-gnu/atomic.h"
-#include <membar.h>
-
-/* TODO */
+#include <sys/atomic.h>
+/* This pulls in include/atomic.h rather than sysdeps/.../atomic.h.  */
+#include <atomic.h>
 
 void membar_enter ()
 {
-  __membar_enter ();
+  atomic_full_barrier ();
 }
-
 
 void membar_exit ()
 {
-  __membar_exit ();
+  atomic_full_barrier ();
 }
-
 
 void membar_producer ()
 {
-  __membar_producer ();
+  atomic_write_barrier ();
 }
-
 
 void membar_consumer ()
 {
-  __membar_consumer ();
+  atomic_read_barrier ();
 }
