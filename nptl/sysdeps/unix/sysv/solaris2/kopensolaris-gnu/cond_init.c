@@ -34,4 +34,6 @@ int cond_init (cond, type, arg)
   memset (cond, 0, sizeof(cond_t));
   cond->cond_type = type;
   cond->cond_magic = COND_MAGIC;
+
+  return 0;
 }
