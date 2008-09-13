@@ -17,6 +17,29 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <rtld_db.h>
+#include <sys/link.h>
+
 extern void rtld_db_preinit (void *arg);
 extern void rtld_db_postinit (void *arg);
 extern void rtld_db_ldactivity (void *arg);
+
+extern rd_event_msg_t rtld_db_event_msg;
+
+static inline void rtld_db_event (rd_event_e event, r_state_e state)
+{
+  rtld_db_event_msg.type = event;
+  rtld_db_event_msg.u.state = state;
+
+  switch (event)
+    {
+    case RD_PREINIT:
+      rtld_db_preinit (NULL);
+      break;
+    case RD_POSTINIT:
+      rtld_db_postinit (NULL);
+      break;
+    case RD_DLACTIVITY:
+      rtld_db_dlactivity (NULL);
+    }
+}

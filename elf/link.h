@@ -35,6 +35,16 @@
 #include <bits/elfclass.h>		/* Defines __ELF_NATIVE_CLASS.  */
 #include <bits/link.h>
 
+typedef enum
+  {
+	/* This state value describes the mapping change taking place when
+	   the `r_brk' address is called.  */
+	RT_CONSISTENT,		/* Mapping change is complete.  */
+	RT_ADD,			/* Beginning to add a new object.  */
+	RT_DELETE		/* Beginning to remove an object mapping.  */
+  } r_state_e;
+
+
 /* Rendezvous structure used by the run-time dynamic linker to communicate
    details of shared object loading to the debugger.  If the executable's
    dynamic section has a DT_DEBUG element, the run-time linker sets that
@@ -52,14 +62,7 @@ struct r_debug
        The debugger can set a breakpoint at this address if it wants to
        notice shared object mapping changes.  */
     ElfW(Addr) r_brk;
-    enum
-      {
-	/* This state value describes the mapping change taking place when
-	   the `r_brk' address is called.  */
-	RT_CONSISTENT,		/* Mapping change is complete.  */
-	RT_ADD,			/* Beginning to add a new object.  */
-	RT_DELETE		/* Beginning to remove an object mapping.  */
-      } r_state;
+    r_state_e r_state;
 
     ElfW(Addr) r_ldbase;	/* Base address the linker is loaded at.  */
   };

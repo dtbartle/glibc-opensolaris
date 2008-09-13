@@ -35,4 +35,11 @@ typedef enum
 	RD_DLACTIVITY
   } rd_event_e;
 
+typedef enum
+  {
+	RD_FL_NONE = 0,
+	RD_FL_ODBG = 1,
+	RD_FL_DBG = 2
+  } rd_flags_e;
+
 #endif /* _SYS_LINK_H */

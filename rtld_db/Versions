@@ -7,6 +7,6 @@ librtld_db {
 }
 ld {
   GLIBC_2.7 {
-    rtld_db_preinit; rtld_db_postinit; rtld_db_dlactivity;
+    rtld_db_preinit; rtld_db_postinit; rtld_db_dlactivity; rtld_db_event_msg;
   }
 }

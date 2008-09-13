@@ -26,20 +26,39 @@ Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 
 rd_err_e rd_reset (struct rd_agent *rdap)
 {
+  ps_err_e res;
+
   /* Read _r_debug from ld.so (the dynamic case).  */
   if (&ps_pglobal_lookup == NULL)
     return RD_NOCAPAB;
-  ps_err_e res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "_r_debug",
-    &rdap->rd_r_debug);
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "_r_debug",
+      (psaddr_t *)&rdap->rd_r_debug);
   if (res != PS_OK )
     {
       /* TODO: Scan executable's .dynamic section (the static case).  */
 
-      return res;
+      return RD_DBERR;
     }
 
-  /* TODO: lookup symbol for rtld_db_preinit, rtld_db_postinit,
-     rtld_db_dlactivity.  */
+  /* Lookup symbols for rtld_db_preinit, rtld_db_postinit,
+     rtld_db_dlactivity, and rtld_db_event_msg.  */
+  /* TODO: Does this work for static executables?  */
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_preinit",
+      (psaddr_t *)&rdap->rd_preinit);
+  if (res != PS_OK)
+    return RD_DBERR;
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_postinit",
+      (psaddr_t *)&rdap->rd_postinit);
+  if (res != PS_OK)
+    return RD_DBERR;
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_dlactivity",
+      (psaddr_t *)&rdap->rd_dlactivity);
+  if (res != PS_OK)
+    return RD_DBERR;
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_event_msg",
+      (psaddr_t *)&rdap->rd_event_msg);
+  if (res != PS_OK)
+    return RD_DBERR;
 
   return RD_OK;
 }

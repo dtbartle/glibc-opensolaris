@@ -18,12 +18,16 @@
    02111-1307 USA.  */
 
 #include <proc_service.h>
-#include <link.h>
+#include <sys/link.h>
 
 struct rd_agent
   {
 	struct ps_prochandle *rd_php;
 	struct r_debug *rd_r_debug;
+    void (*rd_preinit)(void *);
+    void (*rd_postinit)(void *);
+    void (*rd_dlactivity)(void *);
+    rd_event_msg_t *rd_event_msg;
   };
 
 extern int __rtld_logging;

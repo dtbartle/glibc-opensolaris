@@ -26,7 +26,7 @@ extra-libs-others := $(extra-libs)
 headers         := rtld_db.h
 
 librtld_db-routines = rd_init rd_new rd_reset rd_delete rd_loadobj_iter \
-    rd_log rd_get_dyns
+    rd_log rd_get_dyns rd_event_enable rd_event_addr rd_event_getmsg
 
 include ../Makeconfig
 
