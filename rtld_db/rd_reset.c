@@ -27,13 +27,15 @@ Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 rd_err_e rd_reset (struct rd_agent *rdap)
 {
   ps_err_e res;
+  psaddr_t addr;
 
   /* Read _r_debug from ld.so (the dynamic case).  */
   if (&ps_pglobal_lookup == NULL)
     return RD_NOCAPAB;
-  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "_r_debug",
-      (psaddr_t *)&rdap->rd_r_debug);
-  if (res != PS_OK )
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "_r_debug", &addr);
+  if (res == PS_OK )
+      rdap->rd_r_debug = (struct r_debug *)addr;
+  else
     {
       /* TODO: Scan executable's .dynamic section (the static case).  */
 
@@ -43,22 +45,22 @@ rd_err_e rd_reset (struct rd_agent *rdap)
   /* Lookup symbols for rtld_db_preinit, rtld_db_postinit,
      rtld_db_dlactivity, and rtld_db_event_msg.  */
   /* TODO: Does this work for static executables?  */
-  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_preinit",
-      (psaddr_t *)&rdap->rd_preinit);
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_preinit", &addr);
   if (res != PS_OK)
     return RD_DBERR;
-  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_postinit",
-      (psaddr_t *)&rdap->rd_postinit);
+  rdap->rd_preinit = (void (*)(void *))addr;
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_postinit", &addr);
   if (res != PS_OK)
     return RD_DBERR;
-  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_dlactivity",
-      (psaddr_t *)&rdap->rd_dlactivity);
+  rdap->rd_postinit = (void (*)(void *))addr;
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_dlactivity", &addr);
   if (res != PS_OK)
     return RD_DBERR;
-  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_event_msg",
-      (psaddr_t *)&rdap->rd_event_msg);
+  rdap->rd_dlactivity = (void (*)(void *))addr;
+  res = ps_pglobal_lookup (rdap->rd_php, PS_OBJ_LDSO, "rtld_db_event_msg", &addr);
   if (res != PS_OK)
     return RD_DBERR;
+  rdap->rd_event_msg = (rd_event_msg_t *)addr;
 
   return RD_OK;
 }

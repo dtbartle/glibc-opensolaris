@@ -1,5 +1,6 @@
-/* Copyright (C) 1995, 1996, 1997, 2002 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -16,26 +17,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <errno.h>
-#include <termios.h>
-#include <sys/ioctl.h>
-#include <sysdep-cancel.h>
+#include <sys/mnttab.h>
 
-/* Wait for pending output to be written on FD.  */
-int
-__libc_tcdrain (int fd)
+/* Docs: http://docs.sun.com/app/docs/doc/816-5168/resetmnttab-3c  */
+
+void resetmnttab (FILE *fp)
 {
-  if (SINGLE_THREAD_P)
-    /* With an argument of 1, TCSBRK for output to be drain.  */
-    return ioctl (fd, TCSBRK, 1);
-
-  int oldtype = LIBC_CANCEL_ASYNC ();
-
-  /* With an argument of 1, TCSBRK for output to be drain.  */
-  int res = ioctl (fd, TCSBRK, 1);
-
-  LIBC_CANCEL_RESET (oldtype);
-
-  return res;
+  rewind (fp);
 }
-weak_alias (__libc_tcdrain, tcdrain)

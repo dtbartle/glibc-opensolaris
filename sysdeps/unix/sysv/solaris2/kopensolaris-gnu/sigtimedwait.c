@@ -57,11 +57,11 @@ __sigtimedwait (const sigset_t *set, siginfo_t *info,
 
   int oldtype = LIBC_CANCEL_ASYNC ();
 
-  int result = __sigtimedwait_not_cancel (set, info, timeout);
+  int res = __sigtimedwait_not_cancel (set, info, timeout);
 
   LIBC_CANCEL_RESET (oldtype);
 
-  return result;
+  return res;
 }
 
 libc_hidden_def (__sigtimedwait)

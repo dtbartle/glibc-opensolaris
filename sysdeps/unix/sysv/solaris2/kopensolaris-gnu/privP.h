@@ -29,5 +29,10 @@ typedef struct priv_data
 	priv_chunk_t *pd_basicprivs;
   } priv_data_t;
 
-
 extern const priv_data_t * __priv_parse_data_cached (void);
+
+#define __NPRIVBITS	(8 * sizeof (priv_chunk_t))
+#define __PRIVELT(pr)	((pr) / __NPRIVBITS)
+#define __PRIVMASK(pr)	((priv_chunk_t) 1 << ((pr) % __NPRIVBITS))
+#define __PRIVSETCHUNKS	(getprivimplinfo()->priv_setsize)
+#define __PRIVSETSIZE	(__PRIVSETCHUNKS * sizeof (priv_chunk_t))

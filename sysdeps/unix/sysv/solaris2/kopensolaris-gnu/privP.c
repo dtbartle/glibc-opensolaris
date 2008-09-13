@@ -24,7 +24,7 @@
 __libc_lock_define_recursive (extern, __priv_lock);
 libc_freeres_ptr (static priv_data_t *__data);
 
-priv_data_t * __priv_parse_info (priv_impl_info_t *pii)
+priv_data_t * __priv_parse_info (const priv_impl_info_t *pii)
 {
   priv_data_t *data = malloc (sizeof (priv_data_t));
   if (!data)
@@ -114,11 +114,7 @@ const priv_data_t * __priv_parse_data_cached (void)
     return __data;
 
   __libc_lock_lock_recursive (__priv_lock);
-
-  const priv_impl_info_t *pii = getprivimplinfo ();
-  if (pii)
-    __data = __priv_parse_info (pii);
-
+  __data = __priv_parse_info (getprivimplinfo ());
   __libc_lock_unlock_recursive (__priv_lock);
 
   return __data;
