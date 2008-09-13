@@ -290,6 +290,8 @@ typedef union
 
 #endif /* __BYTE_ORDER == __BIG_ENDIAN */
 
+#define _INT64_TYPE
+
 #include <bits/machtypes.h>
 
 /* OpenSolaris compatibility types.  */
