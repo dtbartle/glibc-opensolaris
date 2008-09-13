@@ -27,15 +27,15 @@ libpthread {
 
     # m
     mutex_init; mutex_destroy; mutex_consistent; mutex_lock; mutex_trylock;
-    mutex_unlock;
+    mutex_unlock; _mutex_held;
 
     # r
     rwlock_init; rwlock_destroy; rw_rdlock; rw_wrlock; rw_unlock; rw_tryrdlock;
-    rw_trywrlock;
+    rw_trywrlock; _rw_read_held; _rw_write_held;
 
     # s
     sema_init; sema_destroy; sema_wait; sema_timedwait; sema_reltimedwait;
-    sema_post; sema_trywait;
+    sema_post; sema_trywait; _sema_held;
 
     # t
     thr_create; thr_join; thr_exit; thr_suspend; thr_continue; thr_self;
