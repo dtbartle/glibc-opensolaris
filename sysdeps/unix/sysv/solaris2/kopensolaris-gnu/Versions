@@ -17,7 +17,7 @@ libc {
     core_set_process_content; core_set_process_path;
 
     # d
-    door_bind; door_cred; door_call; door_create; door_getparam; door_info;
+    door_bind; door_call; door_cred; door_create; door_getparam; door_info;
     door_return; door_revoke; door_server_create; door_setparam; door_ucred;
     door_unbind;
 
@@ -25,10 +25,13 @@ libc {
     fork1;
 
     # g
-    getacct; getcpuid; getexecname; gethrtime; gethrvtime; getpagesizes;
-    getpagesizes2; getpeerucred; getpflags; getppriv; getprivimplinfo;
-    getprojid; getrctl; gettaskid; getustack; getvmusage; getzoneid;
-    getzoneidbyname; getzonenamebyid;
+    getacct; getcpuid; getexecname; gethrtime; gethrvtime; getextmntent;
+    getmntany; getmntent; getpagesizes; getpagesizes2; getpeerucred; getpflags;
+    getppriv; getprivimplinfo; getprojid; getrctl; gettaskid; getustack;
+    getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
+
+    # h
+    hasmntopt;
 
     # i
     idmap_reg; idmap_unreg; issetugid; is_system_labeled;
@@ -48,13 +51,13 @@ libc {
     __priv_parse_info; processor_bind; processor_info; port_alert;
     port_associate; port_create; port_dissociate; port_get; port_getn;
     port_send; port_sendn; priv_allocset; priv_addset; priv_copyset;
-    priv_delset; priv_emptyset; priv_fillset;
-    priv_freeset; priv_getbyname; priv_getbynum; priv_getsetbyname;
-    priv_getsetbynum; priv_gettext; priv_ineffect; priv_intersect;
-    priv_inverse; priv_isemptyset; priv_isequalset; priv_isfullset;
-    priv_ismember; priv_issubset; priv_set; priv_set_to_str; priv_str_to_set;
-    priv_union; pset_assign; pset_bind; pset_create; pset_destroy;
-    pset_getattr; pset_getloadavg; pset_info; pset_list; pset_setattr; putacct;
+    priv_delset; priv_emptyset; priv_fillset; priv_freeset; priv_getbyname;
+    priv_getbynum; priv_getsetbyname; priv_getsetbynum; priv_gettext;
+    priv_ineffect; priv_intersect; priv_inverse; priv_isemptyset;
+    priv_isequalset; priv_isfullset; priv_ismember; priv_issubset; priv_set;
+    priv_set_to_str; priv_str_to_set; priv_union; pset_assign; pset_bind;
+    pset_create; pset_destroy; pset_getattr; pset_getloadavg; pset_info;
+    pset_list; pset_setattr; putacct; putmntent;
 
     # r
     rctlblk_get_firing_time; rctlblk_get_global_action;
@@ -62,7 +65,8 @@ libc {
     rctlblk_get_local_flags; rctlblk_get_privilege; rctlblk_get_recipient_pid;
     rctlblk_get_value; rctlblk_get_enforced_value; rctlblk_set_local_action;
     rctlblk_set_local_flags; rctlblk_set_privilege; rctlblk_set_value;
-    rctlblk_set_recipient_pid; rctlblk_size; rctllist; resolvepath;
+    rctlblk_set_recipient_pid; rctlblk_size; rctllist; resetmnttab;
+    resolvepath;
 
     # s
     sendfilev; sendfilev64; setpflags; setppriv; setprojrctl; setrctl;
