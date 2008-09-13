@@ -29,7 +29,7 @@ DECLARE_INLINE_SYSCALL (int, fcntl, int fd, int cmd, ...);
 int
 __fcntl_not_cancel (int fd, int cmd, ...)
 {
-  int result;
+  int res;
   va_list ap;
   void *arg;
 
@@ -41,9 +41,9 @@ __fcntl_not_cancel (int fd, int cmd, ...)
   switch(cmd)
     {
     case F_GETOWN:
-      if(ioctl (fd, FIOGETOWN, &result) == -1)
+      if(ioctl (fd, FIOGETOWN, &res) == -1)
         return -1;
-      return result;
+      return res;
     case F_SETOWN:
       return ioctl (fd, FIOSETOWN, &arg);
     default:
@@ -66,11 +66,11 @@ __libc_fcntl (int fd, int cmd, ...)
 
   int oldtype = LIBC_CANCEL_ASYNC ();
 
-  int result = __fcntl_not_cancel (fd, cmd, arg);
+  int res = __fcntl_not_cancel (fd, cmd, arg);
 
   LIBC_CANCEL_RESET (oldtype);
 
-  return result;
+  return res;
 }
 
 libc_hidden_def (__libc_fcntl)

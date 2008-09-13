@@ -32,10 +32,10 @@ __libc_tcdrain (int fd)
   int oldtype = LIBC_CANCEL_ASYNC ();
 
   /* With an argument of 1, TCSBRK for output to be drain.  */
-  int result = ioctl (fd, TCSBRK, 1);
+  int res = ioctl (fd, TCSBRK, 1);
 
   LIBC_CANCEL_RESET (oldtype);
 
-  return result;
+  return res;
 }
 weak_alias (__libc_tcdrain, tcdrain)

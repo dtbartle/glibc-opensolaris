@@ -26,7 +26,7 @@
 __pid_t
 __waitpid_not_cancel (__pid_t pid, int *stat_loc, int options)
 {
-  int result;
+  int res;
   siginfo_t info;
 
   /* wait until the child dies */
@@ -34,15 +34,15 @@ __waitpid_not_cancel (__pid_t pid, int *stat_loc, int options)
 
   /* implement waitpid by calling waitid */
   if (pid < -1)
-    result = waitid_not_cancel (P_PGID, -pid, &info, options);
+    res = waitid_not_cancel (P_PGID, -pid, &info, options);
   else if (pid == -1)
-    result = waitid_not_cancel (P_ALL, 0, &info, options);
+    res = waitid_not_cancel (P_ALL, 0, &info, options);
   else if (pid == 0)
-    result = waitid_not_cancel (P_PGID, getpgid(0), &info, options);
+    res = waitid_not_cancel (P_PGID, getpgid(0), &info, options);
   else /* if(pid > 0) */
-    result = waitid_not_cancel (P_PID, pid, &info, options);
+    res = waitid_not_cancel (P_PID, pid, &info, options);
 
-  if (result == -1)
+  if (res == -1)
     return -1;
 
   /* use info.si_code and info.si_status to set stat_loc */
@@ -80,11 +80,11 @@ __libc_waitpid (__pid_t pid, int *stat_loc, int options)
 
   int oldtype = LIBC_CANCEL_ASYNC ();
 
-  __pid_t result = __waitpid_not_cancel (pid, stat_loc, options);
+  __pid_t res = __waitpid_not_cancel (pid, stat_loc, options);
 
   LIBC_CANCEL_RESET (oldtype);
 
-  return result;
+  return res;
 }
 
 weak_alias (__libc_waitpid, __waitpid)

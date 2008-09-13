@@ -29,9 +29,9 @@ msync (__ptr_t addr, size_t len, int flags)
 
   int oldtype = LIBC_CANCEL_ASYNC ();
 
-  int result = memcntl (addr, len, MC_SYNC, (caddr_t)flags, 0, 0);
+  int res = memcntl (addr, len, MC_SYNC, (caddr_t)flags, 0, 0);
 
   LIBC_CANCEL_RESET (oldtype);
 
-  return result;
+  return res;
 }

@@ -55,8 +55,8 @@ OPEN_NOT_CANCEL_FUNC_NAME (OPEN_FUNC_PRE_FILE_PARAM_DECLS
   if (saved_oflag & O_DIRECTORY)
     {
       OPEN_FUNC_STAT_BUF buf;
-      int result = OPEN_FUNC_STAT;
-      if (result == -1)
+      int res = OPEN_FUNC_STAT;
+      if (res == -1)
         {
           close_not_cancel_no_status (fd);
           return -1;
@@ -72,8 +72,8 @@ OPEN_NOT_CANCEL_FUNC_NAME (OPEN_FUNC_PRE_FILE_PARAM_DECLS
   /* enable direct i/o via _FIODIRECTIO */
   if (saved_oflag & O_DIRECT)
     {
-      int result = ioctl (fd, _FIODIRECTIO, DIRECTIO_ON);
-      if (result == -1)
+      int res = ioctl (fd, _FIODIRECTIO, DIRECTIO_ON);
+      if (res == -1)
         {
           close_not_cancel_no_status(fd);
           return -1;
@@ -103,10 +103,10 @@ OPEN_FUNC_NAME (OPEN_FUNC_PRE_FILE_PARAM_DECLS
 
   int oldtype = LIBC_CANCEL_ASYNC ();
 
-  int result = OPEN_NOT_CANCEL_FUNC_NAME (OPEN_FUNC_PRE_FILE_ARGS
+  int res = OPEN_NOT_CANCEL_FUNC_NAME (OPEN_FUNC_PRE_FILE_ARGS
       file, oflag, mode);
 
   LIBC_CANCEL_RESET (oldtype);
 
-  return result;
+  return res;
 }
