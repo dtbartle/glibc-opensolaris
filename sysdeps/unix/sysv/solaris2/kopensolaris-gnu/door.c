@@ -17,6 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <sysdep-cancel.h>
 #include <inline-syscall.h>
 #include <door.h>
 
@@ -58,4 +59,19 @@ int door_getparam(int d, int param, size_t *out)
 int door_setparam (int d, int param, size_t val)
 {
   return INLINE_SYSCALL (door, 6, d, param, val, 0, 0, DOOR_SETPARAM);
+}
+
+
+int door_call (int d, door_arg_t* params)
+{
+  if (SINGLE_THREAD_P)
+    return INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0, DOOR_SETPARAM);
+
+  int oldtype = LIBC_CANCEL_ASYNC ();
+
+  int res = INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0, DOOR_SETPARAM);
+
+  LIBC_CANCEL_RESET (oldtype);
+
+  return res;
 }
