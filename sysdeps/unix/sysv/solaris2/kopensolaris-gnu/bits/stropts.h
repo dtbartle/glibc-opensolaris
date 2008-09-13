@@ -24,6 +24,7 @@
 #define _BITS_STROPTS_H	1
 
 #include <bits/types.h>
+#include <features.h>
 
 /* Macros used as `request' argument to `ioctl'.  */
 #define __SID		('S' << 8)
@@ -233,5 +234,9 @@ struct str_list
   };
 
 typedef __t_scalar_t t_scalar_t;
+
+#ifdef __USE_MISC
+# define INFTIM		-1
+#endif
 
 #endif /* bits/stropts.h */

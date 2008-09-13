@@ -17,23 +17,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
 #include <pthreadP.h>
 #include <synch.h>
-#include <errno.h>
 
-
-int cond_init (cond, type, arg)
-      cond_t *cond;
-      int type;
-      void *arg;
+int _mutex_held (mutex_t *mutex)
 {
-  if (type != LOCK_NORMAL && type != LOCK_SHARED)
-    return EINVAL;
-
-  memset (cond, 0, sizeof(cond_t));
-  cond->cond_type = type;
-  cond->cond_magic = COND_MAGIC;
-
-  return 0;
+  return MUTEX_IS_OWNER (mutex);
 }

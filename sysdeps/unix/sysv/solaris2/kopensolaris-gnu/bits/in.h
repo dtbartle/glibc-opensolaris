@@ -177,3 +177,5 @@ struct in_pktinfo
 
 typedef __uint32_t	ipaddr_t;
 typedef struct in6_addr in6_addr_t;
+
+#define IN_CLASSE_NET	0xffffffffU

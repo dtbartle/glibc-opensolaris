@@ -63,11 +63,6 @@ extern long int __sysconf (int);
 /* Flag to indicate time is absolute.  */
 #   define TIMER_ABSTIME		1
 
-#define SEC		1
-#define MILLISEC	1000
-#define MICROSEC	1000000
-#define NANOSEC		1000000000
-
 #  endif
 
 # endif	/* bits/time.h */
@@ -86,14 +81,30 @@ struct timeval
     __time_t tv_sec;		/* Seconds.  */
     __suseconds_t tv_usec;	/* Microseconds.  */
   };
+
+
+
 # endif	/* struct timeval */
 #endif	/* need timeval */
+
+#ifndef __time_misc_defined
+
+typedef struct timespec timespec_t;
+
+# define SEC		1
+# define MILLISEC	1000
+# define MICROSEC	1000000
+# define NANOSEC	1000000000
+
+# define __time_misc_defined
+
+#endif /* __time_misc_defined */
 
 #ifdef _SYSCALL32
 
 # include <sys/types32.h>
 
-# if defined (_TIME_H) && !defined (__time32_macros_defined)
+# ifndef __time32_misc_defined
 
 #  define TIMEVAL32_TO_TIMEVAL(tv, tv32)            \
 {                                                   \
@@ -125,8 +136,8 @@ struct timeval
 #  define TIMESPEC_OVERFLOW(ts) \
 	((ts)->tv_sec < TIME32_MIN || (ts)->tv_sec > TIME32_MAX)
 
-#  define __time32_macros_defined
-# endif
+#  define __time32_misc_defined
+# endif /* __time32_misc_defined */
 
 # if defined (_SYS_TIME_H) && !defined (__itimerval32_defined)
 struct itimerval32

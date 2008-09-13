@@ -70,4 +70,7 @@
 #define TYPICALMAXPATHLEN	64
 #define MAXLINKNAMELEN	32
 
+#define UID_DLADM	15
+#define GID_SYS		3
+
 #endif	/* sys/param.h */

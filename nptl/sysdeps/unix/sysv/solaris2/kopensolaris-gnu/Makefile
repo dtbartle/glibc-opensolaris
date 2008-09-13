@@ -11,15 +11,16 @@ libpthread-sysdep_routines += pt-fork fastlock clock_gettime \
 
 # solaris threads/synch
 libpthread-routines += mutex_init mutex_lock mutex_trylock mutex_unlock \
-    mutex_destroy mutex_timedlock mutex_consistent cond_init cond_wait \
-    cond_timedwait cond_reltimedwait cond_signal cond_broadcast cond_destroy \
-    rwlock_init rwlock_destroy rw_rdlock rw_wrlock rw_unlock rw_tryrdlock \
-    rw_trywrlock rw_timedrdlock rw_timedwrlock sema_init sema_destroy \
-    sema_wait sema_trywait sema_post sema_timedwait thr_create thr_join \
-    thr_exit thr_self thr_main thr_yield thr_sigsetmask thr_getspecific \
-    thr_setspecific thr_keycreate thr_min_stack thr_getconcurrency \
-    thr_setconcurrency thr_continue thr_suspend thr_getprio thr_setprio \
-    thr_stksegment _lwp_sema_init _lwp_info
+    mutex_destroy mutex_timedlock mutex_consistent _mutex_held \
+    cond_init cond_wait cond_timedwait cond_reltimedwait cond_signal \
+    cond_broadcast cond_destroy rwlock_init rwlock_destroy rw_rdlock \
+    rw_wrlock rw_unlock rw_tryrdlock rw_trywrlock rw_timedrdlock \
+    rw_timedwrlock sema_init sema_destroy sema_wait sema_trywait sema_post \
+    sema_timedwait thr_create thr_join thr_exit thr_self thr_main thr_yield \
+    thr_sigsetmask thr_getspecific thr_setspecific thr_keycreate \
+    thr_min_stack thr_getconcurrency thr_setconcurrency thr_continue \
+    thr_suspend thr_getprio thr_setprio thr_stksegment _lwp_sema_init \
+    _lwp_info
 endif
 
 ifeq ($(subdir),posix)
