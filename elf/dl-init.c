@@ -99,7 +99,7 @@ _dl_init (struct link_map *main_map, int argc, char **argv, char **env)
   unsigned int i;
 
 #ifdef ENABLE_RTLD_DB
-  rtld_db_preinit (NULL);
+  rtld_db_event (RD_PREINIT, RD_NOSTATE);
 #endif
 
   if (__builtin_expect (GL(dl_initfirst) != NULL, 0))
@@ -141,7 +141,7 @@ _dl_init (struct link_map *main_map, int argc, char **argv, char **env)
     call_init (main_map->l_initfini[i], argc, argv, env);
 
 #ifdef ENABLE_RTLD_DB
-  rtld_db_postinit (NULL);
+  rtld_db_event (RD_POSTINIT, RD_NOSTATE);
 #endif
 
 #ifndef HAVE_INLINED_SYSCALLS

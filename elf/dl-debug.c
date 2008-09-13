@@ -95,4 +95,6 @@ void
 rtld_db_ldactivity (void *arg)
 {
 }
+
+rd_event_msg_t rtld_db_event_msg;
 #endif
