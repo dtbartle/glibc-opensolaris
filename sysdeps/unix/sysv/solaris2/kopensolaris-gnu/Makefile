@@ -32,7 +32,7 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _so_connect _so_getpeername _so_getsockname _so_getsockopt _so_listen \
     _so_send _so_sendmsg _so_sendto _so_setsockopt _so_shutdown _so_socket \
     _so_socketpair _sysconfig rctl atomic door getexecname is_system_labeled \
-    privP mnttab
+    privP mnttab modctl
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
@@ -43,13 +43,14 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h sys/ulimit.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/synch.h sys/fork.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
-    sys/pset.h sys/priv.h sys/acl.h sys/procfs.h sys/reg.h sys/bufmod.h \
-    sys/types32.h sys/task.h sys/isa_defs.h sys/door.h sys/elf.h sys/rctl.h \
-    sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h sys/mnttab.h \
-    sys/mutex.h sys/exacct.h sys/acct.h sys/sid.h sys/siginfo.h sys/link.h \
-    sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h sys/port.h \
-    sys/machelf.h sys/zmod.h sys/inttypes.h sys/atomic.h sys/ucred.h \
-    sys/port_impl.h sys/ttold.h sys/machtypes.h sys/dirent.h sys/utime.h
+    sys/pset.h sys/priv.h sys/acl.h sys/acl_impl.h sys/procfs.h sys/reg.h \
+    sys/bufmod.h sys/types32.h sys/task.h sys/isa_defs.h sys/door.h sys/elf.h \
+    sys/rctl.h sys/task.h sys/zone.h sys/refstr.h sys/refstr_impl.h \
+    sys/mnttab.h sys/mutex.h sys/exacct.h sys/acct.h sys/sid.h sys/siginfo.h \
+    sys/link.h sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h \
+    sys/port.h sys/machelf.h sys/zmod.h sys/inttypes.h sys/atomic.h \
+    sys/ucred.h sys/port_impl.h sys/ttold.h sys/machtypes.h sys/dirent.h \
+    sys/utime.h sys/vfstab
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h \
     rtld_db.h pcsample.h port.h atomic.h bits/machtypes.h
 headers := $(filter-out sys/sysinfo.h,$(headers))

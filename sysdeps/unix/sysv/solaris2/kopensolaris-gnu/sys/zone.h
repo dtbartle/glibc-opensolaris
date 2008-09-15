@@ -67,6 +67,11 @@ typedef m_label_t bslabel_t;
 
 #define ZONENAME_MAX		64
 
+/* Zone flags.  */
+#define ZF_HASHED_LABEL	0x2
+#define ZF_IS_SCRATCH	0x4
+#define ZF_NET_EXCL	0x8
+
 typedef struct
   {
 	const char *zone_name;

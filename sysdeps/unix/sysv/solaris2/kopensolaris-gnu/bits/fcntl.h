@@ -164,7 +164,7 @@ typedef struct fshare
 /* OpenSolaris-specific */
 #define F_UNLKSYS	4
 
-struct flock
+typedef struct flock
   {
     short int l_type;	/* Type of lock: F_RDLCK, F_WRLCK, or F_UNLCK.	*/
     short int l_whence;	/* Where `l_start' is relative to (like `lseek').  */
@@ -178,7 +178,7 @@ struct flock
     int l_sysid;
     __pid_t l_pid;	/* Process holding the lock.  */
     long l_pad[4];
-  };
+  } flock_t;
 
 #ifdef _SYSCALL32
 typedef struct flock32
@@ -194,7 +194,7 @@ typedef struct flock32
 #endif
 
 #ifdef __USE_LARGEFILE64
-struct flock64
+typedef struct flock64
   {
     short int l_type;	/* Type of lock: F_RDLCK, F_WRLCK, or F_UNLCK.	*/
     short int l_whence;	/* Where `l_start' is relative to (like `lseek').  */
@@ -203,7 +203,7 @@ struct flock64
     int l_sysid;
     __pid_t l_pid;	/* Process holding the lock.  */
     long l_pad[4];
-  };
+  } flock64_t;
 #endif
 
 /* OpenSolaris direct i/o */
