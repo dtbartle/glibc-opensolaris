@@ -41,7 +41,7 @@ libc {
 
     # m
     membar_enter; membar_exit; membar_producer; membar_consumer; memcntl;
-    meminfo; mount;
+    meminfo; modctl; mount;
 
     # n
     ntp_adjtime; ntp_gettime;
