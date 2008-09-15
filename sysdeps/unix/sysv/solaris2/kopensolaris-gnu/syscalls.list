@@ -33,6 +33,7 @@ issetugid           - privsys:issetugid     Ei:         issetugid
 lchown              - lchown                i:sii       __lchown            lchown
 memcntl             - memcntl               i:piiiii    memcntl
 mincore             - mincore               i:anV       mincore
+modctl              - modctl                i:ip        modctl
 mmap64              - mmap64                i:piiiii    __mmap64            mmap64
 mount               - mount                 i:ppippipi  __mount             mount
 nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __nanosleep nanosleep
