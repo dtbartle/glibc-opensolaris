@@ -37,7 +37,7 @@ libc {
     idmap_reg; idmap_unreg; _insert; issetugid; is_system_labeled;
 
     # l
-    llseek;
+    llseek; lltostr;
 
     # m
     membar_enter; membar_exit; membar_producer; membar_consumer; memcntl;
@@ -65,7 +65,7 @@ libc {
     rctlblk_get_local_flags; rctlblk_get_privilege; rctlblk_get_recipient_pid;
     rctlblk_get_value; rctlblk_get_enforced_value; rctlblk_set_local_action;
     rctlblk_set_local_flags; rctlblk_set_privilege; rctlblk_set_value;
-    rctlblk_set_recipient_pid; rctlblk_size; rctllist; resetmnttab;
+    rctlblk_set_recipient_pid; rctlblk_size; rctllist; resetmnttab; res_nclose;
     resolvepath;
 
     # s
@@ -83,8 +83,8 @@ libc {
     uadmin; _ucred_alloc; ucred_free; ucred_get; ucred_getegid; ucred_geteuid;
     ucred_getgroups; ucred_getlabel; ucred_getpflags; ucred_getpid;
     ucred_getprivset; ucred_getprojid; ucred_getrgid; ucred_getruid;
-    ucred_getsgid; ucred_getsuid; ucred_getzoneid; ucred_size; umount;
-    umount2; utssys;
+    ucred_getsgid; ucred_getsuid; ucred_getzoneid; ucred_size; ulltostr;
+    umount; umount2; utssys;
 
     # w
     wracct;
