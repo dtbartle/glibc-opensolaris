@@ -76,4 +76,20 @@
 #define UID_DLADM	15
 #define MAXUID		2147483647
 
+#define NS_PACKETSZ	512
+#define NS_MAXDNAME	1025
+#define NS_MAXMSG	65535
+#define NS_MAXCDNAME	255
+#define NS_MAXLABEL	63
+#define NS_HFIXEDSZ	12
+#define NS_QFIXEDSZ	4
+#define NS_RRFIXEDSZ	10
+#define NS_INT32SZ	4
+#define NS_INT16SZ	2
+#define NS_INT8SZ	1
+#define NS_INADDRSZ	4
+#define NS_IN6ADDRSZ	16
+#define NS_CMPRSFLGS	0xc0
+#define NS_DEFAULTPORT	53
+
 #endif	/* sys/param.h */

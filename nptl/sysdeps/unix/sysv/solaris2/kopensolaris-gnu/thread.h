@@ -26,11 +26,18 @@
 typedef unsigned int thread_t;
 typedef unsigned int thread_key_t;
 
-#define THR_BOUND		0x00000001 /* PTHREAD_SCOPE_SYSTEM; unused */
-#define THR_NEW_LWP		0x00000002 /* unused */
+#define THR_BOUND	0x00000001 /* PTHREAD_SCOPE_SYSTEM; unused */
+#define THR_NEW_LWP	0x00000002 /* unused */
 #define THR_DETACHED	0x00000040 /* PTHREAD_CREATE_DETACHED */
 #define THR_SUSPENDED	0x00000080
-#define THR_DAEMON		0x00000100
+#define THR_DAEMON	0x00000100
+
+#define THR_ONCE_KEY	(thread_key_t)(-1)
+
+#define TRS_VALID	0
+#define TRS_NONVOLATILE	1
+#define TRS_LWPID	2
+#define TRS_INVALID	3
 
 __BEGIN_DECLS
 
