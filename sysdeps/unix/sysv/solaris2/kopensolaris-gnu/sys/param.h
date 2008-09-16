@@ -92,4 +92,27 @@
 #define NS_CMPRSFLGS	0xc0
 #define NS_DEFAULTPORT	53
 
+#include <sys/isa_defs.h>
+
+#ifdef  _LP64
+# define MAXOFF_T	0x7fffffffffffffffl
+# define MAXOFFSET_T	0x7fffffffffffffffl
+#else
+# define MAXOFF_T	0x7fffffffl
+# define MAXOFFSET_T	0x7fffffffffffffffLL
+#endif
+
+#ifdef _LITTLE_ENDIAN
+# define lobyte(X)	(((unsigned char *)&(X))[0])
+# define hibyte(X)	(((unsigned char *)&(X))[1])
+# define loword(X)	(((ushort_t *)&(X))[0])
+# define hiword(X)	(((ushort_t *)&(X))[1])
+#endif
+#ifdef _BIG_ENDIAN
+# define lobyte(X)	(((unsigned char *)&(X))[1])
+# define hibyte(X)	(((unsigned char *)&(X))[0])
+# define loword(X)	(((ushort_t *)&(X))[1])
+# define hiword(X)	(((ushort_t *)&(X))[0])
+#endif
+
 #endif	/* sys/param.h */

@@ -20,7 +20,20 @@
 #include <sys/auxv.h>
 #include_next <dl-sysdep.h>
 
+#ifdef SHARED
+# define SECURE_DECIDED
+#else
+# define SECURE_DECIDED	__libc_enable_secure_decided = 1;
+#endif
+
 #define DL_PLATFORM_AUXV                                    \
       case AT_SUN_EXECNAME:                                 \
 	GLRO(dl_sun_execname) = (void *) av->a_un.a_val;        \
+	break;                                                  \
+      case AT_SUN_AUXFLAGS:                                 \
+	if (av->a_un.a_val & AF_SUN_SETUGID)                    \
+	  {                                                     \
+		__libc_enable_secure = 1;                           \
+		SECURE_DECIDED                                      \
+	  }                                                     \
 	break;

@@ -13,15 +13,12 @@ ptrace details:
     write command (long) followed by struct
 
 These are solaris extensions that we should implement:
-  door_*
-  modctl
   _sharefs
   _cladm (sys/cladm.h)
   exportfs, nfs_getfh, nfssvc [SYS_nfssys] (sys/nfssec.h) [maybe not]
   lgrpsys
   gethomelgroup
   atomic_*
-  membar_*
   defopen, defread
   _ttyname_dev
 
@@ -34,6 +31,7 @@ Insert into headers:
   sysi86 (sys/sysi86.h - see below)
   str2sig, sig2str (signal.h)
   getexecname (stdlib.h)
+  lltostr, ulltostr (stdlib.h)
 
 INVALID_NOT_TERMINATED_TD_P expects to succeed on terminated threads
 
@@ -45,70 +43,6 @@ Since we now use an entirely libc-based rwlock implementation we should be able
 
 More clocks in pthread_condattr_setclock
 
-List of CDDL headers needed to compile random stuff:
-  sys/dlpi.h [Should be LGPL'd]
-  sys/sysi86.h [Should be LGPL'd]
-  sys/ctf_api.h [libctf]
-  libctf.h [libctf]
-  sys/ctf.h [libctr[
-  libproc.h [libproc]
-  libelf.h [libelf]
-  gelf.h [libelf; need to add Elf64_Cap]
-  sys/tiuser.h
-  sys/tpicommon.h
-  sys/timod.h
-  netconfig.h [libnsl]
-  sys/netconfig.h [libnsl]
-  netdir.h [libnsl]
-  libuutil.h [libuutil]
-  libuutil_impl.h [libuutil]
-  sys/avl.h [libavl]
-  sys/avl_impl.h [libavl]
-  auth_attr.h [libsecdb]
-  user_attr.h [libsecdb]
-  prof_attr.h [libsecdb]
-  secdb.h [libsecdb]
-  libnvpair.h [libnvpair]
-  sys/nvpair.h [libnvpair]
-  sys/nvpair_impl.h [libnvpair]
-  project.h [libproject]
-  sys/aio.h
-  sys/aio_impl.h
-
-Use cond_t data field for broadcast seqence
-
 Use timer_* syscalls
 
 Instead of AT_SECURE we can use AF_SUN_SETUGID [AT_SUN_AUXFLAGS]
-
-We can't _exit if the main thread goes away since we have daemon threaeds (THR_DAEMON)
-
-The following are needed by xorg:
-
-  sys/vuid_event.h
-  sys/vuid_queue.h
-  sys/vuid_state.h
-  sys/vuid_store.h
-  sys/vuid_wheel.h
-  sys/msio.h
-  sys/psw.h
-  sys/spl.h
-  sys/audio.h
-  sys/audioio.h
-  ia32/sys/asm_linkage.h
-  sys/sysi86.h
-  sys/kbd.h
-
-Implement libc-private __priv interface:
-
-    void __priv_free_info (void *data);
-
-    void * __priv_getbynum (priv_data_t *data, int num);
-
-    priv_data_t * __priv_getdata (void);
-
-    int __priv_getsetbyname (const char *name);
-
-    __priv_getsetbynum (priv_data_t *data, int num);
-
-    priv_data_t * __priv_parse_info (priv_impl_info_t *pii);

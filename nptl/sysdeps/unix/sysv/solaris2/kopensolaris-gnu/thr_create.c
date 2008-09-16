@@ -24,7 +24,7 @@
 #include <errno.h>
 
 int thr_create (void *stack_address, size_t stack_size,
-        void *(*start_routine)(void *), void *arg,
+        void * (*start_routine)(void *), void *arg,
         long flags, thread_t *new_thread)
 {
   if(flags & ~(THR_BOUND | THR_DETACHED | THR_NEW_LWP | THR_SUSPENDED |
