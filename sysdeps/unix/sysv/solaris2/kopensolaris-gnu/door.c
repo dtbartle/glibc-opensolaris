@@ -20,6 +20,16 @@
 #include <sysdep-cancel.h>
 #include <inline-syscall.h>
 #include <door.h>
+#include <libio/libioP.h>
+#include <atomic.h>
+#include <thread.h>
+#include <dlfcn.h>
+
+static pid_t __door_private_pid, __door_unref_pid;
+static void * door_server_create_default (door_info_t *);
+static door_server_func_t *door_server_create_proc = &door_server_create_default;
+static int (*thr_create_ptr) (void *, size_t, void * (*)(void *), void *,
+    long, thread_t *);
 
 /* Arguments are passed normally with the 6th argument always the subcode.  */
 
@@ -58,20 +68,103 @@ int door_getparam(int d, int param, size_t *out)
 
 int door_setparam (int d, int param, size_t val)
 {
-  return INLINE_SYSCALL (door, 6, d, param, val, 0, 0, DOOR_SETPARAM);
+  return INLINE_SYSCALL (door, 6, d, param, val, 0, 0, DOOR_GETPARAM);
 }
 
 
 int door_call (int d, door_arg_t* params)
 {
   if (SINGLE_THREAD_P)
-    return INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0, DOOR_SETPARAM);
+    return INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0, DOOR_CALL);
 
   int oldtype = LIBC_CANCEL_ASYNC ();
 
-  int res = INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0, DOOR_SETPARAM);
+  int res = INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0, DOOR_CALL);
 
   LIBC_CANCEL_RESET (oldtype);
 
   return res;
+}
+
+
+int door_return (char *data_ptr, size_t data_size, door_desc_t *desc_ptr,
+     uint_t num_desc)
+{
+  ucontext_t uc;
+  if (getcontext (&uc) != 0)
+    return -1;
+
+  door_return_desc_t drd;
+  drd.desc_ptr = desc_ptr;
+  drd.desc_num = num_desc;
+
+  return INLINE_SYSCALL (door, 6, (long)data_ptr, data_size, (long)&drd,
+      (long)uc.uc_stack.ss_sp, uc.uc_stack.ss_size, DOOR_RETURN);
+}
+
+
+door_server_func_t * door_server_create (door_server_func_t *create_proc)
+{
+  while (1)
+    {
+      door_server_func_t *cur_proc = door_server_create_proc;
+      door_server_func_t *old_proc = atomic_compare_and_exchange_val_acq (
+          &door_server_create_proc, create_proc, cur_proc);
+      if (old_proc == cur_proc)
+        return old_proc;
+    }
+}
+
+
+static void * door_create_default_proc (void *arg)
+{
+  pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, NULL);
+  door_return (NULL, 0, NULL, 0);
+}
+
+
+static void * door_server_create_default (door_info_t *info)
+{
+  if (!thr_create_ptr)
+    {
+      void *libpthread = __libc_dlopen ("libpthread.so");
+      if (!libpthread)
+        return NULL;
+      thr_create_ptr = __libc_dlsym (libpthread, "thr_create");
+      if (!thr_create_ptr)
+        return NULL;
+    }
+
+  /* The default server create action is to create a server thread. We use
+     thr_create since we want to create this as a daemon thread.  */
+  thr_create_ptr (NULL, 0, door_create_default_proc, NULL, THR_DETACHED, NULL);
+}
+
+
+int door_create (void (*server_procedure)(void *cookie, char *argp,
+      size_t arg_size, door_desc_t *dp, uint_t n_desc), void *cookie,
+      unsigned int attributes)
+{
+  // TODO: remove
+  if (attributes & ~(DOOR_NO_CANCEL | DOOR_REFUSE_DESC | DOOR_PRIVATE))
+    abort ();
+
+  /* We lock the io list lock as fork() locks it before forking. This allows us
+     to be safe in the face of a fork.  */
+  _IO_list_lock ();
+
+  return INLINE_SYSCALL (door, 6, (long)server_procedure, (long)cookie, attributes,
+      0, 0, DOOR_CREATE);
+
+  pid_t pid = getpid ();
+  if (__door_private_pid != pid && (attributes & DOOR_PRIVATE) == 0)
+    {
+      /* We haven't created the first server.  */
+      (*door_server_create_proc) (NULL);
+      __door_private_pid = pid;
+    }
+
+  // TODO: DOOR_UNREF and DOOR_UNREF_MULTI
+
+  _IO_list_unlock ();
 }
