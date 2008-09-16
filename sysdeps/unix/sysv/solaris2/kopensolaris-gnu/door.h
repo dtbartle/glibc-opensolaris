@@ -24,6 +24,8 @@
 #include <ucred.h>
 #include <features.h>
 
+typedef void door_server_func_t (door_info_t *);
+
 __BEGIN_DECLS
 
 int door_create (void (*)(void *, char *, size_t, door_desc_t *, uint_t),
@@ -38,9 +40,7 @@ int door_bind (int);
 int door_unbind (void);
 int door_getparam (int, int, size_t *);
 int door_setparam (int, int, size_t);
-
-typedef void door_server_func_t(door_info_t *);
-door_server_func_t *door_server_create(door_server_func_t *);
+door_server_func_t *door_server_create (door_server_func_t *);
 
 __END_DECLS
 

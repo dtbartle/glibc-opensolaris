@@ -65,4 +65,9 @@
 /* Round up assuming y is power-of-2 aligned.  */
 #define P2ROUNDUP(x, y)		(-(-(x) & -(y)))
 
+#define P2ALIGN_TYPED(x, align, type)	((type)(x) & -(type)(align))
+#define P2PHASE_TYPED(x, align, type)	((type)(x) & ((type)(align) - 1))
+
+#define ISP2(x)		(((x) & ((x) - 1)) == 0)
+
 #endif /* _SYS_SYSMACROS_H */

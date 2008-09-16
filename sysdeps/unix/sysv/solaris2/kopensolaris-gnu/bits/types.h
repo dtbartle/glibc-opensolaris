@@ -223,6 +223,7 @@ typedef unsigned long long	u_offset_t;
 typedef unsigned long	pfn_t;
 typedef unsigned int	k_fltset_t;
 typedef void		*timeout_id_t;
+typedef long long	len_t;
 
 typedef enum
   {
