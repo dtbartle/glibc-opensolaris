@@ -41,7 +41,7 @@ typedef unsigned int thread_key_t;
 
 __BEGIN_DECLS
 
-extern int thr_create (void *, size_t, void *(*)(void *), void *, long,
+extern int thr_create (void *, size_t, void * (*)(void *), void *, long,
     thread_t *);
 
 extern int thr_join (thread_t, thread_t *, void **);
