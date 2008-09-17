@@ -21,14 +21,18 @@ libc {
     door_create; door_getparam; door_info; door_return; door_revoke;
     door_server_create; door_setparam; door_ucred; door_unbind;
 
+    # e
+    _endprofattr;
+
     # f
     facl; fork1;
 
     # g
     getacct; getcpuid; getexecname; gethrtime; gethrvtime; getextmntent;
     getmntany; getmntent; getpagesizes; getpagesizes2; getpeerucred; getpflags;
-    getppriv; getprivimplinfo; getprojid; getrctl; gettaskid; getustack;
-    getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
+    getppriv; getprivimplinfo; _getprofattr; _getprofnam; getprojid; getrctl;
+    gettaskid; getustack; getvmusage; getzoneid; getzoneidbyname;
+    getzonenamebyid;
 
     # h
     hasmntopt;
@@ -69,8 +73,8 @@ libc {
     resolvepath;
 
     # s
-    sendfilev; sendfilev64; setpflags; setppriv; setprojrctl; setrctl;
-    settaskid; setustack; sig2str; _so_accept; _so_bind; _so_connect;
+    sendfilev; sendfilev64; setpflags; setppriv; _setprofattr; setprojrctl;
+    setrctl; settaskid; setustack; sig2str; _so_accept; _so_bind; _so_connect;
     _so_getpeername; _so_getsockname; _so_getsockopt; _so_listen; _so_recv;
     _so_recvfrom; _so_recvmsg; _so_send; _so_sendmsg; _so_sendto;
     _so_setsockopt; _so_shutdown; _so_socket; _so_socketpair; str2sig; strlcat;
