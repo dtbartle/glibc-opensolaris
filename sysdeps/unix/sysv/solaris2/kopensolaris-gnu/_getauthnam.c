@@ -17,21 +17,22 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <prof_attr.h>
+#include <auth_attr.h>
 
-#define LOOKUP_TYPE	profstr_t
-#define SETFUNC_NAME	_setprofattr
-#define	GETFUNC_NAME	_getprofattr
-#define	ENDFUNC_NAME	_endprofattr
-#define DATABASE_NAME	prof_attr
+#define LOOKUP_TYPE	authstr_t
+#define FUNCTION_NAME	_getauthnam
+#define DATABASE_NAME	auth_attr
+#define ADD_PARAMS	const char *name
+#define ADD_VARIABLES	name
 #define BUFLEN		NSS_BUFLEN_PROFATTR
 
-#include "../nss/getXXent_r.c"
+#include <nss/getXXbyYY_r.c>
 
-profstr_t * _getprofattr (profstr_t *psbuf, char *buf, int buflen, int *errnop)
+authstr_t * _getauthnam (const char *name, authstr_t *psbuf, char *buf,
+      int buflen, int *errnop)
 {
-  profstr_t *psbufp;
-  int errval = _getprofattr_r (psbuf, buf, buflen, &psbufp);
+  authstr_t *psbufp;
+  int errval = _getauthnam_r (name, psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 

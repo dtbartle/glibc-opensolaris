@@ -17,23 +17,41 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <prof_attr.h>
+#ifndef _AUTH_ATTR_H
+#define _AUTH_ATTR_H
 
-#define LOOKUP_TYPE	profstr_t
-#define SETFUNC_NAME	_setprofattr
-#define	GETFUNC_NAME	_getprofattr
-#define	ENDFUNC_NAME	_endprofattr
-#define DATABASE_NAME	prof_attr
-#define BUFLEN		NSS_BUFLEN_PROFATTR
+#include <features.h>
 
-#include "../nss/getXXent_r.c"
+#define NSS_BUFLEN_AUTHATTR	1024
 
-profstr_t * _getprofattr (profstr_t *psbuf, char *buf, int buflen, int *errnop)
-{
-  profstr_t *psbufp;
-  int errval = _getprofattr_r (psbuf, buf, buflen, &psbufp);
-  if (errval && errnop)
-    *errnop = errval;
+typedef struct authstr_s
+  {
+	char *name;
+	char *res1;
+	char *res2;
+	char *short_desc;
+	char *long_desc;
+	char *attr;
+} authstr_t;
 
-  return errval ? NULL : psbuf;
-}
+typedef struct kv_s kva_t;
+
+typedef struct authattr_s
+  {
+	char *name;
+	char *res1;
+	char *res2;
+	char *short_desc;
+	char *long_desc;
+	kva_t *attr;
+ } authattr_t;
+
+extern authattr_t *getauthnam (const char *);
+extern authattr_t *getauthattr (void);
+extern void getauthlist (const char *, char **, int *);
+extern void setauthattr (void);
+extern void endauthattr (void);
+extern void free_authattr (authattr_t *);
+extern void free_authlist (char **, int);
+
+#endif /* _AUTH_ATTR_H */

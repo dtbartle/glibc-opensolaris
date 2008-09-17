@@ -22,12 +22,18 @@
    field size for it must be increases.  */
 
 DEFINE_DATABASE (aliases)
+#ifdef __OpenSolaris_kernel__
+DEFINE_DATABASE (auth_attr)
+#endif
 DEFINE_DATABASE (ethers)
 DEFINE_DATABASE (group)
 DEFINE_DATABASE (hosts)
 DEFINE_DATABASE (netgroup)
 DEFINE_DATABASE (networks)
 DEFINE_DATABASE (passwd)
+#ifdef __OpenSolaris_kernel__
+DEFINE_DATABASE (prof_attr)
+#endif
 DEFINE_DATABASE (protocols)
 DEFINE_DATABASE (publickey)
 DEFINE_DATABASE (rpc)
