@@ -92,6 +92,10 @@
 #define NS_CMPRSFLGS	0xc0
 #define NS_DEFAULTPORT	53
 
+#define NGROUPS_UMIN	0
+#define NGROUPS_UMAX	32
+#define NGROUPS_MAX_DEFAULT	16
+
 #include <sys/isa_defs.h>
 
 #ifdef  _LP64

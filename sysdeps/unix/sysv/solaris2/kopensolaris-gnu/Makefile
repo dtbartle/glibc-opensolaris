@@ -104,6 +104,10 @@ ifeq ($(subdir),elf)
 sysdep-rtld-routines += _sysconfig
 endif
 
+ifeq ($(subdir),nis)
+sysdep-libnsl_routines += nsl_misc
+endif
+
 ifeq ($(subdir),nptl)
 libpthread-sysdep_routines += sys_fcntl sys_fdsync sys_sigaction sys_open \
     sys_open64 sys_priocntlsys schedP priocntl syscall
