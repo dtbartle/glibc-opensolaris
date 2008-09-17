@@ -37,9 +37,10 @@ char * defread (cp)
       (_DEFLT (flags) & DC_CASE) ? strncmp : strncasecmp;
   while (fgets (_DEFLT (buf), _DEFLT_BUFSIZE, _DEFLT (fp)))
     {
-      /* Make sure we got the full line.  */
-      if (_DEFLT (buf)[strlen (_DEFLT (buf)) - 1] != '\n')
-        return NULL;
+      /* Trim trailing newline.  */
+      size_t len = strlen (_DEFLT (buf));
+      if (len && _DEFLT (buf)[len - 1] == '\n')
+        _DEFLT (buf)[len - 1] = '\0';
 
       /* Eat spaces.  */
       char *bufp = _DEFLT (buf) - 1;
@@ -60,9 +61,9 @@ char * defread (cp)
                 }
 
               /* Strip trailing quote.  */
-              size_t len = strlen (bufp);
+              len = strlen (bufp);
               if (len && (bufp[len - 1] == '"' || bufp[len - 1] == '\''))
-                bufp[len - 1] = 0;
+                bufp[len - 1] = '\0';
             }
 
           return bufp;
