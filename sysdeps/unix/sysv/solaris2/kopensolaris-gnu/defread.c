@@ -28,6 +28,10 @@ char * defread (cp)
   if (_DEFLT (fp) == NULL)
       return NULL;
 
+  /* Rewind if needed.  */
+  if ((_DEFLT (flags) & DC_NOREWIND) == 0)
+    rewind (_DEFLT (fp));
+
   size_t cplen = strlen (cp);
   int (*strcmpfunc)(const char *, const char *, size_t) =
       (_DEFLT (flags) & DC_CASE) ? strncmp : strncasecmp;
