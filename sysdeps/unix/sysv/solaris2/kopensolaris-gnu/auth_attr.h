@@ -24,6 +24,9 @@
 
 #define NSS_BUFLEN_AUTHATTR	1024
 
+#define AUTH_POLICY	"/etc/security/policy.conf"
+#define DEF_AUTH	"AUTHS_GRANTED="
+
 typedef struct authstr_s
   {
 	char *name;
@@ -34,7 +37,7 @@ typedef struct authstr_s
 	char *attr;
 } authstr_t;
 
-typedef struct kv_s kva_t;
+typedef struct kva_s kva_t;
 
 typedef struct authattr_s
   {
@@ -46,6 +49,8 @@ typedef struct authattr_s
 	kva_t *attr;
  } authattr_t;
 
+__BEGIN_DECLS
+
 extern authattr_t *getauthnam (const char *);
 extern authattr_t *getauthattr (void);
 extern void getauthlist (const char *, char **, int *);
@@ -53,5 +58,7 @@ extern void setauthattr (void);
 extern void endauthattr (void);
 extern void free_authattr (authattr_t *);
 extern void free_authlist (char **, int);
+
+__END_DECLS
 
 #endif /* _AUTH_ATTR_H */
