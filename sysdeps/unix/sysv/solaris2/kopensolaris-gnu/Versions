@@ -17,9 +17,9 @@ libc {
     core_set_process_content; core_set_process_path;
 
     # d
-    _delete; door_bind; door_call; door_cred; door_create; door_getparam;
-    door_info; door_return; door_revoke; door_server_create; door_setparam;
-    door_ucred; door_unbind;
+    _delete; defcntl; defopen; defread; door_bind; door_call; door_cred;
+    door_create; door_getparam; door_info; door_return; door_revoke;
+    door_server_create; door_setparam; door_ucred; door_unbind;
 
     # f
     facl; fork1;
