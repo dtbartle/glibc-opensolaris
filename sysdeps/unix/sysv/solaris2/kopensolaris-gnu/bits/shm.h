@@ -61,16 +61,16 @@ struct shmid_ds
     unsigned long shm_cnattch;	/* number of ISM attaches */
     __time_t shm_atime;			/* time of last shmat() */
 #if __WORDSIZE == 32
-	int32_t shm_pad1;
+	__int32_t shm_pad1;
 #endif
     __time_t shm_dtime;			/* time of last shmdt() */
 #if __WORDSIZE == 32
-	int32_t shm_pad2;
+	__int32_t shm_pad2;
 #endif
     __time_t shm_ctime;			/* time of last change by shmctl() */
 #if __WORDSIZE == 32
-	int32_t shm_pad3;
-    int32_t shm_pad4[4];
+	__int32_t shm_pad3;
+    __int32_t shm_pad4[4];
 #endif
   };
 
