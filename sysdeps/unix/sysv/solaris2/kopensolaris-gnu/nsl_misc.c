@@ -26,7 +26,7 @@
 
 char * _strdup_null (char *str)
 {
-  return strdup (s ?: "");
+  return strdup (str ?: "");
 }
 
 
@@ -50,6 +50,7 @@ char * _escape (char *str, char *escape)
         *retp++ = '\\';
       *retp++ = str[i];
     }
+  *retp = '\0';
 
   return ret;
 }
@@ -65,10 +66,11 @@ char * _unescape (char *str, char *escape)
   for (size_t i = 0; i < strlen (str); i++)
     {
       if (str[i] == '\\' && str[i + 1] && strchr (escape, str[i + 1]))
-        *ret++ = str[++i];
+        *retp++ = str[++i];
       else
-        *ret++ = str[i];
+        *retp++ = str[i];
     }
+  *retp = '\0';
 
   return ret;
 }
@@ -88,7 +90,7 @@ char * _strpbrk_escape (char *str, char *brkset)
 
 
 /* strtok_r except escaped chars are ignored.  */
-_strtok_escape (char *str, const char *delim, char **saveptr)
+_strtok_escape (char *s, const char *delim, char **save_ptr)
 {
   char *token;
 
