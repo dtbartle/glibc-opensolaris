@@ -60,6 +60,10 @@ ifeq ($(subdir),dirent)
 sysdep_routines += sys_getdents sys_getdents64
 endif
 
+ifeq ($(subdir),inet)
+sysdep_routines += _link_aton _link_ntoa
+endif
+
 ifeq ($(subdir),posix)
 sysdep_routines += exit-thread schedP
 endif
