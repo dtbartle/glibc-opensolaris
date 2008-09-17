@@ -47,4 +47,6 @@ int defopen (fn)
 
   /* Set default flags.  */
   _DEFLT (flags) = DC_STD;
+
+  return 0;
 }

@@ -38,8 +38,8 @@ char * defread (cp)
         return NULL;
 
       /* Eat spaces.  */
-      char *bufp = _DEFLT (buf);
-      while (*bufp++ == ' ') ;
+      char *bufp = _DEFLT (buf) - 1;
+      while (*++bufp == ' ') ;
 
       if ((*strcmpfunc)(bufp, cp, cplen) == 0)
         {
