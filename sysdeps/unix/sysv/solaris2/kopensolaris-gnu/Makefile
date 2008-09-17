@@ -105,7 +105,7 @@ sysdep-rtld-routines += _sysconfig
 endif
 
 ifeq ($(subdir),nis)
-sysdep-libnsl_routines += nsl_misc
+libnsl-routines += nsl_misc
 endif
 
 ifeq ($(subdir),nptl)
