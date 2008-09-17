@@ -53,8 +53,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h sys/ulimit.h \
     sys/ucred.h sys/port_impl.h sys/ttold.h sys/machtypes.h sys/dirent.h \
     sys/utime.h sys/vfstab sys/procfs.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h deflt.h \
-    auth_attr.h prof_attr.h user_attr.h rtld_db.h pcsample.h port.h atomic.h \
-    bits/machtypes.h
+    rtld_db.h pcsample.h port.h atomic.h bits/machtypes.h
 headers := $(filter-out sys/sysinfo.h,$(headers))
 endif
 

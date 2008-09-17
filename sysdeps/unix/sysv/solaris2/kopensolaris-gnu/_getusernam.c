@@ -17,7 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <user_attr.h>
+#include <user_attrP.h>
 
 #define LOOKUP_TYPE	userstr_t
 #define FUNCTION_NAME	_getusernam

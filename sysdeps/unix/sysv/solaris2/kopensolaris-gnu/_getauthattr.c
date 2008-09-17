@@ -17,7 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <auth_attr.h>
+#include <auth_attrP.h>
 
 #define LOOKUP_TYPE	authstr_t
 #define SETFUNC_NAME	_setauthattr

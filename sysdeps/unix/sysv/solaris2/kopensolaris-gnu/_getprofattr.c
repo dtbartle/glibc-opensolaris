@@ -17,7 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <prof_attr.h>
+#include <prof_attrP.h>
 
 #define LOOKUP_TYPE	profstr_t
 #define SETFUNC_NAME	_setprofattr
