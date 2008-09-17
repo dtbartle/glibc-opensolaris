@@ -37,7 +37,7 @@ libc {
     idmap_reg; idmap_unreg; _insert; issetugid; is_system_labeled;
 
     # l
-    llseek; lltostr;
+    _link_aton; _link_ntoa; llseek; lltostr;
 
     # m
     membar_enter; membar_exit; membar_producer; membar_consumer; memcntl;
