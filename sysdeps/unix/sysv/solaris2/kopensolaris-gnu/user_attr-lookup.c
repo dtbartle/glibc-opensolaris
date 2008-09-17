@@ -17,47 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _AUTH_ATTR_H
-#define _AUTH_ATTR_H
+#define DATABASE_NAME user_attr
+#define DEFAULT_CONFIG "files nis"
 
-#include <features.h>
-
-#define NSS_BUFLEN_AUTHATTR	1024
-
-#define AUTH_POLICY	"/etc/security/policy.conf"
-#define DEF_AUTH	"AUTHS_GRANTED="
-
-typedef struct authstr_s
-  {
-	char *name;
-	char *res1;
-	char *res2;
-	char *short_desc;
-	char *long_desc;
-	char *attr;
-} authstr_t;
-
-typedef struct kva_s kva_t;
-
-typedef struct authattr_s
-  {
-	char *name;
-	char *res1;
-	char *res2;
-	char *short_desc;
-	char *long_desc;
-	kva_t *attr;
- } authattr_t;
-
-__BEGIN_DECLS
-
-extern authattr_t *getauthnam (const char *);
-extern authattr_t *getauthattr (void);
-extern void setauthattr (void);
-extern void endauthattr (void);
-extern void free_authattr (authattr_t *);
-extern int chkauthattr (const char *, const char *);
-
-__END_DECLS
-
-#endif /* _AUTH_ATTR_H */
+#include "XXX-lookup.c"

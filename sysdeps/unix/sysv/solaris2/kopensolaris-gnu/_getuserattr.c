@@ -17,47 +17,23 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _AUTH_ATTR_H
-#define _AUTH_ATTR_H
+#include <user_attr.h>
 
-#include <features.h>
+#define LOOKUP_TYPE	userstr_t
+#define SETFUNC_NAME	_setuserattr
+#define	GETFUNC_NAME	_getuserattr
+#define	ENDFUNC_NAME	_enduserattr
+#define DATABASE_NAME	user_attr
+#define BUFLEN		NSS_BUFLEN_PROFATTR
 
-#define NSS_BUFLEN_AUTHATTR	1024
+#include "../nss/getXXent_r.c"
 
-#define AUTH_POLICY	"/etc/security/policy.conf"
-#define DEF_AUTH	"AUTHS_GRANTED="
+userstr_t * _getuserattr (userstr_t *psbuf, char *buf, int buflen, int *errnop)
+{
+  userstr_t *psbufp;
+  int errval = _getuserattr_r (psbuf, buf, buflen, &psbufp);
+  if (errval && errnop)
+    *errnop = errval;
 
-typedef struct authstr_s
-  {
-	char *name;
-	char *res1;
-	char *res2;
-	char *short_desc;
-	char *long_desc;
-	char *attr;
-} authstr_t;
-
-typedef struct kva_s kva_t;
-
-typedef struct authattr_s
-  {
-	char *name;
-	char *res1;
-	char *res2;
-	char *short_desc;
-	char *long_desc;
-	kva_t *attr;
- } authattr_t;
-
-__BEGIN_DECLS
-
-extern authattr_t *getauthnam (const char *);
-extern authattr_t *getauthattr (void);
-extern void setauthattr (void);
-extern void endauthattr (void);
-extern void free_authattr (authattr_t *);
-extern int chkauthattr (const char *, const char *);
-
-__END_DECLS
-
-#endif /* _AUTH_ATTR_H */
+  return errval ? NULL : psbuf;
+}
