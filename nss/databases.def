@@ -23,6 +23,7 @@
 
 DEFINE_DATABASE (aliases)
 #ifdef __OpenSolaris_kernel__
+DEFINE_DATABASE (audit_user)
 DEFINE_DATABASE (auth_attr)
 #endif
 DEFINE_DATABASE (ethers)

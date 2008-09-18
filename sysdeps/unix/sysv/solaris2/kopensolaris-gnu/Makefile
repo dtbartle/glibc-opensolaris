@@ -33,7 +33,8 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _so_send _so_sendmsg _so_sendto _so_setsockopt _so_shutdown _so_socket \
     _so_socketpair _sysconfig rctl atomic door getexecname is_system_labeled \
     privP mnttab modctl acl facl lltostr ulltostr defopen defread defcntl \
-    _getauthnam _getauthattr _getprofnam _getprofattr _getusernam _getuserattr
+    _getauthnam _getauthattr _getprofnam _getprofattr _getusernam _getuserattr \
+    _getauuserent _getauusernam
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
@@ -51,7 +52,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/cred.h sys/ulimit.h \
     sys/link.h sys/rctl_impl.h sys/procfs_isa.h sys/frame.h sys/kbio.h \
     sys/port.h sys/machelf.h sys/zmod.h sys/inttypes.h sys/atomic.h \
     sys/ucred.h sys/port_impl.h sys/ttold.h sys/machtypes.h sys/dirent.h \
-    sys/utime.h sys/vfstab sys/procfs.h
+    sys/utime.h sys/vfstab sys/procfs.h sys/old_procfs.h
 sysdep_headers += ucred.h priv.h bits/regset.h door.h zone.h deflt.h \
     rtld_db.h pcsample.h port.h atomic.h bits/machtypes.h
 headers := $(filter-out sys/sysinfo.h,$(headers))
@@ -110,7 +111,7 @@ libnsl-routines += nsl_misc
 endif
 
 ifeq ($(subdir),nss)
-databases += auth_attr prof_attr user_attr
+databases += audit_user auth_attr prof_attr user_attr
 endif
 
 ifeq ($(subdir),nptl)

@@ -60,7 +60,7 @@ static service_library *nss_new_service (name_database *database,
 /* Structure to map database name to variable.  */
 static const struct
 {
-  const char name[10];
+  const char name[12];
   service_user **dbp;
 } databases[] =
 {
