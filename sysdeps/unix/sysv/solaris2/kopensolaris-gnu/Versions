@@ -32,8 +32,8 @@ libc {
     getexecname; gethrtime; gethrvtime; getextmntent; getmntany; getmntent;
     getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv;
     getprivimplinfo; _getprofattr; _getprofnam; getprojid; getrctl; gettaskid;
-    _getuserattr; _getusernam; getustack; getvmusage; getzoneid;
-    getzoneidbyname; getzonenamebyid;
+    _getuserattr; _getusernam; getustack; getvfsany; getvfsent; getvfsfile;
+    getvfsspec; getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
 
     # h
     hasmntopt;
