@@ -28,7 +28,7 @@ libc {
     facl; fork1;
 
     # g
-    getacct; _getauuserent; _getauuserent; _getauthattr; _getauthnam; getcpuid;
+    getacct; _getauuserent; _getauusernam; _getauthattr; _getauthnam; getcpuid;
     getexecname; gethrtime; gethrvtime; getextmntent; getmntany; getmntent;
     getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv;
     getprivimplinfo; _getprofattr; _getprofnam; getprojid; getrctl; gettaskid;
