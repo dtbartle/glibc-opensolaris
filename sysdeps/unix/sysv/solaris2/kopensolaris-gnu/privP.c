@@ -65,9 +65,9 @@ priv_data_t * __priv_parse_info (const priv_impl_info_t *pii)
           /* Setup the index.  */
           char *names_ptr = pi_names->names;
           char **end_list = name_list + pi_names->cnt;
-          while (name_list < end_list)
+          for (int i = 0; i < pi_names->cnt; i++)
             {
-              *name_list = names_ptr;
+              name_list[i] = names_ptr;
               names_ptr += strlen (names_ptr);
             }
 
