@@ -47,7 +47,7 @@ int getvfsent (FILE *fp, struct vfstab *vp)
       len = strlen (bufp);
 
       /* Ignore empty lines and lines starting with #.  */
-      if (len && (bufp[len] == '\n' || bufp[len] == '#'))
+      if (len && (bufp[0] == '\n' || bufp[0] == '#'))
         continue;
 
       bufp[len - 1] = '\0';
