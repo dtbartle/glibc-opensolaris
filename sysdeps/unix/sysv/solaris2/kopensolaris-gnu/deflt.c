@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* XXX: OpenSolaris uses a per-thread buffer.  */
+
 _DEFLT_INIT
 
 int defopen (char *fn)

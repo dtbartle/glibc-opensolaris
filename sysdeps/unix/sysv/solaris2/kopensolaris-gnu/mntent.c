@@ -25,6 +25,10 @@
 
 /* Docs: http://docs.sun.com/app/docs/doc/816-5168/resetmnttab-3c  */
 
+#define _MNT_CMP(x, y, f) \
+	(!y->f || (y->f && strcmp (x->f, y->f) == 0))
+
+
 int getmntent (FILE *fp, struct mnttab *mt)
 {
   struct extmnttab emt;
@@ -41,19 +45,16 @@ int getmntent (FILE *fp, struct mnttab *mt)
   return 0;
 }
 
-#define MNTTABCMP(x, y, f) \
-	(!y->f || (y->f && strcmp (x->f, y->f) == 0))
-
 int getmntany (FILE *fp, struct mnttab *mt, struct mnttab *mtpref)
 {
   int res;
   while ((res = getmntent (fp, mt)) == 0)
     {
-      if (MNTTABCMP (mt, mtpref, mnt_special) &&
-          MNTTABCMP (mt, mtpref, mnt_mountp) &&
-          MNTTABCMP (mt, mtpref, mnt_fstype) &&
-          MNTTABCMP (mt, mtpref, mnt_mntopts) &&
-          MNTTABCMP (mt, mtpref, mnt_time))
+      if (_MNT_CMP (mt, mtpref, mnt_special) &&
+          _MNT_CMP (mt, mtpref, mnt_mountp) &&
+          _MNT_CMP (mt, mtpref, mnt_fstype) &&
+          _MNT_CMP (mt, mtpref, mnt_mntopts) &&
+          _MNT_CMP (mt, mtpref, mnt_time))
         return 0;
     }
 

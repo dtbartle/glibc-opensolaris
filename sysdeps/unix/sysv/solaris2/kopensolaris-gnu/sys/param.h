@@ -98,6 +98,10 @@
 
 #include <sys/isa_defs.h>
 
+#define MAXBSIZE	8192
+#define DEV_BSIZE	512
+#define DEV_BSHIFT	9
+#define MAXFRAG		8
 #ifdef  _LP64
 # define MAXOFF_T	0x7fffffffffffffffl
 # define MAXOFFSET_T	0x7fffffffffffffffl
