@@ -39,3 +39,5 @@
 #define POLLERR		0x008		/* Error condition.  */
 #define POLLHUP		0x010		/* Hung up.  */
 #define POLLNVAL	0x020		/* Invalid polling request.  */
+
+typedef struct pollfd pollfd_t;
