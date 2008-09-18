@@ -18,8 +18,8 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <priv.h>
-#include <zone.h>
+#include <zoneP.h>
+#include <privP.h>
 #include <dlfcn.h>
 
 DECLARE_INLINE_SYSCALL (zoneid_t, zone_create, zone_def *def);
@@ -49,15 +49,11 @@ zoneid_t zone_create (const char *name, const char *root,
       const char *zfsbuf, size_t zfsbufsz, int *extended_error, int match,
       int doi, const bslabel_t *label, int flags)
 {
-  const priv_impl_info_t *info = getprivimplinfo ();
-  if (info == NULL)
-    return -1;
-
   zone_def def;
   def.zone_name = name;
   def.zone_root = root;
   def.zone_privs = privs;
-  def.zone_privssz = info->priv_setsize * sizeof (priv_chunk_t);
+  def.zone_privssz = __PRIVSETSIZE;
   def.rctlbuf = rctlbuf;
   def.rctlbufsz = rctlbufsz;
   def.extended_error = extended_error;
