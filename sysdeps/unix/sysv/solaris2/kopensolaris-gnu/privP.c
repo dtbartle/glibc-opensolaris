@@ -35,7 +35,7 @@ priv_data_t * __priv_parse_info (const priv_impl_info_t *pii)
   /* Iterate over all priv_info_t's. Note that the first priv_info_t follows
      the header.  */
   priv_info_t *pi = (priv_info_t *)((char *)pii + pii->priv_headersize);
-  uint32_t left = pii->priv_headersize + pii->priv_globalinfosize;
+  uint32_t left = pii->priv_globalinfosize;
   while (left)
     {
       switch (pi->priv_info_type)
@@ -68,7 +68,7 @@ priv_data_t * __priv_parse_info (const priv_impl_info_t *pii)
           for (int i = 0; i < pi_names->cnt; i++)
             {
               name_list[i] = names_ptr;
-              names_ptr += strlen (names_ptr);
+              names_ptr += strlen (names_ptr) + 1;
             }
 
           break;
