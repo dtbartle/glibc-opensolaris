@@ -22,17 +22,21 @@
 
 #include <stdio.h>
 
-#define _DEFLT_INIT                                 \
-    FILE *__deflt_fp = NULL;                        \
-    int __deflt_flags = 0;                          \
-    libc_freeres_ptr (char *__deflt_buf) = NULL;
-
-extern FILE *__deflt_fp;
-extern int __deflt_flags;
-extern char *__deflt_buf;
+#define _DEFLT_INIT                                     \
+    static FILE *__deflt_fp = NULL;                     \
+    static int __deflt_flags = 0;                       \
+    libc_freeres_ptr (static char *__deflt_buf) = NULL;
 
 #define _DEFLT(x)	__deflt_##x
 
 #define _DEFLT_BUFSIZE	1024
+
+#define DC_GETFLAGS	0
+#define DC_SETFLAGS	1
+
+#define DC_CASE		0x01
+#define DC_NOREWIND	0x02
+#define DC_STRIP_QUOTES	0x04
+#define DC_STD		DC_CASE
 
 #endif /* _DEFLTP_H */

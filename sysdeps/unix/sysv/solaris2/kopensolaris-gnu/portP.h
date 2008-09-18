@@ -1,6 +1,6 @@
-/* Declarations of privilege functions and types.
-   Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,31 +17,22 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _DOOR_H
-#define _DOOR_H
+#ifndef _PORTP_H
+#define _PORTP_H
 
-#include <sys/door.h>
-#include <ucred.h>
-#include <features.h>
+#include <sys/types.h>
 
-typedef void door_server_func_t (door_info_t *);
+#define PORT_SYS_NOPORT		0x100
 
-__BEGIN_DECLS
+#define PORT_MAX_LIST	8192
 
-int door_create (void (*)(void *, char *, size_t, door_desc_t *, uint_t),
-    void *, uint_t);
-int door_revoke (int);
-int door_info (int, door_info_t *);
-int door_call (int, door_arg_t *);
-int door_return (char *, size_t, door_desc_t *, uint_t);
-int door_cred (door_cred_t *);
-int door_ucred (ucred_t **);
-int door_bind (int);
-int door_unbind (void);
-int door_getparam (int, int, size_t *);
-int door_setparam (int, int, size_t);
-door_server_func_t *door_server_create (door_server_func_t *);
+typedef struct port_event
+  {
+	int portev_events;
+	unsigned short portev_source;
+	unsigned short portev_pad;
+	uintptr_t portev_object;
+	void *portev_user;
+  } port_event_t;
 
-__END_DECLS
-
-#endif /* _DOOR_H */
+#endif /* _PORTP_H */

@@ -19,7 +19,7 @@
 
 #include <sys/swap.h>
 #include <sys/stat.h>
-#include <sys/uadmin.h>
+#include <uadminP.h>
 #include <errno.h>
 
 /* XXX: If the size of the device pointed to by path changes between calls

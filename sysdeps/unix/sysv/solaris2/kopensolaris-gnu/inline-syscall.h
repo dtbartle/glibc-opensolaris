@@ -21,6 +21,7 @@
 #define _INLINE_SYSCALL_H
 
 #include <sys/types.h>
+#include <syscallP.h>
 #include <sysdep.h>
 
 typedef union rval

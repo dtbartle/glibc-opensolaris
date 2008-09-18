@@ -18,12 +18,40 @@
    02111-1307 USA.  */
 
 #include <defltP.h>
-#include <deflt.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-char * defread (cp)
-      char *cp;
+_DEFLT_INIT
+
+int defopen (char *fn)
+{
+  /* Close old file if open.  */
+  if (_DEFLT (fp))
+    fclose (_DEFLT (fp));
+  if (fn == NULL)
+    return 0;
+
+  _DEFLT (fp) = fopen (fn, "r");
+  if (!_DEFLT (fp))
+    return -1;
+
+  /* Allocate line buffer.  */
+  if (_DEFLT (buf) == NULL)
+    {
+      _DEFLT (buf) = malloc (_DEFLT_BUFSIZE);
+      if (!_DEFLT (buf))
+        return -1;
+    }
+
+  /* Set default flags.  */
+  _DEFLT (flags) = DC_STD;
+
+  return 0;
+}
+
+
+char * defread (char *cp)
 {
   if (_DEFLT (fp) == NULL)
       return NULL;
@@ -72,3 +100,11 @@ char * defread (cp)
 
   return NULL;
 }
+
+
+// TODO
+#if 0
+int defcntl (int cmd, int newflags)
+{
+}
+#endif

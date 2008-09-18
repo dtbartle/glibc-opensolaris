@@ -19,7 +19,7 @@
 
 #include <sysdep-cancel.h>
 #include <inline-syscall.h>
-#include <door.h>
+#include <doorP.h>
 #include <libio/libioP.h>
 #include <atomic.h>
 #include <thread.h>
@@ -38,48 +38,51 @@ DECLARE_INLINE_SYSCALL (int, door, long, long, long, long, long, long subcode);
 
 int door_info (int d, door_info_t *info)
 {
-  return INLINE_SYSCALL (door, 6, d, (long)info, 0, 0, 0, DOOR_INFO);
+  return INLINE_SYSCALL (door, 6, d, (long)info, 0, 0, 0, SYS_SUB_door_info);
 }
 
 
 int door_bind (int d)
 {
-  return INLINE_SYSCALL (door, 6, d, 0, 0, 0, 0, DOOR_BIND);
+  return INLINE_SYSCALL (door, 6, d, 0, 0, 0, 0, SYS_SUB_door_bind);
 }
 
 
 int door_unbind (void)
 {
-  return INLINE_SYSCALL (door, 6, 0, 0, 0, 0, 0, DOOR_UNBIND);
+  return INLINE_SYSCALL (door, 6, 0, 0, 0, 0, 0, SYS_SUB_door_unbind);
 }
 
 
 int door_revoke (int d)
 {
-  return INLINE_SYSCALL (door, 6, d, 0, 0, 0, 0, DOOR_REVOKE);
+  return INLINE_SYSCALL (door, 6, d, 0, 0, 0, 0, SYS_SUB_door_revoke);
 }
 
 
 int door_getparam(int d, int param, size_t *out)
 {
-  return INLINE_SYSCALL (door, 6, d, param, (long)out, 0, 0, DOOR_GETPARAM);
+  return INLINE_SYSCALL (door, 6, d, param, (long)out, 0, 0,
+    SYS_SUB_door_getparam);
 }
 
 
 int door_setparam (int d, int param, size_t val)
 {
-  return INLINE_SYSCALL (door, 6, d, param, val, 0, 0, DOOR_GETPARAM);
+  return INLINE_SYSCALL (door, 6, d, param, val, 0, 0, SYS_SUB_door_setparam);
 }
 
 
 int door_call (int d, door_arg_t* params)
 {
   if (SINGLE_THREAD_P)
-    return INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0, DOOR_CALL);
+    return INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0,
+      SYS_SUB_door_call);
 
   int oldtype = LIBC_CANCEL_ASYNC ();
 
-  int res = INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0, DOOR_CALL);
+  int res = INLINE_SYSCALL (door, 6, d, (long)params, 0, 0, 0,
+    SYS_SUB_door_call);
 
   LIBC_CANCEL_RESET (oldtype);
 
@@ -99,7 +102,7 @@ int door_return (char *data_ptr, size_t data_size, door_desc_t *desc_ptr,
   drd.desc_num = num_desc;
 
   return INLINE_SYSCALL (door, 6, (long)data_ptr, data_size, (long)&drd,
-      (long)uc.uc_stack.ss_sp, uc.uc_stack.ss_size, DOOR_RETURN);
+      (long)uc.uc_stack.ss_sp, uc.uc_stack.ss_size, SYS_SUB_door_return);
 }
 
 
@@ -158,7 +161,7 @@ int door_create (void (*server_procedure)(void *cookie, char *argp,
   _IO_list_lock ();
 
   return INLINE_SYSCALL (door, 6, (long)server_procedure, (long)cookie, attributes,
-      0, 0, DOOR_CREATE);
+      0, 0, SYS_SUB_door_create);
 
   pid_t pid = getpid ();
   if (__door_private_pid != pid && (attributes & DOOR_PRIVATE) == 0)

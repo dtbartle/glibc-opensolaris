@@ -18,9 +18,8 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
+#include <ustatP.h>
 #include <sys/types.h>
-#include <sys/ustat.h>
-#include <sys/utssys.h>
 #include <unistd.h>
 
 DECLARE_INLINE_SYSCALL (int, utssys, void *buf, long arg, int type,
@@ -31,5 +30,5 @@ ustat (dev, ust)
      dev_t dev;
      struct ustat * ust;
 {
-  return INLINE_SYSCALL (utssys, 3, ust, dev, UTS_USTAT, NULL);
+  return INLINE_SYSCALL (utssys, 3, ust, dev, SYS_SUB_ustat, NULL);
 }

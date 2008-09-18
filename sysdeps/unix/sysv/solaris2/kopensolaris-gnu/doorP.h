@@ -17,19 +17,27 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _PORT_H
-#define _PORT_H
+#ifndef _DOORP_H
+#define _DOORP_H
 
-#include <sys/types.h>
-#include <sys/port.h>
+#define DOOR_UNREF		0x01
+#define DOOR_PRIVATE		0x02
+#define DOOR_LOCAL		0x04
+#define DOOR_REVOKED		0x08
+#define DOOR_UNREF_MULTI	0x10
+#define DOOR_IS_UNREF		0x20
+#define DOOR_REFUSE_DESC	0x40
+#define DOOR_NO_CANCEL		0x80
 
-int port_create (void);
-int port_associate (int, int, uintptr_t, int, void *);
-int port_dissociate (int, int, uintptr_t);
-int port_send (int, int, void *);
-int port_sendn (int [], int [], uint_t, int, void *);
-int port_get (int, port_event_t *, struct timespec *);
-int port_getn (int, port_event_t [], uint_t, uint_t *, struct timespec *);
-int port_alert (int, int, int, void *);
+typedef struct door_desc door_desc_t;
+typedef struct door_info door_info_t;
+typedef struct door_arg door_arg_t;
+typedef void door_server_func_t (door_info_t *);
 
-#endif /* _PORT_H */
+typedef struct door_return_desc
+  {
+	door_desc_t *desc_ptr;
+	unsigned int desc_num;
+  } door_return_desc_t;
+
+#endif /* _DOORP_H */

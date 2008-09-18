@@ -17,27 +17,25 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _ACL_IMPL_H
-#define _ACL_IMPL_H
+#ifndef _UADMINP_H
+#define _UADMINP_H
 
-#include <sys/acl.h>
+/* uadmin cmd's.  */
+#define	A_REBOOT	1
+#define	A_SHUTDOWN	2
+#define	A_FREEZE	3
+#define	A_REMOUNT	4
+#define	A_DUMP		5
+#define	A_FTRACE	15
+#define	A_SWAPCTL	16
 
-#define ACL_IS_TRIVIAL	0x10000
-#define ACL_IS_DIR	0x20000
+/* Shutdown-related fcn's.  */
+#define	AD_HALT		0
+#define	AD_BOOT		1
+#define	AD_IBOOT	2
+#define	AD_SBOOT	3
+#define	AD_SIBOOT	4
+#define	AD_POWEROFF	6
+#define	AD_NOSYNC	7
 
-typedef enum acl_type
-  {
-	ACLENT_T = 0,
-	ACE_T = 1
-  } acl_type_t;
-
-struct acl_info
-  {
-	acl_type_t acl_type;
-	int acl_cnt;
-	int acl_entry_size;
-	int acl_flags;
-	void *acl_aclp;
-  };
-
-#endif /* _SYS_ACL_IMPL_H */
+#endif /* _UADMINP_H */

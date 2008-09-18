@@ -112,6 +112,4 @@ typedef struct priv_info_names
 #define PRIV_INFO_BASICPRIVS	3
 #define PRIV_INFO_FLAGS		4
 
-
-
 #endif /* _SYS_PRIV_H */

@@ -172,14 +172,30 @@
 #define SYS_SUB_getrusage_lwp       2
 #define SYS_SUB_getvmusage          3
 
-/* TODO: SYS_port */
+/* SYS_port */
+#define SYS_SUB_port_create	0
+#define SYS_SUB_port_associate	1
+#define SYS_SUB_port_dissociate	2
+#define SYS_SUB_port_send	3
+#define SYS_SUB_port_sendn	4
+#define SYS_SUB_port_get	5
+#define SYS_SUB_port_getn	6
+#define SYS_SUB_port_alert	7
+#define SYS_SUB_port_dispatch	8
 
 /* SYS_door */
 #define SYS_SUB_door_create     0
 #define SYS_SUB_door_revoke     1
 #define SYS_SUB_door_info       2
 #define SYS_SUB_door_call       3
-#define SYS_SUB_door_return     4
+/* Subcodes 4 and 5 missing.  */
+#define SYS_SUB_door_bind       6
+#define SYS_SUB_door_unbind     7
+#define SYS_SUB_door_unrefsys   8
+#define SYS_SUB_door_ucred      9
+#define SYS_SUB_door_return     10
+#define SYS_SUB_door_getparam   11
+#define SYS_SUB_door_setparam   12
 
 /* SYS_pset */
 #define SYS_SUB_pset_create         0

@@ -1,6 +1,6 @@
-/* Declarations of SID functions and types.
-   Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,29 +17,29 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_SID_H
-#define _SYS_SID_H
+#ifndef _RCTLP_H
+#define _RCTLP_H
 
 #include <sys/types.h>
-#include <features.h>
 
-#define SIDSYS_ALLOC_IDS	0
-#define SIDSYS_IDMAP_REG	1
-#define SIDSYS_IDMAP_UNREG	2
+#define RCTL_GLOBAL_ACTION_MASK	0xFFFF0000
+#define RCTL_LOCAL_ACTION_MASK	0xFFFF0000
 
-/* allocids flags.  */
-#define SID_EXTEND_RANGE	0
-#define SID_NEW_RANGE	1
+typedef unsigned long long rctl_qty_t;
+typedef int rctl_priv_t;
+typedef struct rctlblk rctlblk_t;
 
-#define SIDSYS_SID2ID	0
-#define SIDSYS_ID2SID	1
+typedef struct rctl_opaque
+  {
+	rctl_qty_t rcq_value;
+	rctl_qty_t rcq_enforced_value;
+	rctl_priv_t rcq_privilege;
+	int rcq_global_flagaction;
+	int rcq_global_syslog_level;
+	int rcq_local_flagaction;
+	int rcq_local_signal;
+	id_t rcq_local_recipient_pid;
+	hrtime_t rcq_firing_time;
+  } rctl_opaque_t;
 
-__BEGIN_DECLS
-
-int allocids (int, int, uid_t *, int, gid_t *);
-int idmap_reg (int);
-int idmap_unreg (int);
-
-__END_DECLS
-
-#endif /* _SYS_SID_H */
+#endif /* _RCTLP_H */

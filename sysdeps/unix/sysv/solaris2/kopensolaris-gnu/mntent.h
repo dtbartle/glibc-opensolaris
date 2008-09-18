@@ -17,7 +17,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_VFSTAB_H
-#define _SYS_VFSTAB_H
+/* OpenSolaris defines getmntent but it differs from the glibc one. Only glibc
+   provides this header file, so we print an error if someone tries to use
+   the glibc implementation.  */
 
-#endif /* _SYS_VFSTAB_H */
+#error The glibc/linux mntent.h functions are incompatible with OpenSolaris

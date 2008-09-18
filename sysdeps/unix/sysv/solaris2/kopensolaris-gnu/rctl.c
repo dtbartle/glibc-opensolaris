@@ -18,9 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <syscallP.h>
-#include <sys/rctl.h>
-#include <sys/rctl_impl.h>
+#include <rctlP.h>
 
 /* Docs: http://docs.sun.com/app/docs/doc/816-5167/getrctl-2?a=view
          http://docs.sun.com/app/docs/doc/816-5168/rctlblk-size-3c?a=view  */

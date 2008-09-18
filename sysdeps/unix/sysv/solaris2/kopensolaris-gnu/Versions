@@ -62,7 +62,7 @@ libc {
     priv_isequalset; priv_isfullset; priv_ismember; priv_issubset; priv_set;
     priv_set_to_str; priv_str_to_set; priv_union; pset_assign; pset_bind;
     pset_create; pset_destroy; pset_getattr; pset_getloadavg; pset_info;
-    pset_list; pset_setattr; putacct; putmntent;
+    pset_list; pset_setattr; putacct;
 
     # r
     rctlblk_get_firing_time; rctlblk_get_global_action;

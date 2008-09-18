@@ -17,7 +17,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sys/priv.h>
+#ifndef _PRIVP_H
+#define _PRIVP_H
+
+#include <priv.h>
 
 typedef struct priv_data
   {
@@ -36,3 +39,5 @@ extern const priv_data_t * __priv_parse_data_cached (void);
 #define __PRIVMASK(pr)	((priv_chunk_t) 1 << ((pr) % __NPRIVBITS))
 #define __PRIVSETCHUNKS	(getprivimplinfo()->priv_setsize)
 #define __PRIVSETSIZE	(__PRIVSETCHUNKS * sizeof (priv_chunk_t))
+
+#endif /* _PRIVP_H */

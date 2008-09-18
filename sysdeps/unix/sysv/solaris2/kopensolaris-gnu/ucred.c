@@ -19,11 +19,9 @@
 
 #include <inline-syscall.h>
 #include <unistd.h>
-#include <ucred.h>
-#include <errno.h>
-#define _STRUCTURED_PROC 1
-#include <sys/ucred.h>
+#include <ucredP.h>
 #include <auditP.h>
+#include <errno.h>
 #include <priv.h>
 #include <assert.h>
 
@@ -244,12 +242,12 @@ const au_mask_t * ucred_getamask (const ucred_t *uc)
 
 size_t ucred_size (void)
 {
-    const priv_impl_info_t *info = getprivimplinfo ();
+  const priv_impl_info_t *info = getprivimplinfo ();
 
-    /* ucred_size cannot fail.  */
-    assert (info);
-
-    return UCRED_SIZE (info);
+  return sizeof (ucred_t) + sizeof (prcred_t) + sizeof (prpriv_t) +
+    ((int)sysconf (_SC_NGROUPS_MAX) - 1) * sizeof (gid_t) +
+    sizeof (priv_chunk_t) * (info->priv_setsize * info->priv_nsets - 1) +
+    info->priv_infosize + AUDITINFO64_ADDR_T_SIZE + BSLABEL_T_SIZE;
 }
 
 

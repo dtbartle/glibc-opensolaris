@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <sys/task.h>
+#include <sys/types.h>
 
 DECLARE_INLINE_SYSCALL (int, settaskid, projid_t project, unsigned int flags);
 

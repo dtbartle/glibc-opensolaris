@@ -20,8 +20,7 @@
 #include <inline-syscall.h>
 #include <sys/types.h>
 #include <sys/param.h>
-#include <sys/port_impl.h>
-#include <port.h>
+#include <portP.h>
 
 /* SYS_port returns a 64-bit int but the port_* calls return a 32-bit int, so
    we can't implement these directly in syscalls.list.  Whenever the 2nd
@@ -38,9 +37,10 @@ DECLARE_INLINE_SYSCALL (int64_t, port, int, ...);
 
 int port_create (void)
 {
-  /* The 2nd argument is the version on PORT_CREATE, currently 0.  */
+  /* The 2nd argument is the version of port_create, currently 0.  */
   rval_t ret;
-  ret.rval64 = INLINE_SYSCALL (port, 2, PORT_CREATE | PORT_SYS_NOPORT, 0);
+  ret.rval64 = INLINE_SYSCALL (port, 2,
+    SYS_SUB_port_create | PORT_SYS_NOPORT, 0);
   return ret.rval1;
 }
 
@@ -48,22 +48,23 @@ int port_associate (int port, int source, uintptr_t object,
       int events, void *user)
 {
   rval_t ret;
-  ret.rval64 = INLINE_SYSCALL (port, 6, PORT_ASSOCIATE, port, source, object,
-      events, user);
+  ret.rval64 = INLINE_SYSCALL (port, 6, SYS_SUB_port_associate, port, source,
+    object, events, user);
   return ret.rval1;
 }
 
 int port_dissociate (int port, int source, uintptr_t object)
 {
   rval_t ret;
-  ret.rval64 = INLINE_SYSCALL (port, 4, PORT_DISSOCIATE, port, source, object);
+  ret.rval64 = INLINE_SYSCALL (port, 4, SYS_SUB_port_dissociate, port,
+      source, object);
   return ret.rval1;
 }
 
 int port_send (int port, int events, void *user)
 {
   rval_t ret;
-  ret.rval64 = INLINE_SYSCALL (port, 4, PORT_SEND, port, events, user);
+  ret.rval64 = INLINE_SYSCALL (port, 4, SYS_SUB_port_send, port, events, user);
   return ret.rval1;
 }
 
@@ -77,8 +78,9 @@ int port_sendn (int ports[], int errors[], unsigned int nent,
   int nevents = 0;
   for (unsigned int i = 0; i < nent; i += PORT_MAX_LIST)
     {
-      int errval = __systemcall (SYS_port, &ret, PORT_SENDN | PORT_SYS_NOPORT,
-        &ports[i], &errors[i], MIN (nent - i, PORT_MAX_LIST), events, user);
+      int errval = __systemcall (SYS_port, &ret, SYS_SUB_port_sendn |
+        PORT_SYS_NOPORT, &ports[i], &errors[i], MIN (nent - i, PORT_MAX_LIST),
+        events, user);
       if (errval == 0 || errval == ETIME)
           nevents += ret.rval1;
       if (errval != 0)
@@ -96,7 +98,7 @@ int port_get (int port, port_event_t *pe, struct timespec *to)
   time_t sec = to ? to->tv_sec : 0;
   long nsec = to ? to->tv_nsec : 0;
   rval_t ret;
-  ret.rval64 = INLINE_SYSCALL (port, 6, PORT_GET, port, pe, sec, nsec, to);
+  ret.rval64 = INLINE_SYSCALL (port, 6, SYS_SUB_port_get, port, pe, sec, nsec, to);
   return ret.rval1;
 }
 
@@ -104,8 +106,8 @@ int port_getn (int port, port_event_t list[], unsigned int max,
       unsigned int *nget, struct timespec *timeout)
 {
   rval_t ret;
-  int errval = __systemcall (SYS_port, &ret, PORT_GETN, port, list, max,
-    *nget, timeout);
+  int errval = __systemcall (SYS_port, &ret, SYS_SUB_port_getn, port, list,
+    max, *nget, timeout);
   if (errval == 0 || errval == ETIME)
     *nget = ret.rval1;
 
@@ -120,6 +122,7 @@ int port_getn (int port, port_event_t list[], unsigned int max,
 int port_alert (int port, int flags, int events, void *user)
 {
   rval_t ret;
-  ret.rval64 = INLINE_SYSCALL (port, 5, PORT_ALERT, port, flags, events, user);
+  ret.rval64 = INLINE_SYSCALL (port, 5, SYS_SUB_port_alert, port, flags,
+    events, user);
   return ret.rval1;
 }

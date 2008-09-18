@@ -17,40 +17,32 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_UADMIN_H
-#define	_SYS_UADMIN_H
+#ifndef _MNTENTP_H
+#define _MNTENTP_H
 
-#include <features.h>
-#include <sys/types.h>
+#define MNTIOC	('m' << 8)
+#define MNTIOC_GETMNTENT	(MNTIOC|7)
 
-/* uadmin cmd's */
-#define	A_REBOOT	1
-#define	A_SHUTDOWN	2
-#define	A_FREEZE	3
-#define	A_REMOUNT	4
-#define	A_DUMP		5
-#define	A_FTRACE	15
-#define	A_SWAPCTL	16
+#define MNT_LINE_MAX	1024
 
-/* shutdown-related fcn's */
-#define	AD_HALT		0
-#define	AD_BOOT		1
-#define	AD_IBOOT	2
-#define	AD_SBOOT	3
-#define	AD_SIBOOT	4
-#define	AD_POWEROFF	6
-#define	AD_NOSYNC	7
+struct mnttab
+  {
+	char *mnt_special;
+	char *mnt_mountp;
+	char *mnt_fstype;
+	char *mnt_mntopts;
+	char *mnt_time;
+  };
 
-/* freez-related fcn's */
-#define	AD_SUSPEND_TO_DISK			0
-#define	AD_CHECK_SUSPEND_TO_DISK	2
-#define	AD_SUSPEND_TO_RAM			20
-#define	AD_CHECK_SUSPEND_TO_RAM		21
+struct extmnttab
+  {
+    char *mnt_special;
+    char *mnt_mountp;
+    char *mnt_fstype;
+    char *mnt_mntopts;
+    char *mnt_time;
+    unsigned int mnt_major;
+    unsigned int mnt_minor;
+  };
 
-__BEGIN_DECLS
-
-extern int uadmin (int cmd, int fcn, uintptr_t mdep);
-
-__END_DECLS
-
-#endif /* _SYS_UADMIN_H */
+#endif /* _MNTENTP_H */

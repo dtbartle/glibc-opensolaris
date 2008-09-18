@@ -25,7 +25,7 @@
 
 DECLARE_INLINE_SYSCALL (int64_t, forkx, int flags);
 
-static inline pid_t ARCH_FORK()
+static inline pid_t ARCH_FORK(void)
 {
   rval_t res;
   res.rval64 = INLINE_SYSCALL (forkx, 1, 0);
