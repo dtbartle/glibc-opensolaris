@@ -23,6 +23,7 @@
 #include <sys/priocntl.h>
 #include <string.h>
 #include <assert.h>
+#include <stdarg.h>
 
 DECLARE_INLINE_SYSCALL (int, privsys, int code, priv_op_t op,
     priv_ptype_t type, void *buf, size_t bufsize);
@@ -259,6 +260,7 @@ boolean_t priv_ismember (const priv_set_t *sp, const char *priv)
       B_TRUE : B_FALSE;
 }
 
+
 boolean_t priv_issubset (const priv_set_t *src, const priv_set_t *dst)
 {
   priv_chunk_t *pcsrc = (priv_chunk_t *)src;
@@ -267,4 +269,58 @@ boolean_t priv_issubset (const priv_set_t *src, const priv_set_t *dst)
     if ((pcsrc[__PRIVELT (i)] & pcdst[__PRIVELT (i)]) != pcsrc[__PRIVELT (i)])
       return B_FALSE;
   return B_TRUE;
+}
+
+
+int priv_set (priv_op_t op, priv_ptype_t which, ...)
+{
+  va_list ap;
+  va_start (ap, which);
+
+  priv_set_t *pset = priv_allocset ();
+  if (!pset)
+    return -1;
+
+  const char *priv;
+  while ((priv = va_arg (ap, const char *)))
+    {
+      if (priv_addset (pset, priv) == -1)
+        return -1;
+    }
+
+  int ret;
+  if (which == NULL)
+    {
+      /* Set all sets.  */
+      for (int i = 0; i < __PRIVSETCHUNKS; i++)
+        {
+          ret = setppriv (op, which, pset);
+          if (ret == -1)
+            break;
+        }
+    }
+  else
+    {
+      ret = setppriv (op, which, pset);
+    }
+
+  priv_freeset (pset);
+  return 0;
+}
+
+boolean_t priv_ineffect (const char *priv)
+{
+  priv_set_t *pset = priv_allocset ();
+  if (!pset)
+    return B_FALSE;
+
+  int res = getppriv (PRIV_EFFECTIVE, pset);
+  if (res == -1)
+    return B_FALSE;
+
+  boolean_t ret = priv_ismember (pset, priv);
+
+  priv_freeset (pset);
+
+  return ret;
 }
