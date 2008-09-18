@@ -57,9 +57,15 @@ priv_data_t * __priv_parse_info (const priv_impl_info_t *pii)
           if (!name_list)
             goto err;
           if (pi->priv_info_type == PRIV_INFO_SETNAMES)
-            data->pd_setnames = name_list;
+            {
+              data->pd_setnames = name_list;
+              data->pd_setnames_cnt = pi_names->cnt;
+            }
           else
-            data->pd_privnames = name_list;
+            {
+              data->pd_privnames = name_list;
+              data->pd_privnames_cnt = pi_names->cnt;
+            }
           data->pd_privnames_cnt = pi_names->cnt;
 
           /* Setup the index.  */
