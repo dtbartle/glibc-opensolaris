@@ -23,6 +23,7 @@
 #include <errno.h>
 #define _STRUCTURED_PROC 1
 #include <sys/ucred.h>
+#include <auditP.h>
 #include <priv.h>
 #include <assert.h>
 
@@ -188,6 +189,56 @@ m_label_t *ucred_getlabel (const ucred_t *uc)
     }
 
   return (m_label_t *)((char *)uc + uc->uc_labeloff);
+}
+
+
+au_id_t ucred_getauid (const ucred_t *uc)
+{
+  if (uc->uc_audoff == 0)
+    return AU_NOAUDITID;
+  const auditinfo64_addr_t *info = (auditinfo64_addr_t *)
+      ((char *)uc + uc->uc_audoff);
+
+  return info->ai_auid;
+}
+
+
+au_asid_t ucred_getasid (const ucred_t *uc)
+{
+  if (uc->uc_audoff == 0)
+    return (au_asid_t)-1;
+  const auditinfo64_addr_t *info = (auditinfo64_addr_t *)
+      ((char *)uc + uc->uc_audoff);
+
+  return info->ai_asid;
+}
+
+
+const au_tid64_addr_t * ucred_getatid (const ucred_t *uc)
+{
+  if (uc->uc_audoff == 0)
+    {
+      __set_errno (EINVAL);
+      return NULL;
+    }
+  const auditinfo64_addr_t *info = (auditinfo64_addr_t *)
+      ((char *)uc + uc->uc_audoff);
+
+  return &info->ai_termid;
+}
+
+
+const au_mask_t * ucred_getamask (const ucred_t *uc)
+{
+  if (uc->uc_audoff == 0)
+    {
+      __set_errno (EINVAL);
+      return NULL;
+    }
+  const auditinfo64_addr_t *info = (auditinfo64_addr_t *)
+      ((char *)uc + uc->uc_audoff);
+
+  return &info->ai_mask;
 }
 
 
