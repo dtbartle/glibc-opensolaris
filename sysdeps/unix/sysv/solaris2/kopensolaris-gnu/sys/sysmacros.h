@@ -53,6 +53,9 @@
 #define makedev(x, y)	(unsigned short)(((x) << O_BITSMINOR) | \
 	((y) & O_MAXMIN))
 
+#define makedevice(x, y)	(dev_t)(((dev_t)(x) << L_BITSMINOR) | \
+	((y) & L_MAXMIN))
+
 /* Convert new dev to old dev.  */
 #define cmpdev(x)	((((x) >> L_BITSMAJOR) > O_MAXMAJ) || \
 	(((x) & L_MAXMAJ) > O_MAXMAJ) ? NODEV : ((((x) >> L_BITSMAJOR) << \
