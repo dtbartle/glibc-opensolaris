@@ -120,6 +120,8 @@ static void * door_create_default_proc (void *arg)
 {
   pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, NULL);
   door_return (NULL, 0, NULL, 0);
+
+  return arg;
 }
 
 
@@ -138,6 +140,8 @@ static void * door_server_create_default (door_info_t *info)
   /* The default server create action is to create a server thread. We use
      thr_create since we want to create this as a daemon thread.  */
   thr_create_ptr (NULL, 0, door_create_default_proc, NULL, THR_DETACHED, NULL);
+
+  return NULL;
 }
 
 
