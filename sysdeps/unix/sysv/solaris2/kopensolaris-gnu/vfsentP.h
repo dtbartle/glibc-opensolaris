@@ -37,7 +37,7 @@ struct vfstab
 #define VFS_TOOMANY	2
 #define VFS_TOOFEW	3
 
-#define _VFS_INIT	static buf[VFS_LINE_MAX + 1];
+#define _VFS_INIT	static char buf[VFS_LINE_MAX + 1];
 #define _VFS_BUF	buf
 #define _VFS_DELIM	" \t"
 

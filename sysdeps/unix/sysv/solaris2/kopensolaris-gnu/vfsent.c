@@ -19,15 +19,18 @@
 
 #include <stdio.h>
 #include <vfsentP.h>
+#include <string.h>
 
 /* XXX: OpenSolaris uses a per-thread buffer.  */
 _VFS_INIT
 
 static inline int vfs_strtok_r (char *str, const char *delim,
-      char **saveptr, const char **strt)
+      char **saveptr, char **strt)
 {
-  *strt = strtok_r (str, delim, saveptr);
-  return  *strt ? 0 : -1;
+  int ret = (*strt = strtok_r (str, delim, saveptr)) ? 1 : 0;
+  if (*strt && strcmp (*strt, "-") == 0)
+    *strt = NULL;
+  return ret;
 }
 
 
@@ -55,16 +58,16 @@ int getvfsent (FILE *fp, struct vfstab *vp)
       /* Tokenize.  */
       char *tokp = NULL;
       if (!vfs_strtok_r (bufp, _VFS_DELIM, &tokp, &vp->vfs_special) ||
-          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, vp->vfs_fsckdev) ||
-          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, vp->vfs_mountp) ||
-          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, vp->vfs_fstype) ||
-          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, vp->vfs_fsckpass) ||
-          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, vp->vfs_automnt) ||
+          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_fsckdev) ||
+          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_mountp) ||
+          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_fstype) ||
+          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_fsckpass) ||
+          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_automnt) ||
           !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, vp->vfs_mntopts))
         return VFS_TOOFEW;
 
       /* If we can still tokenize the line is too long.  */
-      if (vfs_strtok_r (NULL, _VFS_DELIM, &tokp, vp->vfs_mntopts) == 0)
+      if (strtok_r (NULL, _VFS_DELIM, &tokp))
         return VFS_TOOMANY;
 
       return 0;
