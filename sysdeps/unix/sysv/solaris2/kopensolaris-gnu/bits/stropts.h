@@ -88,6 +88,15 @@
 #define I_GETCLTIME (__SID |33) /* Get current value for closing timeout.  */
 #define I_CANPUT    (__SID |34) /* Check if a certain band is writable.  */
 
+#define __I_PUSH_NOCTTY	(__SID |047)
+
+#define _I_MUXID2FD	(__SID |056)
+#define _I_INSERT	(__SID |057)
+#define _I_REMOVE	(__SID |060)
+#define _I_GETPEERCRED	(__SID |061)
+#define _I_PLINK_LH	(__SID |062)
+#define _I_CMD		(__SID |063)
+
 
 /* Used in `I_LOOK' request.  */
 #define FMNAMESZ	8	/* compatibility w/UnixWare/Solaris.  */
@@ -236,6 +245,13 @@ struct str_list
 typedef __t_scalar_t t_scalar_t;
 
 #ifdef __USE_MISC
+
+struct strmodconf
+  {
+	int pos;
+	__caddr_t mod_name;
+  };
+
 # define INFTIM		-1
 #endif
 

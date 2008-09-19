@@ -24,7 +24,7 @@
 #ifndef _BITS_UIO_H
 #define _BITS_UIO_H	1
 
-#include <sys/types.h>
+#include <bits/types.h>
 #include <features.h>
 
 /* Maximum number of iovec's that can be processed in a single call. */
@@ -56,8 +56,8 @@ typedef struct uio
 	int uio_iovcnt;
 	lloff_t _uio_offset;
 	uio_seg_t uio_segflg;
-	uint16_t uio_fmode;
-	uint16_t uio_extflg;
+	__uint16_t uio_fmode;
+	__uint16_t uio_extflg;
 	lloff_t _uio_limit;
 	ssize_t uio_resid;
   } uio_t;

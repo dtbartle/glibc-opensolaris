@@ -26,6 +26,7 @@
 # include <sys/types.h>
 # include <sys/socket.h>
 #endif
+#include <stdint.h>
 
 
 /* Length of interface name.  */
@@ -248,8 +249,8 @@ struct ifreq
 # define ifr_ip_muxid	ifr_ifru.if_muxid[0]
 # define ifr_arp_muxid	ifr_ifru.if_muxid[1]
 
-#define ifr_netmask	ifr_addr
-#define ifr_ifindex	ifr_index
+# define ifr_netmask	ifr_addr
+# define ifr_ifindex	ifr_index
 # define _IOT_ifreq	_IOT(_IOTS(char),IFNAMSIZ,_IOTS(char),16,0,0)
 # define _IOT_ifreq_short _IOT(_IOTS(char),IFNAMSIZ,_IOTS(short),1,0,0)
 # define _IOT_ifreq_int	_IOT(_IOTS(char),IFNAMSIZ,_IOTS(int),1,0,0)
@@ -286,7 +287,7 @@ struct ifconf
 /* Structure used in SIOCLIF*ND requests. */
 typedef struct lif_nd_req
   {
-#define ND_MAX_HDW_LEN  64
+# define ND_MAX_HDW_LEN  64
     struct sockaddr_storage lnr_addr;
     uint8_t lnr_state_create;
     uint8_t lnr_state_same_lla;
@@ -297,23 +298,23 @@ typedef struct lif_nd_req
     char lnr_hdw_addr[ND_MAX_HDW_LEN];
   } lif_nd_req_t;
 
-#define ND_UNCHANGED	0
-#define ND_INCOMPLETE	1
-#define ND_REACHABLE	2
-#define ND_STALE	3
-#define ND_DELAY	4
-#define ND_PROBE	5
-#define ND_UNREACHABLE	6
-#define ND_INITIAL	7
-#define ND_STATE_VALID_MIN	0
-#define ND_STATE_VALID_MAX	7
+# define ND_UNCHANGED	0
+# define ND_INCOMPLETE	1
+# define ND_REACHABLE	2
+# define ND_STALE	3
+# define ND_DELAY	4
+# define ND_PROBE	5
+# define ND_UNREACHABLE	6
+# define ND_INITIAL	7
+# define ND_STATE_VALID_MIN	0
+# define ND_STATE_VALID_MAX	7
 
-#define NDF_ISROUTER_ON		0x1
-#define NDF_ISROUTER_OFF	0x2
-#define NDF_ANYCAST_ON	0x4
-#define NDF_ANYCAST_OFF		0x8
-#define NDF_PROXY_ON	0x10
-#define NDF_PROXY_OFF	0x20
+# define NDF_ISROUTER_ON		0x1
+# define NDF_ISROUTER_OFF	0x2
+# define NDF_ANYCAST_ON	0x4
+# define NDF_ANYCAST_OFF		0x8
+# define NDF_PROXY_ON	0x10
+# define NDF_PROXY_OFF	0x20
 
 /* Structure used for the SIOC[GS]LIFLNKINFO requests. */
 typedef struct lif_ifinfo_req
@@ -357,27 +358,27 @@ struct lifreq
         zoneid_t lifru_zoneid;
     } lifr_lifru;
 };
-#define lifr_addrlen	lifr_lifru1.lifru_addrlen
-#define lifr_ppa	lifr_lifru1.lifru_ppa   /* driver's ppa */
-#define lifr_addr	lifr_lifru.lifru_addr   /* address */
-#define lifr_dstaddr	lifr_lifru.lifru_dstaddr /* other end of p-to-p link */
-#define lifr_broadaddr	lifr_lifru.lifru_broadaddr /* broadcast address */
-#define lifr_token	lifr_lifru.lifru_token  /* address token */
-#define lifr_subnet	lifr_lifru.lifru_subnet /* subnet prefix */
-#define lifr_index	lifr_lifru.lifru_index  /* interface index */
-#define lifr_flags	lifr_lifru.lifru_flags  /* flags */
-#define lifr_metric	lifr_lifru.lifru_metric /* metric */
-#define lifr_mtu	lifr_lifru.lifru_mtu    /* mtu */
-#define lifr_data	lifr_lifru.lifru_data   /* for use by interface */
-#define lifr_enaddr	lifr_lifru.lifru_enaddr /* ethernet address */
-#define lifr_index	lifr_lifru.lifru_index  /* interface index */
-#define lifr_ip_muxid	lifr_lifru.lif_muxid[0]
-#define lifr_arp_muxid	lifr_lifru.lif_muxid[1]
-#define lifr_nd	lifr_lifru.lifru_nd_req
-#define lifr_ifinfo	lifr_lifru.lifru_ifinfo_req
-#define lifr_groupname	lifr_lifru.lifru_groupname
-#define lifr_delay	lifr_lifru.lifru_delay
-#define lifr_zoneid	lifr_lifru.lifru_zoneid
+# define lifr_addrlen	lifr_lifru1.lifru_addrlen
+# define lifr_ppa	lifr_lifru1.lifru_ppa   /* driver's ppa */
+# define lifr_addr	lifr_lifru.lifru_addr   /* address */
+# define lifr_dstaddr	lifr_lifru.lifru_dstaddr /* other end of p-to-p link */
+# define lifr_broadaddr	lifr_lifru.lifru_broadaddr /* broadcast address */
+# define lifr_token	lifr_lifru.lifru_token  /* address token */
+# define lifr_subnet	lifr_lifru.lifru_subnet /* subnet prefix */
+# define lifr_index	lifr_lifru.lifru_index  /* interface index */
+# define lifr_flags	lifr_lifru.lifru_flags  /* flags */
+# define lifr_metric	lifr_lifru.lifru_metric /* metric */
+# define lifr_mtu	lifr_lifru.lifru_mtu    /* mtu */
+# define lifr_data	lifr_lifru.lifru_data   /* for use by interface */
+# define lifr_enaddr	lifr_lifru.lifru_enaddr /* ethernet address */
+# define lifr_index	lifr_lifru.lifru_index  /* interface index */
+# define lifr_ip_muxid	lifr_lifru.lif_muxid[0]
+# define lifr_arp_muxid	lifr_lifru.lif_muxid[1]
+# define lifr_nd	lifr_lifru.lifru_nd_req
+# define lifr_ifinfo	lifr_lifru.lifru_ifinfo_req
+# define lifr_groupname	lifr_lifru.lifru_groupname
+# define lifr_delay	lifr_lifru.lifru_delay
+# define lifr_zoneid	lifr_lifru.lifru_zoneid
 
 /* Structure used in SIOCT* requests. */
 struct sioc_addrreq
@@ -418,8 +419,8 @@ struct lifconf
         struct lifreq *lifcu_req;
       } lifc_lifcu;
   };
-#define lifc_buf	lifc_lifcu.lifcu_buf
-#define lifc_req	lifc_lifcu.lifcu_req
+# define lifc_buf	lifc_lifcu.lifcu_buf
+# define lifc_req	lifc_lifcu.lifcu_req
 
 /* Structure used in SIOCGLIFSRCOF request. */
 struct lifsrcof
@@ -433,13 +434,13 @@ struct lifsrcof
         struct lifreq *lifsu_req;
       } lifs_lifsu;
  };
-#define lifs_buf lifs_lifsu.lifsu_buf
-#define lifs_req lifs_lifsu.lifsu_req
+# define lifs_buf lifs_lifsu.lifsu_buf
+# define lifs_req lifs_lifsu.lifsu_req
 
-#define LIFC_NOXMIT				0x01
-#define LIFC_EXTERNAL_SOURCE	0x02
-#define LIFC_TEMPORARY			0x04
-#define LIFC_ALLZONES			0x08
+# define LIFC_NOXMIT				0x01
+# define LIFC_EXTERNAL_SOURCE	0x02
+# define LIFC_TEMPORARY			0x04
+# define LIFC_ALLZONES			0x08
 
 typedef struct if_data
   {
@@ -491,12 +492,12 @@ enum ifta_proto
     IFTAP_IPV6
   };
 
-#define IFTUN_VERSION 1
+# define IFTUN_VERSION 1
 
 /* Structure used in SIOCTUN[SG]PARAM requests. */
 struct iftun_req
   {
-#define IFTUN_SECINFOLEN 8
+# define IFTUN_SECINFOLEN 8
     char ifta_lifr_name[LIFNAMSIZ];
     struct sockaddr_storage ifta_saddr;
     struct sockaddr_storage ifta_daddr;
@@ -511,12 +512,49 @@ struct iftun_req
     uint32_t ifta_spare1;
   };
 
-#define IFTUN_SRC	0x01
-#define IFTUN_DST	0x02
-#define IFTUN_SECURITY	0x04
-#define IFTUN_ENCAP		0x08
-#define IFTUN_HOPLIMIT	0x10
-#define IFTUN_COMPLEX_SECURITY	0x20
+# define IFTUN_SRC	0x01
+# define IFTUN_DST	0x02
+# define IFTUN_SECURITY	0x04
+# define IFTUN_ENCAP		0x08
+# define IFTUN_HOPLIMIT	0x10
+# define IFTUN_COMPLEX_SECURITY	0x20
+
+struct ifnet
+  {
+	char *if_name;
+	short if_unit;
+	short if_mtu;
+	short if_flags;
+	short if_timer;
+	unsigned short if_promisc;
+	int if_metric;
+	struct ifaddr *if_addrlist;
+	struct ifqueue
+	  {
+		struct mbuf *ifq_head;
+		struct mbuf *ifq_tail;
+		int ifq_len;
+		int ifq_maxlen;
+		int ifq_drops;
+	  } if_snd;
+	int (*if_init)();
+	int (*if_output)();
+	int (*if_ioctl)();
+	int (*if_reset)();
+	int (*if_watchdog)();
+	int if_ipackets;
+	int if_ierrors;
+	int if_opackets;
+	int if_oerrors;
+	int if_collisions;
+	struct ifnet *if_next;
+	struct ifnet *if_upper;
+	struct ifnet *if_lower;
+	int (*if_input)();
+	int (*if_ctlin)();
+	int (*if_ctlout)();
+	struct map *if_memmap;
+  };
 
 #endif	/* Misc.  */
 

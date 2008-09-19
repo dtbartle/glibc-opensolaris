@@ -35,3 +35,21 @@ struct netent
 
 #define MAXALIASES	35
 #define MAXADDRS	35
+
+#ifdef __USE_MISC
+
+typedef struct ipsecalgent
+{
+  char **a_names;
+  int a_proto_num;
+  int a_alg_num;
+  char *a_mech_name;
+  int *a_block_sizes;
+  int *a_key_sizes;
+  int a_key_increment;
+} ipsecalgent_t;
+
+#define IPSEC_PROTO_AH	2
+#define IPSEC_PROTO_ESP	3
+
+#endif /* __USE_MISC */

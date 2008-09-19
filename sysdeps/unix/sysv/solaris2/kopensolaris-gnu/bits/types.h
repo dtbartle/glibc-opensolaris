@@ -28,6 +28,9 @@
 #include <features.h>
 #include <bits/wordsize.h>
 
+/* OpenSolaris needs this for source compatibility.  */
+#include <stdint.h>
+
 /* Convenience types.  */
 typedef unsigned char __u_char;
 typedef unsigned short int __u_short;
@@ -225,11 +228,19 @@ typedef unsigned int	k_fltset_t;
 typedef void		*timeout_id_t;
 typedef long long	len_t;
 
+#ifdef __USE_MISC
 typedef enum
   {
 	B_FALSE,
 	B_TRUE
   } boolean_t;
+#else
+typedef enum
+  {
+	_B_FALSE,
+	_B_TRUE
+  } boolean_t;
+#endif
 
 typedef union
   {
