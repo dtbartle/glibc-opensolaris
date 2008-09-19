@@ -25,15 +25,16 @@ libc {
     _endauuser; _endauthattr; _endprofattr; _enduserattr;
 
     # f
-    facl; fdwalk; fork1;
+    facl; fdwalk; fork1; freeipsecalgent;
 
     # g
     getacct; _getauuserent; _getauusernam; _getauthattr; _getauthnam; getcpuid;
-    getexecname; gethrtime; gethrvtime; getextmntent; getmntany; getmntent;
-    getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv;
-    getprivimplinfo; _getprofattr; _getprofnam; getprojid; getrctl; gettaskid;
-    _getuserattr; _getusernam; getustack; getvfsany; getvfsent; getvfsfile;
-    getvfsspec; getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
+    getexecname; gethrtime; gethrvtime; getextmntent; getipsecalgbyname;
+    getipsecalgbynum; getmntany; getmntent; getpagesizes; getpagesizes2;
+    getpeerucred; getpflags; getppriv; getprivimplinfo; _getprofattr;
+    _getprofnam; getprojid; getrctl; gettaskid; _getuserattr; _getusernam;
+    getustack; getvfsany; getvfsent; getvfsfile; getvfsspec; getvmusage;
+    getzoneid; getzoneidbyname; getzonenamebyid;
 
     # h
     hasmntopt;
