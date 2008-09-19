@@ -90,6 +90,7 @@ struct timeval
 #ifndef __time_misc_defined
 
 typedef struct timespec timespec_t;
+typedef struct timespec timestruc_t;
 typedef struct tm tm_t;
 
 # define SEC		1

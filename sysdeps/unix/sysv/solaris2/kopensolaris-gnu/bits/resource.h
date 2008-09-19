@@ -101,6 +101,14 @@ typedef __rlim64_t rlim64_t;
 # define RLIM32_SAVED_CUR	0x7FFFFFFD
 #endif
 
+#if __WORDSIZE == 64
+# define RLIM_SAVED(x)	1
+# define RLIM_NSAVED	RLIM_NLIMITS
+#else
+# define RLIM_SAVED(x)	(x <= RLIMIT_FSIZE)
+# define RLIM_NSAVED	(RLIMIT_FSIZE + 1)
+#endif
+
 struct rlimit
   {
     /* The current (soft) limit.  */

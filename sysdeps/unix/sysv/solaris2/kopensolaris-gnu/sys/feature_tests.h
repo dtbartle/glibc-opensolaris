@@ -22,6 +22,16 @@
 /* Let glibc do most of the work.  */
 #include <features.h>
 
+/* By default the large-file interfaces are available.  */
+#if !defined(_XOPEN_SOURCE) && !defined(__USE_LARGEFILE64)
+# define __USE_LARGEFILE64	1
+#endif
+
+/* UNIX98 stuff is always available.  */
+#ifndef __USE_UNIX98
+# define __USE_UNIX98	1
+#endif
+
 #if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE - 0 < 500) && \
 	(_XOPEN_VERSION - 0 < 4) && !defined(_XOPEN_SOURCE_EXTENDED)
 # define _XPG3

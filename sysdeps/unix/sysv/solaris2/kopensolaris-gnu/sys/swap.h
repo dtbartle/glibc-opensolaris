@@ -61,6 +61,10 @@ typedef struct swapent
 	int ste_flags;
 } swapent_t;
 
+/* ste_flags values.  */
+#define ST_INDEL	1
+#define ST_DOINGDEL	2
+
 /* swapctl arg for SC_LIST.  */
 typedef struct swaptable {
 	int			swt_n;

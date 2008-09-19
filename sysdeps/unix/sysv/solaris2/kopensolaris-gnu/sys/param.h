@@ -20,6 +20,7 @@
 #define _SYS_PARAM_H	1
 
 #include <limits.h>
+#include <features.h>
 
 /* BSD names for some <limits.h> values.  */
 
@@ -125,6 +126,10 @@
 # define hibyte(X)	(((unsigned char *)&(X))[0])
 # define loword(X)	(((ushort_t *)&(X))[1])
 # define hiword(X)	(((ushort_t *)&(X))[0])
+#endif
+
+#ifndef __USE_XOPEN
+# define NZERO	20
 #endif
 
 #endif	/* sys/param.h */

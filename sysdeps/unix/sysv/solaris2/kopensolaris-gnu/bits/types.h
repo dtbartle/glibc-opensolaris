@@ -25,7 +25,7 @@
 #ifndef	_BITS_TYPES_H
 #define	_BITS_TYPES_H	1
 
-#include <features.h>
+#include <sys/feature_tests.h>
 #include <bits/wordsize.h>
 
 /* OpenSolaris needs this for source compatibility.  */
