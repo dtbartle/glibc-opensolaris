@@ -104,9 +104,17 @@ char * defread (char *cp)
 }
 
 
-// TODO
-#if 0
 int defcntl (int cmd, int newflags)
 {
+  int oldflags = _DEFLT (flags);
+  switch (cmd)
+    {
+    case DC_GETFLAGS:
+      return oldflags;
+    case DC_SETFLAGS:
+      _DEFLT (flags) = newflags;
+      return oldflags;
+    default:
+      return -1;
+    }
 }
-#endif
