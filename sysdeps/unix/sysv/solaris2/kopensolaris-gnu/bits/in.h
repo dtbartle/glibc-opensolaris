@@ -180,3 +180,8 @@ typedef struct in6_addr in6_addr_t;
 
 #define IN_CLASSE(i)	IN_BADCLASS(i)
 #define IN_CLASSE_NET	0xffffffffU
+
+#define IN6_V4MAPPED_TO_INADDR(v6, v4) \
+	((v4)->s_addr = (v6)->in6_u.u6_addr32[3])
+#define IN6_V4MAPPED_TO_IPADDR(v6, v4) \
+	((v4) = (v6)->in6_u.u6_addr32[3])

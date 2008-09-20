@@ -50,7 +50,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/dirent.h sys/utime.h \
     sys/bufmod.h sys/types32.h sys/isa_defs.h sys/elf.h sys/int_types.h \
     sys/machelf.h sys/inttypes.h sys/atomic.h sys/procfs.h sys/old_procfs.h \
     sys/machtypes.h
-sysdep_headers += priv.h bits/regset.h procfs.h \
+sysdep_headers += priv.h bits/regset.h procfs.h nss_common.h \
     rtld_db.h pcsample.h atomic.h bits/machtypes.h
 headers := $(filter-out sys/sysinfo.h,$(headers))
 endif

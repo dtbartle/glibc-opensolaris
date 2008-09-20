@@ -28,9 +28,6 @@
 #include <sys/feature_tests.h>
 #include <bits/wordsize.h>
 
-/* OpenSolaris needs this for source compatibility.  */
-#include <stdint.h>
-
 /* Convenience types.  */
 typedef unsigned char __u_char;
 typedef unsigned short int __u_short;
@@ -326,8 +323,6 @@ typedef unsigned short	o_ino_t;
 #if !defined __clock_t_defined
 # define __clock_t_defined	1
 
-# include <bits/types.h>
-
 __BEGIN_NAMESPACE_STD
 /* Returned by `clock'.  */
 typedef __clock_t clock_t;
@@ -341,6 +336,13 @@ __USING_NAMESPACE_STD(clock_t)
 #if defined(__USE_MISC)
 /* A value representing the current process/task.  */
 # define P_MYID	(-1)
+#endif
+
+/* OpenSolaris needs this for source compatibility.  */
+#include <stdint.h>
+
+#ifdef _SYSCALL32
+# include <sys/types32.h>
 #endif
 
 #endif /* bits/types.h */

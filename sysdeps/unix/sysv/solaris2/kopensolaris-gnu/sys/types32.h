@@ -49,10 +49,18 @@ struct timeval32
 	__int32_t tv_usec;
   };
 
-struct timespec32
+typedef struct timespec32
   {
 	time32_t tv_sec;
 	__int32_t tv_nsec;
-  };
+  } timespec32_t;
+
+typedef struct timespec32 timestruc32_t;
+
+typedef struct itimerspec32
+  {
+	struct timespec32 it_interval;
+	struct timespec32 it_value;
+  } itimerspec32_t;
 
 #endif /* _SYS_TYPES32_H */
