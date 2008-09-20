@@ -43,8 +43,9 @@ libc {
     getacct; _getauuserent; _getauusernam; _getauthattr; _getauthnam; getcpuid;
     getexecname; gethrtime; gethrvtime; getextmntent; getipnodebyaddr;
     getipnodebyname; getipsecalgbyname; getipsecalgbynum; getmntany; getmntent;
-    getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv;
-    getprivimplinfo; _getprofattr; _getprofnam; getprojid; getrctl; gettaskid;
+    __getopt_sun; getpagesizes; getpagesizes2; getpeerucred; getpflags;
+    getppriv; getprivimplinfo; _getprofattr; _getprofnam; getprojid;
+    __getpwent_r_sun; __getpwnam_r_sun; __getpwuid_r_sun; getrctl; gettaskid;
     _getuserattr; _getusernam; getustack; getvfsany; getvfsent; getvfsfile;
     getvfsspec; getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
 
@@ -59,11 +60,12 @@ libc {
     _link_aton; _link_ntoa; llseek; lltostr;
 
     # m
-    membar_enter; membar_exit; membar_producer; membar_consumer; memcntl;
-    meminfo; modctl; mount;
+    __makedev; __major; membar_enter; membar_exit; membar_producer;
+    membar_consumer; memcntl; meminfo; __minor; modctl; mount;
 
     # n
-    ntp_adjtime; ntp_gettime;
+    nss_delete; nss_endent; nss_getent; nss_search; nss_setent;
+    _nss_XbyY_fgets; ntp_adjtime; ntp_gettime;
 
     # p
     pc_sample; p_online; priocntl; priocntlset; __priv_bracket;

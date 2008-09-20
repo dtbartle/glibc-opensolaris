@@ -20,12 +20,17 @@ These are solaris extensions that we should implement:
   gethomelgroup
   atomic_*
   _ttyname_dev
+  pthread_key_create_once_np
+  pthread_mutex_reltimedlock_np
+  pthread_rwlock_reltimedrdlock_np
+  pthread_rwlock_reltimedwrlock_np
 
 Insert into headers:
   resolvpath (unistd.h)
   issetugid (unistd.h)
   getvmusage (sys/vm_usage.h)
   str2sig, sig2str (signal.h)
+  sigsend, sigsendset (signal.h)
   getexecname (stdlib.h)
   lltostr, ulltostr (stdlib.h)
   fdwalk, closefrom (stdlib.h)
@@ -41,3 +46,6 @@ Since we now use an entirely libc-based rwlock implementation we should be able
 More clocks in pthread_condattr_setclock
 
 Use timer_* syscalls
+
+Fix forward.c to include mutex_* and thr_main
+  thr_main should return -1 when libpthread.so is not linked in

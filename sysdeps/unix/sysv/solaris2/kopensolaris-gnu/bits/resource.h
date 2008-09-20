@@ -152,6 +152,7 @@ enum __rusage_who
 };
 
 #define __need_timeval
+#define __need_itimerval
 #include <bits/time.h>		/* For `struct timeval'.  */
 
 /* Structure which says how much of each resource has been used.  */

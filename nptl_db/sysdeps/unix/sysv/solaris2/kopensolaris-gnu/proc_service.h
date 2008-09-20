@@ -95,12 +95,12 @@ extern ps_err_e ps_pglobal_lookup (struct ps_prochandle *,
 
 
 /* Stop or continue the entire process.  */
-extern ps_err_e ps_pstop (const struct ps_prochandle *);
-extern ps_err_e ps_pcontinue (const struct ps_prochandle *);
+extern ps_err_e ps_pstop (struct ps_prochandle *);
+extern ps_err_e ps_pcontinue (struct ps_prochandle *);
 
 /* Stop or continue the given LWP alone.  */
-extern ps_err_e ps_lstop (const struct ps_prochandle *, lwpid_t);
-extern ps_err_e ps_lcontinue (const struct ps_prochandle *, lwpid_t);
+extern ps_err_e ps_lstop (struct ps_prochandle *, lwpid_t);
+extern ps_err_e ps_lcontinue (struct ps_prochandle *, lwpid_t);
 
 __END_DECLS
 

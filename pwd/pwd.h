@@ -137,20 +137,58 @@ extern struct passwd *getpwnam (__const char *__name);
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation it is a cancellation point and
    therefore not marked with __THROW.  */
+#  ifndef __SUN_COMPAT_MODE
 extern int getpwent_r (struct passwd *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct passwd **__restrict __result);
+#  else
+extern struct passwd * __getpwent_r_sun (struct passwd *__restrict __resultbuf,
+		       char *__restrict __buffer, size_t __buflen);
+#   ifdef __REDIRECT
+extern struct passwd * __REDIRECT (getpwent_r, (
+		       struct passwd *__restrict __resultbuf,
+		       char *__restrict __buffer, size_t __buflen), __getpwent_r_sun);
+#   else
+#    define getpwent_r __getpwent_r_sun
+#   endif
+#  endif
 # endif
 
+# ifndef __SUN_COMPAT_MODE
 extern int getpwuid_r (__uid_t __uid,
 		       struct passwd *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct passwd **__restrict __result);
+# else
+extern struct passwd * __getpwuid_r_sun (__uid_t __uid,
+		       struct passwd *__restrict __resultbuf,
+		       char *__restrict __buffer, size_t __buflen);
+#  ifdef __REDIRECT
+extern struct passwd * __REDIRECT (getpwuid_r, (__uid_t __uid,
+		       struct passwd *__restrict __resultbuf,
+		       char *__restrict __buffer, size_t __buflen), __getpwuid_r_sun);
+#  else
+#   define getpwuid_r __getpwuid_r_sun
+#  endif
+# endif
 
+# ifndef __SUN_COMPAT_MODE
 extern int getpwnam_r (__const char *__restrict __name,
 		       struct passwd *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct passwd **__restrict __result);
+# else
+extern struct passwd * __getpwnam_r_sun (__const char *__restrict __name,
+		       struct passwd *__restrict __resultbuf,
+		       char *__restrict __buffer, size_t __buflen);
+#  ifdef __REDIRECT
+extern struct passwd * __REDIRECT (getpwnam_r, (__const char *__restrict __name,
+		       struct passwd *__restrict __resultbuf,
+		       char *__restrict __buffer, size_t __buflen), __getpwnam_r_sun);
+#  else
+#   define getpwnam_r __getpwnam_r_sun
+#  endif
+# endif
 
 
 # ifdef	__USE_SVID
@@ -161,10 +199,23 @@ extern int getpwnam_r (__const char *__restrict __name,
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation it is a cancellation point and
    therefore not marked with __THROW.  */
+#  ifndef __SUN_COMPAT_MODE
 extern int fgetpwent_r (FILE *__restrict __stream,
 			struct passwd *__restrict __resultbuf,
 			char *__restrict __buffer, size_t __buflen,
 			struct passwd **__restrict __result);
+#  else
+extern struct passwd * __fgetpwent_r_sun (FILE *__restrict __stream,
+			struct passwd *__restrict __resultbuf,
+			char *__restrict __buffer, size_t __buflen);
+#   ifdef __REDIRECT
+extern struct passwd * __REDIRECT (fgetpwent_r, (FILE *__restrict __stream,
+			struct passwd *__restrict __resultbuf,
+			char *__restrict __buffer, size_t __buflen), __fgetpwent_r_sun);
+#   else
+#    define fgetpwent_r __fgetpwent_r_sun
+#   endif
+#  endif
 # endif
 
 #endif	/* POSIX or reentrant */

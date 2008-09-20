@@ -120,6 +120,28 @@ reader-writer lock:
 
 [0] http://docs.sun.com/app/docs/doc/819-2243/rwlock-init-3c?a=view
 
+nsswitch:
+
+  nss_search
+
+    This is used to search a database given a key. Examples that use nss_search
+    include gethostbyname_r and _getauthattr.
+
+  nss_getent
+  nss_setent
+  nss_endent
+  nss_delete
+
+    These are used when for iterating over a database. nss_getent, nss_sent,
+    and nss_endent are used in gethostent, sethostent, and endhostent,
+    respectively. nss_delete is used to free resources used by the interation;
+    it usually directly follows a call to nss_endent.
+
+  _nss_XbyY_fgets
+
+    This function is used to parse a file directly, rather than going through
+    nsswitch.conf and its databases.
+
 sysconf:
 
   Many of the _SC_ sysconf values are obtained via the systemconf syscall. The

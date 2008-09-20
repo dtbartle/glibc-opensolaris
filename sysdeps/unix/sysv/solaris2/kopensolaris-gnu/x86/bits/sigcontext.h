@@ -21,7 +21,7 @@
 # error "Never use <bits/sigcontext.h> directly; include <signal.h> instead."
 #endif
 
-#include <bits/regset.h>
+#include <sys/ucontext.h>
 
 /* This is the same as mcontext_t.  */
 

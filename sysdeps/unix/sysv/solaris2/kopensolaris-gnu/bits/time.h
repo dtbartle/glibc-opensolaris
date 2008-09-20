@@ -68,6 +68,10 @@ extern long int __sysconf (int);
 # endif	/* bits/time.h */
 #endif
 
+#if defined (__need_itimerval) && !defined (__need_timeval)
+# define __need_timeval
+#endif
+
 #ifdef __need_timeval
 # undef __need_timeval
 # ifndef _STRUCT_TIMEVAL
@@ -86,6 +90,18 @@ struct timeval
 
 # endif	/* struct timeval */
 #endif	/* need timeval */
+
+# if defined (__need_itimerval) && !defined (__itimerval_defined)
+struct itimerval
+  {
+    /* Value to put into `it_value' when the timer expires.  */
+    struct timeval it_interval;
+    /* Time to the next timer expiration.  */
+    struct timeval it_value;
+  };
+#  define __itimerval_defined
+#  undef __need_itimerval
+# endif
 
 #ifndef __time_misc_defined
 

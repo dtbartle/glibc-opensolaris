@@ -17,14 +17,29 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <stdint.h>
-#include <signal.h>
+#ifndef _MKDEVP_H
+#define _MKDEVP_H
 
-extern void __sighandler (int, siginfo_t *, void *);
-extern void __sighandler_end (void);
+#include <sys/feature_tests.h>
 
-void thr_sighndlrinfo (void (**func)(void), int *funcsize)
-{
-    *func = (void (*)(void))&__sighandler;
-    *funcsize = (int)((uintptr_t)&__sighandler_end - (uintptr_t)&__sighandler);
-}
+#define ONBITSMAJOR	7
+#define ONBITSMINOR	8
+#define OMAXMAJ		0x7f
+#define OMAXMIN		0xff
+
+#ifdef _LP64
+# define NBITSMAJOR	32
+# define NBITSMINOR	32
+# define MAXMAJ		0xfffffffful
+# define MAXMIN		0xfffffffful
+#else
+# define NBITSMAJOR	14
+# define NBITSMINOR	18
+# define MAXMAJ		0x3ffful
+# define MAXMIN		0x3fffful
+#endif
+
+#define OLDDEV	0
+#define NEWDEV	1
+
+#endif /* _MKDEVP_H */
