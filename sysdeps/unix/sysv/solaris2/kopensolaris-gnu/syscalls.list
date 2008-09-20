@@ -61,6 +61,7 @@ shmget              - shmsys:shmget         i:iii       shmget
 sigaltstack         - sigaltstack           i:PP        __sigaltstack       sigaltstack
 sigfillset          - sigpending:sigfillset i:P         __sigfillset        sigfillset
 sigpending          - sigpending:sigpending i:p         sigpending
+sigsendset          - sigsendsys            i:pi        sigsendset
 sockconfig          - sockconfig            i:iiis      _sockconfig         sockconfig
 statvfs             - statvfs               i:sp        __statvfs           statvfs
 statvfs64           - statvfs64             i:sp        __statvfs64         statvfs64

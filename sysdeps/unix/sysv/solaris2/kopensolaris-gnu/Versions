@@ -77,7 +77,7 @@ libc {
     # s
     sendfilev; sendfilev64; _setauuser; _setauthattr; setpflags; setppriv;
     _setprofattr; setprojrctl; setrctl; settaskid; _setuserattr; setustack;
-    sig2str; _so_accept; _so_bind; _so_connect; _so_getpeername;
+    sig2str; sigsend; sigsendset;_so_accept; _so_bind; _so_connect; _so_getpeername;
     _so_getsockname; _so_getsockopt; _so_listen; _so_recv; _so_recvfrom;
     _so_recvmsg; _so_send; _so_sendmsg; _so_sendto; _so_setsockopt;
     _so_shutdown; _so_socket; _so_socketpair; str2sig; strlcat; strlcpy;
