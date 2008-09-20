@@ -21,6 +21,7 @@
 #define _UCREDP_H
 
 #include <sys/types.h>
+#include <auditP.h>
 
 typedef struct ucred_s
   {
@@ -34,7 +35,6 @@ typedef struct ucred_s
 	uint32_t uc_labeloff;
   } ucred_t;
 
-#define AUDITINFO64_ADDR_T_SIZE		44
 #define BSLABEL_T_SIZE		36
 
 extern size_t ucred_size (void);

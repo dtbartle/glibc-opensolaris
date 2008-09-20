@@ -537,11 +537,11 @@ struct ifnet
 		int ifq_maxlen;
 		int ifq_drops;
 	  } if_snd;
-	int (*if_init)();
-	int (*if_output)();
-	int (*if_ioctl)();
-	int (*if_reset)();
-	int (*if_watchdog)();
+	int (*if_init)(void);
+	int (*if_output)(void);
+	int (*if_ioctl)(void);
+	int (*if_reset)(void);
+	int (*if_watchdog)(void);
 	int if_ipackets;
 	int if_ierrors;
 	int if_opackets;
@@ -550,9 +550,9 @@ struct ifnet
 	struct ifnet *if_next;
 	struct ifnet *if_upper;
 	struct ifnet *if_lower;
-	int (*if_input)();
-	int (*if_ctlin)();
-	int (*if_ctlout)();
+	int (*if_input)(void);
+	int (*if_ctlin)(void);
+	int (*if_ctlout)(void);
 	struct map *if_memmap;
   };
 

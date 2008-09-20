@@ -46,7 +46,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/dirent.h sys/utime.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
     sys/pset.h sys/priv.h sys/priv_names.h sys/reg.h sys/siginfo.h \
-    sys/bufmod.h sys/types32.h sys/isa_defs.h sys/elf.h \
+    sys/bufmod.h sys/types32.h sys/isa_defs.h sys/elf.h sys/int_types.h \
     sys/machelf.h sys/inttypes.h sys/atomic.h sys/procfs.h sys/old_procfs.h \
     sys/machtypes.h
 sysdep_headers += priv.h bits/regset.h procfs.h \

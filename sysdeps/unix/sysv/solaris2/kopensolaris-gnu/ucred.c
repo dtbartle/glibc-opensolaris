@@ -247,7 +247,7 @@ size_t ucred_size (void)
   return sizeof (ucred_t) + sizeof (prcred_t) + sizeof (prpriv_t) +
     ((int)sysconf (_SC_NGROUPS_MAX) - 1) * sizeof (gid_t) +
     sizeof (priv_chunk_t) * (info->priv_setsize * info->priv_nsets - 1) +
-    info->priv_infosize + AUDITINFO64_ADDR_T_SIZE + BSLABEL_T_SIZE;
+    info->priv_infosize + sizeof (auditinfo64_addr_t) + BSLABEL_T_SIZE;
 }
 
 

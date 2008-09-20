@@ -21,6 +21,7 @@
 
 #include <limits.h>
 #include <features.h>
+#include <sys/isa_defs.h>
 
 /* BSD names for some <limits.h> values.  */
 

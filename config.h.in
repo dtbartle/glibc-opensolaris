@@ -230,3 +230,5 @@
 #define HAVE_REGEX 1
 
 #endif
+
+#undef	ALLOW_NULL_STRFTIME_FORMAT

@@ -227,6 +227,13 @@ typedef unsigned long	pfn_t;
 typedef unsigned int	k_fltset_t;
 typedef void		*timeout_id_t;
 typedef long long	len_t;
+typedef __SLONG32_TYPE	__t_scalar_t;
+typedef __ULONG32_TYPE	__t_uscalar_t;
+#ifndef __t_uscalar_t_defined
+typedef __t_uscalar_t	t_uscalar_t;
+# define __t_uscalar_t_defined
+#endif
+typedef __t_scalar_t	t_scalar_t;
 
 #ifdef __USE_MISC
 typedef enum
