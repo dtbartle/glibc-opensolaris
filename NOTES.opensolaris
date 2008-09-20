@@ -1,3 +1,10 @@
+headers:
+
+  In order to avoid duplicating OpenSolaris-specifc headers, most extensions
+  define any constants/structs in accompanying private/"P" headers. For
+  example, zone_* is implemented in zone.c and constants/structs are defined in
+  zoneP.h.
+
 auxiliary vector (auxv_t):
 
   Proper OpenSolaris does not support statically-linked executables (i.e. via
