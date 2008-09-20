@@ -2,3 +2,8 @@
  # Local configure fragment for sysdeps/unix/sysv/solaris2/kopensolaris-gnu.
 
 use_ldconfig=yes
+
+cat >>confdefs.h <<\_ACEOF
+#define ALLOW_NULL_STRFTIME_FORMAT 1
+_ACEOF
+
