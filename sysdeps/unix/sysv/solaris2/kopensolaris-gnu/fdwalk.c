@@ -41,5 +41,5 @@ int fdwalk (int (*func)(void *, int), void *cd)
       (*func)(cd, fd);
     }
 
-  return 0;
+  return closedir (dir);
 }
