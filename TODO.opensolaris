@@ -19,19 +19,16 @@ These are solaris extensions that we should implement:
   lgrpsys
   gethomelgroup
   atomic_*
-  defopen, defread
   _ttyname_dev
 
 Insert into headers:
   resolvpath (unistd.h)
   issetugid (unistd.h)
-  strlcpy, strlcat (string.h or strings.h)
   getvmusage (sys/vm_usage.h)
-  uucopy, uucopystr (string.h or strings.h)
-  sysi86 (sys/sysi86.h - see below)
   str2sig, sig2str (signal.h)
   getexecname (stdlib.h)
   lltostr, ulltostr (stdlib.h)
+  fdwalk, closefrom (stdlib.h)
 
 INVALID_NOT_TERMINATED_TD_P expects to succeed on terminated threads
 
@@ -44,5 +41,3 @@ Since we now use an entirely libc-based rwlock implementation we should be able
 More clocks in pthread_condattr_setclock
 
 Use timer_* syscalls
-
-Instead of AT_SECURE we can use AF_SUN_SETUGID [AT_SUN_AUXFLAGS]
