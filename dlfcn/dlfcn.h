@@ -29,7 +29,7 @@
 #include <bits/dlfcn.h>
 
 
-#ifdef __USE_GNU
+#ifdef __USE_MISC
 /* If the first argument of `dlsym' or `dlvsym' is set to RTLD_NEXT
    the run-time address of the symbol called NAME in the next shared
    object is returned.  The "next" relation is defined by the order
@@ -66,7 +66,7 @@ extern int dlclose (void *__handle) __THROW __nonnull ((1));
 extern void *dlsym (void *__restrict __handle,
 		    __const char *__restrict __name) __THROW __nonnull ((2));
 
-#ifdef __USE_GNU
+#ifdef __USE_MISC
 /* Like `dlopen', but request object to be allocated in a new namespace.  */
 extern void *dlmopen (Lmid_t __nsid, __const char *__file, int __mode) __THROW;
 
@@ -84,7 +84,7 @@ extern void *dlvsym (void *__restrict __handle,
 extern char *dlerror (void) __THROW;
 
 
-#ifdef __USE_GNU
+#ifdef __USE_MISC
 /* Structure containing information about object searched using
    `dladdr'.  */
 typedef struct
@@ -184,7 +184,7 @@ typedef struct
   unsigned int dls_cnt;		/* Number of elements in `dls_serpath'.  */
   Dl_serpath dls_serpath[1];	/* Actually longer, dls_cnt elements.  */
 } Dl_serinfo;
-#endif /* __USE_GNU */
+#endif /* __USE_MISC */
 
 
 __END_DECLS
