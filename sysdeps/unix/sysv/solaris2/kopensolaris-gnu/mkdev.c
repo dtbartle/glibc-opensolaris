@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <mkdevP.h>
+#include <sys/param.h>
 
 major_t __major (const int version, const dev_t devnum)
 {
