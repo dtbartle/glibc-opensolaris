@@ -9,6 +9,18 @@ libc {
     # a
     acct; acctctl; acl; allocids;
 
+    # atomic
+    atomic_add_8; atomic_add_char; atomic_add_16; atomic_add_short;
+    atomic_add_32; atomic_add_int; atomic_add_long; atomic_add_64;
+    atomic_add_ptr; atomic_add_8_nv; atomic_add_char_nv; atomic_add_16_nv;
+    atomic_add_short_nv; atomic_add_32_nv; atomic_add_int_nv;
+    atomic_add_long_nv; atomic_add_64_nv; atomic_add_ptr_nv;
+    atomic_dec_8; atomic_dec_uchar; atomic_dec_16; atomic_dec_ushort;
+    atomic_dec_32; atomic_dec_uint; atomic_dec_ulong; atomic_dec_64;
+    atomic_dec_ptr; atomic_dec_8_nv; atomic_dec_uchar_nv; atomic_dec_16_nv;
+    atomic_dec_ushort_nv; atomic_dec_32_nv; atomic_dec_uint_nv;
+    atomic_dec_ulong_nv; atomic_dec_64_nv; atomic_dec_ptr_nv;
+
     # c
     closefrom; core_get_default_content; core_get_default_path;
     core_get_global_content; core_get_global_path; core_get_options;
@@ -40,7 +52,8 @@ libc {
     hasmntopt;
 
     # i
-    idmap_reg; idmap_unreg; _insert; issetugid; is_system_labeled;
+    idmap_reg; idmap_unreg; __init_suid_priv; _insert; issetugid;
+    is_system_labeled;
 
     # l
     _link_aton; _link_ntoa; llseek; lltostr;
@@ -53,13 +66,13 @@ libc {
     ntp_adjtime; ntp_gettime;
 
     # p
-    pc_sample; p_online; priocntl; priocntlset; __priv_free_info;
-    __priv_parse_info; processor_bind; processor_info; port_alert;
-    port_associate; port_create; port_dissociate; port_get; port_getn;
-    port_send; port_sendn; priv_allocset; priv_addset; priv_copyset;
-    priv_delset; priv_emptyset; priv_fillset; priv_freeset; priv_getbyname;
-    priv_getbynum; priv_getsetbyname; priv_getsetbynum; priv_gettext;
-    priv_ineffect; priv_intersect; priv_inverse; priv_isemptyset;
+    pc_sample; p_online; priocntl; priocntlset; __priv_bracket;
+    __priv_free_info; __priv_parse_info; __priv_relinquish; processor_bind;
+    processor_info; port_alert; port_associate; port_create; port_dissociate;
+    port_get; port_getn; port_send; port_sendn; priv_allocset; priv_addset;
+    priv_copyset; priv_delset; priv_emptyset; priv_fillset; priv_freeset;
+    priv_getbyname; priv_getbynum; priv_getsetbyname; priv_getsetbynum;
+    priv_gettext; priv_ineffect; priv_intersect; priv_inverse; priv_isemptyset;
     priv_isequalset; priv_isfullset; priv_ismember; priv_issubset; priv_set;
     priv_set_to_str; priv_str_to_set; priv_union; pset_assign; pset_bind;
     pset_create; pset_destroy; pset_getattr; pset_getloadavg; pset_info;
@@ -80,11 +93,11 @@ libc {
     sig2str; sigsend; sigsendset;_so_accept; _so_bind; _so_connect; _so_getpeername;
     _so_getsockname; _so_getsockopt; _so_listen; _so_recv; _so_recvfrom;
     _so_recvmsg; _so_send; _so_sendmsg; _so_sendto; _so_setsockopt;
-    _so_shutdown; _so_socket; _so_socketpair; str2sig; strlcat; strlcpy;
-    swapctl; __systemcall; sysfs; systeminfo;
+    _so_shutdown; _so_socket; _so_socketpair; stack_getbounds; str2sig;
+    strlcat; strlcpy; swapctl; _sysconf; __systemcall; sysfs; systeminfo;
 
     # t
-    _ttyname_dev;
+    thr_sighndlrinfo; _ttyname_dev;
 
     # u
     uadmin; _ucred_alloc; ucred_free; ucred_get; ucred_getamask; ucred_getauid;

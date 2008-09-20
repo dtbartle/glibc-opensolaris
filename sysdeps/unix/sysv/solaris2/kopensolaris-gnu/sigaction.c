@@ -122,6 +122,7 @@ weak_alias (__libc_sigaction, sigaction)
 #endif
 
 
+asm (".globl __sighandler_end");
 void __sighandler (int sig, siginfo_t *sip, void *uvp)
 {
   assert (sig >= 0 && sig < NSIG);
@@ -148,3 +149,4 @@ void __sighandler (int sig, siginfo_t *sip, void *uvp)
   setcontext (uctx);
   assert (0); /* never reached */
 }
+asm ("__sighandler_end:");

@@ -34,9 +34,11 @@ print_entry (struct utmp *up)
      a 64-bit long is expected. So copy up->up_tv to a temporary timeval.
      This is 32-/64-bit agnostic and expands the timeval fields to the
      expected size as needed. */
+#ifdef _HAVE_UT_TV
   struct timeval temp_tv;
   temp_tv.tv_sec = up->ut_tv.tv_sec;
   temp_tv.tv_usec = up->ut_tv.tv_usec;
+#endif
 
   (printf) (
 	    /* The format string.  */

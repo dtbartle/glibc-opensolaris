@@ -103,3 +103,5 @@ __sysconf (int name)
 #undef __sysconf
 #define __sysconf static posix_sysconf
 #include <sysdeps/posix/sysconf.c>
+
+weak_alias (__sysconf, _sysconf)

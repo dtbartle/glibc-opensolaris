@@ -23,6 +23,7 @@
 
 __libc_lock_define_recursive (extern, __priv_lock);
 libc_freeres_ptr (static priv_data_t *__data);
+static priv_set_t *__suidset = NULL;
 
 priv_data_t * __priv_parse_info (const priv_impl_info_t *pii)
 {
@@ -123,4 +124,39 @@ const priv_data_t * __priv_parse_data_cached (void)
   __libc_lock_unlock_recursive (__priv_lock);
 
   return __data;
+}
+
+
+#if 0
+int __init_suid_priv (int flags, ...)
+{
+  // TODO
+}
+#endif
+
+
+int __priv_bracket (priv_op_t op)
+{
+  if (op != PRIV_ON && op != PRIV_OFF)
+    {
+      __set_errno (EINVAL);
+      return -1;
+    }
+
+  /* We can only toggle privileges if __init_suid_priv was called.  */
+  if (__suidset)
+    return setppriv (op, PRIV_EFFECTIVE, __suidset);
+  else
+    return 0;
+}
+
+
+void __priv_relinquish (void)
+{
+  if (__suidset)
+    {
+      setppriv (PRIV_OFF, PRIV_PERMITTED, __suidset);
+      priv_freeset (__suidset);
+      __suidset = NULL;
+    }
 }
