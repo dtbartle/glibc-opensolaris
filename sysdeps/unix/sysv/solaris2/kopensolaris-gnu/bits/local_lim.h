@@ -83,6 +83,8 @@
 
 #define PIPE_BUF    5120
 
+#define PASS_MAX    256
+
 /* Maximum message queue priority level.  */
 #define MQ_PRIO_MAX		32768
 

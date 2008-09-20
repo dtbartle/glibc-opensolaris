@@ -234,3 +234,7 @@ struct termios
 #define DIOCSETP	(DIOC|9)
 
 #define FIORDCHK	(('f'<<8)|3)
+
+#define CESC	'\\'
+#define CNUL	0
+#define CDEL	0377
