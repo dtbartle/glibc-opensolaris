@@ -26,18 +26,20 @@
 #include <bits/types.h>
 #include <sys/time.h>
 #include <bits/wordsize.h>
+#include <sys/types32.h>
 
 
-#ifdef __USE_GNU
-# include <paths.h>
-# define _PATH_UTMPX	_PATH_UTMP
-# define _PATH_WTMPX	_PATH_WTMP
+#define _UTMPX_FILE	"/var/adm/utmpx"
+#define _WTMPX_FILE	"/var/adm/wtmpx"
+#ifdef __USE_MISC
+# define _PATH_UTMPX	_UTMPX_FILE
+# define _PATH_WTMPX	_WTMPX_FILE
 #endif
 
 
 #define __UT_LINESIZE	32
 #define __UT_NAMESIZE	32
-#define __UT_HOSTSIZE	256
+#define __UT_HOSTSIZE	257
 
 
 /* The structure describing the status of a terminated process.  This
@@ -71,17 +73,19 @@ struct utmpx
   char ut_host[__UT_HOSTSIZE];	/* Hostname for remote login.  */
 };
 
+#define ut_name	ut_user
+#define ut_xtime	ut_tv.tv_sec
+
+#define NONROOT_USRX	2
+#define nonuserx(utx)	((utx).ut_exit.e_exit == NONROOT_USRX ? 1 : 0)
+#define setuserx(utx)	((utx).ut_exit.e_exit = NONROOT_USRX)
 
 /* Values for the `ut_type' field of a `struct utmpx'.  */
 #define EMPTY		0	/* No valid user accounting information.  */
-
-#ifdef __USE_GNU
 # define RUN_LVL	1	/* The system's runlevel.  */
-#endif
 #define BOOT_TIME	2	/* Time of system boot.  */
 #define NEW_TIME	3	/* Time after system clock changed.  */
 #define OLD_TIME	4	/* Time when system clock changed.  */
-
 #define INIT_PROCESS	5	/* Process spawned by the init process.  */
 #define LOGIN_PROCESS	6	/* Session leader of a logged in user.  */
 #define USER_PROCESS	7	/* Normal process.  */
@@ -93,5 +97,28 @@ struct utmpx
 # define  UTMAXTYPE	DOWN_TIME
 #endif
 
-#define UTMPX_FILE	"/var/adm/utmpx"
-#define WTMPX_FILE	"/var/adm/wtmpx"
+#define RUNLVL_MSG	"run-level %c"
+#define BOOT_MSG	"system boot"
+#define OTIME_MSG	"old time"
+#define NTIME_MSG	"new time"
+#define PSRADM_MSG	"%03d  %s"
+#define DOWN_MSG	"system down"
+
+struct futmpx
+  {
+	char    ut_user[__UT_NAMESIZE];
+	char    ut_id[4];
+	char    ut_line[__UT_LINESIZE];
+	pid32_t ut_pid;
+	int16_t ut_type;
+	struct
+	  {
+		int16_t e_termination;
+		int16_t e_exit;
+	  } ut_exit;
+	struct timeval32 ut_tv;
+	int32_t ut_session;
+	int32_t pad[5];
+	int16_t ut_syslen;
+	char ut_host[__UT_HOSTSIZE];
+  };

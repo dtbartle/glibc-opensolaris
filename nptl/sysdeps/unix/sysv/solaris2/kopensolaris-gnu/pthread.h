@@ -942,6 +942,11 @@ extern int pthread_cond_timedwait (pthread_cond_t *__restrict __cond,
 				   __const struct timespec *__restrict
 				   __abstime) __nonnull ((1, 2, 3));
 
+extern int pthread_cond_reltimedwait_np (pthread_cond_t *__restrict __cond,
+				   pthread_mutex_t *__restrict __mutex,
+				   __const struct timespec *__restrict
+				   __reltime) __nonnull ((1, 2, 3));
+
 /* Functions for handling condition variable attributes.  */
 
 /* Initialize condition variable attribute ATTR.  */

@@ -20,6 +20,8 @@
 #ifndef _STACK_STACK_H
 #define _STACK_STACK_H
 
-#define STACK_ALIGN		16
+#define STACK_ALIGN	16
+#define STACK_BIAS	0
+#define SA(x)		(((x) + (STACK_ALIGN - 1)) & ~(STACK_ALIGN - 1))
 
 #endif /* _STACK_STACK_H */

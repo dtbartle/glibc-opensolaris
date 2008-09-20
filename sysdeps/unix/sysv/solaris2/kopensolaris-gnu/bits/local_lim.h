@@ -59,34 +59,36 @@
 #define MQ_PRIO_MAX		32768
 
 /* Maximum number of characters in a path name.  */
-#define PATH_MAX    1024
+#define PATH_MAX	1024
 
 /* Maximum number of files a process can have open.  */
-#define OPEN_MAX    256
+#define OPEN_MAX	256
 
-#define NGROUPS_MAX 16
+#define NGROUPS_MAX	16
 
 /* XXX: The 64-bit case is larger but this should be enough for all.  */
-#define ARG_MAX    1048320
+#define ARG_MAX		1048320
 
-#define CHILD_MAX   25
+#define CHILD_MAX	25
 
-#define OPEN_MAX    256
+#define OPEN_MAX	256
 
-#define SYMLINK_MAX 1024
+#define SYMLINK_MAX	1024
 
-#define MAX_CANON   256
+#define MAX_CANON	256
 
-#define PATH_MAX    1024
+#define PATH_MAX	1024
 
-#define MAX_INPUT   512
+#define MAX_INPUT	512
 
-#define PIPE_BUF    5120
+#define PIPE_BUF	5120
 
-#define PASS_MAX    256
+#define PASS_MAX	256
+
+#define UID_MAX         2147483647
 
 /* Maximum message queue priority level.  */
 #define MQ_PRIO_MAX		32768
 
 /* Maximum value the semaphore can have.  */
-#define SEM_VALUE_MAX   (2147483647)
+#define SEM_VALUE_MAX   2147483647

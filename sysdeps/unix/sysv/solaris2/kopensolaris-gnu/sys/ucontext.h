@@ -56,6 +56,8 @@ int getustack (stack_t **);
 
 int setustack (stack_t *);
 
+int stack_getbounds (stack_t *);
+
 __END_DECLS
 
 #endif /* _SYS_UCONTEXT_H */

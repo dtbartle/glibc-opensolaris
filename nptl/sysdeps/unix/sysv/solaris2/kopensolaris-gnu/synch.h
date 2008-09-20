@@ -28,6 +28,12 @@ typedef lwp_cond_t cond_t;
 typedef lwp_rwlock_t rwlock_t;
 typedef lwp_sema_t sema_t;
 
+#define SEMA_HELD(x)		_sema_held (x)
+#define RW_READ_HELD(x)		_rw_read_held (x)
+#define RW_WRITE_HELD(x)	_rw_write_held (x)
+#define RW_LOCK_HELD(x)		(RW_READ_HELD (x) || RW_WRITE_HELD (x))
+#define MUTEX_HELD(x)		_mutex_held (x)
+
 __BEGIN_DECLS
 
 /* syscalls */

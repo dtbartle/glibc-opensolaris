@@ -57,6 +57,13 @@ enum
 #define P_FORCED	P_FORCED
 };
 
+#define PS_OFFLINE	"off-line"
+#define PS_ONLINE	"on-line"
+#define PS_FAULTED	"faulted"
+#define PS_POWEROFF	"powered-off"
+#define PS_NOINTR	"no-intr"
+#define PS_SPARE	"spare"
+
 #define PBIND_NONE	-1
 #define PBIND_QUERY	-2
 #define PBIND_HARD	-3

@@ -81,6 +81,7 @@
 #define GID_SYS		3
 #define UID_DLADM	15
 #define MAXUID		2147483647
+#define MAXPROJID	MAXUID
 
 #define NS_PACKETSZ	512
 #define NS_MAXDNAME	1025

@@ -43,4 +43,7 @@ extern void _dl_non_dynamic_init (void) internal_function;
 /* We want to enable th rtld_db hooks.  */
 #define ENABLE_RTLD_DB
 
+# define DLOPEN_ALLOWED_FLAGS	(RTLD_BINDING_MASK | RTLD_NOLOAD | \
+	RTLD_DEEPBIND | RTLD_GLOBAL | RTLD_LOCAL | RTLD_NODELETE)
+
 #endif /* ldsodefs.h */
