@@ -1,4 +1,4 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 1997, 1998, 1999 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,14 +16,35 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_MKDEV_H
-#define _SYS_MKDEV_H
+#ifndef _ULIMIT_H
+#define _ULIMIT_H	1
 
-#include <sys/sysmacros.h>
+#include <features.h>
 
-#define NBITSMAJOR32	14
-#define NBITSMINOR32	18
-#define MAXMAJ32		0x3FFFUL
-#define MAXMIN32		0x3FFFFUL
+/* Constants used as the first parameter for `ulimit'.  They denote limits
+   which can be set or retrieved using this function.  */
+enum
+{
+  UL_GETFSIZE = 1,			/* Return limit on the size of a file,
+					   in units of 512 bytes.  */
+#define UL_GETFSIZE	UL_GETFSIZE
+  UL_SETFSIZE,				/* Set limit on the size of a file to
+					   second argument.  */
+#define UL_SETFSIZE	UL_SETFSIZE
 
-#endif /* _SYS_MKDEV_H */
+  UL_GMEMLIM,
+#define UL_GMEMLIM	UL_GMEMLIM
+
+  UL_GDESLIM
+#define UL_GDESLIM	UL_GDESLIM
+};
+
+
+__BEGIN_DECLS
+
+/* Control process limits according to CMD.  */
+extern long int ulimit (int __cmd, ...) __THROW;
+
+__END_DECLS
+
+#endif /* ulimit.h */

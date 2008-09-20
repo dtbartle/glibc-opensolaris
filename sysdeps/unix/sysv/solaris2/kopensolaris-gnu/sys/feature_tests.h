@@ -47,18 +47,12 @@
 # define _XPG4_2
 # define _XPG4
 # define _XPG3
-# undef  _POSIX_C_SOURCE
-# define _POSIX_C_SOURCE	199506L
-#elif   (_XOPEN_SOURCE - 0 == 600) || (_POSIX_C_SOURCE - 0 == 200112L)
+#elif   (_XOPEN_SOURCE - 0 == 600)
 # define _XPG6
 # define _XPG5
 # define _XPG4_2
 # define _XPG4
 # define _XPG3
-# undef  _POSIX_C_SOURCE
-# define _POSIX_C_SOURCE	200112L
-# undef  _XOPEN_SOURCE
-# define _XOPEN_SOURCE	600
 #endif
 
 #endif /* _SYS_FEATURE_TESTS */
