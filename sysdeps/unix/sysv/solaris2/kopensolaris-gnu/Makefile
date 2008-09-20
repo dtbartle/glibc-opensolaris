@@ -34,7 +34,7 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _so_socketpair _sysconfig rctl atomic door getexecname is_system_labeled \
     privP modctl acl facl lltostr ulltostr deflt _getauthnam _getauthattr \
     _getprofnam _getprofattr _getusernam _getuserattr _getauuserent \
-    _getauusernam vfsent fdwalk closefrom ipsecalg
+    _getauusernam vfsent fdwalk closefrom ipsecalg gethostent
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
