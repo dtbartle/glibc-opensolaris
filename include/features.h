@@ -40,6 +40,7 @@
    _SVID_SOURCE		ISO C, POSIX, and SVID things.
    _ATFILE_SOURCE	Additional *at interfaces.
    _GNU_SOURCE		All of the above, plus GNU extensions.
+   _SUN_SOURCE		Turns on Sun compatibility mode.
    _REENTRANT		Select additionally reentrant object.
    _THREAD_SAFE		Same as _REENTRANT, often used by other systems.
    _FORTIFY_SOURCE	If set to numeric value > 0 additional security
@@ -165,6 +166,12 @@
 # define _SVID_SOURCE	1
 # undef  _ATFILE_SOURCE
 # define _ATFILE_SOURCE	1
+#endif
+
+/* If _SUN_SOURCE was defined by the user we enable Sun compatibility mode.  */
+#ifdef _SUN_SOURCE
+# undef __SUN_COMPAT_MODE
+# define __SUN_COMPAT_MODE	1
 #endif
 
 /* If nothing (other than _GNU_SOURCE) is defined,
