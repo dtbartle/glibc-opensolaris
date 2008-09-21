@@ -21,7 +21,7 @@
 
 #define LOOKUP_TYPE	userstr_t
 #define FUNCTION_NAME	_getusernam
-#define DATABASE_NAME	user_attr
+#define DATABASE_NAME	passwd
 #define ADD_PARAMS	const char *name
 #define ADD_VARIABLES	name
 #define BUFLEN		NSS_BUFLEN_PROFATTR

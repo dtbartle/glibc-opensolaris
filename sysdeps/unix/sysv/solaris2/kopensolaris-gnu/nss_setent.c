@@ -29,6 +29,13 @@ void nss_setent (nss_db_root_t *rootp, nss_db_initf_t initf,
   /* If we've never called nss_setent then the context is NULL.  */
   if (contextpp->ctx == NULL)
     {
+      /* Get dbid.  */
+      nss_db_params_t conf;
+      initf (&conf);
+      int dbid = __nss_get_dbid (conf.name);
+      if (dbid == -1)
+        return NSS_ERROR;
+
       /* Allocate context.  */
       contextpp->ctx = malloc (sizeof (struct nss_getent_context));
       if (!contextpp->ctx)
@@ -40,18 +47,16 @@ void nss_setent (nss_db_root_t *rootp, nss_db_initf_t initf,
       memset (ctx, 0, sizeof (*ctx));
 
       /* Construct names.  */
-      nss_db_params_t conf;
-      initf (&conf);
       sprintf (ctx->getfuncname, "get%sent", conf.name);
       sprintf (ctx->setfuncname, "set%sent", conf.name);
       sprintf (ctx->endfuncname, "end%sent", conf.name);
 
       /* Get db lookup func.  */
-      ctx->dblookup = __nss_dbname_to_lookup (conf.name);
+      ctx->dblookupfunc = __nss_get_dblookupfunc (dbid);
     }
 
   struct nss_getent_context *ctx = contextpp->ctx;
-  __nss_setent (ctx->setfuncname, ctx->dblookup, &ctx->nip, &ctx->startp,
+  __nss_setent (ctx->setfuncname, ctx->dblookupfunc, &ctx->nip, &ctx->startp,
       &ctx->last_nip, ctx->stayopen, &ctx->stayopen_tmp, 0);
 
   __libc_lock_unlock (contextpp->lock);

@@ -23,7 +23,7 @@
 #define SETFUNC_NAME	_setauuser
 #define	GETFUNC_NAME	_getauuserent
 #define	ENDFUNC_NAME	_endauuser
-#define DATABASE_NAME	audit_user
+#define DATABASE_NAME	passwd
 #define BUFLEN		NSS_BUFLEN_AUDITUSER
 
 #include "../nss/getXXent_r.c"

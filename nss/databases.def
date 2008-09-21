@@ -24,7 +24,6 @@
 DEFINE_DATABASE (aliases)
 #ifdef __OpenSolaris_kernel__
 DEFINE_DATABASE (auth_attr)
-DEFINE_DATABASE (automount)
 DEFINE_DATABASE (bootparams)
 #endif
 DEFINE_DATABASE (ethers)

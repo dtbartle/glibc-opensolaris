@@ -96,7 +96,7 @@ struct nss_getent_context
     char getfuncname[30];
     char setfuncname[30];
     char endfuncname[30];
-    db_lookup_function dblookup;
+    db_lookup_function dblookupfunc;
 
 	service_user *nip;
 	service_user *last_nip;
@@ -104,6 +104,18 @@ struct nss_getent_context
 
     int stayopen;
     int stayopen_tmp;
+  };
+
+typedef enum nss_status (*lookup_function) (void *, char *, size_t, int *);
+
+struct nss_db_state
+  {
+	bool startp_initialized;
+	service_user *startp;
+	lookup_function start_fct;
+
+    db_lookup_function dblookupfunc;
+    const char **dbtable;
   };
 
 #define RESULT_TO_STATUS(res) \
@@ -117,11 +129,14 @@ enum nss_dbid
 	NSS_DBID_NETMASKS,
 	NSS_DBID_PRINTERS,
 	NSS_DBID_PROF_ATTR,
-	NSS_DBID_PROJECT
+	NSS_DBID_PROJECT,
+	_NSS_DBID_MAX = NSS_DBID_PROJECT
   };
 
-extern int __nss_dbname_to_dbid (const char *dbname);
-extern const char * __nss_dbop_to_name (int dbid, int search_fnum);
-extern db_lookup_function __nss_dbname_to_lookup (const char * dbname);
+#define _NSS_DBENTRY_MAX	6
+
+extern int __nss_get_dbid (const char *dbname);
+extern const char ** __nss_get_dbtable (int dbid);
+extern db_lookup_function __nss_get_dblookupfunc (int dbid);
 
 #endif /* _NSS_SUNP_H */

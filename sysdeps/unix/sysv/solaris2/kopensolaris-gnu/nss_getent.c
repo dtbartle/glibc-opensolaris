@@ -44,7 +44,7 @@ nss_status_t nss_getent (nss_db_root_t *rootp, nss_db_initf_t initf,
   // TODO: Store nssargs->str2ent in a global table and use it for parsing.
 
   int res = __nss_getent_r (ctx->getfuncname, ctx->setfuncname,
-      ctx->dblookup, &ctx->nip, &ctx->startp, &ctx->last_nip,
+      ctx->dblookupfunc, &ctx->nip, &ctx->startp, &ctx->last_nip,
       &ctx->stayopen_tmp, 0, nssargs->buf.result, nssargs->buf.buffer,
       nssargs->buf.buflen, &nssargs->returnval, &nssargs->h_errno);
 

@@ -20,12 +20,10 @@
 #include <nss_sunP.h>
 #include <string.h>
 
-int __nss_dbname_to_dbid (const char *dbname)
+int __nss_get_dbid (const char *dbname)
 {
   if (strcmp (dbname, "auth_attr") == 0)
     return NSS_DBID_AUTH_ATTR;
-  if (strcmp (dbname, "automount") == 0)
-    return NSS_DBID_AUTOMOUNT;
   if (strcmp (dbname, "bootparams") == 0)
     return NSS_DBID_BOOTPARAMS;
   if (strcmp (dbname, "netmasks") == 0)
@@ -41,30 +39,27 @@ int __nss_dbname_to_dbid (const char *dbname)
 }
 
 
-const char * __nss_dbop_to_name (int dbid, int search_fnum)
+const char ** __nss_get_dbtable (int dbid)
 {
-  // TODO
-  switch (dbid)
-    {
-    case NSS_DBID_AUTH_ATTR:
-    case NSS_DBID_AUTOMOUNT:
-    case NSS_DBID_BOOTPARAMS:
-    case NSS_DBID_NETMASKS:
-    case NSS_DBID_PRINTERS:
-    case NSS_DBID_PROF_ATTR:
-    case NSS_DBID_PROJECT:
-      break;
-    }
+  static const char * __nss_dbtables[_NSS_DBID_MAX][_NSS_DBENTRY_MAX] = {
+      {NULL, NULL, NULL, NULL, "getauthattrbyname", NULL}, /* auth_attr */
+      {NULL, "bootparams_getbyname", NULL, NULL, NULL, NULL}, /* bootparams */
+      {NULL, "getnetmaskbynet", NULL, NULL, NULL, NULL}, /* netmasks */
+      {NULL, NULL, NULL, NULL, "getprinterbyname", NULL}, /* printers */
+      {NULL, NULL, NULL, NULL, "getprofname", NULL}, /* prof_attr */
+      {NULL, NULL, NULL, NULL, "getprojbyname", "getprojbyid"} /* project */
+  };
 
-  return NULL;
+  if (dbid < 0 || dbid > _NSS_DBID_MAX)
+    return NULL;
+
+  return __nss_dbtables[dbid];
 }
 
 
-db_lookup_function __nss_dbname_to_lookup (const char *dbname)
+db_lookup_function __nss_get_dblookupfunc (int dbid)
 {
   extern int internal_function __nss_auth_attr_lookup (service_user **,
-      const char *, void **);
-  extern int internal_function __nss_automount_lookup (service_user **,
       const char *, void **);
   extern int internal_function __nss_bootparams_lookup (service_user **,
       const char *, void **);
@@ -77,16 +72,10 @@ db_lookup_function __nss_dbname_to_lookup (const char *dbname)
   extern int internal_function __nss_project_lookup (service_user **,
       const char *, void **);
 
-  int dbid = __nss_dbname_to_dbid (dbname);
-  if (dbid == -1)
-    return NULL;
-
   switch (dbid)
     {
     case NSS_DBID_AUTH_ATTR:
       return __nss_auth_attr_lookup;
-    case NSS_DBID_AUTOMOUNT:
-      return __nss_automount_lookup;
     case NSS_DBID_BOOTPARAMS:
       return __nss_bootparams_lookup;
     case NSS_DBID_NETMASKS:

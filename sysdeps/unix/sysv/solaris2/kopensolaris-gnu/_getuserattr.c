@@ -23,7 +23,7 @@
 #define SETFUNC_NAME	_setuserattr
 #define	GETFUNC_NAME	_getuserattr
 #define	ENDFUNC_NAME	_enduserattr
-#define DATABASE_NAME	user_attr
+#define DATABASE_NAME	passwd
 #define BUFLEN		NSS_BUFLEN_PROFATTR
 
 #include "../nss/getXXent_r.c"

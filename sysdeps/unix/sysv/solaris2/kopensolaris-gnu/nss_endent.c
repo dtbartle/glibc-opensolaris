@@ -30,7 +30,7 @@ void nss_endent (nss_db_root_t *rootp, nss_db_initf_t initf,
   __libc_lock_lock (contextpp->lock);
 
   struct nss_getent_context *ctx = contextpp->ctx;
-  __nss_endent (ctx->endfuncname, ctx->dblookup, &ctx->nip, &ctx->startp,
+  __nss_endent (ctx->endfuncname, ctx->dblookupfunc, &ctx->nip, &ctx->startp,
       &ctx->last_nip, 0);
 
   /* Free context.  */

@@ -36,7 +36,7 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _getprofnam _getprofattr _getusernam _getuserattr _getauuserent \
     _getauusernam vfsent fdwalk closefrom ipsecalg gethostent sigsendset \
     sigsend stack_getbounds thr_sighndlrinfo sun_compat mkdev nss_getent \
-    nss_setent nss_endent nss_misc
+    nss_setent nss_endent nss_search nss_misc
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
@@ -108,7 +108,7 @@ libnsl-routines += nsl_misc
 endif
 
 ifeq ($(subdir),nss)
-databases += auth_attr automount bootparams netmasks printers prof_attr project
+databases += auth_attr bootparams netmasks printers prof_attr project
 endif
 
 ifeq ($(subdir),nptl)

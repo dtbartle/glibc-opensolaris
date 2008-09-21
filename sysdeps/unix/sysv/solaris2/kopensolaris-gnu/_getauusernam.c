@@ -21,7 +21,7 @@
 
 #define LOOKUP_TYPE	au_user_str_t
 #define FUNCTION_NAME	_getauusernam
-#define DATABASE_NAME	audit_user
+#define DATABASE_NAME	passwd
 #define ADD_PARAMS	const char *name
 #define ADD_VARIABLES	name
 #define BUFLEN		NSS_BUFLEN_AUDITUSER
