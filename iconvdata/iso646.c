@@ -67,6 +67,7 @@ enum variant
   CA2,		/* CSA_Z243.4-1985-2 */
   DE,		/* DIN_66003 */
   DK,		/* DS_2089 */
+#undef ES
   ES,		/* ES */
   ES2,		/* ES2 */
   CN,		/* GB_1988-80 */
