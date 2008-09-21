@@ -17,7 +17,31 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#define DATABASE_NAME audit_user
-#define DEFAULT_CONFIG "files nis"
+#include <nss_sunP.h>
+#include <string.h>
+#include <bits/libc-lock.h>
 
-#include "XXX-lookup.c"
+void nss_endent (nss_db_root_t *rootp, nss_db_initf_t initf,
+      nss_getent_t *contextpp)
+{
+  if (contextpp->ctx == NULL)
+    return;
+
+  __libc_lock_lock (contextpp->lock);
+
+  struct nss_getent_context *ctx = contextpp->ctx;
+  __nss_endent (ctx->endfuncname, ctx->dblookup, &ctx->nip, &ctx->startp,
+      &ctx->last_nip, 0);
+
+  /* Free context.  */
+  free (contextpp->ctx);
+  contextpp->ctx = NULL;
+
+  __libc_lock_unlock (contextpp->lock);
+}
+
+
+void nss_delete (nss_db_root_t *rootp)
+{
+  /* We do nothing here by design.  */
+}

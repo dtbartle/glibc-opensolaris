@@ -23,26 +23,29 @@
 
 DEFINE_DATABASE (aliases)
 #ifdef __OpenSolaris_kernel__
-DEFINE_DATABASE (audit_user)
 DEFINE_DATABASE (auth_attr)
+DEFINE_DATABASE (automount)
+DEFINE_DATABASE (bootparams)
 #endif
 DEFINE_DATABASE (ethers)
 DEFINE_DATABASE (group)
 DEFINE_DATABASE (hosts)
 DEFINE_DATABASE (netgroup)
+#ifdef __OpenSolaris_kernel__
+DEFINE_DATABASE (netmasks)
+#endif
 DEFINE_DATABASE (networks)
 DEFINE_DATABASE (passwd)
 #ifdef __OpenSolaris_kernel__
+DEFINE_DATABASE (printers)
 DEFINE_DATABASE (prof_attr)
+DEFINE_DATABASE (project)
 #endif
 DEFINE_DATABASE (protocols)
 DEFINE_DATABASE (publickey)
 DEFINE_DATABASE (rpc)
 DEFINE_DATABASE (services)
 DEFINE_DATABASE (shadow)
-#ifdef __OpenSolaris_kernel__
-DEFINE_DATABASE (user_attr)
-#endif
 
 /*
    Local Variables:

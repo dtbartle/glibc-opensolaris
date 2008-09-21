@@ -22,7 +22,7 @@
 
 #include <sys/types.h>
 #include <stdint.h>
-#include <synch.h> /* mutex_t */
+#include <bits/libc-lock.h>
 
 typedef enum
   {
@@ -112,7 +112,7 @@ struct nss_getent_context;
 typedef struct nss_db_root
   {
 	struct nss_db_state *s;
-	mutex_t lock;
+	__libc_lock_define (, lock);
   } nss_db_root_t;
 
 #define NSS_DB_ROOT_INIT		{ 0, DEFAULTMUTEX }
@@ -121,7 +121,7 @@ typedef struct nss_db_root
 typedef struct
   {
 	struct nss_getent_context *ctx;
-	mutex_t lock;
+	__libc_lock_define (, lock);
   } nss_getent_t;
 
 #define NSS_GETENT_INIT			{ 0, DEFAULTMUTEX }
@@ -140,7 +140,7 @@ typedef struct nss_config
   {
 	char *name;
 	nss_config_op_t cop;
-	mutex_t *lock;
+	void *lock;
 	void *buffer;
 	size_t length;
   } nss_config_t;

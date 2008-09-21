@@ -17,7 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#define DATABASE_NAME user_attr
+#define DATABASE_NAME project
 #define DEFAULT_CONFIG "files nis"
 
 #include "XXX-lookup.c"
