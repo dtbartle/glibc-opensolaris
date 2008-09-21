@@ -101,11 +101,11 @@ int __getopt_sun (int argc, char * const argv[], const char *optstring)
     }
 
   optstr[0] = '+';
-  memcpy (optstr, optstring, len - 1);
+  memcpy (optstr + 1, optstring, len - 1);
 
   int res = getopt (argc, argv, optstr);
 
-  if (use_alloca)
+  if (!use_alloca)
     free (optstr);
 
   return res;
