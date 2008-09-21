@@ -21,8 +21,8 @@
 #include <unistd.h>
 #include <ucredP.h>
 #include <auditP.h>
+#include <privP.h>
 #include <errno.h>
-#include <priv.h>
 #include <assert.h>
 
 DECLARE_INLINE_SYSCALL (int, getpeerucred, int fd, ucred_t *ucred);
@@ -62,23 +62,76 @@ void ucred_free (ucred_t *uc)
 }
 
 
-#define MAKE_PRCRED_T_CALL(field, type)                                     \
-  type ucred_get##field (const ucred_t *uc)                                 \
-  {                                                                         \
-    if (uc->uc_credoff == 0)                                                \
-      {                                                                     \
-        __set_errno(EINVAL);                                                \
-        return (type)-1;                                                    \
-      }                                                                     \
-    return (type)((prcred_t *)((char *)uc + uc->uc_credoff))->pr_##field;   \
-   }
+uid_t ucred_geteuid (const ucred_t *uc)
+{
+  if (uc->uc_credoff == 0)
+    {
+      __set_errno (EINVAL);
+      return (uid_t)-1;
+    }
 
-MAKE_PRCRED_T_CALL (euid, uid_t)
-MAKE_PRCRED_T_CALL (ruid, uid_t)
-MAKE_PRCRED_T_CALL (suid, uid_t)
-MAKE_PRCRED_T_CALL (egid, gid_t)
-MAKE_PRCRED_T_CALL (rgid, gid_t)
-MAKE_PRCRED_T_CALL (sgid, gid_t)
+  return (uid_t)((prcred_t *)((char *)uc + uc->uc_credoff))->pr_euid;
+}
+
+
+uid_t ucred_getruid (const ucred_t *uc)
+{
+  if (uc->uc_credoff == 0)
+    {
+      __set_errno (EINVAL);
+      return (uid_t)-1;
+    }
+
+  return (uid_t)((prcred_t *)((char *)uc + uc->uc_credoff))->pr_ruid;
+}
+
+
+uid_t ucred_getsuid (const ucred_t *uc)
+{
+  if (uc->uc_credoff == 0)
+    {
+      __set_errno (EINVAL);
+      return (uid_t)-1;
+    }
+
+  return (uid_t)((prcred_t *)((char *)uc + uc->uc_credoff))->pr_suid;
+}
+
+
+gid_t ucred_getegid (const ucred_t *uc)
+{
+  if (uc->uc_credoff == 0)
+    {
+      __set_errno (EINVAL);
+      return (gid_t)-1;
+    }
+
+  return (gid_t)((prcred_t *)((char *)uc + uc->uc_credoff))->pr_egid;
+}
+
+
+gid_t ucred_getrgid (const ucred_t *uc)
+{
+  if (uc->uc_credoff == 0)
+    {
+      __set_errno (EINVAL);
+      return (gid_t)-1;
+    }
+
+  return (gid_t)((prcred_t *)((char *)uc + uc->uc_credoff))->pr_rgid;
+}
+
+
+gid_t ucred_getsgid (const ucred_t *uc)
+{
+  if (uc->uc_credoff == 0)
+    {
+      __set_errno(EINVAL);                                                \
+      return (gid_t)-1;                                                    \
+    }
+
+  return (gid_t)((prcred_t *)((char *)uc + uc->uc_credoff))->pr_sgid;
+}
 
 
 int ucred_getgroups (const ucred_t *uc, const gid_t **groups)

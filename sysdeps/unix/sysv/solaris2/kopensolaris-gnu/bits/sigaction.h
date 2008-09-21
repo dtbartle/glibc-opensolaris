@@ -41,6 +41,24 @@ struct sigaction
 #endif
 };
 
+#ifdef _SYSCALL32
+
+# include <sys/types32.h>
+
+struct sigaction32
+  {
+	int32_t sa_flags;
+	union
+	  {
+		caddr32_t _handler;
+		caddr32_t _sigaction;
+	  } _funcptr;
+	sigset32_t sa_mask;
+	int32_t sa_resv[2];
+  };
+
+#endif
+
 /* Bits in `sa_flags'.  */
 #define SA_NOCLDSTOP    0x00020000	/* Don't send SIGCHLD when children stop.  */
 #define	SA_NOCLDWAIT	0x00010000	/* Don't send SIGCHLD when children stop.  */

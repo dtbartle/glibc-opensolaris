@@ -22,6 +22,19 @@
 
 #include <sys/types.h>
 #include <auditP.h>
+#include <privP.h>
+
+typedef struct prcred
+  {
+	uid_t pr_euid;
+	uid_t pr_ruid;
+	uid_t pr_suid;
+	gid_t pr_egid;
+	gid_t pr_rgid;
+	gid_t pr_sgid;
+	int pr_ngroups;
+	gid_t pr_groups[1];
+  } prcred_t;
 
 typedef struct ucred_s
   {

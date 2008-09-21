@@ -19,7 +19,6 @@
 
 #include <inline-syscall.h>
 #include <privP.h>
-#include <priv.h>
 #include <sys/priocntl.h>
 #include <string.h>
 #include <assert.h>
@@ -46,7 +45,7 @@ const priv_impl_info_t * getprivimplinfo (void)
 
   /* First call: get header.  */
   priv_impl_info_t _info;
-  int res = INLINE_SYSCALL (privsys, 5, PRIVSYS_GETIMPLINFO, 0, 0, &_info,
+  int res = INLINE_SYSCALL (privsys, 5, SYS_SUB_getimplinfo, 0, 0, &_info,
       sizeof(_info));
   if (res == 0)
     {
@@ -54,7 +53,7 @@ const priv_impl_info_t * getprivimplinfo (void)
       size_t info_size = PRIV_IMPL_INFO_SIZE (&_info);
       __info = malloc (info_size);
       assert (__info);
-      res = INLINE_SYSCALL (privsys, 5, PRIVSYS_GETIMPLINFO, 0, 0, __info,
+      res = INLINE_SYSCALL (privsys, 5, SYS_SUB_getimplinfo, 0, 0, __info,
           info_size);
       assert (res == 0);
     }
@@ -70,7 +69,7 @@ int getppriv (priv_ptype_t which, priv_set_t *set)
   if (setn == -1)
     return -1;
 
-  return INLINE_SYSCALL (privsys, 5, PRIVSYS_GETPPRIV, 0, (priv_ptype_t)setn,
+  return INLINE_SYSCALL (privsys, 5, SYS_SUB_getppriv, 0, (priv_ptype_t)setn,
       (void *)set, __PRIVSETSIZE);
 }
 
@@ -81,7 +80,7 @@ int setppriv (priv_op_t op, priv_ptype_t which, const priv_set_t *set)
   if (setn == -1)
     return -1;
 
-  return INLINE_SYSCALL (privsys, 5, PRIVSYS_GETPPRIV, op, (priv_ptype_t)setn,
+  return INLINE_SYSCALL (privsys, 5, SYS_SUB_setppriv, op, (priv_ptype_t)setn,
       (void *)set, __PRIVSETSIZE);
 }
 

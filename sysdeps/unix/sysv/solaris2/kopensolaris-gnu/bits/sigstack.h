@@ -32,6 +32,19 @@ struct sigstack
     int ss_onstack;		/* Nonzero if executing on this stack.  */
   };
 
+#ifdef _SYSCALL32
+
+# include <sys/types32.h>
+
+typedef struct sigaltstack32
+  {
+	caddr32_t ss_sp;
+	size32_t ss_size;
+    int32_t  ss_flags;
+  } stack32_t;
+
+#endif
+
 
 /* Possible values for `ss_flags.'.  */
 enum

@@ -23,7 +23,7 @@
 #define __need_stack_t
 #include <bits/sigstack.h>
 #include <bits/sigset.h>
-#include <bits/regset.h>
+#include <sys/regset.h>
 #include <features.h>
 
 typedef struct ucontext

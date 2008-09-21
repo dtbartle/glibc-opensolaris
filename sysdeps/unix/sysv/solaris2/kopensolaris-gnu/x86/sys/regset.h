@@ -20,80 +20,188 @@
 #define _SYS_REGSET_H	1
 
 #include <features.h>
+#include <bits/types.h>
 
 #ifdef __USE_MISC
 
-#include <bits/regset.h>
+# ifdef __amd64__
+#  define REG_R15	0
+#  define REG_R14	1
+#  define REG_R13	2
+#  define REG_R12	3
+#  define REG_R11	4
+#  define REG_R10	5
+#  define REG_R9	6
+#  define REG_R8	7
+#  define REG_RDI	8
+#  define REG_RSI	9
+#  define REG_RBP	10
+#  define REG_RBX	11
+#  define REG_RDX	12
+#  define REG_RCX	13
+#  define REG_RAX	14
+#  define REG_TRAPNO	15
+#  define REG_ERR	16
+#  define REG_RIP	17
+#  define REG_CS	18
+#  define REG_RFL	19
+#  define REG_RSP	20
+#  define REG_SS	21
+#  define REG_FS	22
+#  define REG_GS	23
+#  define REG_ES	24
+#  define REG_DS	25
+#  define REG_FSBASE	26
+#  define REG_GSBASE	27
+#  define REG_PC	REG_RIP
+#  define REG_FP	REG_RBP
+#  define REG_SP	REG_RSP
+#  define REG_PS	REG_RFL
+#  define REG_R0	REG_RAX
+#  define REG_R1	REG_RDX
+# else /* __i386__ */
+#  define GS		0
+#  define FS		1
+#  define ES		2
+#  define DS		3
+#  define EDI		4
+#  define ESI		5
+#  define EBP		6
+#  define ESP		7
+#  define EBX		8
+#  define EDX		9
+#  define ECX		10
+#  define EAX		11
+#  define TRAPNO	12
+#  define ERR		13
+#  define EIP		14
+#  define CS		15
+#  define EFL		16
+#  define UESP		17
+#  define SS		18
+#  define REG_PC	EIP
+#  define REG_FP	EBP
+#  define REG_SP	UESP
+#  define REG_PS	EFL
+#  define REG_R0	EAX
+#  define REG_R1	EDX
+# endif /* __amd64__ */
 
-#ifdef __amd64__
+#endif /* __USE_MISC */
 
-# define REG_R15	0
-# define REG_R14	1
-# define REG_R13	2
-# define REG_R12	3
-# define REG_R11	4
-# define REG_R10	5
-# define REG_R9		6
-# define REG_R8		7
-# define REG_RDI	8
-# define REG_RSI	9
-# define REG_RBP	10
-# define REG_RBX	11
-# define REG_RDX	12
-# define REG_RCX	13
-# define REG_RAX	14
-# define REG_TRAPNO	15
-# define REG_ERR	16
-# define REG_RIP	17
-# define REG_CS		18
-# define REG_RFL	19
-# define REG_RSP	20
-# define REG_SS		21
-# define REG_FS		22
-# define REG_GS		23
-# define REG_ES		24
-# define REG_DS		25
-# define REG_FSBASE	26
-# define REG_GSBASE	27
+typedef struct __fpu
+  {
+	union
+	  {
+		struct __fpchip_state
+		  {
+			__uint32_t __state[27];
+			__uint32_t __status;
+			__uint32_t __mxcsr;
+			__uint32_t __xstatus;
+			__uint32_t __pad[2];
+			__uint32_t __xmm[4][8];
+		  } __fpchip_state;
+		struct __fp_emul_space
+		  {
+			__uint8_t __fp_emul[246];
+			__uint8_t __fp_epad[2];
+		  } __fp_emul_space;
+		__uint32_t __f_fpregs[95];
+	  } __fp_reg_set;
+  } fpregset_t;
 
-# define REG_PC		REG_RIP
-# define REG_FP		REG_RBP
-# define REG_SP		REG_RSP
-# define REG_PS		REG_RFL
-# define REG_R0		REG_RAX
-# define REG_R1		REG_RDX
-
-#else /* __i386__ */
-
-# define GS	0
-# define FS	1
-# define ES	2
-# define DS	3
-# define EDI	4
-# define ESI	5
-# define EBP	6
-# define ESP	7
-# define EBX	8
-# define EDX	9
-# define ECX	10
-# define EAX	11
-# define TRAPNO	12
-# define ERR	13
-# define EIP	14
-# define CS	15
-# define EFL	16
-# define UESP	17
-# define SS	18
-
-# define REG_PC		EIP
-# define REG_FP		EBP
-# define REG_SP		UESP
-# define REG_PS		EFL
-# define REG_R0		EAX
-# define REG_R1		EDX
-
-#endif /* __amd64__ */
-
+#ifdef __amd64
+# define _NGREG		28
+#else
+# define _NGREG		19
 #endif
+#define NGREG		_NGREG
+
+typedef int greg_t;
+
+#if defined (_SYSCALL32)
+typedef int32_t greg32_t;
+typedef int64_t greg64_t;
+#endif
+
+typedef greg_t gregset_t[_NGREG];
+
+typedef struct
+  {
+    gregset_t gregs;
+    fpregset_t fpregs;
+  } mcontext_t;
+
+#ifdef __USE_MISC
+
+struct fxsave_state
+  {
+	__uint16_t fx_fcw;
+	__uint16_t fx_fsw;
+	__uint16_t fx_fctw;
+	__uint16_t fx_fop;
+#ifdef __amd64__
+	__uint64_t fx_rip;
+	__uint64_t fx_rdp;
+#else
+	__uint32_t fx_eip;
+	__uint16_t fx_cs;
+	__uint16_t __fx_ign0;
+	__uint32_t fx_dp;
+	__uint16_t fx_ds;
+	__uint16_t __fx_ign1;
+#endif
+	__uint32_t fx_mxcsr;
+	__uint32_t fx_mxcsr_mask;
+	union
+	  {
+		__uint16_t fpr_16[5];
+		unsigned long long fpr_mmx;
+        __uint32_t __fpr_pad[4];
+	  } fx_st[8];
+#if defined(__amd64)
+	upad128_t fx_xmm[16]; /* 128-bit registers */
+	upad128_t __fx_ign2[6];
+#else
+	upad128_t fx_xmm[8];  /* 128-bit registers */
+	upad128_t __fx_ign2[14];
+#endif
+  };
+
+struct fnsave_state
+  {
+	__uint16_t f_fcw;
+	__uint16_t __f_ign0;
+	__uint16_t f_fsw;
+	__uint16_t __f_ign1;
+	__uint16_t f_ftw;
+	__uint16_t __f_ign2;
+	__uint32_t f_eip;
+	__uint16_t f_cs;
+	__uint16_t f_fop;
+	__uint32_t f_dp;
+	__uint16_t f_ds;
+	__uint16_t __f_ign3;
+	union
+	  {
+		__uint16_t fpr_16[5];
+	  } f_st[8];
+  };
+
+typedef struct
+  {
+	union _kfpu_u
+	  {
+		struct fxsave_state kfpu_fx;
+#ifdef __i386__
+		struct fnsave_state kfpu_fn;
+#endif
+	  } kfpu_u;
+	__uint32_t kfpu_status;
+	__uint32_t kfpu_xstatus;
+  } kfpu_t;
+
+#endif /* __USE_MISC */
 
 #endif /* _SYS_REGSET_H */

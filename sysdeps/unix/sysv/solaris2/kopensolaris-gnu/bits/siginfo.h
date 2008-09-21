@@ -101,7 +101,7 @@ typedef struct siginfo
 
         struct /* SIGSEGV, SIGBUS, SIGILL, SIGTRAP, SIGFPE */
         {
-            void  *__addr;
+            void *__addr;
             int __trapno;
             char *__pc;
         } __fault;
@@ -129,6 +129,70 @@ typedef struct siginfo
         } __rctl;
     } __data;
 } siginfo_t;
+
+# ifdef _SYSCALL32
+
+#  include <sys/types32.h>
+
+typedef struct siginfo32
+{
+    int32_t si_signo;
+    int32_t si_code;
+    int32_t si_errno;
+    union
+    {
+        int32_t _pad[__SI_PAD_SIZE];
+
+        struct /* kill(), SIGCLD, siqqueue() */
+        {
+            pid32_t __pid;	/* Sending process ID.  */
+            union {
+                struct {
+                    uid32_t __uid;	/* Real user ID of sending process.  */
+                    union sigval32  __value;
+                } __kill;
+                struct {
+                    clock32_t __utime;
+                    int32_t __status;
+                    clock32_t __stime;
+                } __cld;
+            } __pdata;
+            id32_t __ctid;
+            id32_t __zoneid;
+        } __proc;
+
+        struct /* SIGSEGV, SIGBUS, SIGILL, SIGTRAP, SIGFPE */
+        {
+            caddr32_t __addr;
+            int32_t __trapno;
+            caddr32_t __pc;
+        } __fault;
+
+        struct /* SIGPOLL, SIGXFSZ */
+        {
+            int32_t __fd;
+            int32_t  __band;
+        } __file;
+
+        struct /* SIGPROF */
+        {
+            caddr32_t __faddr;
+            struct timespec32 __tstamp;
+            int16_t __syscall;
+            int8_t  __nsysarg;
+            int8_t  __fault;
+            int32_t  __sysarg[8];
+            int32_t __mstate[10];
+        } __prof;
+
+        struct /* SI_RCTL */
+        {
+            int32_t __entity;
+        } __rctl;
+    } __data;
+} siginfo32_t;
+
+# endif /* _SYSCALL32 */
 
 # ifdef __USE_MISC
 

@@ -30,6 +30,17 @@ typedef struct
 	unsigned int __sigbits[_SIGSET_NWORDS];
   } __sigset_t;
 
+#ifdef _SYSCALL32
+
+# include <sys/types32.h>
+
+typedef struct
+  {
+	uint32_t __sigbits[4];
+  } sigset32_t;
+
+#endif
+
 typedef struct
   {
 	unsigned int __sigbits[2];

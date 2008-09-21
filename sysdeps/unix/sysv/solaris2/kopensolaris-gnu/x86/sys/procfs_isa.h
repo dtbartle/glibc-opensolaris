@@ -21,21 +21,61 @@
 #define _SYS_PROCFS_ISA_H
 
 #include <sys/regset.h>
+#include <sys/isa_defs.h>
 
-#ifdef __i386__
-# define R_PC	EIP
-# define R_PS	EFL
-# define R_SP	UESP
-# define R_FP	EBP
-# define R_R0	EAX
-# define R_R1	EDX
+#define PR_MODEL_UNKNOWN	0
+#define PR_MODEL_ILP32		1
+#define PR_MODEL_LP64		2
+
+#ifdef _LP64
+# define PR_MODEL_NATIVE	PR_MODEL_LP64
 #else
+# define PR_MODEL_NATIVE	PR_MODEL_ILP32
+#endif
+
+typedef unsigned char instr_t;
+
+#define prgregset_t	gregset_t
+#define prfpregset_t	fpregset_t
+#define prgreg_t	greg_t
+#define prfpregset	fpu
+
+#define NPRGREG	_NGREG
+
+#ifdef _SYSCALL32
+
+typedef unsigned char instr32_t;
+
+# if defined(__amd64)
+#  define NPRGREG32		_NGREG32
+#  define prgreg32_t		greg32_t
+#  define prgregset32_t		gregset32_t
+#  define prfpregset32		fpu32
+#  define prfpregset32_t	fpregset32_t
+# else
+#  define NPRGREG32		_NGREG
+#  define prgreg32_t		greg_t
+#  define prgregset32_t		gregset_t
+#  define prfpregset32		fpu
+#  define prfpregset32_t	fpregset_t
+# endif
+
+#endif /* _SYSCALL32 */
+
+#ifdef __amd64__
 # define R_PC	REG_RIP
 # define R_PS	REG_RFL
 # define R_SP	REG_RSP
 # define R_FP	REG_RBP
 # define R_R0	REG_RAX
 # define R_R1	REG_RDX
+#else
+# define R_PC	EIP
+# define R_PS	EFL
+# define R_SP	UESP
+# define R_FP	EBP
+# define R_R0	EAX
+# define R_R1	EDX
 #endif
 
 #endif /* _SYS_PROCFS_ISA_H */

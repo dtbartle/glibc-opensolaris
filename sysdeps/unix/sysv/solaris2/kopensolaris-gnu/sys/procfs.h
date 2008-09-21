@@ -40,7 +40,7 @@
 #include <bits/regset.h>
 #include <time.h>
 #include <bits/wordsize.h>
-#include <sys/isa_defs.h>
+#include <sys/procfs_isa.h>
 
 /* control codes for ctl and lwpctl */
 #define PCNULL		0
