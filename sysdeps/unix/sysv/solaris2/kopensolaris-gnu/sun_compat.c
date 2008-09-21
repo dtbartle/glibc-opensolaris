@@ -55,7 +55,6 @@ struct passwd * __fgetpwent_r_sun (FILE *fp, struct passwd *pwbuf, char *buf,
 }
 
 
-
 struct group * __getgrnam_r_sun (const char *name, struct group *gbuf,
       char *buf, size_t buflen)
 {

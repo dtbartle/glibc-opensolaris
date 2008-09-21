@@ -37,17 +37,19 @@ libc {
     _endauuser; _endauthattr; _endprofattr; _enduserattr;
 
     # f
-    facl; fdwalk; fork1; freehostent; freeipsecalgent;
+    facl; fdwalk; __fgetgrent_r_sun; __fgetpwent_r_sun; fork1; freehostent;
+    freeipsecalgent;
 
     # g
     getacct; _getauuserent; _getauusernam; _getauthattr; _getauthnam; getcpuid;
-    getexecname; gethrtime; gethrvtime; getextmntent; getipnodebyaddr;
-    getipnodebyname; getipsecalgbyname; getipsecalgbynum; getmntany; getmntent;
-    __getopt_sun; getpagesizes; getpagesizes2; getpeerucred; getpflags;
-    getppriv; getprivimplinfo; _getprofattr; _getprofnam; getprojid;
-    __getpwent_r_sun; __getpwnam_r_sun; __getpwuid_r_sun; getrctl; gettaskid;
-    _getuserattr; _getusernam; getustack; getvfsany; getvfsent; getvfsfile;
-    getvfsspec; getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
+    getexecname; gethrtime; gethrvtime; getextmntent; __getgrent_r_sun;
+    __getgrgid_r_sun; __getgrnam_r_sun; getipnodebyaddr; getipnodebyname;
+    getipsecalgbyname; getipsecalgbynum; getmntany; getmntent; __getopt_sun;
+    getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv;
+    getprivimplinfo; _getprofattr; _getprofnam; getprojid; __getpwent_r_sun;
+    __getpwnam_r_sun; __getpwuid_r_sun; getrctl; gettaskid; _getuserattr;
+    _getusernam; getustack; getvfsany; getvfsent; getvfsfile; getvfsspec;
+    getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
 
     # h
     hasmntopt;
