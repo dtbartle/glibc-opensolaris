@@ -86,8 +86,8 @@ libc {
     rctlblk_get_local_flags; rctlblk_get_privilege; rctlblk_get_recipient_pid;
     rctlblk_get_value; rctlblk_get_enforced_value; rctlblk_set_local_action;
     rctlblk_set_local_flags; rctlblk_set_privilege; rctlblk_set_value;
-    rctlblk_set_recipient_pid; rctlblk_size; rctllist; resetmnttab; res_nclose;
-    resolvepath;
+    rctlblk_set_recipient_pid; rctlblk_size; rctllist; rctl_walk; resetmnttab;
+    res_nclose; resolvepath;
 
     # s
     sendfilev; sendfilev64; _setauuser; _setauthattr; setpflags; setppriv;

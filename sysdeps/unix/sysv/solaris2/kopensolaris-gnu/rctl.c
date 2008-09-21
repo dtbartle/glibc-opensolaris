@@ -168,3 +168,25 @@ size_t rctlblk_size (void)
 {
   return sizeof (rctl_opaque_t);
 }
+
+
+int rctl_walk (int (*callback)(const char *rctlname, void *walk_data),
+      void *init_data)
+{
+  size_t len = rctllist (NULL, 0);
+  if (len < 0)
+    return -1;
+  char *names = malloc (len);
+  if (!names)
+    return -1;
+
+  char *namesptr = names;
+  while (*namesptr)
+    {
+      callback (namesptr, walk_data);
+      namesptr += strlen (namesptr) + 1;
+    }
+
+  free (names);
+  return 0;
+}
