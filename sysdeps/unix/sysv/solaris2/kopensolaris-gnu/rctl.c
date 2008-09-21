@@ -183,7 +183,7 @@ int rctl_walk (int (*callback)(const char *rctlname, void *walk_data),
   char *namesptr = names;
   while (*namesptr)
     {
-      callback (namesptr, walk_data);
+      callback (namesptr, init_data);
       namesptr += strlen (namesptr) + 1;
     }
 
