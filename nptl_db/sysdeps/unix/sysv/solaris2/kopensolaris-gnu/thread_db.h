@@ -26,7 +26,7 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <sys/types.h>
-#include <procfs.h>
+#include <sys/procfs_isa.h>
 #include <thread.h>
 
 

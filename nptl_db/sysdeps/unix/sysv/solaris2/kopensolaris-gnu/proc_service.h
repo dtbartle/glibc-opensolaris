@@ -21,9 +21,8 @@
 #define _PROC_SERVICE_H
 
 /* The definitions in this file must correspond to those in the debugger.  */
-#include <procfs.h>
+#include <sys/procfs_isa.h>
 #include <elf.h>
-#include <sys/isa_defs.h>
 #include <features.h>
 
 #ifdef _LP64
