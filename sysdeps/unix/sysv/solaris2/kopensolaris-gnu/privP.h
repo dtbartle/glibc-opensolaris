@@ -101,6 +101,11 @@ typedef enum priv_op
 #define PRIV_PERMITTED		"Permitted"
 #define PRIV_LIMIT		"Limit"
 
+#define PU_RESETGROUPS		0x01
+#define PU_LIMITPRIVS		0x02
+#define PU_INHERITPRIVS		0x04
+#define PU_CLEARLIMITSET	0x08
+
 #define __NPRIVBITS	(8 * sizeof (priv_chunk_t))
 #define __PRIVELT(pr)	((pr) / __NPRIVBITS)
 #define __PRIVMASK(pr)	((priv_chunk_t) 1 << ((pr) % __NPRIVBITS))
@@ -112,5 +117,13 @@ extern const priv_impl_info_t *getprivimplinfo (void);
 extern int setppriv (priv_op_t, priv_ptype_t, const priv_set_t *);
 extern int getppriv (priv_ptype_t, priv_set_t *);
 extern int priv_getsetbyname (const char *);
+extern priv_set_t *priv_allocset (void);
+extern void priv_freeset (priv_set_t *sp);
+extern void priv_union (const priv_set_t *src, priv_set_t *dst);
+extern void priv_intersect (const priv_set_t *src, priv_set_t *dst);
+extern void priv_emptyset (priv_set_t *sp);
+extern int priv_addset (priv_set_t *sp, const char *priv);
+extern void priv_copyset (const priv_set_t *src, priv_set_t *dst);
+extern boolean_t priv_issubset (const priv_set_t *src, const priv_set_t *dst);
 
 #endif /* _PRIVP_H */

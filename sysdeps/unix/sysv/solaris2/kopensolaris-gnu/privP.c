@@ -18,6 +18,8 @@
    02111-1307 USA.  */
 
 #include <privP.h>
+#include <stdarg.h>
+#include <grp.h>
 #include <bits/libc-lock.h>
 
 __libc_lock_define_recursive (extern, __priv_lock);
@@ -126,14 +128,133 @@ const priv_data_t * __priv_parse_data_cached (void)
 }
 
 
-#if 0
+/* Specify what privileges an suid root binary needs.  */
 int __init_suid_priv (int flags, ...)
 {
-  // TODO
+  int res = 0;
+  priv_set_t *permit = NULL, *inherit = NULL, *scratch = NULL;
+
+  /* Check flags.  */
+  if (flags != PU_LIMITPRIVS && flags != PU_CLEARLIMITSET)
+    return -1;
+
+  /* We can only initialize once.  */
+  if (__suidset)
+    return -1;
+
+  /* Do nothing if we are running as root but not setuid root.  */
+  uid_t uid = getuid ();
+  uid_t euid = geteuid ();
+  if (uid == 0 && euid == 0)
+    return 0;
+
+  /* Allocate a scratch set.  */
+  scratch = priv_allocset ();
+  if (!scratch)
+    goto error;
+
+  /* Get the basic set.  */
+  const priv_data_t *pd = __priv_parse_data_cached ();
+  if (!pd)
+    goto error;
+  priv_set_t *basic = pd->pd_basicprivs;
+
+  /* Get the inherited set.  */
+  inherit = priv_allocset ();
+  if (!inherit)
+    goto error;
+  if (getppriv (PRIV_INHERITABLE, inherit) != 0)
+    goto error;
+
+  /* Get the permitted set.  */
+  permit = priv_allocset ();
+  if (!permit)
+    goto error;
+  if (getppriv (PRIV_PERMITTED, permit) != 0)
+    goto error;
+
+  /* Get passed privileges.  */
+  __suidset = priv_allocset ();
+  if (!__suidset)
+    goto error;
+  priv_emptyset (__suidset);
+  va_list ap;
+  va_start (ap, flags);
+  const char *priv;
+  while ((priv = va_arg (ap, const char *)))
+    if (priv_addset (__suidset, priv) != 0)
+      goto error;
+
+  /* Make sure that the passed privileges are a subset of the current
+     permitted privileges.  */
+  if (priv_issubset (__suidset, permit) != B_TRUE)
+    goto error;
+
+  /* Set the effective privileges to the inherited ones.  */
+  if (setppriv (PRIV_SET, PRIV_EFFECTIVE, inherit) != 0)
+    goto error;
+
+  /* Set the permitted privileges to those currently permitted privileges in
+     set of the ones passed in, the inherited ones, and the basic set.  */
+  priv_copyset (__suidset, scratch);
+  priv_union (inherit, scratch);
+  priv_union (basic, scratch);
+  priv_intersect (permit, scratch);
+  if (setppriv (PRIV_SET, PRIV_PERMITTED, scratch) != 0)
+    goto error;
+
+  /* Check if we need to set the limit set.  */
+  if (flags & PU_CLEARLIMITSET)
+    {
+      priv_emptyset (scratch);
+      if (setppriv (PRIV_SET, PRIV_LIMIT, scratch) != 0)
+        goto error;
+    }
+  else if (flags & PU_LIMITPRIVS)
+    {
+      if (setppriv (PRIV_SET, PRIV_LIMIT, scratch) != 0)
+        goto error;
+    }
+
+  /* Change the uid to the caller's uid if we're setuid root.  */
+  if (euid == 0 && setreuid (uid, uid) != 0)
+    goto error;
+
+  goto out;
+
+error:
+  res = -1;
+  if (__suidset)
+    {
+      priv_freeset (__suidset);
+      __suidset = NULL;
+    }
+  if (euid == 0)
+    setreuid (uid, uid);
+
+out:
+  priv_freeset (permit);
+  priv_freeset (inherit);
+  priv_freeset (scratch);
+
+  return res;
+}
+
+
+// TODO
+#if 0
+int __init_daemon_priv (int flags, uid_t uid, gid_t gid, ...)
+{
+}
+
+
+void __fini_daemon_priv (const char *priv, ...)
+{
 }
 #endif
 
 
+/* Enable or disable those privileges passed in __init_suid_priv.  */
 int __priv_bracket (priv_op_t op)
 {
   if (op != PRIV_ON && op != PRIV_OFF)
@@ -150,6 +271,7 @@ int __priv_bracket (priv_op_t op)
 }
 
 
+/* Permanently disable those privileges passed in __init_suid_priv.  */
 void __priv_relinquish (void)
 {
   if (__suidset)

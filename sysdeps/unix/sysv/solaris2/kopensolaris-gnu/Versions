@@ -37,8 +37,8 @@ libc {
     _endauuser; _endauthattr; _endprofattr; _enduserattr;
 
     # f
-    facl; fdwalk; __fgetgrent_r_sun; __fgetpwent_r_sun; fork1; freehostent;
-    freeipsecalgent;
+    facl; fdwalk; __fgetgrent_r_sun; __fgetpwent_r_sun; __fini_daemon_priv;
+    fork1; freehostent; freeipsecalgent;
 
     # g
     getacct; _getauuserent; _getauusernam; _getauthattr; _getauthnam; getcpuid;
@@ -55,8 +55,8 @@ libc {
     hasmntopt;
 
     # i
-    idmap_reg; idmap_unreg; __init_suid_priv; _insert; issetugid;
-    is_system_labeled;
+    idmap_reg; idmap_unreg; __init_daemon_priv; __init_suid_priv; _insert;
+    issetugid; is_system_labeled;
 
     # l
     _link_aton; _link_ntoa; llseek; lltostr;
