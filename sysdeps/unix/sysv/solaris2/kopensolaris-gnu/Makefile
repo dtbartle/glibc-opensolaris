@@ -34,15 +34,16 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _so_socketpair _sysconfig rctl atomic door getexecname is_system_labeled \
     privP modctl acl facl lltostr ulltostr deflt _getauthnam _getauthattr \
     _getprofnam _getprofattr _getusernam _getuserattr _getauuserent \
-    _getauusernam vfsent fdwalk closefrom ipsecalg gethostent sigsendset \
-    sigsend stack_getbounds thr_sighndlrinfo sun_compat mkdev nss_getent \
-    nss_setent nss_endent nss_search nss_misc
+    _getauusernam _getexecattr vfsent fdwalk closefrom ipsecalg gethostent \
+    sigsendset sigsend stack_getbounds thr_sighndlrinfo sun_compat mkdev \
+    nss_getent nss_setent nss_endent nss_search nss_delete nss_misc \
+    _nss_XbyY_fgets _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
     sys_zone_create sys_allocids sys_settaskid sys_zone_lookup sys_port \
     sys_door
-sysdep_headers += sys/feature_tests.h sys/mount.h sys/dirent.h sys/utime.h \
+sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h \
     sys/systeminfo.h sys/link.h sys/procfs_isa.h sys/ttold.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/synch.h sys/fork.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \
@@ -51,8 +52,7 @@ sysdep_headers += sys/feature_tests.h sys/mount.h sys/dirent.h sys/utime.h \
     sys/int_types.h sys/machelf.h sys/inttypes.h sys/atomic.h sys/machtypes.h
 sysdep_headers += procfs.h nss_common.h \
     rtld_db.h pcsample.h atomic.h bits/machtypes.h
-headers := $(filter-out sys/sysinfo.h,$(headers))
-headers := $(filter-out sys/sysmacros.h,$(headers))
+headers := $(filter-out sys/sysinfo.h, $(headers))
 endif
 
 ifeq ($(subdir),dirent)
@@ -65,6 +65,7 @@ endif
 
 ifeq ($(subdir),posix)
 sysdep_routines += exit-thread schedP
+headers := $(filter-out sys/sysmacros.h, $(headers))
 endif
 
 ifeq ($(subdir),resource)

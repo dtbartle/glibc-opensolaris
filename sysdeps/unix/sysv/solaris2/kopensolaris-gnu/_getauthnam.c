@@ -24,7 +24,7 @@
 #define DATABASE_NAME	passwd
 #define ADD_PARAMS	const char *name
 #define ADD_VARIABLES	name
-#define BUFLEN		NSS_BUFLEN_PROFATTR
+#define BUFLEN		NSS_BUFLEN_AUTHATTR
 
 #include <nss/getXXbyYY_r.c>
 

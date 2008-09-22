@@ -24,7 +24,7 @@
 #define	GETFUNC_NAME	_getauthattr
 #define	ENDFUNC_NAME	_endauthattr
 #define DATABASE_NAME	passwd
-#define BUFLEN		NSS_BUFLEN_PROFATTR
+#define BUFLEN		NSS_BUFLEN_AUTHATTR
 
 #include "../nss/getXXent_r.c"
 

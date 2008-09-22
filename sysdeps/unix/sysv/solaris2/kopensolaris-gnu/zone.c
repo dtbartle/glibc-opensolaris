@@ -22,8 +22,11 @@
 #include <privP.h>
 #include <dlfcn.h>
 
+static int (*_zone_get_id) (const char *, zoneid_t *);
+
 DECLARE_INLINE_SYSCALL (zoneid_t, zone_create, zone_def *def);
 DECLARE_INLINE_SYSCALL (zoneid_t, zone_lookup, const char *name);
+
 
 
 zoneid_t getzoneid (void)
@@ -67,8 +70,6 @@ zoneid_t zone_create (const char *name, const char *root,
   return INLINE_SYSCALL (zone_create, 1, &def);
 }
 
-
-int (*_zone_get_id)(const char *, zoneid_t *);
 
 int zone_get_id (const char *str, zoneid_t *idp)
 {

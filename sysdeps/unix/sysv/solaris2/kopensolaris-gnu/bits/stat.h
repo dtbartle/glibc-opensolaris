@@ -224,5 +224,7 @@ struct stat64_32
 #define _R3_STAT_VER	1	/* SVR3.0 stat */
 #define _STAT_VER		2	/* current version of stat */
 
+#define S_IAMB	0x01FF
+
 #define S_ISDOOR(mode)  (((mode) & 0xF000) == S_IFDOOR)
 #define S_ISPORT(mode)  (((mode) & 0xF000) == S_IFPORT)

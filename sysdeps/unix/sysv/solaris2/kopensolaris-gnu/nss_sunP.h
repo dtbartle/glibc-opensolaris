@@ -106,6 +106,10 @@ struct nss_getent_context
     int stayopen_tmp;
   };
 
+#define NSS_STR_PARSE_SUCCESS	0
+#define NSS_STR_PARSE_PARSE	1
+#define NSS_STR_PARSE_ERANGE	2
+
 typedef enum nss_status (*lookup_function) (void *, char *, size_t, int *);
 
 struct nss_db_state

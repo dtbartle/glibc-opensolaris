@@ -41,7 +41,7 @@ int defopen (char *fn)
   /* Allocate line buffer.  */
   if (_DEFLT (buf) == NULL)
     {
-      _DEFLT (buf) = malloc (_DEFLT_BUFSIZE);
+      _DEFLT (buf) = malloc (_DEFLT_BUFSIZE + 2);
       if (!_DEFLT (buf))
         return -1;
     }
@@ -65,8 +65,11 @@ char * defread (char *cp)
   size_t cplen = strlen (cp);
   int (*strcmpfunc)(const char *, const char *, size_t) =
       (_DEFLT (flags) & DC_CASE) ? strncmp : strncasecmp;
-  while (fgets (_DEFLT (buf), _DEFLT_BUFSIZE, _DEFLT (fp)))
+  while (fgets (_DEFLT (buf), _DEFLT_BUFSIZE + 2, _DEFLT (fp)))
     {
+      if (strlen (_DEFLT (buf)) > _DEFLT_BUFSIZE)
+        break;
+
       /* Trim trailing newline.  */
       size_t len = strlen (_DEFLT (buf));
       if (len && _DEFLT (buf)[len - 1] == '\n')

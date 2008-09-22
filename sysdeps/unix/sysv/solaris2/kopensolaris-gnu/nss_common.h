@@ -22,7 +22,7 @@
 
 #include <sys/types.h>
 #include <stdint.h>
-#include <bits/libc-lock.h>
+#include <pthread.h>
 
 typedef enum
   {
@@ -112,19 +112,19 @@ struct nss_getent_context;
 typedef struct nss_db_root
   {
 	struct nss_db_state *s;
-	__libc_lock_define (, lock);
+	pthread_mutex_t lock;
   } nss_db_root_t;
 
-#define NSS_DB_ROOT_INIT		{ 0, DEFAULTMUTEX }
+#define NSS_DB_ROOT_INIT		{ 0, PTHREAD_MUTEX_INITIALIZER }
 #define DEFINE_NSS_DB_ROOT(name)	nss_db_root_t name = NSS_DB_ROOT_INIT
 
 typedef struct
   {
 	struct nss_getent_context *ctx;
-	__libc_lock_define (, lock);
+	pthread_mutex_t lock;
   } nss_getent_t;
 
-#define NSS_GETENT_INIT			{ 0, DEFAULTMUTEX }
+#define NSS_GETENT_INIT			{ 0, PTHREAD_MUTEX_INITIALIZER }
 #define DEFINE_NSS_GETENT(name)		nss_getent_t name = NSS_GETENT_INIT
 
 typedef enum

@@ -86,7 +86,7 @@ priv_data_t * __priv_parse_info (const priv_impl_info_t *pii)
 
           if (pi->priv_info_size != data->pd_setsize)
             break;
-          data->pd_basicprivs = ((priv_info_set_t *)pi)->set;
+          data->pd_basicprivs = (priv_set_t *)((priv_info_set_t *)pi)->set;
 
           break;
         }
@@ -198,7 +198,8 @@ int __init_suid_priv (int flags, ...)
      set of the ones passed in, the inherited ones, and the basic set.  */
   priv_copyset (__suidset, scratch);
   priv_union (inherit, scratch);
-  priv_union (basic, scratch);
+  if (basic)
+    priv_union (basic, scratch);
   priv_intersect (permit, scratch);
   if (setppriv (PRIV_SET, PRIV_PERMITTED, scratch) != 0)
     goto error;

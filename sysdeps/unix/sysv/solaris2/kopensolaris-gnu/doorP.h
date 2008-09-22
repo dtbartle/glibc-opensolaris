@@ -34,6 +34,16 @@ typedef struct door_info door_info_t;
 typedef struct door_arg door_arg_t;
 typedef void door_server_func_t (door_info_t *);
 
+typedef struct door_cred
+  {
+	uid_t dc_euid;
+	gid_t dc_egid;
+	uid_t dc_ruid;
+	gid_t dc_rgid;
+	pid_t dc_pid;
+	int dc_resv[4];
+  } door_cred_t;
+
 typedef struct door_return_desc
   {
 	door_desc_t *desc_ptr;

@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <sys/ptms.h>
 #include <streams/stropts.h>
+#include <mkdevP.h>
 
 /* Directory where we can find the slave pty nodes.  */
 #define _PATH_DEVPTS "/dev/pts/"
@@ -72,7 +73,7 @@ __ptsname_r (int fd, char *buf, size_t buflen)
     struct stat st;
     if (fstat (fd, &st) < 0)
         return -1;
-    int ptyno = minor (st.st_rdev);
+    int ptyno = __minor (NEWDEV, st.st_rdev);
 
     /* Buffer we use to print the number in.  For a maximum size for
        `int' of 8 bytes we never need more than 20 digits.  */

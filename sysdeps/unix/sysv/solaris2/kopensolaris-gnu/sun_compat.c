@@ -110,3 +110,9 @@ int __getopt_sun (int argc, char * const argv[], const char *optstring)
 
   return res;
 }
+
+
+int __sigwait_sun (sigset_t * set)
+{
+  return sigtimedwait (set, NULL, NULL);
+}

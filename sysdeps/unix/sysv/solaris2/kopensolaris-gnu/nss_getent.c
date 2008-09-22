@@ -24,7 +24,7 @@
 nss_status_t nss_getent (nss_db_root_t *rootp, nss_db_initf_t initf,
       nss_getent_t *contextpp, void *args)
 {
-  __libc_lock_lock (contextpp->lock);
+  pthread_mutex_lock (&contextpp->lock);
 
   /* The first time we are called the context is NULL.  */
   if (contextpp->ctx == NULL)
@@ -33,7 +33,7 @@ nss_status_t nss_getent (nss_db_root_t *rootp, nss_db_initf_t initf,
       nss_setent (rootp, initf, contextpp);
       if (contextpp->ctx == NULL)
         {
-          __libc_lock_unlock (contextpp->lock);
+          pthread_mutex_unlock (&contextpp->lock);
           return NSS_UNAVAIL;
         }
     }
@@ -48,7 +48,7 @@ nss_status_t nss_getent (nss_db_root_t *rootp, nss_db_initf_t initf,
       &ctx->stayopen_tmp, 0, nssargs->buf.result, nssargs->buf.buffer,
       nssargs->buf.buflen, &nssargs->returnval, &nssargs->h_errno);
 
-  __libc_lock_unlock (contextpp->lock);
+  pthread_mutex_unlock (&contextpp->lock);
 
   if (res != 0)
     __set_errno (res);

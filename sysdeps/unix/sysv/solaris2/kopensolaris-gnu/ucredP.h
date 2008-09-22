@@ -50,6 +50,12 @@ typedef struct ucred_s
 
 #define BSLABEL_T_SIZE		36
 
+extern ucred_t *_ucred_alloc (void);
+extern void ucred_free (ucred_t *);
 extern size_t ucred_size (void);
+extern uid_t ucred_geteuid (const ucred_t *uc);
+extern uid_t ucred_getruid (const ucred_t *uc);
+extern gid_t ucred_getegid (const ucred_t *uc);
+extern gid_t ucred_getrgid (const ucred_t *uc);
 
 #endif /* _UCREDP_H */

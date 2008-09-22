@@ -20,10 +20,12 @@
 #include <sysdep-cancel.h>
 #include <inline-syscall.h>
 #include <doorP.h>
+#include <ucredP.h>
 #include <libio/libioP.h>
 #include <atomic.h>
 #include <thread.h>
 #include <dlfcn.h>
+#include <alloca.h>
 
 static pid_t __door_private_pid, __door_unref_pid;
 static void * door_server_create_default (door_info_t *);
@@ -148,12 +150,23 @@ static void * door_server_create_default (door_info_t *info)
 }
 
 
+static void * door_unref_proc (void *arg)
+{
+  /* We may get interrupted so loop.  */
+  while (INLINE_SYSCALL (door, 6, 0, 0, 0, 0, 0, SYS_SUB_door_unrefsys) &&
+      errno == EINTR) ;
+
+  return NULL;
+}
+
+
 int door_create (void (*server_procedure)(void *cookie, char *argp,
       size_t arg_size, door_desc_t *dp, uint_t n_desc), void *cookie,
       unsigned int attributes)
 {
   // TODO: remove
-  if (attributes & ~(DOOR_NO_CANCEL | DOOR_REFUSE_DESC | DOOR_PRIVATE))
+  if (attributes & ~(DOOR_NO_CANCEL | DOOR_REFUSE_DESC | DOOR_PRIVATE | \
+        DOOR_UNREF | DOOR_UNREF_MULTI))
     abort ();
 
   /* We lock the io list lock as fork() locks it before forking. This allows us
@@ -170,8 +183,53 @@ int door_create (void (*server_procedure)(void *cookie, char *argp,
       (*door_server_create_proc) (NULL);
       __door_private_pid = pid;
     }
-
-  // TODO: DOOR_UNREF and DOOR_UNREF_MULTI
+  if (__door_unref_pid != pid && (attributes & (DOOR_UNREF | DOOR_UNREF_MULTI)))
+    {
+      /* We haven't created the unreferenced thread.  */
+      thr_create (NULL, 0, door_unref_proc, NULL, THR_DAEMON, NULL);
+      __door_unref_pid = pid;
+    }
 
   _IO_list_unlock ();
+}
+
+
+int door_ucred (ucred_t **info)
+{
+  ucred_t *uc = *info;
+  if (!uc)
+    {
+      uc = _ucred_alloc ();
+      if (!uc)
+        return -1;
+    }
+
+  int res = INLINE_SYSCALL (door, 6, (long)uc, 0, 0, 0, 0, SYS_SUB_door_ucred);
+  if (res != 0)
+    {
+      if (!*info)
+        free (uc);
+      return -1;
+    }
+
+  *info = uc;
+
+  return 0;
+}
+
+
+int door_cred (door_cred_t *info)
+{
+  ucred_t *uc = alloca (ucred_size ());
+  int res = INLINE_SYSCALL (door, 6, (long)uc, 0, 0, 0, 0, SYS_SUB_door_ucred);
+  if (res != 0)
+    return -1;
+
+  info->dc_euid = ucred_geteuid (uc);
+  info->dc_ruid = ucred_getruid (uc);
+  info->dc_egid = ucred_getegid (uc);
+  info->dc_rgid = ucred_getrgid (uc);
+  info->dc_pid = ucred_getpid (uc);
+
+  return 0;
 }

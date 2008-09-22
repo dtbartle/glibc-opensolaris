@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <streams/stropts.h>
-#include <sys/mount.h>
+#include <mountP.h>
 #include <stddef.h>
 
 int

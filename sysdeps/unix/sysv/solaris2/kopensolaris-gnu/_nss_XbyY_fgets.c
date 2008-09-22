@@ -17,33 +17,35 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _VFSENTP_H
-#define _VFSENTP_H
+#include <nss_sunP.h>
+#include <string.h>
 
-struct vfstab
-  {
-	char *vfs_special;
-	char *vfs_fsckdev;
-	char *vfs_mountp;
-	char *vfs_fstype;
-	char *vfs_fsckpass;
-	char *vfs_automnt;
-	char *vfs_mntopts;
-  };
+void _nss_XbyY_fgets (FILE *fp, nss_XbyY_args_t *args)
+{
+  args->returnval = 0;
+  args->erange = 0;
 
-#define VFS_LINE_MAX	1024
+  /* Read a line, ignoring lines that are too long.  */
+  char buf[LINE_MAX + 2];
+  if (!fgets (buf, sizeof (buf), fp))
+    return;
+  size_t len = strlen (buf);
+  if (len > LINE_MAX)
+    {
+      /* Read rest of line.  */
+      while (buf[len - 1] != '\n' && fgets (buf, sizeof (buf), fp))
+        len = strlen (buf);
+      args->erange = 1;
+      return;
+    }
+  if (buf[len - 1] == '\n')
+    buf[len - 1] = '\0';
 
-#define VFS_TOOLONG	1
-#define VFS_TOOMANY	2
-#define VFS_TOOFEW	3
-
-#define _VFS_INIT	static char buf[VFS_LINE_MAX + 2];
-#define _VFS_BUF	buf
-#define _VFS_DELIM	" \t"
-
-#define _VFS_CMP(x, y, f) \
-	(!y->f || (y->f && strcmp (x->f, y->f) == 0))
-
-int getvfsany (FILE *, struct vfstab *vp, struct vfstab *vref);
-
-#endif /* _VFSENTP_H */
+  /* Parse the line.  */
+  int res = (*args->str2ent) (buf, strlen (buf), args->buf.result,
+      args->buf.buffer, args->buf.buflen);
+  if (res == NSS_STR_PARSE_SUCCESS)
+    args->returnval = args->buf.result;
+  else if (res == NSS_STR_PARSE_ERANGE)
+    args->erange = 1;
+}

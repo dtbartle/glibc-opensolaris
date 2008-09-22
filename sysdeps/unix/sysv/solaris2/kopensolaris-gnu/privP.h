@@ -86,7 +86,7 @@ typedef struct priv_data
 	char **pd_setnames;
 	uint32_t pd_privnames_cnt;
 	char **pd_privnames;
-	priv_chunk_t *pd_basicprivs;
+	priv_set_t *pd_basicprivs;
   } priv_data_t;
 
 typedef enum priv_op
@@ -123,7 +123,9 @@ extern void priv_union (const priv_set_t *src, priv_set_t *dst);
 extern void priv_intersect (const priv_set_t *src, priv_set_t *dst);
 extern void priv_emptyset (priv_set_t *sp);
 extern int priv_addset (priv_set_t *sp, const char *priv);
+extern int priv_delset (priv_set_t *sp, const char *priv);
 extern void priv_copyset (const priv_set_t *src, priv_set_t *dst);
 extern boolean_t priv_issubset (const priv_set_t *src, const priv_set_t *dst);
+extern int priv_getbyname (const char *privname);
 
 #endif /* _PRIVP_H */

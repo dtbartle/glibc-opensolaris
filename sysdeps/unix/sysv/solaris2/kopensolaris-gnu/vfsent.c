@@ -36,11 +36,11 @@ static inline int vfs_strtok_r (char *str, const char *delim,
 
 int getvfsent (FILE *fp, struct vfstab *vp)
 {
-  while (fgets (_VFS_BUF, VFS_LINE_MAX, fp) != NULL)
+  while (fgets (_VFS_BUF, VFS_LINE_MAX + 2, fp) != NULL)
     {
       /* Check for long lines.  */
       size_t len = strlen (_VFS_BUF);
-      if (len > VFS_LINE_MAX && _VFS_BUF[VFS_LINE_MAX] != '\n')
+      if (len > VFS_LINE_MAX)
         return VFS_TOOLONG;
 
       /* Trim leading spaces/tabs.  */

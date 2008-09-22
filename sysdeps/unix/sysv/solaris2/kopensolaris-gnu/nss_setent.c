@@ -24,7 +24,7 @@
 void nss_setent (nss_db_root_t *rootp, nss_db_initf_t initf,
       nss_getent_t *contextpp)
 {
-  __libc_lock_lock (contextpp->lock);
+  pthread_mutex_lock (&contextpp->lock);
 
   /* If we've never called nss_setent then the context is NULL.  */
   if (contextpp->ctx == NULL)
@@ -34,13 +34,16 @@ void nss_setent (nss_db_root_t *rootp, nss_db_initf_t initf,
       initf (&conf);
       int dbid = __nss_get_dbid (conf.name);
       if (dbid == -1)
-        return NSS_ERROR;
+        {
+          pthread_mutex_unlock (&contextpp->lock);
+          return;
+        }
 
       /* Allocate context.  */
       contextpp->ctx = malloc (sizeof (struct nss_getent_context));
       if (!contextpp->ctx)
         {
-          __libc_lock_unlock (contextpp->lock);
+          pthread_mutex_unlock (&contextpp->lock);
           return;
         }
       struct nss_getent_context *ctx = contextpp->ctx;
@@ -59,5 +62,5 @@ void nss_setent (nss_db_root_t *rootp, nss_db_initf_t initf,
   __nss_setent (ctx->setfuncname, ctx->dblookupfunc, &ctx->nip, &ctx->startp,
       &ctx->last_nip, ctx->stayopen, &ctx->stayopen_tmp, 0);
 
-  __libc_lock_unlock (contextpp->lock);
+  pthread_mutex_unlock (&contextpp->lock);
 }

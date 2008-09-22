@@ -34,22 +34,23 @@ libc {
     door_server_create; door_setparam; door_ucred; door_unbind;
 
     # e
-    _endauuser; _endauthattr; _endprofattr; _enduserattr;
+    _endauuser; _endauthattr; _endexecattr; _endprofattr; _enduserattr;
 
     # f
-    facl; fdwalk; __fgetgrent_r_sun; __fgetpwent_r_sun; __fini_daemon_priv;
-    fork1; freehostent; freeipsecalgent;
+    facl; fdwalk; __fgetgrent_r_sun; __fgetpwent_r_sun; _fgetuserattr;
+    __fini_daemon_priv; fork1; freehostent; freeipsecalgent;
 
     # g
     getacct; _getauuserent; _getauusernam; _getauthattr; _getauthnam; getcpuid;
-    getexecname; gethrtime; gethrvtime; getextmntent; __getgrent_r_sun;
-    __getgrgid_r_sun; __getgrnam_r_sun; getipnodebyaddr; getipnodebyname;
-    getipsecalgbyname; getipsecalgbynum; getmntany; getmntent; __getopt_sun;
-    getpagesizes; getpagesizes2; getpeerucred; getpflags; getppriv;
-    getprivimplinfo; _getprofattr; _getprofnam; getprojid; __getpwent_r_sun;
-    __getpwnam_r_sun; __getpwuid_r_sun; getrctl; gettaskid; _getuserattr;
-    _getusernam; getustack; getvfsany; getvfsent; getvfsfile; getvfsspec;
-    getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
+    _getexecattr; getexecname; _getexecprof; getextmntent; gethrtime;
+    gethrvtime; __getgrent_r_sun; __getgrgid_r_sun; __getgrnam_r_sun;
+    getipnodebyaddr; getipnodebyname; getipsecalgbyname; getipsecalgbynum;
+    getmntany; getmntent; __getopt_sun; getpagesizes; getpagesizes2;
+    getpeerucred; getpflags; getppriv; getprivimplinfo; _getprofattr;
+    _getprofnam; getprojid; __getpwent_r_sun; __getpwnam_r_sun;
+    __getpwuid_r_sun; getrctl; gettaskid; _getuserattr; _getusernam; getustack;
+    getvfsany; getvfsent; getvfsfile; getvfsspec; getvmusage; getzoneid;
+    getzoneidbyname; getzonenamebyid;
 
     # h
     hasmntopt;
@@ -92,13 +93,14 @@ libc {
     res_nclose; resolvepath;
 
     # s
-    sendfilev; sendfilev64; _setauuser; _setauthattr; setpflags; setppriv;
-    _setprofattr; setprojrctl; setrctl; settaskid; _setuserattr; setustack;
-    sig2str; sigsend; sigsendset;_so_accept; _so_bind; _so_connect; _so_getpeername;
+    _sbrk_grow_aligned; sendfilev; sendfilev64; _setauuser; _setauthattr;
+    _setexecattr; setpflags; setppriv; _setprofattr; setprojrctl; setrctl;
+    settaskid; _setuserattr; setustack; sig2str; sigsend; sigsendset;
+    __sigwait_sun; _so_accept; _so_bind; _so_connect; _so_getpeername;
     _so_getsockname; _so_getsockopt; _so_listen; _so_recv; _so_recvfrom;
     _so_recvmsg; _so_send; _so_sendmsg; _so_sendto; _so_setsockopt;
-    _so_shutdown; _so_socket; _so_socketpair; stack_getbounds; str2sig;
-    strlcat; strlcpy; swapctl; _sysconf; __systemcall; sysfs; systeminfo;
+    _so_shutdown; _so_socket; _so_socketpair; stack_getbounds; str2sig; strlcat;
+    strlcpy; swapctl; _sysconf; __systemcall; sysfs; systeminfo;
 
     # t
     thr_sighndlrinfo; _ttyname_dev;

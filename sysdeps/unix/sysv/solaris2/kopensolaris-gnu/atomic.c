@@ -94,47 +94,47 @@ void atomic_add_ptr (volatile void *target, ssize_t delta)
 
 uint8_t atomic_add_8_nv (volatile uint8_t *target, int8_t delta)
 {
-  return atomic_exchange_and_add (target, delta);
+  return atomic_exchange_and_add (target, delta) + 1;
 }
 
 unsigned char atomic_add_char_nv (volatile unsigned char *target, signed char delta)
 {
-  return atomic_exchange_and_add (target, delta);
+  return atomic_exchange_and_add (target, delta) + 1;
 }
 
 uint16_t atomic_add_16_nv (volatile uint16_t *target, int16_t delta)
 {
-  return atomic_exchange_and_add (target, delta);
+  return atomic_exchange_and_add (target, delta) + 1;
 }
 
 unsigned short atomic_add_short_nv (volatile unsigned short *target, short delta)
 {
-  return atomic_exchange_and_add (target, delta);
+  return atomic_exchange_and_add (target, delta) + 1;
 }
 
 uint32_t atomic_add_32_nv (volatile uint32_t *target, int32_t delta)
 {
-  return atomic_exchange_and_add (target, delta);
+  return atomic_exchange_and_add (target, delta) + 1;
 }
 
 unsigned int atomic_add_int_nv (volatile unsigned int *target, int delta)
 {
-  return atomic_exchange_and_add (target, delta);
+  return atomic_exchange_and_add (target, delta) + 1;
 }
 
 unsigned long atomic_add_long_nv (volatile unsigned long *target, long delta)
 {
-  return atomic_exchange_and_add (target, delta);
+  return atomic_exchange_and_add (target, delta) + 1;
 }
 
 uint64_t atomic_add_64_nv (volatile uint64_t *target, int64_t delta)
 {
-  return atomic_exchange_and_add (target, delta);
+  return atomic_exchange_and_add (target, delta) + 1;
 }
 
 void *atomic_add_ptr_nv (volatile void *target, ssize_t delta)
 {
-  return atomic_exchange_and_add ((char **)target, delta);
+  return atomic_exchange_and_add ((char **)target, delta) + 1;
 }
 
 /* atomic_dec_* */
@@ -181,40 +181,40 @@ void atomic_dec_64 (volatile uint64_t *target)
 
 uint8_t atomic_dec_8_nv (volatile uint8_t *target)
 {
-  return atomic_decrement_val (target);
+  return atomic_decrement_val (target) - 1;
 }
 
 unsigned char atomic_dec_uchar_nv (volatile unsigned char *target)
 {
-  return atomic_decrement_val (target);
+  return atomic_decrement_val (target) - 1;
 }
 
 uint16_t atomic_dec_16_nv (volatile uint16_t *target)
 {
-  return atomic_decrement_val (target);
+  return atomic_decrement_val (target) - 1;
 }
 
 unsigned short atomic_dec_ushort_nv (volatile unsigned short *target)
 {
-  return atomic_decrement_val (target);
+  return atomic_decrement_val (target) - 1;
 }
 
 uint32_t atomic_dec_32_nv (volatile uint32_t *target)
 {
-  return atomic_decrement_val (target);
+  return atomic_decrement_val (target) - 1;
 }
 
 unsigned int atomic_dec_uint_nv (volatile unsigned int *target)
 {
-  return atomic_decrement_val (target);
+  return atomic_decrement_val (target) - 1;
 }
 
 unsigned long atomic_dec_ulong_nv (volatile unsigned long *target)
 {
-  return atomic_decrement_val (target);
+  return atomic_decrement_val (target) - 1;
 }
 
 uint64_t atomic_dec_64_nv (volatile uint64_t *target)
 {
-  return atomic_decrement_val (target);
+  return atomic_decrement_val (target) - 1;
 }

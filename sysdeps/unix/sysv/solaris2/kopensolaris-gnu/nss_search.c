@@ -26,7 +26,7 @@
 nss_status_t nss_search (nss_db_root_t *rootp, nss_db_initf_t initf,
       int search_fnum, void *search_args)
 {
-  __libc_lock_lock (rootp->lock);
+  pthread_mutex_lock (&rootp->lock);
 
   /* If we've never called nss_search then the context is NULL.  */
   if (rootp->s == NULL)
@@ -37,7 +37,7 @@ nss_status_t nss_search (nss_db_root_t *rootp, nss_db_initf_t initf,
       int dbid = __nss_get_dbid (conf.name);
       if (dbid == -1)
         {
-          __libc_lock_unlock (rootp->lock);
+          pthread_mutex_unlock (&rootp->lock);
           return NSS_ERROR;
         }
 
@@ -45,7 +45,7 @@ nss_status_t nss_search (nss_db_root_t *rootp, nss_db_initf_t initf,
       rootp->s = malloc (sizeof (struct nss_db_state));
       if (!rootp->s)
         {
-          __libc_lock_unlock (rootp->lock);
+          pthread_mutex_unlock (&rootp->lock);
           return NSS_ERROR;
         }
       struct nss_db_state *ctx = rootp->s;
@@ -63,7 +63,10 @@ nss_status_t nss_search (nss_db_root_t *rootp, nss_db_initf_t initf,
 
   /* Make sure we know about search_fnum.  */
   if (search_fnum < 0 || search_fnum >= _NSS_DBENTRY_MAX)
-    return NSS_ERROR;
+    {
+      pthread_mutex_unlock (&rootp->lock);
+      return NSS_ERROR;
+    }
   const char *searchfuncname = ctx->dbtable[search_fnum];
 
   nss_XbyY_args_t* nssargs = (nss_XbyY_args_t *)search_args;
@@ -137,6 +140,8 @@ nss_status_t nss_search (nss_db_root_t *rootp, nss_db_initf_t initf,
 
   if (errno == ERANGE && status != NSS_STATUS_TRYAGAIN)
     __set_errno (EINVAL);
+
+  pthread_mutex_unlock (&rootp->lock);
 
   return res;
 }

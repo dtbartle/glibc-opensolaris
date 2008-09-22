@@ -19,7 +19,7 @@
 
 #include <nss_sunP.h>
 #include <string.h>
-#include <bits/libc-lock.h>
+#include <pthread.h>
 
 void nss_endent (nss_db_root_t *rootp, nss_db_initf_t initf,
       nss_getent_t *contextpp)
@@ -27,7 +27,7 @@ void nss_endent (nss_db_root_t *rootp, nss_db_initf_t initf,
   if (contextpp->ctx == NULL)
     return;
 
-  __libc_lock_lock (contextpp->lock);
+  pthread_mutex_lock (&contextpp->lock);
 
   struct nss_getent_context *ctx = contextpp->ctx;
   __nss_endent (ctx->endfuncname, ctx->dblookupfunc, &ctx->nip, &ctx->startp,
@@ -37,11 +37,5 @@ void nss_endent (nss_db_root_t *rootp, nss_db_initf_t initf,
   free (contextpp->ctx);
   contextpp->ctx = NULL;
 
-  __libc_lock_unlock (contextpp->lock);
-}
-
-
-void nss_delete (nss_db_root_t *rootp)
-{
-  /* We do nothing here by design.  */
+  pthread_mutex_unlock (&contextpp->lock);
 }

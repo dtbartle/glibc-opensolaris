@@ -21,12 +21,5 @@
 # error "Never use <bits/sigcontext.h> directly; include <signal.h> instead."
 #endif
 
-#include <sys/ucontext.h>
-
-/* This is the same as mcontext_t.  */
-
-struct sigcontext
-  {
-    gregset_t gregs;
-    fpregset_t fpregs;
-  };
+/* 'struct sigcontext' is only ever used by sigreturn, which we don't have.  */
+struct sigcontext;
