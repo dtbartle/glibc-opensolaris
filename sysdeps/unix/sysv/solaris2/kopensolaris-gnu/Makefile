@@ -37,7 +37,8 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _getauusernam _getexecattr vfsent fdwalk closefrom ipsecalg gethostent \
     sigsendset sigsend stack_getbounds thr_sighndlrinfo sun_compat mkdev \
     nss_getent nss_setent nss_endent nss_search nss_delete nss_misc \
-    _nss_XbyY_fgets _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned
+    _nss_XbyY_fgets _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned \
+    mntent_sun
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
@@ -50,7 +51,7 @@ sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
     sys/pset.h sys/reg.h sys/siginfo.h sys/types32.h sys/isa_defs.h sys/elf.h \
     sys/int_types.h sys/machelf.h sys/inttypes.h sys/atomic.h sys/machtypes.h
-sysdep_headers += procfs.h nss_common.h \
+sysdep_headers += \
     rtld_db.h pcsample.h atomic.h bits/machtypes.h
 headers := $(filter-out sys/sysinfo.h, $(headers))
 endif

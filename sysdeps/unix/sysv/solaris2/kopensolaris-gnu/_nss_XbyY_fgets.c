@@ -17,7 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <nss_sunP.h>
+#include <nssP.h>
 #include <string.h>
 
 void _nss_XbyY_fgets (FILE *fp, nss_XbyY_args_t *args)

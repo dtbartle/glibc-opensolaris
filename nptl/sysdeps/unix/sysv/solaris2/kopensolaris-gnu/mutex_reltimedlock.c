@@ -23,7 +23,6 @@
 #include <errno.h>
 #include <time.h>
 #include <synchP.h>
-#include <abstime-to-reltime.h>
 
 DECLARE_INLINE_SYSCALL (int, lwp_mutex_timedlock, mutex_t *lp,
     struct timespec *tsp);
@@ -31,9 +30,9 @@ DECLARE_INLINE_SYSCALL (int, lwp_mutex_timedlock, mutex_t *lp,
 extern int __mutex_lock_fast (mutex_t *mutex, bool try);
 
 
-int __mutex_timedlock (mutex, abstime)
+int __mutex_reltimedlock (mutex, reltime)
       mutex_t *mutex;
-      const struct timespec *abstime;
+      const struct timespec *reltime;
 {
   /* Handle inconsistent robust mutexes.  */
   if ((mutex->mutex_type & LOCK_ROBUST) &&
@@ -62,13 +61,8 @@ int __mutex_timedlock (mutex, abstime)
     }
 
   /* Reject invalid timeouts.  */
-  if (INVALID_TIMESPEC (abstime))
+  if (INVALID_TIMESPEC (reltime))
     return EINVAL;
-
-  struct timespec _reltime;
-  struct timespec *reltime = abstime_to_reltime (abstime, &_reltime);
-  if (reltime && reltime->tv_sec < 0)
-    return ETIME;
 
   int errval;
   do
@@ -81,7 +75,7 @@ int __mutex_timedlock (mutex, abstime)
     {
       /* We aren't an error checking mutex so we need to block.  */
       INTERNAL_SYSCALL_DECL (err);
-      if (abstime)
+      if (reltime)
         {
           int result = INTERNAL_SYSCALL (nanosleep, err, 2, reltime, reltime);
           do

@@ -268,8 +268,19 @@ extern int sigpending (sigset_t *__set) __THROW __nonnull ((1));
 
    This function is a cancellation point and therefore not marked with
    __THROW.  */
+# ifndef __SUN_COMPAT_MODE
 extern int sigwait (__const sigset_t *__restrict __set, int *__restrict __sig)
      __nonnull ((1, 2));
+# else
+extern int __sigwait_sun (sigset_t * __set)
+     __nonnull ((1));
+#  ifdef __REDIRECT
+extern int __REDIRECT (sigwait, (sigset_t * __set), __sigwait_sun)
+     __nonnull ((1));
+#  else
+#   define sigwait __sigwait_sun
+#  endif
+# endif
 
 # ifdef __USE_POSIX199309
 /* Select any of pending signals from SET and place information in INFO.

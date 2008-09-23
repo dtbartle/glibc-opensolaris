@@ -1,5 +1,5 @@
-/* Include file for getting new procfs API
-   Copyright (C) 2008 Free Software Foundation, Inc.
+/* Structure describing state saved while handling a signal.  Stub version.
+   Copyright (C) 1991, 1994, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,14 +17,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _PROCFS_H
-#define _PROCFS_H
-
-#ifdef _STRUCTURED_PROC
-# undef _STRUCTURED_PROC
+#ifndef _SIGNAL_H
+# error "Never use <bits/sigcontext.h> directly; include <signal.h> instead."
 #endif
-#define _STRUCTURED_PROC    1
 
-#include <sys/procfs.h>
+#include <sys/ucontext.h>
 
-#endif /* _PROCFS_H */
+struct sigcontext;

@@ -20,6 +20,8 @@
 #ifndef _MNTENTP_H
 #define _MNTENTP_H
 
+#include <stdio.h>
+
 #define MNTIOC	('m' << 8)
 #define MNTIOC_GETMNTENT	(MNTIOC|7)
 
@@ -44,5 +46,8 @@ struct extmnttab
     unsigned int mnt_major;
     unsigned int mnt_minor;
   };
+
+extern int __getmntent_sun (FILE *fp, struct mnttab *mt);
+extern char * __hasmntopt_sun (struct mnttab *mt, char *opt);
 
 #endif /* _MNTENTP_H */

@@ -184,6 +184,8 @@ static inline int __cond_has_waiters (pthread_cond_t *cond)
 /* These functions are used to implement the "real" associated functions.  */
 extern int __cond_reltimedwait_internal (cond_t *cond, mutex_t *mutex,
     struct timespec *reltime, int cancel);
+extern int __mutex_reltimedlock (mutex_t *mutex,
+    const struct timespec *reltime);
 extern int __mutex_timedlock (mutex_t *mutex, const struct timespec *abstime);
 extern int __rw_timedrdlock (rwlock_t *rwlock, struct timespec *abstime);
 extern int __rw_timedwrlock (rwlock_t *rwlock, struct timespec *abstime);

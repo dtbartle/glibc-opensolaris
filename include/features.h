@@ -169,7 +169,7 @@
 #endif
 
 /* If _SUN_SOURCE was defined by the user we enable Sun compatibility mode.  */
-#ifdef _SUN_SOURCE
+#if defined (_SUN_SOURCE) && !defined (_POSIX_PTHREAD_SEMANTICS)
 # undef __SUN_COMPAT_MODE
 # define __SUN_COMPAT_MODE	1
 #endif

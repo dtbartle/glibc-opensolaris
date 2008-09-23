@@ -17,10 +17,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _NSS_COMMON_H
-#define _NSS_COMMON_H
+#ifndef _NSSP_H
+#define _NSSP_H
 
 #include <sys/types.h>
+#include <nss/nsswitch.h>
 #include <stdint.h>
 #include <pthread.h>
 
@@ -145,36 +146,124 @@ typedef struct nss_config
 	size_t length;
   } nss_config_t;
 
-__BEGIN_DECLS
+typedef struct
+  {
+	void *result;
+	char *buffer;
+	int buflen;
+  } nss_XbyY_buf_t;
 
-extern nss_status_t nss_config (nss_config_t **, int);
+typedef int (*nss_str2ent_t)(const char *, int, void *, char *, int);
 
-extern nss_status_t nss_search (nss_db_root_t *, nss_db_initf_t,
-	int search_fnum, void *search_args);
-extern nss_status_t nss_getent (nss_db_root_t *, nss_db_initf_t,
-	nss_getent_t *, void *getent_args);
-extern void nss_setent (nss_db_root_t *, nss_db_initf_t, nss_getent_t *);
-extern void nss_endent (nss_db_root_t *, nss_db_initf_t, nss_getent_t *);
-extern void nss_delete (nss_db_root_t *);
+typedef union nss_XbyY_key
+  {
+	uid_t uid;
+	gid_t gid;
+	projid_t projid;
+	const char *name;
+	int number;
+	struct
+	  {
+		int net;
+		int type;
+	  } netaddr;
+	struct
+	  {
+		const char *addr;
+		int len;
+        int type;
+	  } hostaddr;
+	struct
+	  {
+		union
+		  {
+			const char *name;
+            int port;
+		  } serv;
+        const char *proto;
+	  } serv;
+	void *ether;
+	struct
+	  {
+		const char *name;
+		const char *keytype;
+	  } pkey;
+	struct
+	  {
+		const char *name;
+		int af_family;
+		int flags;
+	  } ipnode;
+	void *attrp;
+} nss_XbyY_key_t;
 
-extern nss_status_t nss_pack (void *, size_t, nss_db_root_t *,
-	nss_db_initf_t, int, void *);
-extern nss_status_t nss_pack_ent (void *, size_t, nss_db_root_t *,
-	nss_db_initf_t, nss_getent_t *);
-extern nss_status_t nss_unpack (void *, size_t, nss_db_root_t *,
-	nss_db_initf_t, int, void *);
-extern nss_status_t nss_unpack_ent (void *, size_t, nss_db_root_t *,
-	nss_db_initf_t, nss_getent_t *, void *);
+typedef int (*nss_key2str_t)(void *, size_t, nss_XbyY_key_t *, size_t *);
 
-extern nss_status_t _nsc_search (nss_db_root_t *, nss_db_initf_t,
-	int search_fnum, void *search_args);
-extern nss_status_t _nsc_getent_u (nss_db_root_t *, nss_db_initf_t,
-	 nss_getent_t *, void *getent_args);
-extern nss_status_t _nsc_setent_u (nss_db_root_t *, nss_db_initf_t,
-	nss_getent_t *);
-extern nss_status_t _nsc_endent_u(nss_db_root_t *, nss_db_initf_t,
-	    nss_getent_t *);
+typedef struct nss_XbyY_args
+  {
+	nss_XbyY_buf_t buf;
+	int stayopen;
+	nss_str2ent_t str2ent;
+	union nss_XbyY_key key;
+	void *returnval;
+	int erange;
+	int h_errno;
+	nss_status_t status;
+	nss_key2str_t key2str;
+	size_t returnlen;
+  } nss_XbyY_args_t;
 
-__END_DECLS
+struct nss_getent_context
+  {
+    char getfuncname[30];
+    char setfuncname[30];
+    char endfuncname[30];
+    db_lookup_function dblookupfunc;
 
-#endif /* _NSS_COMMON_H */
+	service_user *nip;
+	service_user *last_nip;
+	service_user *startp;
+
+    int stayopen;
+    int stayopen_tmp;
+  };
+
+#define NSS_STR_PARSE_SUCCESS	0
+#define NSS_STR_PARSE_PARSE	1
+#define NSS_STR_PARSE_ERANGE	2
+
+typedef enum nss_status (*lookup_function) (void *, char *, size_t, int *);
+
+struct nss_db_state
+  {
+	bool startp_initialized;
+	service_user *startp;
+	lookup_function start_fct;
+
+    db_lookup_function dblookupfunc;
+    const char **dbtable;
+  };
+
+#define RESULT_TO_STATUS(res) \
+	((res == 0) ? NSS_SUCCESS : (res == ENOENT) ? NSS_TRYAGAIN : NSS_ERROR)
+
+enum nss_dbid
+  {
+	NSS_DBID_AUTH_ATTR,
+	NSS_DBID_AUTOMOUNT,
+	NSS_DBID_BOOTPARAMS,
+	NSS_DBID_NETMASKS,
+	NSS_DBID_PRINTERS,
+	NSS_DBID_PROF_ATTR,
+	NSS_DBID_PROJECT,
+	_NSS_DBID_MAX = NSS_DBID_PROJECT
+  };
+
+#define _NSS_DBENTRY_MAX	6
+
+extern int __nss_get_dbid (const char *dbname);
+extern const char ** __nss_get_dbtable (int dbid);
+extern db_lookup_function __nss_get_dblookupfunc (int dbid);
+
+
+#endif /* _NSSP_H */

@@ -366,6 +366,7 @@ extern struct protoent *getprotobynumber (int __proto);
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation they are cancellation points and
    therefore not marked with __THROW.  */
+# ifndef __SUN_COMPAT_MODE
 extern int getprotoent_r (struct protoent *__restrict __result_buf,
 			  char *__restrict __buf, size_t __buflen,
 			  struct protoent **__restrict __result);
@@ -379,6 +380,42 @@ extern int getprotobynumber_r (int __proto,
 			       struct protoent *__restrict __result_buf,
 			       char *__restrict __buf, size_t __buflen,
 			       struct protoent **__restrict __result);
+# else
+extern struct protoent * __getprotoent_r_sun (
+			  struct protoent *__restrict __result_buf,
+			  char *__restrict __buf, size_t __buflen,
+			  struct protoent **__restrict __result);
+
+extern struct protoent * __getprotobyname_r_sun (
+			     __const char *__restrict __name,
+			     struct protoent *__restrict __result_buf,
+			     char *__restrict __buf, size_t __buflen);
+
+extern struct protoent * __getprotobynumber_r_sun (int __proto,
+			       struct protoent *__restrict __result_buf,
+			       char *__restrict __buf, size_t __buflen);
+#  ifdef __REDIRECT
+extern struct protoent * __REDIRECT (getprotoent_r, (
+			  struct protoent *__restrict __result_buf,
+			  char *__restrict __buf, size_t __buflen,
+			  struct protoent **__restrict __result), __getprotoent_r_sun);
+
+extern struct protoent * __REDIRECT (getprotobyname_r, (
+			     __const char *__restrict __name,
+			     struct protoent *__restrict __result_buf,
+			     char *__restrict __buf, size_t __buflen),
+			     __getprotobyname_r_sun);
+
+extern struct protoent * __REDIRECT (getprotobynumber_r, (int __proto,
+			       struct protoent *__restrict __result_buf,
+			       char *__restrict __buf, size_t __buflen),
+			       __getprotobynumber_r_sun);
+#  else
+#   define getprotobynumber_r __getprotobynumber_r_sun
+#   define getprotobyname_r __getprotobyname_r_sun
+#   define getprotobynumber_r __getprotobynumber_r_sun
+#  endif
+# endif
 
 
 /* Establish network group NETGROUP for enumeration.

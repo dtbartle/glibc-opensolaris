@@ -116,3 +116,18 @@ int __sigwait_sun (sigset_t * set)
 {
   return sigtimedwait (set, NULL, NULL);
 }
+
+
+struct protoent * __getprotoent_r_sun ()
+{
+}
+
+
+struct protoent * __getprotobyname_r_sun ()
+{
+}
+
+
+struct protoent * __getprotobynumber_r_sun ()
+{
+}
