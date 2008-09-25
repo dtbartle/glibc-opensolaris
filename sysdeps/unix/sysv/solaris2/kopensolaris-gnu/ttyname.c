@@ -16,19 +16,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#define __TTYNAME_NO_CHECKS
 #define __ASSUME_PROC_SELF_FD_NOT_SYMLINK
 #include <sysdeps/unix/sysv/linux/ttyname.c>
 
 char *
 _ttyname_dev (dev_t rdev, char *buffer, size_t buflen)
 {
-  struct stat64 st, st1;
+  struct stat64 st;
   int dostat;
   char *name;
   int save = errno;
   struct termios term;
 
-  if (__xstat64 (_STAT_VER, "/dev/pts", &st1) == 0 && S_ISDIR (st1.st_mode))
+  if (__xstat64 (_STAT_VER, "/dev/pts", &st) == 0 && S_ISDIR (st.st_mode))
     {
       dostat = 1;
       name = getttyname ("/dev/pts", rdev, -1, save, &dostat);

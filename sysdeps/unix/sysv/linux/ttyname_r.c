@@ -119,11 +119,13 @@ __ttyname_r (int fd, char *buf, size_t buflen)
       return ERANGE;
     }
 
+#ifndef __TTYNAME_NO_CHECKS
   /* isatty check, tcgetattr is used because it sets the correct
      errno (EBADF resp. ENOTTY) on error.  */
   struct termios term;
   if (__builtin_expect (__tcgetattr (fd, &term) < 0, 0))
     return errno;
+#endif
 
 #ifndef __ASSUME_PROC_SELF_FD_NOT_SYMLINK
   /* We try using the /proc filesystem.  */
