@@ -19,6 +19,11 @@
 #ifndef _SYS_PARAM_H
 #define _SYS_PARAM_H	1
 
+#ifdef _GNU_SOURCE
+# define MIN(a,b) (((a)<(b))?(a):(b))
+# define MAX(a,b) (((a)>(b))?(a):(b))
+#endif
+
 #include <limits.h>
 #include <features.h>
 #include <sys/isa_defs.h>
@@ -51,14 +56,6 @@
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
 #define powerof2(x)	((((x)-1)&(x))==0)
 
-/* Macros for min/max.  */
-#ifndef MIN
-# define MIN(a,b)	(((a)<(b))?(a):(b))
-#endif
-#ifndef MAX
-# define MAX(a,b)	(((a)>(b))?(a):(b))
-#endif
-
 #define NODEV	(dev_t)-1
 
 /* Unit of `st_blocks'.  */
@@ -67,8 +64,7 @@
 /* Maximum hostname length.  */
 #define MAXHOSTNAMELEN  256
 
-#include <unistd.h>
-
+extern long int sysconf (int __name) __THROW __attribute__ ((__const__));
 #define PAGESIZE	sysconf(_SC_PAGESIZE)
 #define MAXPID		(pid_t)sysconf(_SC_MAXPID)
 #define MAXEPHUID	(uid_t)sysconf(_SC_EPHID_MAX)

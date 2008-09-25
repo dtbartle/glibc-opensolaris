@@ -24,9 +24,20 @@
 
 #include <bits/wordsize.h>
 #include <stdint.h>
-#define __need_timespec
-#include <time.h>
 #include <features.h>
+
+/* This needs to be defined here because we only get timespec for certain
+   posix flags.  */
+#if !defined __USE_POSIX199309 && !defined __USE_MISC
+struct __timespec
+  {
+    __time_t tv_sec;        /* Seconds.  */
+    long int tv_nsec;       /* Nanoseconds.  */
+  };
+#else
+# define __need_timespec
+# include <time.h>
+#endif
 
 #if (!defined __have_sigval_t \
      && (defined _SIGNAL_H || defined __need_siginfo_t \
@@ -115,7 +126,11 @@ typedef struct siginfo
         struct /* SIGPROF */
         {
             char *__faddr;
+#if !defined __USE_POSIX199309 && !defined __USE_MISC
+            struct __timespec __tstamp;
+#else
             struct timespec __tstamp;
+#endif
             short __syscall;
             char  __nsysarg;
             char  __fault;
@@ -208,12 +223,12 @@ typedef struct k_siginfo
 	  {
 		struct
 		  {
-			pid_t __pid;
+			__pid_t __pid;
 			union
 			  {
 				struct
 				  {
-					uid_t __uid;
+					__uid_t __uid;
                     union sigval __value;
 				  } __kill;
                 struct
