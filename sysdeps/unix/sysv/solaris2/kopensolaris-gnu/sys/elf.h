@@ -64,4 +64,15 @@ typedef struct
 	  } c_un;
   } Elf64_Cap;
 
+#define EM_AMD64	62
+#define EM_X86_64	EM_AMD64
+
+#define STV_EXPORTED	4
+#define STV_SINGLETON	5
+#define STV_ELIMINATE	6
+
+#define SHN_LOSUNW	0xff3f
+#define SHN_SUNW_IGNORE	0xff3f
+#define SHN_HISUNW	0xff3f
+
 #endif /* _SYS_ELF_H */

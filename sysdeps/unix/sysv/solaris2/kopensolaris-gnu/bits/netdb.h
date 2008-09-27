@@ -52,4 +52,6 @@ typedef struct ipsecalgent
 #define IPSEC_PROTO_AH	2
 #define IPSEC_PROTO_ESP	3
 
+#define MAXHOSTNAMELEN	256
+
 #endif /* __USE_MISC */

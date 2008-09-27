@@ -77,4 +77,6 @@
 #define _POSIX_TRACE_LOG	-1
 #define _POSIX_TYPED_MEMORY_OBJECTS	-1
 
+#define _POSIX_VDISABLE	'\0'
+
 #endif /* _BITS_POSIX_OPT_H */

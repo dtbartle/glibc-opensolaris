@@ -44,15 +44,14 @@ sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
     sys_zone_create sys_allocids sys_settaskid sys_zone_lookup sys_port \
     sys_door
-sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h \
+sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
     sys/systeminfo.h sys/link.h sys/procfs_isa.h sys/ttold.h \
     sys/priocntl.h sys/procset.h sys/ptyvar.h sys/synch.h sys/fork.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
-    sys/pset.h sys/reg.h sys/siginfo.h sys/types32.h sys/isa_defs.h sys/elf.h \
-    sys/int_types.h sys/machelf.h sys/inttypes.h sys/atomic.h sys/machtypes.h
-sysdep_headers += \
-    rtld_db.h pcsample.h atomic.h bits/machtypes.h
+    sys/pset.h sys/reg.h sys/siginfo.h sys/types32.h sys/isa_defs.h \
+    sys/int_types.h sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h \
+sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h
 headers := $(filter-out sys/sysinfo.h, $(headers))
 endif
 
@@ -82,6 +81,7 @@ endif
 ifeq ($(subdir),socket)
 sysdep_routines += sa_len
 sysdep_routines += netmask
+headers := $(filter-out sys/socketvar.h, $(headers))
 endif
 
 ifeq ($(subdir),string)

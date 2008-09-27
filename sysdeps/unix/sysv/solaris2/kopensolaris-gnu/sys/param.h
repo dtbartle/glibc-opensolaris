@@ -64,7 +64,9 @@
 /* Maximum hostname length.  */
 #define MAXHOSTNAMELEN  256
 
+__BEGIN_DECLS
 extern long int sysconf (int __name) __THROW __attribute__ ((__const__));
+__END_DECLS
 #define PAGESIZE	sysconf(_SC_PAGESIZE)
 #define MAXPID		(pid_t)sysconf(_SC_MAXPID)
 #define MAXEPHUID	(uid_t)sysconf(_SC_EPHID_MAX)

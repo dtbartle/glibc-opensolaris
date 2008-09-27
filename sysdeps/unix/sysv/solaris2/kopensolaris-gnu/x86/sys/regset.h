@@ -24,42 +24,36 @@
 
 #ifdef __USE_MISC
 
-# ifdef __amd64__
-#  define REG_R15	0
-#  define REG_R14	1
-#  define REG_R13	2
-#  define REG_R12	3
-#  define REG_R11	4
-#  define REG_R10	5
-#  define REG_R9	6
-#  define REG_R8	7
-#  define REG_RDI	8
-#  define REG_RSI	9
-#  define REG_RBP	10
-#  define REG_RBX	11
-#  define REG_RDX	12
-#  define REG_RCX	13
-#  define REG_RAX	14
-#  define REG_TRAPNO	15
-#  define REG_ERR	16
-#  define REG_RIP	17
-#  define REG_CS	18
-#  define REG_RFL	19
-#  define REG_RSP	20
-#  define REG_SS	21
-#  define REG_FS	22
-#  define REG_GS	23
-#  define REG_ES	24
-#  define REG_DS	25
-#  define REG_FSBASE	26
-#  define REG_GSBASE	27
-#  define REG_PC	REG_RIP
-#  define REG_FP	REG_RBP
-#  define REG_SP	REG_RSP
-#  define REG_PS	REG_RFL
-#  define REG_R0	REG_RAX
-#  define REG_R1	REG_RDX
-# else /* __i386__ */
+# define REG_R15	0
+# define REG_R14	1
+# define REG_R13	2
+# define REG_R12	3
+# define REG_R11	4
+# define REG_R10	5
+# define REG_R9		6
+# define REG_R8		7
+# define REG_RDI	8
+# define REG_RSI	9
+# define REG_RBP	10
+# define REG_RBX	11
+# define REG_RDX	12
+# define REG_RCX	13
+# define REG_RAX	14
+# define REG_TRAPNO	15
+# define REG_ERR	16
+# define REG_RIP	17
+# define REG_CS		18
+# define REG_RFL	19
+# define REG_RSP	20
+# define REG_SS		21
+# define REG_FS		22
+# define REG_GS		23
+# define REG_ES		24
+# define REG_DS		25
+# define REG_FSBASE	26
+# define REG_GSBASE	27
+
+# ifndef __SUN_COMPAT_SOURCE
 #  define GS		0
 #  define FS		1
 #  define ES		2
@@ -79,12 +73,22 @@
 #  define EFL		16
 #  define UESP		17
 #  define SS		18
-#  define REG_PC	EIP
-#  define REG_FP	EBP
-#  define REG_SP	UESP
-#  define REG_PS	EFL
-#  define REG_R0	EAX
-#  define REG_R1	EDX
+# endif
+
+# ifdef __amd64__
+#  define REG_PC	REG_RIP
+#  define REG_FP	REG_RBP
+#  define REG_SP	REG_RSP
+#  define REG_PS	REG_RFL
+#  define REG_R0	REG_RAX
+#  define REG_R1	REG_RDX
+# else /* __i386__ */
+#  define REG_PC	14
+#  define REG_FP	6
+#  define REG_SP	17
+#  define REG_PS	16
+#  define REG_R0	11
+#  define REG_R1	9
 # endif /* __amd64__ */
 
 #endif /* __USE_MISC */

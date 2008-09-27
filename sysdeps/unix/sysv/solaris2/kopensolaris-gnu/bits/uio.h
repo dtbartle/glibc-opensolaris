@@ -62,6 +62,33 @@ typedef struct uio
 	ssize_t uio_resid;
   } uio_t;
 
+typedef struct uioa_page_s
+  {
+	int uioa_pfncnt;
+	void **uioa_ppp;
+	caddr_t uioa_base;
+	size_t uioa_len;
+  } uioa_page_t;
+
+#define UIOA_IOV_MAX	16
+
+typedef struct uioa_s
+  {
+	iovec_t *uio_iov;
+	int uio_iovcnt;
+	lloff_t _uio_offset;
+	uio_seg_t uio_segflg;
+	uint16_t uio_fmode;
+	uint16_t uio_extflg;
+	lloff_t _uio_limit;
+	ssize_t uio_resid;
+	uint32_t uioa_state;
+	uioa_page_t *uioa_lcur;
+	void **uioa_lppp;
+	void *uioa_hwst[4];
+	uioa_page_t uioa_locked[UIOA_IOV_MAX];
+  } uioa_t;
+
 #endif
 
 #endif /* _SYS_UIO_H */
