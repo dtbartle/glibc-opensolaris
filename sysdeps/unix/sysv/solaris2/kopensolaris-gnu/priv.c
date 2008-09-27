@@ -235,8 +235,8 @@ boolean_t priv_isemptyset (const priv_set_t *sp)
   priv_chunk_t *pcsp = (priv_chunk_t *)sp;
   for (int i = 0; i < __PRIVSETCHUNKS; i++)
     if (pcsp[i])
-      return B_FALSE;
-  return B_TRUE;
+      return _B_FALSE;
+  return _B_TRUE;
 }
 
 
@@ -245,8 +245,8 @@ boolean_t priv_isfullset (const priv_set_t *sp)
   priv_chunk_t *pcsp = (priv_chunk_t *)sp;
   for (int i = 0; i < __PRIVSETCHUNKS; i++)
     if (~pcsp[i])
-      return B_FALSE;
-  return B_TRUE;
+      return _B_FALSE;
+  return _B_TRUE;
 }
 
 
@@ -254,10 +254,10 @@ boolean_t priv_ismember (const priv_set_t *sp, const char *priv)
 {
   int privn = priv_getbyname (priv);
   if (privn == -1)
-    return B_FALSE;
+    return _B_FALSE;
 
   return (((priv_chunk_t *)sp)[__PRIVELT (privn)] & __PRIVMASK (privn)) ?
-      B_TRUE : B_FALSE;
+      _B_TRUE : _B_FALSE;
 }
 
 
@@ -267,8 +267,8 @@ boolean_t priv_issubset (const priv_set_t *src, const priv_set_t *dst)
   priv_chunk_t *pcdst = (priv_chunk_t *)dst;
   for (int i = 0; i < __PRIVSETCHUNKS; i++)
     if ((pcsrc[__PRIVELT (i)] & pcdst[__PRIVELT (i)]) != pcsrc[__PRIVELT (i)])
-      return B_FALSE;
-  return B_TRUE;
+      return _B_FALSE;
+  return _B_TRUE;
 }
 
 
@@ -312,11 +312,11 @@ boolean_t priv_ineffect (const char *priv)
 {
   priv_set_t *pset = priv_allocset ();
   if (!pset)
-    return B_FALSE;
+    return _B_FALSE;
 
   int res = getppriv (PRIV_EFFECTIVE, pset);
   if (res == -1)
-    return B_FALSE;
+    return _B_FALSE;
 
   boolean_t ret = priv_ismember (pset, priv);
 
