@@ -50,7 +50,7 @@ sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
     sys/sockio.h sys/ioccom.h sys/tty.h sys/trap.h sys/sysconfig.h \
 	sys/ptms.h sys/stack.h sys/regset.h sys/fault.h sys/processor.h \
     sys/pset.h sys/reg.h sys/siginfo.h sys/types32.h sys/isa_defs.h \
-    sys/int_types.h sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h \
+    sys/int_types.h sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h
 sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h
 headers := $(filter-out sys/sysinfo.h, $(headers))
 endif
