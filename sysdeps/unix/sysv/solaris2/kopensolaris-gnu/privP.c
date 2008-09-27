@@ -20,6 +20,7 @@
 #include <privP.h>
 #include <stdarg.h>
 #include <grp.h>
+#include <unistd.h>
 #include <bits/libc-lock.h>
 
 __libc_lock_define_recursive (extern, __priv_lock);
@@ -187,7 +188,7 @@ int __init_suid_priv (int flags, ...)
 
   /* Make sure that the passed privileges are a subset of the current
      permitted privileges.  */
-  if (priv_issubset (__suidset, permit) != B_TRUE)
+  if (priv_issubset (__suidset, permit) != _B_TRUE)
     goto error;
 
   /* Set the effective privileges to the inherited ones.  */
