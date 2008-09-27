@@ -17,8 +17,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SYS_PRIOCNTL_H
-#define _SYS_PRIOCNTL_H
+#ifndef _PRIOCNTLP_H
+#define _PRIOCNTLP_H
 
 #include <features.h>
 #include <sys/types.h>
@@ -49,13 +49,6 @@ typedef struct pcinfo
 #define PC_CLINFOSZ		(32 / sizeof (int))
 	int pc_clinfo[PC_CLINFOSZ];
 } pcinfo_t;
-
-typedef struct pcparms
-{
-	id_t pc_cid;
-#define PC_CLPARMSZ		(32 / sizeof (int))
-	int pc_clparms[PC_CLPARMSZ];
-} pcparms_t;
 
 typedef struct pcnice
 {
@@ -116,4 +109,4 @@ long priocntlset (procset_t *ps, int cmd, ...);
 
 __END_DECLS
 
-#endif /* _SYS_PRIOCNTL_H */
+#endif /* _PRIOCNTLP_H */

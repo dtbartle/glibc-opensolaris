@@ -21,6 +21,7 @@
 #define _SYS_PROCSET_H
 
 #include <sys/types.h>
+#include <features.h>
 
 #if defined __USE_MISC || defined __USE_XOPEN
 typedef enum
@@ -48,6 +49,7 @@ typedef enum
 #define	P_INITUID	0
 #define	P_INITPGID	0
 
+#ifdef __USE_MISC
 typedef enum idop
 {
 	POP_DIFF,
@@ -55,6 +57,7 @@ typedef enum idop
 	POP_OR,
 	POP_XOR
 } idop_t;
+#endif
 
 typedef struct procset
 {

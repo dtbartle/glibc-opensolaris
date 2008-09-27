@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <sys/pset.h>
+#include <psetP.h>
 
 DECLARE_INLINE_SYSCALL (int, pset_getloadavg, int *buf, int nelem);
 

@@ -32,23 +32,23 @@ major_t __major (const int version, const dev_t devnum)
 
   if (version == OLDDEV)
     {
-      if ((devnum >> ONBITSMINOR) > OMAXMAJ)
+      if ((devnum >> O_BITSMINOR) > O_MAXMAJ)
         {
           __set_errno (EINVAL);
           return NODEV;
         }
 
-        return devnum >> ONBITSMINOR;
+        return devnum >> O_BITSMINOR;
     }
   else /* NEWDEV */
     {
-      if ((devnum >> NBITSMINOR) > MAXMAJ)
+      if ((devnum >> L_BITSMINOR) > L_MAXMAJ)
         {
           __set_errno (EINVAL);
           return NODEV;
         }
 
-        return devnum >> NBITSMINOR;
+        return devnum >> L_BITSMINOR;
     }
 }
 
@@ -62,9 +62,9 @@ minor_t __minor (const int version, const dev_t devnum)
     }
 
   if (version == OLDDEV)
-    return devnum & OMAXMIN;
+    return devnum & O_MAXMIN;
   else /* NEWDEV */
-    return devnum & MAXMIN;
+    return devnum & L_MAXMIN;
 }
 
 
@@ -78,22 +78,22 @@ dev_t __makedev (const int version, const major_t majdev, const minor_t mindev)
 
   if (version == OLDDEV)
     {
-      if (majdev > OMAXMAJ || mindev > OMAXMIN)
+      if (majdev > O_MAXMAJ || mindev > O_MAXMIN)
         {
           __set_errno (EINVAL);
           return NODEV;
         }
-      return (majdev << ONBITSMINOR) | mindev;
+      return (majdev << O_BITSMINOR) | mindev;
     }
   else /* NEWDEV */
     {
-      if (majdev > MAXMAJ || mindev > MAXMIN)
+      if (majdev > L_MAXMAJ || mindev > L_MAXMIN)
         {
           __set_errno (EINVAL);
           return NODEV;
         }
 
-      dev_t devnum = (majdev << NBITSMINOR) | mindev;
+      dev_t devnum = (majdev << L_BITSMINOR) | mindev;
       if (devnum == NODEV)
         __set_errno (EINVAL);
       return devnum;

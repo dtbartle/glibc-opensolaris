@@ -1,6 +1,6 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Declarations of processor sets.
+   Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,10 +17,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _MKDEVP_H
-#define _MKDEVP_H
+#ifndef _PSETP_H
+#define _PSETP_H
 
-#define OLDDEV	0
-#define NEWDEV	1
+typedef int psetid_t;
 
-#endif /* _MKDEVP_H */
+#endif /* _PSETP_H */
