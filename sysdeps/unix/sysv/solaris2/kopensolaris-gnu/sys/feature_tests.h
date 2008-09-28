@@ -21,10 +21,22 @@
 
 /* Let glibc do most of the work.  */
 #include <features.h>
+#include <sys/isa_defs.h>
 
 /* By default the large-file interfaces are available.  */
 #if !defined(_XOPEN_SOURCE) && !defined(__USE_LARGEFILE64)
 # define __USE_LARGEFILE64	1
+#endif
+
+/* Sun doesn't leave _FILE_OFFSET_BITS undefined.  */
+#ifdef _LP64
+# ifndef _FILE_OFFSET_BITS
+#  define _FILE_OFFSET_BITS	64
+# endif
+#else
+# ifndef _FILE_OFFSET_BITS
+#  define _FILE_OFFSET_BITS	32
+# endif
 #endif
 
 /* UNIX98 stuff is always available.  */
