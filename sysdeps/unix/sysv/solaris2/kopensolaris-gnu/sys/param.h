@@ -19,14 +19,16 @@
 #ifndef _SYS_PARAM_H
 #define _SYS_PARAM_H	1
 
-#ifdef _GNU_SOURCE
-# define MIN(a,b) (((a)<(b))?(a):(b))
-# define MAX(a,b) (((a)>(b))?(a):(b))
-#endif
-
 #include <limits.h>
 #include <features.h>
 #include <sys/isa_defs.h>
+
+#ifndef MIN
+# define MIN(a,b) (((a)<(b))?(a):(b))
+#endif
+#ifndef MAX
+# define MAX(a,b) (((a)>(b))?(a):(b))
+#endif
 
 /* BSD names for some <limits.h> values.  */
 
@@ -64,9 +66,6 @@
 /* Maximum hostname length.  */
 #define MAXHOSTNAMELEN  256
 
-__BEGIN_DECLS
-extern long int sysconf (int __name) __THROW __attribute__ ((__const__));
-__END_DECLS
 #define PAGESIZE	sysconf(_SC_PAGESIZE)
 #define MAXPID		(pid_t)sysconf(_SC_MAXPID)
 #define MAXEPHUID	(uid_t)sysconf(_SC_EPHID_MAX)
@@ -101,8 +100,6 @@ __END_DECLS
 #define NGROUPS_UMAX	32
 #define NGROUPS_MAX_DEFAULT	16
 
-#include <sys/isa_defs.h>
-
 #define MAXBSIZE	8192
 #define DEV_BSIZE	512
 #define DEV_BSHIFT	9
@@ -131,5 +128,11 @@ __END_DECLS
 #ifndef __USE_XOPEN
 # define NZERO	20
 #endif
+
+__BEGIN_DECLS
+
+extern long int sysconf (int __name) __THROW;
+
+__END_DECLS
 
 #endif	/* sys/param.h */

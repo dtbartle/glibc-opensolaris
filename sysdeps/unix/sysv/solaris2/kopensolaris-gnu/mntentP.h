@@ -25,28 +25,6 @@
 #define MNTIOC	('m' << 8)
 #define MNTIOC_GETMNTENT	(MNTIOC|7)
 
-#define MNT_LINE_MAX	1024
-
-struct mnttab
-  {
-	char *mnt_special;
-	char *mnt_mountp;
-	char *mnt_fstype;
-	char *mnt_mntopts;
-	char *mnt_time;
-  };
-
-struct extmnttab
-  {
-    char *mnt_special;
-    char *mnt_mountp;
-    char *mnt_fstype;
-    char *mnt_mntopts;
-    char *mnt_time;
-    unsigned int mnt_major;
-    unsigned int mnt_minor;
-  };
-
 extern int __getmntent_sun (FILE *fp, struct mnttab *mt);
 extern char * __hasmntopt_sun (struct mnttab *mt, char *opt);
 

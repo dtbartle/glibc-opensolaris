@@ -22,6 +22,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/ioctl.h>
+#define _SUN_SOURCE
+#include <sys/mnttab.h>
 
 /* Docs: http://docs.sun.com/app/docs/doc/816-5168/resetmnttab-3c  */
 
