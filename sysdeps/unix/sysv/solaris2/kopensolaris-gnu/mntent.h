@@ -26,27 +26,28 @@
 #include <stdio.h>
 #include <paths.h>
 
+#ifndef _SUN_SOURCE
 
 /* File listing canonical interesting mount points.  */
-#define	MNTTAB		_PATH_MNTTAB	/* Deprecated alias.  */
+# define MNTTAB		_PATH_MNTTAB	/* Deprecated alias.  */
 
 /* File listing currently active mount points.  */
-#define	MOUNTED		_PATH_MOUNTED	/* Deprecated alias.  */
+# define MOUNTED		_PATH_MOUNTED	/* Deprecated alias.  */
 
 
 /* General filesystem types.  */
-#define MNTTYPE_IGNORE	"ignore"	/* Ignore this entry.  */
-#define MNTTYPE_NFS	"nfs"		/* Network file system.  */
-#define MNTTYPE_SWAP	"swap"		/* Swap device.  */
+# define MNTTYPE_IGNORE	"ignore"	/* Ignore this entry.  */
+# define MNTTYPE_NFS	"nfs"		/* Network file system.  */
+# define MNTTYPE_SWAP	"swap"		/* Swap device.  */
 
 
 /* Generic mount options.  */
-#define MNTOPT_DEFAULTS	"defaults"	/* Use all default options.  */
-#define MNTOPT_RO	"ro"		/* Read only.  */
-#define MNTOPT_RW	"rw"		/* Read/write.  */
-#define MNTOPT_SUID	"suid"		/* Set uid allowed.  */
-#define MNTOPT_NOSUID	"nosuid"	/* No set uid allowed.  */
-#define MNTOPT_NOAUTO	"noauto"	/* Do not auto mount.  */
+# define MNTOPT_DEFAULTS	"defaults"	/* Use all default options.  */
+# define MNTOPT_RO	"ro"		/* Read only.  */
+# define MNTOPT_RW	"rw"		/* Read/write.  */
+# define MNTOPT_SUID	"suid"		/* Set uid allowed.  */
+# define MNTOPT_NOSUID	"nosuid"	/* No set uid allowed.  */
+# define MNTOPT_NOAUTO	"noauto"	/* Do not auto mount.  */
 
 
 __BEGIN_DECLS
@@ -70,37 +71,39 @@ extern FILE *setmntent (__const char *__file, __const char *__mode) __THROW;
 /* Read one mount table entry from STREAM.  Returns a pointer to storage
    reused on the next call, or null for EOF or error (use feof/ferror to
    check).  */
-#ifdef __REDIRECT_NTH
+# ifdef __REDIRECT_NTH
 extern struct mntent *__getmntent_gnu (FILE *__stream) __THROW;
 extern struct mntent * __REDIRECT_NTH (getmntent, (FILE *__stream),
 				   __getmntent_gnu);
-#else
-# define getmntent __getmntent_gnu
-#endif
+# else
+#  define getmntent __getmntent_gnu
+# endif
 
-#ifdef __USE_MISC
+# ifdef __USE_MISC
 /* Reentrant version of the above function.  */
 extern struct mntent *getmntent_r (FILE *__restrict __stream,
 				   struct mntent *__restrict __result,
 				   char *__restrict __buffer,
 				   int __bufsize) __THROW;
-#endif
+# endif
 
 /* Close a stream opened with `setmntent'.  */
 extern int endmntent (FILE *__stream) __THROW;
 
 /* Search MNT->mnt_opts for an option matching OPT.
    Returns the address of the substring, or null if none found.  */
-#ifdef __REDIRECT_NTH
+# ifdef __REDIRECT_NTH
 extern char *__hasmntopt_gnu (__const struct mntent *__mnt,
 			__const char *__opt) __THROW;
 extern char * __REDIRECT_NTH (hasmntopt, (__const struct mntent *__mnt,
 			__const char *__opt), __hasmntopt_gnu);
-#else
-# define hasmntopt __hasmntopt_gnu
-#endif
+# else
+#  define hasmntopt __hasmntopt_gnu
+# endif
 
 
 __END_DECLS
+
+#endif /* _SUN_SOURCE */
 
 #endif	/* mntent.h */

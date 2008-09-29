@@ -237,7 +237,7 @@ struct ifreq
 # define ifr_oaddr	ifr_ifru.ifru_oname	/* other if name */
 # define ifr_broadaddr	ifr_ifru.ifru_broadaddr	/* broadcast address	*/
 # define ifr_flags	ifr_ifru.ifru_flags	/* flags		*/
-# define ifr_metric	ifr_ifru.ifru_ivalue	/* metric		*/
+# define ifr_metric	ifr_ifru.ifru_metric	/* metric		*/
 # define ifr_data	ifr_ifru.ifru_data	/* for use by interface	*/
 # define ifr_enaddr	ifr_ifru.ifru_enaddr	/* ethernet address */
 # define ifr_index	ifr_ifru.ifru_index	/* interface index */

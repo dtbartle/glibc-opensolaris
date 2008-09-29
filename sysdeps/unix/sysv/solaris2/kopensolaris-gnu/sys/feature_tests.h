@@ -19,7 +19,38 @@
 #ifndef _SYS_FEATURE_TESTS
 #define _SYS_FEATURE_TESTS
 
-/* Let glibc do most of the work.  */
+#if defined(_XOPEN_SOURCE) || defined(_POSIX_C_SOURCE)
+# define __XOPEN_OR_POSIX
+#endif
+
+#if defined(_POSIX_SOURCE) && !defined(_POSIX_C_SOURCE)
+# define _POSIX_C_SOURCE 1
+#endif
+
+#if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE - 0 < 500) && \
+	(_XOPEN_VERSION - 0 < 4) && !defined(_XOPEN_SOURCE_EXTENDED)
+# define _XPG3
+# elif (defined(_XOPEN_SOURCE) && _XOPEN_VERSION - 0 == 4)
+# define _XPG4
+# define _XPG3
+#elif (defined(_XOPEN_SOURCE) && _XOPEN_SOURCE_EXTENDED - 0 == 1)
+# define _XPG4_2
+# define _XPG4
+# define _XPG3
+#elif   (_XOPEN_SOURCE - 0 == 500)
+# define _XPG5
+# define _XPG4_2
+# define _XPG4
+# define _XPG3
+#elif   (_XOPEN_SOURCE - 0 == 600)
+# define _XPG6
+# define _XPG5
+# define _XPG4_2
+# define _XPG4
+# define _XPG3
+#endif
+
+/* Let glibc do the rest of most of the work.  */
 #include <features.h>
 #include <sys/isa_defs.h>
 
@@ -44,27 +75,9 @@
 # define __USE_UNIX98	1
 #endif
 
-#if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE - 0 < 500) && \
-	(_XOPEN_VERSION - 0 < 4) && !defined(_XOPEN_SOURCE_EXTENDED)
-# define _XPG3
-# elif (defined(_XOPEN_SOURCE) && _XOPEN_VERSION - 0 == 4)
-# define _XPG4
-# define _XPG3
-#elif (defined(_XOPEN_SOURCE) && _XOPEN_SOURCE_EXTENDED - 0 == 1)
-# define _XPG4_2
-# define _XPG4
-# define _XPG3
-#elif   (_XOPEN_SOURCE - 0 == 500)
-# define _XPG5
-# define _XPG4_2
-# define _XPG4
-# define _XPG3
-#elif   (_XOPEN_SOURCE - 0 == 600)
-# define _XPG6
-# define _XPG5
-# define _XPG4_2
-# define _XPG4
-# define _XPG3
+/* __EXTENSIONS__ corresponds to __USE_MISC.  */
+#if defined(__USE_MISC) && !defined(__EXTENSIONS__)
+# define __EXTENSIONS__
 #endif
 
 #endif /* _SYS_FEATURE_TESTS */

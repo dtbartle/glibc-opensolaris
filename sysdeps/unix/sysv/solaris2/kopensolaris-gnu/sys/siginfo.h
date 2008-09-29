@@ -19,6 +19,7 @@
 #ifndef _SYS_SIGINFO_H
 #define _SYS_SIGINFO_H
 
+#define __need_siginfo_t
 #include <bits/siginfo.h>
 
 #endif /* _SYS_SIGINFO_H */
