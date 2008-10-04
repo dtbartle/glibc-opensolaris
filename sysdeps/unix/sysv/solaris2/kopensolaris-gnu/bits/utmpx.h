@@ -28,10 +28,12 @@
 
 #define _UTMPX_FILE	"/var/adm/utmpx"
 #define _WTMPX_FILE	"/var/adm/wtmpx"
-#ifdef __USE_GNU
+#ifdef __USE_MISC
 # include <paths.h>
 # define _PATH_UTMPX	_PATH_UTMP
 # define _PATH_WTMPX	_PATH_WTMP
+# define UTMPX_FILE	_UTMPX_FILE
+# define WTMPX_FILE	_WTMPX_FILE
 #endif
 
 
@@ -44,7 +46,7 @@
    type is used in `struct utmpx' below.  */
 struct __exit_status
   {
-#ifdef __USE_GNU
+#ifdef __USE_MISC
     short int e_termination;	/* Process termination status.  */
     short int e_exit;		/* Process exit status.  */
 #else

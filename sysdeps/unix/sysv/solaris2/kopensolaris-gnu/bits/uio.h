@@ -26,6 +26,8 @@
 
 #include <bits/types.h>
 #include <features.h>
+#define __need_IOV_MAX
+#include <bits/stdio_lim.h>
 
 /* Maximum number of iovec's that can be processed in a single call. */
 #define UIO_MAXIOV	16

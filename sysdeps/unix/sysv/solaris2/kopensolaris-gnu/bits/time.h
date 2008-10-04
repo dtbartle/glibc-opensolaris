@@ -103,7 +103,7 @@ struct itimerval
 #  undef __need_itimerval
 # endif
 
-#ifndef __time_misc_defined
+#if !defined (__time_misc_defined)  && defined (__USE_MISC)
 
 typedef struct timespec timespec_t;
 typedef struct timespec timestruc_t;

@@ -20,15 +20,10 @@
 #include <sysdep.h>
 
 ENTRY (__libc_lseek64)
-L(pseudo_end):
-    /* call llseek64
-    DO_CALL (llseek64, 3)
+    DO_CALL (llseek, 3)
     jnb 1f
-
-    /* no error */
     ret
 1:
-    /* jump to error label */
     jmp SYSCALL_ERROR_LABEL
 
 L(pseudo_end):

@@ -69,6 +69,7 @@
 /* It's too much trouble to pull in all of errno.h just for this */
 #ifndef ERESTART
 # define ERESTART   91  /* Restartable system call.  */
+# define EINTR		4	/* Interrupted system call.  */
 #endif
 
 #ifdef __ASSEMBLER__
@@ -78,6 +79,14 @@
 # define SYSCALL_64BIT_RETURN_ASM   orl $-1, %edx;
 #else
 # define SYSCALL_64BIT_RETURN_ASM
+#endif
+
+#ifdef SYSCALL_RESTARTABLE
+# define DO_RESTART \
+    cmpl $ERESTART, %eax; \
+    je L(restart);
+#else
+# define DO_RESTART
 #endif
 
 /* We don't want the label for the error handle to be global when we define
@@ -95,8 +104,7 @@
   L(restart):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 2f;										\
-    cmpl $ERESTART, %eax;                   \
-    je L(restart);                                      \
+    DO_RESTART                             \
     jmp SYSCALL_ERROR_LABEL;                           \
 2:                                              \
   L(pseudo_end):
@@ -111,8 +119,7 @@
   L(restart):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 2f;										\
-    cmpl $ERESTART, %eax;                   \
-    je L(restart);                                      \
+    DO_RESTART                             \
     movl %ecx, 4(%esp);							\
     addl $4, %esp; \
     jmp SYSCALL_ERROR_LABEL;                           \
@@ -154,11 +161,11 @@
 #define PSEUDO_ERRVAL(name, syscall_name, args) \
   .text;                                      \
   ENTRY (name)                                    \
-  L(restart):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 1f;										\
     cmpl $ERESTART, %eax;                   \
-    je L(restart);                        \
+    jne 2f;                        \
+    movl $EINTR, %eax;                  \
     jmp 2f;                             \
 1:  xorl %eax, %eax;                        \
 2:;
@@ -174,7 +181,8 @@
     DO_CALL (syscall_name, args);                         \
     jnb 1f;										\
     cmpl $ERESTART, %eax;                   \
-    je L(restart);                                      \
+    jne 2f;                                      \
+    movl $EINTR, %eax;                  \
     jmp 2f;                             \
 1:  xorl %eax, %eax;                        \
 2:											\

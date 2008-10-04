@@ -26,6 +26,7 @@
 #include <thread.h>
 #include <dlfcn.h>
 #include <alloca.h>
+#include <signal.h>
 
 static pid_t __door_private_pid, __door_unref_pid;
 static void * door_server_create_default (door_info_t *);
@@ -95,16 +96,29 @@ int door_call (int d, door_arg_t* params)
 int door_return (char *data_ptr, size_t data_size, door_desc_t *desc_ptr,
      uint_t num_desc)
 {
-  ucontext_t uc;
-  if (getcontext (&uc) != 0)
-    return -1;
+  /* Reserve space for returned client arguments.  */
+  stack_t stack;
+  thr_stksegment (&stack);
+  if (stack.ss_size > DOOR_MIN_STACKSIZE)
+    {
+      stack.ss_size -= DOOR_MIN_STACKSIZE;
+      // TODO: handle stacks that grow up
+      stack.ss_sp -= DOOR_MIN_STACKSIZE;
+    }
+  else
+    {
+      stack.ss_size = 0;
+    }
 
   door_return_desc_t drd;
   drd.desc_ptr = desc_ptr;
   drd.desc_num = num_desc;
 
-  return INLINE_SYSCALL (door, 6, (long)data_ptr, data_size, (long)&drd,
-      (long)uc.uc_stack.ss_sp, uc.uc_stack.ss_size, SYS_SUB_door_return);
+  /* __door_return never returns unless there's an error.  */
+  while (__door_return ((long)data_ptr, data_size, (long)&drd,
+      (long)stack.ss_sp, stack.ss_size, SYS_SUB_door_return) == 0 ||
+      errno == EINTR || errno == ERESTART) ;
+  return -1;
 }
 
 
@@ -130,17 +144,25 @@ static void * door_create_default_proc (void *arg)
 }
 
 
-static void * door_server_create_default (door_info_t *info)
+static void door_load_libpthread (void)
 {
   if (!thr_create_ptr)
     {
-      void *libpthread = __libc_dlopen ("libpthread.so");
+      void *libpthread = __libc_dlopen ("libpthread.so.0");
       if (!libpthread)
-        return NULL;
+        return;
       thr_create_ptr = __libc_dlsym (libpthread, "thr_create");
       if (!thr_create_ptr)
-        return NULL;
+        return;
     }
+}
+
+
+static void * door_server_create_default (door_info_t *info)
+{
+  door_load_libpthread ();
+  if (!thr_create_ptr)
+    return NULL;
 
   /* The default server create action is to create a server thread. We use
      thr_create since we want to create this as a daemon thread.  */
@@ -173,8 +195,8 @@ int door_create (void (*server_procedure)(void *cookie, char *argp,
      to be safe in the face of a fork.  */
   _IO_list_lock ();
 
-  return INLINE_SYSCALL (door, 6, (long)server_procedure, (long)cookie, attributes,
-      0, 0, SYS_SUB_door_create);
+  int res = INLINE_SYSCALL (door, 6, (long)server_procedure,
+      (long)cookie, attributes, 0, 0, SYS_SUB_door_create);
 
   pid_t pid = getpid ();
   if (__door_private_pid != pid && (attributes & DOOR_PRIVATE) == 0)
@@ -185,12 +207,18 @@ int door_create (void (*server_procedure)(void *cookie, char *argp,
     }
   if (__door_unref_pid != pid && (attributes & (DOOR_UNREF | DOOR_UNREF_MULTI)))
     {
+      door_load_libpthread ();
+      if (!thr_create_ptr)
+        return -1;
+
       /* We haven't created the unreferenced thread.  */
-      thr_create (NULL, 0, door_unref_proc, NULL, THR_DAEMON, NULL);
+      thr_create_ptr (NULL, 0, door_unref_proc, NULL, THR_DAEMON, NULL);
       __door_unref_pid = pid;
     }
 
   _IO_list_unlock ();
+
+  return res;
 }
 
 

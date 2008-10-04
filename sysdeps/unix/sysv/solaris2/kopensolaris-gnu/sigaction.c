@@ -126,9 +126,13 @@ asm (".globl __sighandler_end");
 void __sighandler (int sig, siginfo_t *sip, void *uvp)
 {
   assert (sig >= 0 && sig < NSIG);
+  ucontext_t *uctx = (ucontext_t*)uvp;
 
   if (sig == SIGPIPE && SIGPIPE_IS_DISABLED)
-    return;
+    {
+      setcontext (uctx);
+      assert (0); /* never reached */
+    }
 
   /* All signals are blocked (we passed a filled sa_mask above).  */
 
@@ -136,7 +140,6 @@ void __sighandler (int sig, siginfo_t *sip, void *uvp)
 
   void (*handler)(int, siginfo_t *, void *) = sighandlers[sig];
   sigset_t mask = sigmasks[sig];
-  ucontext_t *uctx = (ucontext_t*)uvp;
 
   __libc_lock_unlock (signal_lock);
 

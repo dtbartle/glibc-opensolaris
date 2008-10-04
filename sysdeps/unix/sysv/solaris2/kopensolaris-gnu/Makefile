@@ -31,12 +31,12 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     utssys zone port sendfilev sendfilev64 sig2str _so_accept _so_bind \
     _so_connect _so_getpeername _so_getsockname _so_getsockopt _so_listen \
     _so_send _so_sendmsg _so_sendto _so_setsockopt _so_shutdown _so_socket \
-    _so_socketpair _sysconfig rctl atomic door getexecname is_system_labeled \
-    privP modctl acl facl lltostr ulltostr deflt _getauthnam _getauthattr \
-    _getprofnam _getprofattr _getusernam _getuserattr _getauuserent \
-    _getauusernam _getexecattr vfsent fdwalk closefrom ipsecalg gethostent \
-    sigsendset sigsend stack_getbounds thr_sighndlrinfo sun_compat mkdev \
-    nss_getent nss_setent nss_endent nss_search nss_delete nss_misc \
+    _so_socketpair _sysconfig rctl atomic door __door_return getexecname \
+    is_system_labeled privP modctl acl facl lltostr ulltostr _getauthnam \
+    _getauthattr deflt _getprofnam _getprofattr _getusernam _getuserattr \
+    _getauuserent _getauusernam _getexecattr vfsent fdwalk closefrom ipsecalg \
+    gethostent sigsendset sigsend stack_getbounds thr_sighndlrinfo sun_compat \
+    mkdev nss_getent nss_setent nss_endent nss_search nss_delete nss_misc \
     _nss_XbyY_fgets _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned \
     mntent_sun
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
@@ -60,6 +60,7 @@ endif
 
 ifeq ($(subdir),inet)
 sysdep_routines += _link_aton _link_ntoa
+headers := $(filter-out netinet/if_ether.h, $(headers))
 endif
 
 ifeq ($(subdir),posix)

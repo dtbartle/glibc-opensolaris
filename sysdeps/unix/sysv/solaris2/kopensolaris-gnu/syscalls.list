@@ -15,7 +15,7 @@ fstatvfs            - fstatvfs              i:ip        __fstatvfs          fsta
 fstatvfs64          - fstatvfs64            i:ip        __fstatvfs64        fstatvfs64
 getcpuid            - getcpuid              i:          getcpuid
 getpflags           - privsys:getpflags     i:i         getpflags
-getmsg              - getmsg                i:ppp       getmsg
+getmsg              - getmsg                Ri:ppp      getmsg
 getpmsg             - getpmsg               i:pppp      getpmsg
 getpagesizes        - getpagesizes:getpagesizes2  i:pi  __getpagesizes      getpagesizes getpagesizes2
 getpgid             - pgrpsys:getpgid       i:i         __getpgid           getpgid
@@ -29,6 +29,7 @@ getvmusage          - rusagesys:getvmusage  i:iipp      getvmusage
 gtty                - gtty                  i:ip        gtty
 idmap_reg           - sidsys:idmap_reg      i:i         idmap_reg
 idmap_unreg         - sidsys:idmap_unreg    i:i         idmap_unreg
+ioctl               - ioctl                 Ri:iiI      __ioctl             ioctl
 issetugid           - privsys:issetugid     Ei:         issetugid
 lchown              - lchown                i:sii       __lchown            lchown
 memcntl             - memcntl               i:piiiii    memcntl
@@ -40,11 +41,13 @@ nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __na
 pathconf            - pathconf              i:pi        __pathconf          pathconf
 pcsample            - pcsample              i:pi        pcsample
 ppoll               - pollsys               Ci:pipp     ppoll
-pread               - pread                 Ci:iPii     __libc_pread        __pread pread
+pread               - pread                 RCi:iPii    __libc_pread        __pread pread
 pread64             - pread64               Ci:iPii     __libc_pread64      __pread64 pread64
 profil              - profil                :piii       __profil            profil
-pwrite              - pwrite                Ci:iPii     __libc_pwrite       __pwrite pwrite
-pwrite64            - pwrite64              Ci:iPii     __libc_pwrite64     __pwrite64 pwrite64
+pwrite              - pwrite                RCi:iPii    __libc_pwrite       __pwrite pwrite
+pwrite64            - pwrite64              RCi:iPii    __libc_pwrite64     __pwrite64 pwrite64
+read                - read                  RCi:ibn     __libc_read         __read read
+readv               - readv                 RCi:ipi     __readv             readv
 resolvepath         - resolvepath           i:spi       resolvepath
 sched_yield         - yield                 i:          __sched_yield       sched_yield
 setcontext          - context:setcontext    i:p         __setcontext        setcontext
@@ -75,7 +78,9 @@ utssys              - utssys                i:piip      utssys
 uucopy              - uucopy                i:ppi       uucopy
 uucopystr           - uucopystr             i:ppi       uucopystr
 vhangup             - vhangup               i:          vhangup
-waitid              - waitid                Ci:iipi     __waitid            waitid
+waitid              - waitid                RCi:iipi    __waitid            waitid
+write               - write                 RCi:ibn     __libc_write        __write write
+writev              - writev                RCi:ipi     __writev            writev
 xmknod              - xmknod                i:isii      __xmknod            _xmknod
 
 # msg
@@ -157,12 +162,12 @@ _so_getpeername     - getpeername           i:ibNi      _so_getpeername
 _so_getsockname     - getsockname           i:ibNi      _so_getsockname
 _so_getsockopt      - getsockopt            i:iiiBNi    _so_getsockopt
 _so_listen          - listen                i:iii       _so_listen
-recv                - recv                  Ci:ibni     __libc_recv         __recv recv _so_recv
-recvfrom            - recvfrom              Ci:ibniBN   __libc_recvfrom     __recvfrom recvfrom _so_recvfrom
-recvmsg             - recvmsg               Ci:ipi      __libc_recvmsg      __recvmsg recvmsg _so_recvmsg
-_so_send            - send                  Ci:ibni     _so_send
-_so_sendmsg         - sendmsg               Ci:ipi      _so_sendmsg
-_so_sendto          - sendto                Ci:ibnibn   _so_sendto
+recv                - recv                  RCi:ibni    __libc_recv         __recv recv _so_recv
+recvfrom            - recvfrom              RCi:ibniBN  __libc_recvfrom     __recvfrom recvfrom _so_recvfrom
+recvmsg             - recvmsg               Ri:ipi      __libc_recvmsg      __recvmsg recvmsg _so_recvmsg
+_so_send            - send                  RCi:ibni    _so_send
+_so_sendmsg         - sendmsg               RCi:ipi     _so_sendmsg
+_so_sendto          - sendto                RCi:ibnibn  _so_sendto
 _so_setsockopt      - setsockopt            i:iiibn     _so_setsockopt
 _so_shutdown        - shutdown              i:iii       _so_shutdown
 _so_socket          - so_socket             i:iiipi     _so_socket
@@ -178,7 +183,7 @@ is_system_labeled   - labelsys:syslabeling  i:          is_system_labeled
 
 sys_allocids        - sidsys:allocids       i:iii       __syscall_allocids
 sys_brk             - brk                   i:p         __syscall_brk
-sys_fcntl           - fcntl                 i:iiF       __syscall_fcntl
+sys_fcntl           - fcntl                 Ri:iiF      __syscall_fcntl
 sys_fdsync          - fdsync                Ci:ii       __syscall_fdsync
 sys_forkx           - forksys:forkx         i:i         __syscall_forkx
 sys_fstat           - fstat                 i:ip        __syscall_fstat
@@ -206,7 +211,7 @@ sys_port            - port                  i:i         __syscall_port
 sys_priocntlsys     - priocntlsys           i:ipiv      __syscall_priocntlsys
 sys_privsys         - privsys               i:iipii     __syscall_privsys
 sys_pset_getloadavg - pset:pset_getloadavg  i:ipi       __syscall_pset_getloadavg
-sys_putmsg          - putmsg                i:ippi      __syscall_putmsg
+sys_putmsg          - putmsg                Ri:ippi     __syscall_putmsg
 sys_putpmsg         - putpmsg               i:ippii     __syscall_putpmsg
 sys_rctlsys         - rctlsys               i:ipppii    __syscall_rctlsys
 sys_rusagesys       - rusagesys             i:ip        __syscall_rusagesys

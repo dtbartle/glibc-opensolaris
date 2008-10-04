@@ -23,7 +23,7 @@
 #include <features.h>
 #include <paths.h>
 
-#ifndef _SUN_SOURCE
+#ifndef __USE_SUN
 # include <mntent.h>
 #else
 
@@ -74,6 +74,6 @@ extern char	*mntopt (char **);
 
 __END_DECLS
 
-#endif /* _SUN_SOURCE */
+#endif /* __USE_SUN */
 
 #endif /* _SYS_MNTTAB_H */

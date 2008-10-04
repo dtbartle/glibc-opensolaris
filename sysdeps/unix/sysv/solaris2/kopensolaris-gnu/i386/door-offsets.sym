@@ -1,0 +1,4 @@
+#include <sysdep.h>
+#include <doorP.h>
+
+DOOR_RESULTS_PC		offsetof (struct door_results, pc)

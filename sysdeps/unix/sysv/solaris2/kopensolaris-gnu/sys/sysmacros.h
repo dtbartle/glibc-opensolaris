@@ -24,6 +24,8 @@
 
 #ifdef __USE_MISC
 
+# include <sys/param.h>
+
 # define dtob(DD)	((DD) << DEV_BSHIFT)
 # define btod(BB)	(((BB) + DEV_BSIZE - 1) >> DEV_BSHIFT)
 # define btodt(BB)	((BB) >> DEV_BSHIFT)
@@ -78,7 +80,7 @@
 
 #endif /* __USE_MISC */
 
-#ifdef _SUN_SOURCE
+#ifdef __USE_SUN
 
 # ifndef MIN
 #  define MIN(a, b)	((a) < (b) ? (a) : (b))
@@ -114,6 +116,6 @@
 # define P2SAMEHIGHBIT_TYPED(x, y, type)	(((type)(x) ^ (type)(y)) < \
 	((type)(x) & (type)(y)))
 
-#endif /* _SUN_SOURCE */
+#endif /* __USE_SUN */
 
 #endif	/* _SYS_SYSMACROS_H */

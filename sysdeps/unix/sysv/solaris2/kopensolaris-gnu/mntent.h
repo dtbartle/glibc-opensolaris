@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <paths.h>
 
-#ifndef _SUN_SOURCE
+#ifndef __USE_SUN
 
 /* File listing canonical interesting mount points.  */
 # define MNTTAB		_PATH_MNTTAB	/* Deprecated alias.  */
@@ -104,6 +104,6 @@ extern char * __REDIRECT_NTH (hasmntopt, (__const struct mntent *__mnt,
 
 __END_DECLS
 
-#endif /* _SUN_SOURCE */
+#endif /* __USE_SUN */
 
 #endif	/* mntent.h */

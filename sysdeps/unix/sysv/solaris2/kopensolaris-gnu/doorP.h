@@ -29,6 +29,13 @@
 #define DOOR_REFUSE_DESC	0x40
 #define DOOR_NO_CANCEL		0x80
 
+/* The default stack size is 1-2M so reserving 16K is reasonable.  */
+#define DOOR_MIN_STACKSIZE	16384
+
+#ifndef __ASSEMBLER__
+
+#include <sys/types.h>
+
 typedef struct door_desc door_desc_t;
 typedef struct door_info door_info_t;
 typedef struct door_arg door_arg_t;
@@ -49,5 +56,21 @@ typedef struct door_return_desc
 	door_desc_t *desc_ptr;
 	unsigned int desc_num;
   } door_return_desc_t;
+
+struct door_results
+  {
+	void *cookie;
+	char *data_ptr;
+	size_t data_size;
+	door_desc_t *desc_ptr;
+	size_t desc_num;
+	void (*pc)(void);
+	int nservers;
+	door_info_t *door_info;
+  };
+
+int __door_return (long, long, long, long, long, long);
+
+#endif /* __ASSEMBLER__ */
 
 #endif /* _DOORP_H */

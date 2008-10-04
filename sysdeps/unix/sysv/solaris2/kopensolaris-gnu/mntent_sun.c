@@ -22,7 +22,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/ioctl.h>
-#define _SUN_SOURCE
+#define __USE_SUN
 #include <sys/mnttab.h>
 
 /* Docs: http://docs.sun.com/app/docs/doc/816-5168/resetmnttab-3c  */
@@ -64,7 +64,7 @@ int getmntany (FILE *fp, struct mnttab *mt, struct mnttab *mtpref)
 }
 
 
-int getextmntent(FILE *fp, struct extmnttab *emt, int len)
+int getextmntent (FILE *fp, struct extmnttab *emt, size_t len)
 {
   int res = ioctl (fileno (fp), MNTIOC_GETMNTENT, emt);
   if (res != 0)

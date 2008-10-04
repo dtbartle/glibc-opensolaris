@@ -25,6 +25,7 @@
 #define MNTIOC	('m' << 8)
 #define MNTIOC_GETMNTENT	(MNTIOC|7)
 
+struct mnttab;
 extern int __getmntent_sun (FILE *fp, struct mnttab *mt);
 extern char * __hasmntopt_sun (struct mnttab *mt, char *opt);
 

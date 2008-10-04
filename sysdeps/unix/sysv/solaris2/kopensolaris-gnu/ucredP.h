@@ -57,5 +57,6 @@ extern uid_t ucred_geteuid (const ucred_t *uc);
 extern uid_t ucred_getruid (const ucred_t *uc);
 extern gid_t ucred_getegid (const ucred_t *uc);
 extern gid_t ucred_getrgid (const ucred_t *uc);
+extern pid_t ucred_getpid (const ucred_t *uc);
 
 #endif /* _UCREDP_H */
