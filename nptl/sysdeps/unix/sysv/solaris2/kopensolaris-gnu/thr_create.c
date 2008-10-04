@@ -44,6 +44,10 @@ int thr_create (void *stack_address, size_t stack_size,
     ((flags & THR_SUSPENDED) ? ATTR_FLAG_SUSPENDED : 0) |
     ((flags & THR_DAEMON) ? ATTR_FLAG_DAEMON : 0);
 
-  return pthread_create ((pthread_t *)new_thread, (pthread_attr_t *)&iattr,
+  pthread_t thread;
+  int res = pthread_create (&thread, (pthread_attr_t *)&iattr,
       start_routine, arg);
+  if (res == 0 && new_thread)
+    *new_thread = (thread_t)thread;
+  return res;
 }

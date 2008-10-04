@@ -16,17 +16,20 @@ libpthread-routines += mutex_init mutex_lock mutex_trylock mutex_unlock \
     cond_signal cond_broadcast cond_destroy rwlock_init rwlock_destroy \
     rw_rdlock rw_wrlock rw_unlock rw_tryrdlock rw_trywrlock rw_timedrdlock \
     rw_timedwrlock sema_init sema_destroy sema_wait sema_trywait sema_post \
-    sema_timedwait thr_create thr_join thr_exit thr_self thr_main thr_yield \
+    sema_timedwait thr_create thr_join thr_exit thr_self thr_yield \
     thr_sigsetmask thr_getspecific thr_setspecific thr_keycreate \
     thr_keycreate_once thr_min_stack thr_getconcurrency thr_setconcurrency \
-    thr_continue thr_suspend thr_getprio thr_setprio thr_stksegment \
-    _lwp_sema_init _lwp_info __nthreads pthread_cond_reltimedwait_np \
-    pthread_mutex_reltimedlock_np
+    thr_continue thr_suspend thr_getprio thr_setprio _lwp_sema_init _lwp_info \
+    __nthreads pthread_cond_reltimedwait_np pthread_mutex_reltimedlock_np
 endif
 
 ifeq ($(subdir),posix)
 CFLAGS-fork.c = -D_IO_MTSAFE_IO
 sysdep_routines += sys_forkx
+endif
+
+ifeq ($(subdir),misc)
+sysdep_routines += thr_main thr_stksegment
 endif
 
 # Needed in both the signal and nptl subdir.

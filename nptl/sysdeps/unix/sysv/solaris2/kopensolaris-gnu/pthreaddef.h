@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <ucontext.h>
-#include <sys/isa_defs.h>
+#include <signal.h>
 
 /* Get the arch-specific version.  */
 #include_next <pthreaddef.h>
@@ -26,33 +26,35 @@
 /* Register atfork handlers to protect signal_lock.  */
 extern void sigaction_atfork (void);
 
-#define PLATFORM_PTHREAD_INIT                   \
-    sigaction_atfork ();                        \
-    THREAD_SETMEM (pd, main_thread, 1);         \
-    ucontext_t _ctx;                            \
-    if (getcontext (&_ctx) == 0)                \
-      {                                         \
-        main_stackaddr = _ctx.uc_stack.ss_sp;   \
-        main_stacksize = _ctx.uc_stack.ss_size; \
+/* TODO: Need to deal with stacks that grow up.  */
+#define PLATFORM_PTHREAD_INIT                                       \
+    sigaction_atfork ();                                            \
+    THREAD_SETMEM (pd, main_thread, 1);                             \
+    ucontext_t _ctx;                                                \
+    if (getcontext (&_ctx) == 0)                                    \
+      {                                                             \
+        THREAD_SETMEM (pd, stackblock, _ctx.uc_stack.ss_sp -        \
+            _ctx.uc_stack.ss_size);                                 \
+        THREAD_SETMEM (pd, stackblock_size, _ctx.uc_stack.ss_size); \
       }
+
+/* We need to tell the kernel about the allocated stack.  */
+#define PLATFORM_THREAD_START                                       \
+    {                                                               \
+        stack_t stack;                                              \
+        stack.ss_sp = pd->stackblock;                               \
+        stack.ss_sp = pd->stackblock_size;                          \
+        stack.ss_flags = 0;                                         \
+        setustack (&stack);                                         \
+    }
 
 /* Additional descr fields.  */
 # define PLATFORM_DESCR_FIELDS              \
     int sigpipe_disabled;                   \
     int main_thread;
 
-/* Static variables.  */
-#define PLATFORM_STATIC_DECLS   \
-    void *main_stackaddr;       \
-    size_t main_stacksize;
-extern void *main_stackaddr;
-extern size_t main_stacksize;
-
-/* We can get the main thread's stack via getcontext (see above).  */
-#define GET_MAIN_STACK_INFO(stackaddr, stacksize)       \
-    ({*stackaddr = main_stackaddr + main_stacksize;     \
-      *stacksize = main_stacksize;                      \
-      0;})
+/* If we call this then the getcontext call above failed.  */
+#define GET_MAIN_STACK_INFO(stackaddr, stacksize)   ENOSYS
 
 /* Use tid as pthread_t (instead of descr).  */
 #define PTHREAD_T_IS_TID
@@ -68,6 +70,9 @@ extern size_t main_stacksize;
 
 /* It is known that the first lwpid is 1.  */
 #define FIRST_THREAD_TID	1
+
+/* We need to be passed the stacksize.  */
+#define NEED_STACK_SIZE
 
 /* __exit_thread_inline is the same for all architectures.  */
 #include <inline-syscall.h>

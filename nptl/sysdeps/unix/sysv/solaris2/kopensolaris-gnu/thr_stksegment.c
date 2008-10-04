@@ -22,17 +22,16 @@
 #include <sys/ucontext.h>
 #include <sys/syscall.h>
 #include <string.h>
+#include <stdio.h>
 
 int thr_stksegment (stk)
       stack_t *stk;
 {
-  /* We can get the stack base and size from getcontext.  */
-  sysret_t ret;
-  ucontext_t ctx;
-  int errval = __systemcall (&ret, SYS_context, GETCONTEXT, &ctx);
-  if (errval != 0)
-    return errval;
+  struct pthread *self = THREAD_SELF;
+  stk->ss_size = THREAD_GETMEM (self, stackblock_size);
+  // TODO: handle stacks that grow up
+  stk->ss_sp = THREAD_GETMEM (self, stackblock) + stk->ss_size;
+  stk->ss_flags = 0;
 
-  memcpy (stk, &ctx.uc_stack, sizeof (stack_t));
   return 0;
 }

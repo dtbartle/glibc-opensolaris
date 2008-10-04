@@ -30,6 +30,14 @@
 #undef PSEUDO_ERRVAL
 #undef PSEUDO_SUBCALL_NOERRNO
 
+#ifdef SYSCALL_RESTARTABLE
+# define DO_RESTART_CANCEL \
+    cmpl $ERESTART, %eax; \
+    je L(restart_cancel);
+#else
+# define DO_RESTART_CANCEL
+#endif
+
 #if !defined NOT_IN_libc || defined IS_IN_libpthread || defined IS_IN_librt
 
 /* Note that CDISABLE is an internal function, so we need to
@@ -47,8 +55,7 @@
   L(restart):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 2f;										\
-    cmpl $ERESTART, %eax;                   \
-    je L(restart);                                      \
+    DO_RESTART                             \
     jmp SYSCALL_ERROR_LABEL;                           \
 2:  ret;                                            \
   .size __##syscall_name##_nocancel,.-__##syscall_name##_nocancel;	      \
@@ -58,8 +65,7 @@
     movl %eax, %ecx;                    \
     DO_CALL (syscall_name, args);                         \
     jnb 3f;										\
-    cmpl $ERESTART, %eax;                   \
-    je L(restart_cancel);                                      \
+    DO_RESTART_CANCEL                             \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
     movl %ecx, %eax;                        \
     CDISABLE;                           \
@@ -89,8 +95,7 @@
   L(restart):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 2f;										\
-    cmpl $ERESTART, %eax;                   \
-    je L(restart);                                      \
+    DO_RESTART                             \
     movl %ecx, 4(%esp);							\
     addl $-4, %esp;                             \
     jmp SYSCALL_ERROR_LABEL;                           \
@@ -109,8 +114,7 @@
   L(restart_cancel):                                       \
     DO_CALL (syscall_name, args);                         \
     jnb 3f;										\
-    cmpl $ERESTART, %eax;                   \
-    je L(restart_cancel);                                      \
+    DO_RESTART_CANCEL                             \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
     movl %ecx, %eax;                        \
     CDISABLE;                           \

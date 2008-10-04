@@ -2,6 +2,9 @@ libc {
   GLIBC_2.3.2 {
     __register_atfork;
   }
+  GLIBC_2.7 {
+    thr_stksegment; thr_main;
+  }
   GLIBC_PRIVATE {
     __libc_pthread_init;
     __libc_current_sigrtmin_private; __libc_current_sigrtmax_private;
@@ -48,6 +51,6 @@ libpthread {
     thr_create; thr_join; thr_exit; thr_suspend; thr_continue; thr_self;
     thr_setconcurrency; thr_getconcurrency; thr_main; thr_kill; thr_yield;
     thr_setprio; thr_getprio; thr_keycreate; thr_keycreate_once; thr_min_stack;
-    thr_getspecific; thr_setspecific; thr_sigsetmask; thr_stksegment; thr_main;
+    thr_getspecific; thr_setspecific; thr_sigsetmask;
   }
 }

@@ -8,7 +8,7 @@ sys_lwp_self            - lwp_self              Ei:     __syscall_lwp_self
 sys_lwp_create          - lwp_create            Vi:pip  __syscall_lwp_create
 sys_lwp_wait            - lwp_wait              Vi:ip   __syscall_lwp_wait
 sys_lwp_exit            - lwp_exit              Ei:     __syscall_lwp_exit
-sys_lwp_suspend         - lwp_suspend           Vi:i    __syscall_lwp_suspend
+sys_lwp_suspend         - lwp_suspend           RVi:i   __syscall_lwp_suspend
 sys_lwp_continue        - lwp_continue          Vi:i    __syscall_lwp_continue
 sys_lwp_kill            - lwp_kill              Vi:ii   __syscall_lwp_kill
 
@@ -20,7 +20,7 @@ sys_lwp_info            - lwp_info              i:p     __syscall_lwp_info
 sys_lwp_detach          - lwp_detach            i:i     __syscall_lwp_detach
 
 sys_lwp_mutex_wakeup    - lwp_mutex_wakeup      Vi:pi   __syscall_lwp_mutex_wakeup
-sys_lwp_mutex_timedlock - lwp_mutex_timedlock   Vi:pi   __syscall_lwp_mutex_timedlock
+sys_lwp_mutex_timedlock - lwp_mutex_timedlock   RVi:pi  __syscall_lwp_mutex_timedlock
 sys_lwp_mutex_unlock    - lwp_mutex_unlock      Vi:p    __syscall_lwp_mutex_unlock
 sys_lwp_mutex_trylock   - lwp_mutex_trylock     Vi:p    __syscall_lwp_mutex_trylock
 sys_lwp_mutex_register  - lwp_mutex_register    Vi:p    __syscall_lwp_mutex_register
