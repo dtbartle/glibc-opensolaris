@@ -82,7 +82,9 @@ __cond_reltimedwait_internal (cond, mutex, reltime, cancel)
   };
 
   /* Reject invalid timeouts.  */
-  if (INVALID_TIMESPEC (reltime))
+  if (PAST_TIMESPEC (reltime))
+    return ETIME;
+  else if (INVALID_TIMESPEC (reltime))
     return EINVAL;
 
   if ((mutex->mutex_type & LOCK_ERRORCHECK) && MUTEX_NOT_OWNER (mutex))

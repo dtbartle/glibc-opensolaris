@@ -339,7 +339,9 @@ __USING_NAMESPACE_STD(clock_t)
 #endif
 
 /* OpenSolaris needs this for source compatibility.  */
-#include <stdint.h>
+#ifdef __USE_MISC
+# include <stdint.h>
+#endif
 
 #ifdef _SYSCALL32
 # include <sys/types32.h>

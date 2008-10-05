@@ -32,9 +32,9 @@ struct sigstack
     int ss_onstack;		/* Nonzero if executing on this stack.  */
   };
 
-#ifdef _SYSCALL32
+# ifdef _SYSCALL32
 
-# include <sys/types32.h>
+#  include <sys/types32.h>
 
 typedef struct sigaltstack32
   {
@@ -43,23 +43,23 @@ typedef struct sigaltstack32
     int32_t  ss_flags;
   } stack32_t;
 
-#endif
+# endif
 
 
 /* Possible values for `ss_flags.'.  */
 enum
 {
   SS_ONSTACK = 1,
-#define SS_ONSTACK	SS_ONSTACK
+# define SS_ONSTACK	SS_ONSTACK
   SS_DISABLE = 2
-#define SS_DISABLE	SS_DISABLE
+# define SS_DISABLE	SS_DISABLE
 };
 
 /* Minimum stack size for a signal handler.  */
-#define MINSIGSTKSZ	2048
+# define MINSIGSTKSZ	2048
 
 /* System default stack size.  */
-#define SIGSTKSZ	8192
+# define SIGSTKSZ	8192
 
 #endif /* __need_stack_t */
 

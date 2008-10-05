@@ -94,6 +94,11 @@ while read file srcfile caller syscall args strong weak; do
   ;;
   esac
 
+  restart_line=
+  case $args in
+  R*) restart_line='#define SYSCALL_RESTARTABLE 1'; args=`echo $args | sed 's/R//'`;;
+  esac
+
   cancellable=
   noerrno=
   case $args in
@@ -177,7 +182,8 @@ shared-only-routines += $file
 
   echo "\
 	\$(make-target-directory)
-	(echo '#include <sysdep$cancellable.h>'; \\
+	(echo '$restart_line'; \\
+	 echo '#include <sysdep$cancellable.h>'; \\
 	 echo '$pseudo_line'; \\
 	 echo '	ret$noerrno'; \\
 	 echo 'PSEUDO_END$noerrno($strong)'; \\

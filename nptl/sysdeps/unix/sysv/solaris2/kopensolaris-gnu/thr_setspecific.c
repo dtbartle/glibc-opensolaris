@@ -32,6 +32,6 @@ int thr_setspecific (key, value)
   if (KEY_UNUSED (seq) || KEY_USABLE (seq))
     return EINVAL;
 
-  pthread_setspecific (key, value);
+  __pthread_setspecific (key, value);
   return 0;
 }

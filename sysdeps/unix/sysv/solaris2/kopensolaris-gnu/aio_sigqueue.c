@@ -17,6 +17,19 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#define __hasmntopt ___hasmntopt_gnu
-#define hasmntopt __hasmntopt_gnu
-#include <misc/mntent_r.c>
+#include <inline-syscall.h>
+#include <aio.h>
+#include <aio_misc.h>
+#include <signal.h>
+
+DECLARE_INLINE_SYSCALL (int, sigqueue, pid_t pid, int sig,
+    const union sigval value, int si_code, int block);
+
+int
+__aio_sigqueue (sig, val, caller_pid)
+     int sig;
+     const union sigval val;
+     pid_t caller_pid;
+{
+  return INLINE_SYSCALL (sigqueue, 5, caller_pid, sig, val, SI_ASYNCIO, 1);
+}

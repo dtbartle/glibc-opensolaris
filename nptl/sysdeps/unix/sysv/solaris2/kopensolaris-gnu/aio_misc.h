@@ -18,14 +18,13 @@
 
 #include <pthreadP.h>
 #include <thread.h>
+#include <sys/syscall.h>
 
 /* This has to be relative or we'll end up including nptl's version.  */
 #include "../../../../../../sysdeps/pthread/aio_misc.h"
 
 /* We can use cond_timedwait, since it returns EINTR, but it can also return
   ETIME. We get around this by defining a small inline wrapper.  */
-
-#undef DONT_NEED_AIO_MISC_COND
 
 static inline int
 __aio_pthread_cond_wait (pthread_cond_t *cond, pthread_mutex_t *mutex)

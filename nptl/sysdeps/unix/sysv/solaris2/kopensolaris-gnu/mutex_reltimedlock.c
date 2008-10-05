@@ -61,7 +61,9 @@ int __mutex_reltimedlock (mutex, reltime)
     }
 
   /* Reject invalid timeouts.  */
-  if (INVALID_TIMESPEC (reltime))
+  if (PAST_TIMESPEC (reltime))
+    return ETIME;
+  else if (INVALID_TIMESPEC (reltime))
     return EINVAL;
 
   int errval;
@@ -77,9 +79,9 @@ int __mutex_reltimedlock (mutex, reltime)
       INTERNAL_SYSCALL_DECL (err);
       if (reltime)
         {
-          int result = INTERNAL_SYSCALL (nanosleep, err, 2, reltime, reltime);
+          int res = INTERNAL_SYSCALL (nanosleep, err, 2, reltime, reltime);
           do
-            errval = INTERNAL_SYSCALL_ERRNO (result, err) ? EINTR : ETIMEDOUT;
+            errval = INTERNAL_SYSCALL_ERRNO (res, err) ? EINTR : ETIMEDOUT;
           while (errval == EINTR);
         }
       else

@@ -30,13 +30,13 @@ int thr_keycreate_once (keyp, destructor)
 
   if (*keyp)
     {
-      errval = pthread_mutex_lock (&mutex);
+      errval = __pthread_mutex_lock (&mutex);
       if (errval == 0)
         {
           if (*keyp)
             errval = pthread_key_create (keyp, destructor);
 
-          pthread_mutex_unlock (&mutex);
+          __pthread_mutex_unlock (&mutex);
         }
     }
 

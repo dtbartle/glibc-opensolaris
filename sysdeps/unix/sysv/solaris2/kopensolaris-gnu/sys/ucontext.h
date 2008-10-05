@@ -20,8 +20,10 @@
 #ifndef _SYS_UCONTEXT_H
 #define _SYS_UCONTEXT_H	1
 
-#define __need_stack_t
-#include <bits/sigstack.h>
+#ifndef __stack_t_defined
+# define __need_stack_t
+# include <bits/sigstack.h>
+#endif
 #include <bits/sigset.h>
 #include <sys/regset.h>
 #include <features.h>

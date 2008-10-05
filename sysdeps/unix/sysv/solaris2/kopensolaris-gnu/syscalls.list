@@ -164,7 +164,7 @@ _so_getsockopt      - getsockopt            i:iiiBNi    _so_getsockopt
 _so_listen          - listen                i:iii       _so_listen
 recv                - recv                  RCi:ibni    __libc_recv         __recv recv _so_recv
 recvfrom            - recvfrom              RCi:ibniBN  __libc_recvfrom     __recvfrom recvfrom _so_recvfrom
-recvmsg             - recvmsg               Ri:ipi      __libc_recvmsg      __recvmsg recvmsg _so_recvmsg
+recvmsg             - recvmsg               RCi:ipi     __libc_recvmsg      __recvmsg recvmsg _so_recvmsg
 _so_send            - send                  RCi:ibni    _so_send
 _so_sendmsg         - sendmsg               RCi:ipi     _so_sendmsg
 _so_sendto          - sendto                RCi:ibnibn  _so_sendto

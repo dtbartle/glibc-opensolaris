@@ -17,5 +17,18 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#define getmntent __getmntent_gnu
-#include <misc/mntent.c>
+#include <inline-syscall.h>
+#include "gai_misc.h"
+#include <signal.h>
+
+DECLARE_INLINE_SYSCALL (int, sigqueue, pid_t pid, int sig,
+    const union sigval value, int si_code, int block);
+
+int
+__gai_sigqueue (sig, val, caller_pid)
+     int sig;
+     const union sigval val;
+     pid_t caller_pid;
+{
+  return INLINE_SYSCALL (sigqueue, 5, caller_pid, sig, val, SI_QUEUE, 1);
+}

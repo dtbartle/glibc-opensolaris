@@ -21,6 +21,7 @@
 #include <streams/stropts.h>
 #include <sys/ptms.h>
 #include <stddef.h>
+#include <errno.h>
 
 int
 unlockpt (int fd)
@@ -31,5 +32,9 @@ unlockpt (int fd)
   si.ic_timout = 0;
   si.ic_len = 0;
   si.ic_dp = NULL;
-  return ioctl (fd, I_STR, &si);
+
+  int res = (ioctl (fd, I_STR, &si) < 0) ? -1 :0;
+  if (res != 0 && errno == ENOTTY)
+    __set_errno (EINVAL);
+  return res;
 }

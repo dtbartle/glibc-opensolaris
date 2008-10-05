@@ -76,7 +76,11 @@ grantpt (int fd)
   struct strioctl si;
   si.ic_cmd = OWNERPT;
   si.ic_timout = 0;
-  si.ic_len = sizeof(pt_own_t);
-  si.ic_dp = (char*)&pto;
-  return ioctl (fd, I_STR, &si);
+  si.ic_len = sizeof (pt_own_t);
+  si.ic_dp = (char *)&pto;
+
+  int res = (ioctl (fd, I_STR, &si) < 0) ? -1 : 0;
+  if (res != 0 && errno == ENOTTY)
+    __set_errno (EINVAL);
+  return res;
 }

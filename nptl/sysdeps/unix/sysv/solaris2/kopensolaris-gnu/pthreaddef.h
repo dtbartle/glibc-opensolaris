@@ -17,44 +17,45 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <ucontext.h>
-#include <signal.h>
-
 /* Get the arch-specific version.  */
 #include_next <pthreaddef.h>
 
 /* Register atfork handlers to protect signal_lock.  */
 extern void sigaction_atfork (void);
 
-/* TODO: Need to deal with stacks that grow up.  */
-#define PLATFORM_PTHREAD_INIT                                       \
-    sigaction_atfork ();                                            \
-    THREAD_SETMEM (pd, main_thread, 1);                             \
-    ucontext_t _ctx;                                                \
-    if (getcontext (&_ctx) == 0)                                    \
-      {                                                             \
-        THREAD_SETMEM (pd, stackblock, _ctx.uc_stack.ss_sp -        \
-            _ctx.uc_stack.ss_size);                                 \
-        THREAD_SETMEM (pd, stackblock_size, _ctx.uc_stack.ss_size); \
-      }
-
 /* We need to tell the kernel about the allocated stack.  */
-#define PLATFORM_THREAD_START                                       \
-    {                                                               \
-        stack_t stack;                                              \
-        stack.ss_sp = pd->stackblock;                               \
-        stack.ss_sp = pd->stackblock_size;                          \
-        stack.ss_flags = 0;                                         \
-        setustack (&stack);                                         \
+#define PLATFORM_THREAD_START                   \
+    {                                           \
+      pd->stack.ss_sp = pd->stackblock;         \
+      pd->stack.ss_sp = pd->stackblock_size;    \
+      pd->stack.ss_flags = 0;                   \
+      setustack (&pd->stack);                   \
     }
 
-/* Additional descr fields.  */
-# define PLATFORM_DESCR_FIELDS              \
-    int sigpipe_disabled;                   \
-    int main_thread;
+#ifndef __stack_t_defined
+# define __need_stack_t
+# include <bits/sigstack.h>
+#endif
 
-/* If we call this then the getcontext call above failed.  */
-#define GET_MAIN_STACK_INFO(stackaddr, stacksize)   ENOSYS
+#define PLATFORM_PTHREAD_INIT                       \
+    sigaction_atfork ();                            \
+    THREAD_SETMEM (pd, main_thread, 1);             \
+    stack_t *_stack;                                \
+	if (getustack (&_stack) == 0 && _stack)         \
+      {                                             \
+        pd->stackblock = _stack->ss_sp;             \
+        pd->stackblock_size = _stack->ss_size;      \
+      }                                             \
+    PLATFORM_THREAD_START
+
+/* Additional descr fields.  */
+# define PLATFORM_DESCR_FIELDS  \
+    int sigpipe_disabled;       \
+    int main_thread;            \
+    stack_t stack;
+
+/* stackblock/stackblock_size should always be filled.  */
+#define GET_MAIN_STACK_INFO(stackaddr, stacksize)	ENOSYS
 
 /* Use tid as pthread_t (instead of descr).  */
 #define PTHREAD_T_IS_TID

@@ -32,7 +32,7 @@ pthread_barrier_wait (barrier)
 {
   struct pthread_barrier *ibarrier = (struct pthread_barrier *) barrier;
 
-  int errval = pthread_mutex_lock (&ibarrier->mutex);
+  int errval = __pthread_mutex_lock (&ibarrier->mutex);
   if (errval != 0)
     return errval;
 
@@ -43,7 +43,7 @@ pthread_barrier_wait (barrier)
         (mutex_t *)&ibarrier->mutex, NULL, 0);
       if (errval != EINTR && errval != 0)
         {
-          (void)pthread_mutex_unlock (&ibarrier->mutex);
+          (void)__pthread_mutex_unlock (&ibarrier->mutex);
           return errval;
         }
     }
@@ -73,7 +73,7 @@ pthread_barrier_wait (barrier)
               (mutex_t *)&ibarrier->mutex, NULL, 0);
           if (errval != EINTR && errval != 0)
             {
-              (void)pthread_mutex_unlock (&ibarrier->mutex);
+              (void)__pthread_mutex_unlock (&ibarrier->mutex);
               return errval;
             }
         }
@@ -87,6 +87,6 @@ pthread_barrier_wait (barrier)
       (void)pthread_cond_broadcast (&ibarrier->cond);
     }
 
-  (void)pthread_mutex_unlock (&ibarrier->mutex);
+  (void)__pthread_mutex_unlock (&ibarrier->mutex);
   return errval;
 }

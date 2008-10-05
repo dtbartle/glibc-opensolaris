@@ -23,7 +23,7 @@
 static inline struct timespec * abstime_to_reltime (
     const struct timespec *abstime, struct timespec *reltime)
 {
-  if(!abstime)
+  if (!abstime)
     return NULL;
 
   struct timespec now;

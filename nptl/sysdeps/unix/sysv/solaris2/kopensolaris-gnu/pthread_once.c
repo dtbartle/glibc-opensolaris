@@ -33,7 +33,7 @@ clear_once_control (void *arg)
   pthread_once_t *once_control = (pthread_once_t *) arg;
 
   *once_control = 0;
-  (void)pthread_mutex_unlock (&once_lock);
+  (void)__pthread_mutex_unlock (&once_lock);
 }
 
 /* XXX: This code breaks with fork - but so does sun's libc.  */
@@ -45,7 +45,7 @@ __pthread_once (once_control, init_routine)
 {
   if (*once_control == PTHREAD_ONCE_INIT)
     {
-      (void)pthread_mutex_lock (&once_lock);
+      (void)__pthread_mutex_lock (&once_lock);
 
       if (*once_control == PTHREAD_ONCE_INIT)
 	{
@@ -61,7 +61,7 @@ __pthread_once (once_control, init_routine)
 	  *once_control = !PTHREAD_ONCE_INIT;
 	}
 
-      pthread_mutex_unlock (&once_lock);
+      __pthread_mutex_unlock (&once_lock);
     }
 
   return 0;

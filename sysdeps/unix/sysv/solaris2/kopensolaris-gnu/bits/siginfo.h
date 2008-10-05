@@ -23,7 +23,6 @@
 #endif
 
 #include <bits/wordsize.h>
-#include <stdint.h>
 #include <features.h>
 
 /* This needs to be defined here because we only get timespec for certain

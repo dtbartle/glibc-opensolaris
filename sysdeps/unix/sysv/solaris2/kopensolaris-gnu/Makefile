@@ -117,6 +117,18 @@ libpthread-sysdep_routines += sys_fcntl sys_fdsync sys_sigaction sys_open \
     sys_open64 sys_priocntlsys schedP priocntl syscall
 endif
 
+ifeq ($(subdir),nptl_db)
+sysdep_headers += proc_service.h
+endif
+
+ifeq ($(subdir),resolv)
+libresolv-routines += sys_sigqueue
+endif
+
+ifeq ($(subdir),rt)
+librt-routines += sys_sigqueue
+endif
+
 CFLAGS-accept.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-connect.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-fsync.c = -fexceptions -fasynchronous-unwind-tables

@@ -66,10 +66,22 @@ struct extmnttab
 __BEGIN_DECLS
 
 extern void	resetmnttab (FILE *);
-extern int	getmntent (FILE *, struct mnttab *);
-extern int	getextmntent (FILE *, struct extmnttab *, size_t);
-extern int	getmntany (FILE *, struct mnttab *, struct mnttab *);
-extern char	*hasmntopt (struct mnttab *, char *);
+# ifdef __REDIRECT_NTH
+extern int __getmntent_sun (FILE *, struct mnttab *);
+extern int __REDIRECT_NTH (getmntent, (FILE *, struct mnttab *),
+	__getmntent_sun);
+# else
+#  define getmntent __getmntent_sun
+# endif
+extern int getextmntent (FILE *, struct extmnttab *, size_t);
+extern int getmntany (FILE *, struct mnttab *, struct mnttab *);
+# ifdef __REDIRECT_NTH
+extern char	* __hasmntopt_sun (struct mnttab *, char *);
+extern char * __REDIRECT_NTH (hasmntopt, (struct mnttab *, char *),
+	__hasmntopt_sun);
+# else
+#  define hasmntopt __hasmntopt_sun
+# endif
 extern char	*mntopt (char **);
 
 __END_DECLS

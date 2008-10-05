@@ -31,7 +31,7 @@
 	(!y->f || (y->f && strcmp (x->f, y->f) == 0))
 
 
-int getmntent (FILE *fp, struct mnttab *mt)
+int __getmntent_sun (FILE *fp, struct mnttab *mt)
 {
   struct extmnttab emt;
   int res = ioctl (fileno (fp), MNTIOC_GETMNTENT, &emt);
@@ -95,7 +95,7 @@ char *mntopt (char **opts)
 }
 
 
-char * hasmntopt (struct mnttab *mt, char *opt)
+char * __hasmntopt_sun (struct mnttab *mt, char *opt)
 {
   /* We make a copy of mnt_mntopts since we modify it.  */
   char buf[MNT_LINE_MAX + 1];

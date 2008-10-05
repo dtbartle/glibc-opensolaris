@@ -272,6 +272,10 @@ start_thread (void *arg)
 #endif
 #endif
 
+#ifdef PLATFORM_THREAD_START
+PLATFORM_THREAD_START
+#endif
+
   /* If the parent was running cancellation handlers while creating
      the thread the new thread inherited the signal mask.  Reset the
      cancellation signal mask.  */

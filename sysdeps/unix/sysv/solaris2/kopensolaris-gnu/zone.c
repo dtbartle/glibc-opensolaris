@@ -21,6 +21,8 @@
 #include <zoneP.h>
 #include <privP.h>
 #include <dlfcn.h>
+#include <streams/stropts.h>
+#include <sys/ptms.h>
 
 static int (*_zone_get_id) (const char *, zoneid_t *);
 
@@ -83,4 +85,17 @@ int zone_get_id (const char *str, zoneid_t *idp)
     }
 
   return ENOSYS;
+}
+
+
+int zonept (int fd, zoneid_t zoneid)
+{
+  /* Send ZONEPT down.  */
+  struct strioctl si;
+  si.ic_cmd = ZONEPT;
+  si.ic_timout = 0;
+  si.ic_len = sizeof (zoneid_t);
+  si.ic_dp = (char *)&zoneid;
+
+  return (ioctl (fd, I_STR, &si) < 0) ? -1 : 0;
 }

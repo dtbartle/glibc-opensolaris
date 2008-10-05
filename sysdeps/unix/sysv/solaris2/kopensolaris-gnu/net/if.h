@@ -26,7 +26,6 @@
 # include <sys/types.h>
 # include <sys/socket.h>
 #endif
-#include <stdint.h>
 
 
 /* Length of interface name.  */
@@ -205,29 +204,29 @@ struct ifreq
 
     struct ifr_dnld_reqs
       {
-        uint32_t v_addr;
-        uint32_t m_addr;
-        uint32_t ex_addr;
-        uint32_t size;
+        __uint32_t v_addr;
+        __uint32_t m_addr;
+        __uint32_t ex_addr;
+        __uint32_t size;
       } ifru_dnld_req;
 
     struct ifr_fddi_stats
       {
-        uint32_t stat_size;
-        uint32_t fddi_stats;
+        __uint32_t stat_size;
+        __uint32_t fddi_stats;
       } ifru_fddi_stat;
 
     struct ifr_netmapents
       {
-        uint32_t map_ent_size;
-        uint32_t entry_number;
-        uint32_t fddi_map_ent;
+        __uint32_t map_ent_size;
+        __uint32_t entry_number;
+        __uint32_t fddi_map_ent;
       } ifru_netmapent;
 
     struct ifr_fddi_gen_struct
       {
-        uint32_t ifru_fddi_gioctl;
-        uint32_t ifru_fddi_gaddr;
+        __uint32_t ifru_fddi_gioctl;
+        __uint32_t ifru_fddi_gaddr;
       } ifru_fddi_gstruct;
 
     } ifr_ifru;
@@ -289,9 +288,9 @@ typedef struct lif_nd_req
   {
 # define ND_MAX_HDW_LEN  64
     struct sockaddr_storage lnr_addr;
-    uint8_t lnr_state_create;
-    uint8_t lnr_state_same_lla;
-    uint8_t lnr_state_diff_lla;
+    __uint8_t lnr_state_create;
+    __uint8_t lnr_state_same_lla;
+    __uint8_t lnr_state_diff_lla;
     int lnr_hdw_len;
     int lnr_flags;
     int lnr_pad0;
@@ -319,10 +318,10 @@ typedef struct lif_nd_req
 /* Structure used for the SIOC[GS]LIFLNKINFO requests. */
 typedef struct lif_ifinfo_req
   {
-    uint8_t lir_maxhops;
-    uint32_t lir_reachtime;
-    uint32_t lir_reachretrans;
-    uint32_t lir_maxmtu;
+    __uint8_t lir_maxhops;
+    __uint32_t lir_reachtime;
+    __uint32_t lir_reachretrans;
+    __uint32_t lir_maxmtu;
   } lif_ifinfo_req_t;
 
 /* Recommended replacement structure for ifreq. */
@@ -505,11 +504,11 @@ struct iftun_req
     enum ifta_proto ifta_upper;
     enum ifta_proto ifta_lower;
     unsigned int ifta_vers;
-    uint32_t ifta_secinfo[IFTUN_SECINFOLEN];
-    int16_t ifta_encap_lim;
-    uint8_t ifta_hop_limit;
-    uint8_t ifta_spare0;
-    uint32_t ifta_spare1;
+    __uint32_t ifta_secinfo[IFTUN_SECINFOLEN];
+    __int16_t ifta_encap_lim;
+    __uint8_t ifta_hop_limit;
+    __uint8_t ifta_spare0;
+    __uint32_t ifta_spare1;
   };
 
 # define IFTUN_SRC	0x01

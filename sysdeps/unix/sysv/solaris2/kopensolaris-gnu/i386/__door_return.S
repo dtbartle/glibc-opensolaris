@@ -42,11 +42,11 @@ L(restart):
     /* TODO: adjust cfi.  */
 
     /* Call server function.  */
-    movl DOOR_RESULTS_PC(%esp), %eax
+    movl oDOOR_RESULTS_PC(%esp), %eax
     call *%eax
 
     /* The server function is supposed to call door_return...  */
     pushl $0
-    call pthread_exit
+    call __pthread_exit
 L(pseudo_end):
 PSEUDO_END (__door_return)
