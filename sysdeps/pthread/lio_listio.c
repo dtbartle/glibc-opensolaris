@@ -158,8 +158,8 @@ lio_listio_internal (int mode, struct aiocb *const list[], int nent,
 	 which we must remove.  So defer cancellation for now.  */
       pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &oldstate);
 
-      while (total > 0)
-	pthread_cond_wait (&cond, &__aio_requests_mutex);
+      while (total > 0 && result == 0)
+	result = pthread_cond_wait (&cond, &__aio_requests_mutex);
 
       /* Now it's time to restore the cancellation state.  */
       pthread_setcancelstate (oldstate, NULL);
