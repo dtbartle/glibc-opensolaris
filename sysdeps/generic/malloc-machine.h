@@ -1,3 +1,4 @@
+#warning FOO1
 /* Basic platform-independent macro definitions for mutexes,
    thread-specific data and parameters for malloc.
    Copyright (C) 2003 Free Software Foundation, Inc.
@@ -63,6 +64,10 @@ typedef void *tsd_key_t;
 
 #ifndef DEFAULT_TOP_PAD
 # define DEFAULT_TOP_PAD 131072
+#endif
+
+#ifndef MALLOC_PROT_EXEC
+# define MALLOC_PROT_EXEC 0
 #endif
 
 #endif /* !defined(_GENERIC_MALLOC_MACHINE_H) */

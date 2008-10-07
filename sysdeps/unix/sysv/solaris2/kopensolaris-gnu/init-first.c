@@ -27,7 +27,7 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <libc-internal.h>
-#include <sys/ucontext.h>
+#include <ucontext.h>
 #include <sys/resource.h>
 
 #include <ldsodefs.h>
@@ -42,6 +42,7 @@ int __libc_argc attribute_hidden;
 char **__libc_argv attribute_hidden;
 
 stack_t _dl_stack;
+int _dl_malloc_prot_exec;
 
 
 void
@@ -73,17 +74,17 @@ _init (int argc, char **argv, char **envp)
 #endif
 	__setfpucw (__fpu_control);
 
-    /* Setup stack.  */
-    ucontext_t ctx;
-    struct rlimit rlim;
-    if (getrlimit (RLIMIT_STACK, &rlim) == 0 &&
-        rlim.rlim_cur != RLIM_INFINITY && getcontext (&ctx) == 0)
-      {
-        _dl_stack.ss_sp = ctx.uc_stack.ss_sp;
-        _dl_stack.ss_size = rlim.rlim_cur;
-        _dl_stack.ss_flags = 0;
-        setustack (&_dl_stack);
-      }
+      /* Setup stack.  */
+      ucontext_t ctx;
+      struct rlimit rlim;
+      if (getrlimit (RLIMIT_STACK, &rlim) == 0 &&
+          rlim.rlim_cur != RLIM_INFINITY && getcontext (&ctx) == 0)
+        {
+          _dl_stack.ss_sp = ctx.uc_stack.ss_sp;
+          _dl_stack.ss_size = rlim.rlim_cur;
+          _dl_stack.ss_flags = 0;
+          setustack (&_dl_stack);
+        }
     }
 
   /* Save the command-line arguments.  */

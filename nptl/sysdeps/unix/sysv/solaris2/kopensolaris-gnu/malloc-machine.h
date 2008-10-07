@@ -58,6 +58,7 @@ __libc_tsd_define (static, MALLOC)	/* declaration/common definition */
 #define tsd_setspecific(key, data)	__libc_tsd_set (MALLOC, (data))
 #define tsd_getspecific(key, vptr)	((vptr) = __libc_tsd_get (MALLOC))
 
-#include <sysdeps/generic/malloc-machine.h>
+#include <ldsodefs.h>
+#define MALLOC_PROT_EXEC	GLRO(dl_malloc_prot_exec)
 
 #endif /* !defined(_MALLOC_MACHINE_H) */

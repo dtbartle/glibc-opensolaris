@@ -231,6 +231,8 @@ typedef __t_uscalar_t	t_uscalar_t;
 # define __t_uscalar_t_defined
 #endif
 typedef __t_scalar_t	t_scalar_t;
+typedef void		*timeout_id_t;
+typedef void		*bufcall_id_t;
 
 #ifdef __USE_POSIX
 typedef enum

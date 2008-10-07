@@ -83,10 +83,6 @@ sysdep_routines += netmask
 headers := $(filter-out sys/socketvar.h, $(headers))
 endif
 
-ifeq ($(subdir),string)
-sysdep_routines += strlcpy strlcat
-endif
-
 ifeq ($(subdir),time)
 sysdep_routines += ntp_adjtime ntp_gettime sys_time sys_stime
 sysdep_headers += sys/timex.h sys/time_impl.h

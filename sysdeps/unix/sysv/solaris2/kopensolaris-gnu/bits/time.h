@@ -107,6 +107,7 @@ struct itimerval
 
 typedef struct timespec timespec_t;
 typedef struct timespec timestruc_t;
+typedef struct itimerspec itimerspec_t;
 typedef struct tm tm_t;
 
 # define SEC		1

@@ -95,6 +95,11 @@ extern char *strcat (char *__restrict __dest, __const char *__restrict __src)
 extern char *strncat (char *__restrict __dest, __const char *__restrict __src,
 		      size_t __n) __THROW __nonnull ((1, 2));
 
+extern size_t strlcat (char *__restrict __dest, __const char *__restrict __src,
+		      size_t __n) __THROW __nonnull ((1, 2));
+extern size_t strlcpy (char *__restrict __dest, __const char *__restrict __src,
+		      size_t __n) __THROW __nonnull ((1, 2));
+
 /* Compare S1 and S2.  */
 extern int strcmp (__const char *__s1, __const char *__s2)
      __THROW __attribute_pure__ __nonnull ((1, 2));

@@ -21,10 +21,11 @@
 
 #include <kernel-features.h>
 
-/* Copy of AT_SUN_EXECNAME.  */
-#define PLATFORM_RTLD_GLOBAL_RO_FIELDS \
-    EXTERN const char * _dl_sun_execname;
+#define PLATFORM_RTLD_GLOBAL_RO_FIELDS          \
+    EXTERN const char * _dl_sun_execname;       \
+    EXTERN int _dl_malloc_prot_exec;
 extern const char * _dl_sun_execname;
+extern int _dl_malloc_prot_exec;
 
 /* Get the real definitions.  */
 #include_next <ldsodefs.h>

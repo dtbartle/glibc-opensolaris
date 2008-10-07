@@ -61,7 +61,7 @@ typedef struct _heap_info {
   struct _heap_info *prev; /* Previous heap. */
   size_t size;   /* Current size in bytes. */
   size_t mprotect_size;	/* Size in bytes that has been mprotected
-			   PROT_READ|PROT_WRITE.  */
+			   PROT_READ|PROT_WRITE|MALLOC_PROT_EXEC.  */
   /* Make sure the following data is properly aligned, particularly
      that sizeof (heap_info) + 2 * SIZE_SZ is a multiple of
      MALLOC_ALIGNMENT. */
@@ -689,7 +689,7 @@ new_heap(size, top_pad) size_t size, top_pad;
       }
     }
   }
-  if(mprotect(p2, size, PROT_READ|PROT_WRITE) != 0) {
+  if(mprotect(p2, size, PROT_READ|PROT_WRITE|MALLOC_PROT_EXEC) != 0) {
     munmap(p2, HEAP_MAX_SIZE);
     return 0;
   }
@@ -721,7 +721,7 @@ grow_heap(h, diff) heap_info *h; long diff;
     if((unsigned long) new_size > h->mprotect_size) {
       if (mprotect((char *)h + h->mprotect_size,
 		   (unsigned long) new_size - h->mprotect_size,
-		   PROT_READ|PROT_WRITE) != 0)
+		   PROT_READ|PROT_WRITE|MALLOC_PROT_EXEC) != 0)
 	return -2;
       h->mprotect_size = new_size;
     }

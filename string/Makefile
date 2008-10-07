@@ -26,7 +26,7 @@ headers	:= string.h strings.h memory.h endian.h bits/endian.h \
 	   bits/string2.h bits/string3.h
 
 routines	:= strcat strchr strcmp strcoll strcpy strcspn		\
-		   strverscmp strdup strndup				\
+		   strverscmp strdup strndup strlcpy strlcat		\
 		   strerror _strerror strlen strnlen			\
 		   strncat strncmp strncpy				\
 		   strrchr strpbrk strsignal strspn strstr strtok	\

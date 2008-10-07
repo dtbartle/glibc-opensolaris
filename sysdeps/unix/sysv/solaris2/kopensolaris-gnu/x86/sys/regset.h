@@ -53,27 +53,27 @@
 # define REG_FSBASE	26
 # define REG_GSBASE	27
 
-# ifndef __SUN_COMPAT_SOURCE
-#  define GS		0
-#  define FS		1
-#  define ES		2
-#  define DS		3
-#  define EDI		4
-#  define ESI		5
-#  define EBP		6
-#  define ESP		7
-#  define EBX		8
-#  define EDX		9
-#  define ECX		10
-#  define EAX		11
-#  define TRAPNO	12
+# define GS		0
+# define FS		1
+# define ES		2
+# define DS		3
+# define EDI		4
+# define ESI		5
+# define EBP		6
+# define ESP		7
+# define EBX		8
+# define EDX		9
+# define ECX		10
+# define EAX		11
+# define TRAPNO		12
+# ifndef ERR
 #  define ERR		13
-#  define EIP		14
-#  define CS		15
-#  define EFL		16
-#  define UESP		17
-#  define SS		18
 # endif
+# define EIP		14
+# define CS		15
+# define EFL		16
+# define UESP		17
+# define SS		18
 
 # ifdef __amd64__
 #  define REG_PC	REG_RIP
