@@ -1,6 +1,6 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* User file parser in nss_files module.
+   Copyright (C) 1996, 1997, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,32 +17,21 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <netinet/ether.h>
-#include <stdlib.h>
-#include <string.h>
+#include <user_attrP.h>
 
-char * _link_ntoa (const unsigned char *macaddr, char *str, int size,
-      int mactype)
-{
-  if (size != sizeof (struct ether_addr))
-    return NULL;
+#define STRUCTURE	userstr_s
+#define ENTNAME		userattr
+#define DATABASE	"user_attr"
+struct userattrent_data {};
 
-  char *ret = str;
-  if (!ret)
-    {
-      /* 2 chars + 1 colon per byte.  */
-      ret = malloc (3 * size);
-      if (!ret)
-        return NULL;
-    }
+/* Our parser function is already defined in _fgetuserattr.c, so use that
+   to parse lines from the database file.  */
+#define EXTERN_PARSER
+#include "files-parse.c"
+#include GENERIC
 
-  struct ether_addr addr;
-  if (ether_ntoa_r (&addr, ret) == NULL)
-    {
-      if (!str)
-        free (ret);
-      return NULL;
-    }
-
-  return ret;
-}
+DB_LOOKUP (usernam, 1 + strlen (name), (".%s", name),
+	   {
+	     if (! strcmp (name, result->name))
+	       break;
+	   }, const char *name)

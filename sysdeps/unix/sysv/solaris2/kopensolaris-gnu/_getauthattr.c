@@ -20,9 +20,9 @@
 #include <auth_attrP.h>
 
 #define LOOKUP_TYPE	authstr_t
-#define SETFUNC_NAME	_setauthattr
-#define	GETFUNC_NAME	_getauthattr
-#define	ENDFUNC_NAME	_endauthattr
+#define SETFUNC_NAME	setauthattr
+#define	GETFUNC_NAME	getauthattr
+#define	ENDFUNC_NAME	endauthattr
 #define DATABASE_NAME	passwd
 #define BUFLEN		NSS_BUFLEN_AUTHATTR
 
@@ -31,9 +31,12 @@
 authstr_t * _getauthattr (authstr_t *psbuf, char *buf, int buflen, int *errnop)
 {
   authstr_t *psbufp;
-  int errval = _getauthattr_r (psbuf, buf, buflen, &psbufp);
+  int errval = getauthattr_r (psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 
   return errval ? NULL : psbuf;
 }
+
+strong_alias (setauthattr, _setauthattr)
+strong_alias (endauthattr, _endauthattr)

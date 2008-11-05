@@ -143,8 +143,12 @@
 #if defined _BSD_SOURCE && \
     !(defined _POSIX_SOURCE || defined _POSIX_C_SOURCE || \
       defined _XOPEN_SOURCE || defined _XOPEN_SOURCE_EXTENDED || \
-      defined _GNU_SOURCE || defined _SVID_SOURCE)
+      defined _GNU_SOURCE || defined _SVID_SOURCE || _SUN_SOURCE)
 # define __FAVOR_BSD	1
+#endif
+
+#if !defined(_SUN_SOURCE) && !defined(_POSIX_C_SOURCE)
+# define _POSIX_C_SOURCE 1
 #endif
 
 /* If _GNU_SOURCE was defined by the user, turn on all the other features.  */
@@ -179,6 +183,9 @@
 # define _SVID_SOURCE	1
 # undef  _ATFILE_SOURCE
 # define _ATFILE_SOURCE	1
+# ifndef _POSIX_C_SOURCE
+#  define _POSIX_C_SOURCE 1
+# endif
 #endif
 
 /* If nothing (other than _GNU_SOURCE) is defined,

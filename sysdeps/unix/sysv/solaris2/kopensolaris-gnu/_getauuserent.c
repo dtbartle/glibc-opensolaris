@@ -20,9 +20,9 @@
 #include <auditP.h>
 
 #define LOOKUP_TYPE	au_user_str_t
-#define SETFUNC_NAME	_setauuser
-#define	GETFUNC_NAME	_getauuserent
-#define	ENDFUNC_NAME	_endauuser
+#define SETFUNC_NAME	setauuser
+#define	GETFUNC_NAME	getauuserent
+#define	ENDFUNC_NAME	endauuser
 #define DATABASE_NAME	passwd
 #define BUFLEN		NSS_BUFLEN_AUDITUSER
 
@@ -31,9 +31,12 @@
 au_user_str_t * _getauuserent (au_user_str_t *psbuf, char *buf, int buflen, int *errnop)
 {
   au_user_str_t *psbufp;
-  int errval = _getauuserent_r (psbuf, buf, buflen, &psbufp);
+  int errval = getauuserent_r (psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 
   return errval ? NULL : psbuf;
 }
+
+strong_alias (setauuser, _setauuser)
+strong_alias (endauuser, _endauuser)

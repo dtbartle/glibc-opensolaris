@@ -57,7 +57,6 @@ typedef enum idop
 	POP_OR,
 	POP_XOR
 } idop_t;
-#endif
 
 typedef struct procset
 {
@@ -67,6 +66,8 @@ typedef struct procset
 	idtype_t p_ridtype;
 	id_t p_rid;
 } procset_t;
+
+#endif /* __USE_MISC */
 
 #define	setprocset(psp, op, lidtype, lid, ridtype, rid) \
 	(psp)->p_op			= (op); \

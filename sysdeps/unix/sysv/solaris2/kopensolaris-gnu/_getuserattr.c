@@ -20,10 +20,10 @@
 #include <user_attrP.h>
 
 #define LOOKUP_TYPE	userstr_t
-#define SETFUNC_NAME	_setuserattr
-#define	GETFUNC_NAME	_getuserattr
-#define	ENDFUNC_NAME	_enduserattr
-#define DATABASE_NAME	passwd
+#define SETFUNC_NAME	setuserattr
+#define	GETFUNC_NAME	getuserattr
+#define	ENDFUNC_NAME	enduserattr
+#define DATABASE_NAME	user_attr
 #define BUFLEN		NSS_BUFLEN_PROFATTR
 
 #include "../nss/getXXent_r.c"
@@ -31,9 +31,12 @@
 userstr_t * _getuserattr (userstr_t *psbuf, char *buf, int buflen, int *errnop)
 {
   userstr_t *psbufp;
-  int errval = _getuserattr_r (psbuf, buf, buflen, &psbufp);
+  int errval = getuserattr_r (psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 
   return errval ? NULL : psbuf;
 }
+
+strong_alias (setuserattr, _setuserattr)
+strong_alias (enduserattr, _enduserattr)

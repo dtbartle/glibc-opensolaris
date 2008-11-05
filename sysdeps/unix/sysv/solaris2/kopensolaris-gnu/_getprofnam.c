@@ -20,7 +20,7 @@
 #include <prof_attrP.h>
 
 #define LOOKUP_TYPE	profstr_t
-#define FUNCTION_NAME	_getprofnam
+#define FUNCTION_NAME	getprofnam
 #define DATABASE_NAME	prof_attr
 #define ADD_PARAMS	const char *name
 #define ADD_VARIABLES	name
@@ -32,7 +32,7 @@ profstr_t * _getprofnam (const char *name, profstr_t *psbuf, char *buf,
       int buflen, int *errnop)
 {
   profstr_t *psbufp;
-  int errval = _getprofnam_r (name, psbuf, buf, buflen, &psbufp);
+  int errval = getprofnam_r (name, psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 

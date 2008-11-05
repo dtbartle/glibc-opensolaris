@@ -30,7 +30,7 @@
 
 static pid_t __door_private_pid, __door_unref_pid;
 static void * door_server_create_default (door_info_t *);
-static door_server_func_t *door_server_create_proc = &door_server_create_default;
+door_server_func_t *door_server_create_proc = &door_server_create_default;
 static int (*thr_create_ptr) (void *, size_t, void * (*)(void *), void *,
     long, thread_t *);
 

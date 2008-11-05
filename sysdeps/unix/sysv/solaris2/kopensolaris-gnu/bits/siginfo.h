@@ -139,7 +139,7 @@ typedef struct siginfo
 
         struct /* SI_RCTL */
         {
-            int32_t __entity;
+            __int32_t __entity;
         } __rctl;
     } __data;
 } siginfo_t;

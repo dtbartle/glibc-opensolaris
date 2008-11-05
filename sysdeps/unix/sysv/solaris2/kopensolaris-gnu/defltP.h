@@ -20,15 +20,6 @@
 #ifndef _DEFLTP_H
 #define _DEFLTP_H
 
-#include <stdio.h>
-
-#define _DEFLT_INIT                                     \
-    static FILE *__deflt_fp = NULL;                     \
-    static int __deflt_flags = 0;                       \
-    libc_freeres_ptr (static char *__deflt_buf) = NULL;
-
-#define _DEFLT(x)	__deflt_##x
-
 #define _DEFLT_BUFSIZE	1024
 
 #define DC_GETFLAGS	0

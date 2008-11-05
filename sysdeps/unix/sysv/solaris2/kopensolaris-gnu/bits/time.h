@@ -115,6 +115,15 @@ typedef struct tm tm_t;
 # define MICROSEC	1000000
 # define NANOSEC	1000000000
 
+# include <bits/types.h>
+
+__BEGIN_DECLS
+
+extern int cftime (char *, const char *, const __time_t *) __THROW;
+extern int ascftime (char *, const char *, const struct tm *) __THROW;
+
+__END_DECLS
+
 # define __time_misc_defined
 
 #endif /* __time_misc_defined */

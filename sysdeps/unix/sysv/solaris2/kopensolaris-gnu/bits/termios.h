@@ -189,7 +189,8 @@ struct termios
 # define ECHOCTL 0001000
 # define ECHOPRT 0002000
 # define ECHOKE	 0004000
-# define FLUSHO	 0010000
+# define DEFECHO 0010000
+# define FLUSHO	 0020000
 # define PENDIN	 0040000
 #endif
 #define IEXTEN	0100000

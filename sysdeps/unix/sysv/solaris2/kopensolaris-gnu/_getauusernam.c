@@ -20,7 +20,7 @@
 #include <auditP.h>
 
 #define LOOKUP_TYPE	au_user_str_t
-#define FUNCTION_NAME	_getauusernam
+#define FUNCTION_NAME	getauusernam
 #define DATABASE_NAME	passwd
 #define ADD_PARAMS	const char *name
 #define ADD_VARIABLES	name
@@ -32,7 +32,7 @@ au_user_str_t * _getauusernam (const char *name, au_user_str_t *psbuf, char *buf
       int buflen, int *errnop)
 {
   au_user_str_t *psbufp;
-  int errval = _getauusernam_r (name, psbuf, buf, buflen, &psbufp);
+  int errval = getauusernam_r (name, psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 

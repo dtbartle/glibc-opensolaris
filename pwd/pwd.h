@@ -137,7 +137,7 @@ extern struct passwd *getpwnam (__const char *__name);
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation it is a cancellation point and
    therefore not marked with __THROW.  */
-#  ifndef __SUN_COMPAT_MODE
+#  ifndef __USE_SUN
 extern int getpwent_r (struct passwd *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct passwd **__restrict __result);
@@ -154,7 +154,7 @@ extern struct passwd * __REDIRECT (getpwent_r, (
 #  endif
 # endif
 
-# ifndef __SUN_COMPAT_MODE
+# ifndef __USE_SUN
 extern int getpwuid_r (__uid_t __uid,
 		       struct passwd *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
@@ -172,7 +172,7 @@ extern struct passwd * __REDIRECT (getpwuid_r, (__uid_t __uid,
 #  endif
 # endif
 
-# ifndef __SUN_COMPAT_MODE
+# ifndef __USE_SUN
 extern int getpwnam_r (__const char *__restrict __name,
 		       struct passwd *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
@@ -199,7 +199,7 @@ extern struct passwd * __REDIRECT (getpwnam_r, (__const char *__restrict __name,
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation it is a cancellation point and
    therefore not marked with __THROW.  */
-#  ifndef __SUN_COMPAT_MODE
+#  ifndef __USE_SUN
 extern int fgetpwent_r (FILE *__restrict __stream,
 			struct passwd *__restrict __resultbuf,
 			char *__restrict __buffer, size_t __buflen,

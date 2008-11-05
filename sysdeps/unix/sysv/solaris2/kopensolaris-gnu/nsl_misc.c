@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 
 char * _strdup_null (char *str)
@@ -58,7 +59,7 @@ char * _escape (char *str, char *escape)
 
 char * _unescape (char *str, char *escape)
 {
-  char *ret = malloc (strlen (str));
+  char *ret = malloc (strlen (str) + 1);
   if (!ret)
     return NULL;
 

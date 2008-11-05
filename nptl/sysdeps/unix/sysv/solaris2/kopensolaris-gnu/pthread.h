@@ -198,6 +198,10 @@ enum
 # define PTHREAD_BARRIER_SERIAL_THREAD -1
 #endif
 
+#ifdef __USE_MISC
+# define PTHREAD_ONCE_KEY_NP	(pthread_key_t)(-1)
+#endif
+
 
 __BEGIN_DECLS
 

@@ -20,9 +20,9 @@
 #include <exec_attrP.h>
 
 #define LOOKUP_TYPE	execstr_t
-#define SETFUNC_NAME	_setexecattr
-#define	GETFUNC_NAME	_getexecattr
-#define	ENDFUNC_NAME	_endexecattr
+#define SETFUNC_NAME	setexecattr
+#define	GETFUNC_NAME	getexecattr
+#define	ENDFUNC_NAME	endexecattr
 #define DATABASE_NAME	prof_attr
 #define BUFLEN		NSS_BUFLEN_EXECATTR
 
@@ -31,9 +31,12 @@
 execstr_t * _getexecattr (execstr_t *esbuf, char *buf, int buflen, int *errnop)
 {
   execstr_t *esbufp;
-  int errval = _getexecattr_r (esbuf, buf, buflen, &esbufp);
+  int errval = getexecattr_r (esbuf, buf, buflen, &esbufp);
   if (errval && errnop)
     *errnop = errval;
 
   return errval ? NULL : esbuf;
 }
+
+strong_alias (setexecattr, _setexecattr)
+strong_alias (endexecattr, _endexecattr)

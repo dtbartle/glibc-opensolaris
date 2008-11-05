@@ -130,7 +130,7 @@ extern struct group *getgrnam (__const char *__name);
    therefore not marked with __THROW.  */
 
 # ifdef __USE_MISC
-#  ifndef __SUN_COMPAT_MODE
+#  ifndef __USE_SUN
 extern int getgrent_r (struct group *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct group **__restrict __result);
@@ -151,7 +151,7 @@ extern struct group * __REDIRECT (getgrent_r, (
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-# ifndef __SUN_COMPAT_MODE
+# ifndef __USE_SUN
 extern int getgrgid_r (__gid_t __gid, struct group *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct group **__restrict __result);
@@ -172,7 +172,7 @@ extern struct group * __REDIRECT (getgrgid_r, (__gid_t __gid,
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-# ifndef __SUN_COMPAT_MODE
+# ifndef __USE_SUN
 extern int getgrnam_r (__const char *__restrict __name,
 		       struct group *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
@@ -198,7 +198,7 @@ extern struct group * __REDIRECT (getgrnam_r, (__const char *__restrict __name,
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation it is a cancellation point and
    therefore not marked with __THROW.  */
-#  ifndef __SUN_COMPAT_MODE
+#  ifndef __USE_SUN
 extern int fgetgrent_r (FILE *__restrict __stream,
 			struct group *__restrict __resultbuf,
 			char *__restrict __buffer, size_t __buflen,

@@ -179,6 +179,11 @@ int rctl_walk (int (*callback)(const char *rctlname, void *walk_data),
   char *names = malloc (len);
   if (!names)
     return -1;
+  if (rctllist (names, len) != 0)
+    {
+      free (names);
+      return -1;
+    }
 
   char *namesptr = names;
   while (*namesptr)

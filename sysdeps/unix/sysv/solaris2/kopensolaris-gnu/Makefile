@@ -11,6 +11,7 @@ sysdep_routines += sys_open sys_open64 sys_openat sys_openat64 \
     sys_fstat sys_fstat64 sys_fstatat sys_fstatat64 sys_lstat \
     sys_lstat64 sys_stat sys_stat64 sys_sendfilev sys_sendfilev64 \
     sys_getcwd sys_pipe
+headers := $(filter-out sys/vfs.h, $(headers))
 endif
 
 ifeq ($(subdir),misc)
@@ -38,7 +39,7 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     gethostent sigsendset sigsend stack_getbounds thr_sighndlrinfo sun_compat \
     mkdev nss_getent nss_setent nss_endent nss_search nss_delete nss_misc \
     _nss_XbyY_fgets _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned \
-    mntent_sun
+    mntent_sun cftime ascftime inet_ntoa_r
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
@@ -105,7 +106,8 @@ libnsl-routines += nsl_misc
 endif
 
 ifeq ($(subdir),nss)
-databases += auth_attr bootparams netmasks printers prof_attr project
+databases += user_attr #auth_attr bootparams netmasks printers prof_attr project
+CFLAGS-files-user_attr.c = -Inss_files
 endif
 
 ifeq ($(subdir),nptl)

@@ -90,7 +90,7 @@ struct utmpx
 /* Values for the `ut_type' field of a `struct utmpx'.  */
 #define EMPTY		0	/* No valid user accounting information.  */
 
-#ifdef __USE_GNU
+#ifdef __USE_MISC
 # define RUN_LVL	1	/* The system's runlevel.  */
 #endif
 #define BOOT_TIME	2	/* Time of system boot.  */
@@ -102,6 +102,17 @@ struct utmpx
 #define USER_PROCESS	7	/* Normal process.  */
 #define DEAD_PROCESS	8	/* Terminated process.  */
 
-#ifdef __USE_GNU
+#ifdef __USE_MISC
 # define ACCOUNTING	9	/* System accounting.  */
+# define DOWN_TIME	10
+# define UTMAXTYPE	DOWN_TIME
+#endif
+
+#ifdef __USE_MISC
+# define RUNLVL_MSG	"run-level %c"
+# define BOOT_MSG	"system boot"
+# define OTIME_MSG	"old time"
+# define NTIME_MSG	"new time"
+# define PSRADM_MSG	"%03d  %s"
+# define DOWN_MSG	"system down"
 #endif

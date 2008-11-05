@@ -20,7 +20,7 @@
 #include <auth_attrP.h>
 
 #define LOOKUP_TYPE	authstr_t
-#define FUNCTION_NAME	_getauthnam
+#define FUNCTION_NAME	getauthnam
 #define DATABASE_NAME	passwd
 #define ADD_PARAMS	const char *name
 #define ADD_VARIABLES	name
@@ -32,7 +32,7 @@ authstr_t * _getauthnam (const char *name, authstr_t *psbuf, char *buf,
       int buflen, int *errnop)
 {
   authstr_t *psbufp;
-  int errval = _getauthnam_r (name, psbuf, buf, buflen, &psbufp);
+  int errval = getauthnam_r (name, psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 

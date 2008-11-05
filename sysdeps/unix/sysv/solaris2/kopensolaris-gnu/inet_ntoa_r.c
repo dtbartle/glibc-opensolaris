@@ -1,6 +1,7 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Convert Inet number to ASCII representation.
+   Copyright (C) 1997, 1998, 2000, 2001, 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,32 +18,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <netinet/ether.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <arpa/inet.h>
 
-char * _link_ntoa (const unsigned char *macaddr, char *str, int size,
-      int mactype)
+
+char *
+inet_ntoa_r (struct in_addr in, char *buffer)
 {
-  if (size != sizeof (struct ether_addr))
-    return NULL;
+  unsigned char *bytes = (unsigned char *) &in;
+  __snprintf (buffer, sizeof (buffer), "%d.%d.%d.%d",
+	      bytes[0], bytes[1], bytes[2], bytes[3]);
 
-  char *ret = str;
-  if (!ret)
-    {
-      /* 2 chars + 1 colon per byte.  */
-      ret = malloc (3 * size);
-      if (!ret)
-        return NULL;
-    }
-
-  struct ether_addr addr;
-  if (ether_ntoa_r (&addr, ret) == NULL)
-    {
-      if (!str)
-        free (ret);
-      return NULL;
-    }
-
-  return ret;
+  return buffer;
 }

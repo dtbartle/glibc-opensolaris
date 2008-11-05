@@ -223,6 +223,7 @@ typedef unsigned long long	u_offset_t;
 typedef unsigned long	pfn_t;
 typedef unsigned int	k_fltset_t;
 typedef void		*timeout_id_t;
+typedef void		*bufcall_id_t;
 typedef long long	len_t;
 typedef __SLONG32_TYPE	__t_scalar_t;
 typedef __ULONG32_TYPE	__t_uscalar_t;
@@ -231,10 +232,8 @@ typedef __t_uscalar_t	t_uscalar_t;
 # define __t_uscalar_t_defined
 #endif
 typedef __t_scalar_t	t_scalar_t;
-typedef void		*timeout_id_t;
-typedef void		*bufcall_id_t;
 
-#ifdef __USE_POSIX
+#ifdef __USE_XOPEN
 typedef enum
   {
 	_B_FALSE,

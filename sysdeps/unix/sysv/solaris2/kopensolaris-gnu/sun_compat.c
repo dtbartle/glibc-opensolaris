@@ -118,16 +118,79 @@ int __sigwait_sun (sigset_t * set)
 }
 
 
-struct protoent * __getprotoent_r_sun ()
+struct protoent * __getprotoent_r_sun (struct protoent *result, char *buf,
+    size_t buflen)
 {
+  struct protoent *bufp;
+  return (getprotoent_r (result, buf, buflen, &bufp) == 0) ? bufp : NULL;
 }
 
 
-struct protoent * __getprotobyname_r_sun ()
+struct protoent * __getprotobyname_r_sun (const char *name,
+    struct protoent *result, char *buf, size_t buflen)
 {
+  struct protoent *bufp;
+  return (getprotobyname_r (name, result, buf, buflen, &bufp) == 0)
+    ? bufp : NULL;
 }
 
 
-struct protoent * __getprotobynumber_r_sun ()
+struct protoent * __getprotobynumber_r_sun (int proto, struct protoent *result,
+    char *buf, size_t buflen)
 {
+  struct protoent *bufp;
+  return (getprotobynumber_r (proto, result, buf, buflen, &bufp) == 0)
+    ? bufp : NULL;
+}
+
+
+struct servent * __getservent_r_sun (struct servent *result, char *buf,
+    size_t buflen)
+{
+  struct servent *bufp;
+  return (getservent_r (result, buf, buflen, &bufp) == 0) ? bufp : NULL;
+}
+
+
+struct servent * __getservbyname_r_sun (const char * name, const char *proto,
+    struct servent *result, char *buf, size_t buflen)
+{
+  struct servent *bufp;
+  return (getservbyname_r (name, proto, result, buf, buflen, &bufp) == 0)
+    ? bufp : NULL;
+}
+
+
+struct servent * __getservbyport_r_sun (int port, const char *proto,
+    struct servent *result, char *buf, size_t buflen)
+{
+  struct servent *bufp;
+  return (getservbyport_r (port, proto, result, buf, buflen, &bufp) == 0)
+    ? bufp : NULL;
+}
+
+
+struct rpcent * __getrpcbyname_r_sun (const char *name, struct rpcent *result,
+    char *buf, size_t buflen)
+{
+  struct rpcent *bufp;
+  return (getrpcbyname_r (name, result, buf, buflen, &bufp) == 0)
+    ? bufp : NULL;
+}
+
+
+struct rpcent * __getrpcbynumber_r_sun (int number, struct rpcent *result,
+    char *buf, size_t buflen)
+{
+  struct rpcent *bufp;
+  return (getservbyport_r (number, result, buf, buflen, &bufp) == 0)
+    ? bufp : NULL;
+}
+
+
+struct rpcent * __getrpcent_r_sun (struct rpcent *result, char *buf,
+    size_t buflen)
+{
+  struct rpcent *bufp;
+  return (getrpcent_r (result, buf, buflen, &bufp) == 0) ? bufp : NULL;
 }

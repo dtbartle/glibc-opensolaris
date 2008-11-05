@@ -53,7 +53,7 @@ setsourcefilter (int s, uint32_t interface, const struct sockaddr *group,
   memcpy (&gf->gf_group, group, SA_LEN (group));
   gf->gf_fmode = fmode;
   gf->gf_numsrc = numsrc;
-  memcpy (slist, gf->gf_slist, numsrc * sizeof (struct sockaddr_storage));
+  memcpy (gf->gf_slist, slist, numsrc * sizeof (struct sockaddr_storage));
 
   int res = ioctl (s, SIOCSMSFILTER, gf);
   if (res == -1)

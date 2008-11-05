@@ -30,7 +30,10 @@
    For the second part, we need to pass the door results to the server
    function. The first few fields of door_results matches the arguments of
    the server function (probably by design) so we can just call the server
-   function. */
+   function.
+
+   Since servers may block for any reason and to handle high-load doors, we
+   create a new server thread whenever there are none in the thread pool.  */
 
 ENTRY (__door_return)
 L(restart):
@@ -41,12 +44,34 @@ L(restart):
 
     /* TODO: adjust cfi.  */
 
+    /* Check nservers.  */
+    movl oDOOR_RESULTS_NSERVERS(%esp), %ecx
+    andl %ecx, %ecx
+    jg 1f
+
+    /* Create another server thread.  */
+    movl oDOOR_RESULTS_DOOR_INFO(%esp), %ecx
+    pushl %ecx; cfi_adjust_cfa_offset (4);
+#ifdef PIC
+    call __i686.get_pc_thunk.cx
+    addl $_GLOBAL_OFFSET_TABLE_, %ecx
+#endif
+
+#ifdef PIC
+    movl door_server_create_proc@GOTOFF(%ecx), %ecx
+#else
+    movl door_server_create_proc, %ecx
+#endif
+    call *%ecx
+    addl $4, %esp; cfi_adjust_cfa_offset (-4);
+
+1:
     /* Call server function.  */
-    movl oDOOR_RESULTS_PC(%esp), %eax
-    call *%eax
+    movl oDOOR_RESULTS_PC(%esp), %ecx
+    call *%ecx
 
     /* The server function is supposed to call door_return...  */
-    pushl $0
+    pushl $0; cfi_adjust_cfa_offset (4);
     call __pthread_exit
 L(pseudo_end):
 PSEUDO_END (__door_return)

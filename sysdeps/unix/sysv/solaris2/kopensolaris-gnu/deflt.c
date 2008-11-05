@@ -22,32 +22,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* XXX: OpenSolaris uses a per-thread buffer.  */
+static __thread FILE *deflt_fp = NULL;
+static __thread int deflt_flags = 0;
+static __thread char deflt_buf[_DEFLT_BUFSIZE];
 
-_DEFLT_INIT
 
 int defopen (char *fn)
 {
   /* Close old file if open.  */
-  if (_DEFLT (fp))
-    fclose (_DEFLT (fp));
-  if (fn == NULL)
+  if (deflt_fp)
+    {
+      fclose (deflt_fp);
+      deflt_fp = NULL;
+    }
+  if (!fn)
     return 0;
 
-  _DEFLT (fp) = fopen (fn, "r");
-  if (!_DEFLT (fp))
+  deflt_fp = fopen (fn, "r");
+  if (!deflt_fp)
     return -1;
 
-  /* Allocate line buffer.  */
-  if (_DEFLT (buf) == NULL)
-    {
-      _DEFLT (buf) = malloc (_DEFLT_BUFSIZE + 2);
-      if (!_DEFLT (buf))
-        return -1;
-    }
-
   /* Set default flags.  */
-  _DEFLT (flags) = DC_STD;
+  deflt_flags = DC_STD;
 
   return 0;
 }
@@ -55,28 +51,28 @@ int defopen (char *fn)
 
 char * defread (char *cp)
 {
-  if (_DEFLT (fp) == NULL)
+  if (!deflt_fp)
       return NULL;
 
   /* Rewind if needed.  */
-  if ((_DEFLT (flags) & DC_NOREWIND) == 0)
-    rewind (_DEFLT (fp));
+  if ((deflt_flags & DC_NOREWIND) == 0)
+    rewind (deflt_fp);
 
   size_t cplen = strlen (cp);
   int (*strcmpfunc)(const char *, const char *, size_t) =
-      (_DEFLT (flags) & DC_CASE) ? strncmp : strncasecmp;
-  while (fgets (_DEFLT (buf), _DEFLT_BUFSIZE + 2, _DEFLT (fp)))
+      (deflt_flags & DC_CASE) ? strncmp : strncasecmp;
+  while (fgets (deflt_buf, _DEFLT_BUFSIZE + 2, deflt_fp))
     {
-      if (strlen (_DEFLT (buf)) > _DEFLT_BUFSIZE)
+      if (strlen (deflt_buf) > _DEFLT_BUFSIZE)
         break;
 
       /* Trim trailing newline.  */
-      size_t len = strlen (_DEFLT (buf));
-      if (len && _DEFLT (buf)[len - 1] == '\n')
-        _DEFLT (buf)[len - 1] = '\0';
+      size_t len = strlen (deflt_buf);
+      if (len && deflt_buf[len - 1] == '\n')
+        deflt_buf[len - 1] = '\0';
 
       /* Eat spaces.  */
-      char *bufp = _DEFLT (buf) - 1;
+      char *bufp = deflt_buf - 1;
       while (*++bufp == ' ') ;
 
       if ((*strcmpfunc)(bufp, cp, cplen) == 0)
@@ -84,7 +80,7 @@ char * defread (char *cp)
           bufp += cplen;
 
           /* Strip quotes.  */
-          if ((_DEFLT (flags) & DC_STRIP_QUOTES) && *bufp)
+          if ((deflt_flags & DC_STRIP_QUOTES) && *bufp)
             {
               /* Strip leading quote.  */
               if (*bufp == '"' || *bufp == '\'')
@@ -109,13 +105,13 @@ char * defread (char *cp)
 
 int defcntl (int cmd, int newflags)
 {
-  int oldflags = _DEFLT (flags);
+  int oldflags = deflt_flags;
   switch (cmd)
     {
     case DC_GETFLAGS:
       return oldflags;
     case DC_SETFLAGS:
-      _DEFLT (flags) = newflags;
+      deflt_flags = newflags;
       return oldflags;
     default:
       return -1;

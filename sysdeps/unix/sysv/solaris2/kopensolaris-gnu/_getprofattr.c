@@ -20,9 +20,9 @@
 #include <prof_attrP.h>
 
 #define LOOKUP_TYPE	profstr_t
-#define SETFUNC_NAME	_setprofattr
-#define	GETFUNC_NAME	_getprofattr
-#define	ENDFUNC_NAME	_endprofattr
+#define SETFUNC_NAME	setprofattr
+#define	GETFUNC_NAME	getprofattr
+#define	ENDFUNC_NAME	endprofattr
 #define DATABASE_NAME	prof_attr
 #define BUFLEN		NSS_BUFLEN_PROFATTR
 
@@ -31,9 +31,12 @@
 profstr_t * _getprofattr (profstr_t *psbuf, char *buf, int buflen, int *errnop)
 {
   profstr_t *psbufp;
-  int errval = _getprofattr_r (psbuf, buf, buflen, &psbufp);
+  int errval = getprofattr_r (psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 
   return errval ? NULL : psbuf;
 }
+
+strong_alias (setprofattr, _setprofattr)
+strong_alias (endprofattr, _endprofattr)

@@ -28,6 +28,8 @@
 #define IPPROTO_ND	77
 #define IPPROTO_EON	80
 
+#define IPPORT_CHARGEN	19
+
 /* Options for use with `getsockopt' and `setsockopt' at the IP level.
    The first word in the comment at the right is the data type used;
    "bool" means a boolean value stored in an `int'.  */

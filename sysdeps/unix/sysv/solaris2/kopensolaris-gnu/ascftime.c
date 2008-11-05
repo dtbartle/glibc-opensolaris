@@ -17,32 +17,18 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <netinet/ether.h>
+#include <time.h>
 #include <stdlib.h>
-#include <string.h>
+#include <limits.h>
 
-char * _link_ntoa (const unsigned char *macaddr, char *str, int size,
-      int mactype)
+int ascftime (char *s, const char *format, const struct tm *timeptr)
 {
-  if (size != sizeof (struct ether_addr))
-    return NULL;
+  /* If format is null use CFTIME or %C.  */
+  if (!format || *format == '\0' || !(format = getenv ("CFTIME")) ||
+        *format == '\0')
+    format =  "%C";
 
-  char *ret = str;
-  if (!ret)
-    {
-      /* 2 chars + 1 colon per byte.  */
-      ret = malloc (3 * size);
-      if (!ret)
-        return NULL;
-    }
-
-  struct ether_addr addr;
-  if (ether_ntoa_r (&addr, ret) == NULL)
-    {
-      if (!str)
-        free (ret);
-      return NULL;
-    }
-
-  return ret;
+  /* The caller is responsible for ensuring that the buffer is large enough.
+     We just set max to INT_MAX (basically a really large number).  */
+  return ((int)strftime (s, INT_MAX, format, timeptr));
 }

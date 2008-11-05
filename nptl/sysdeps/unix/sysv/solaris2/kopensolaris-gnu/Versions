@@ -38,6 +38,7 @@ libpthread {
     # p
     pthread_cond_reltimedwait_np; pthread_mutex_reltimedlock_np;
     pthread_rwlock_reltimedrdlock_np; pthread_rwlock_reltimedwrlock_np;
+    pthread_key_create_once_np;
 
     # r
     rwlock_init; rwlock_destroy; rw_rdlock; rw_wrlock; rw_unlock; rw_tryrdlock;

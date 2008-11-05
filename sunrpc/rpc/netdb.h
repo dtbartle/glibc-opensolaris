@@ -57,6 +57,7 @@ extern struct rpcent *getrpcbynumber (int __number) __THROW;
 extern struct rpcent *getrpcent (void) __THROW;
 
 #ifdef __USE_MISC
+# ifndef __USE_SUN
 extern int getrpcbyname_r (__const char *__name, struct rpcent *__result_buf,
 			   char *__buffer, size_t __buflen,
 			   struct rpcent **__result) __THROW;
@@ -67,6 +68,35 @@ extern int getrpcbynumber_r (int __number, struct rpcent *__result_buf,
 
 extern int getrpcent_r (struct rpcent *__result_buf, char *__buffer,
 			size_t __buflen, struct rpcent **__result) __THROW;
+# else
+extern struct rpcent * __getrpcbyname_r_sun (__const char *__name,
+			   struct rpcent *__result_buf, char *__buffer,
+			   size_t __buflen) __THROW;
+
+extern struct rpcent * __getrpcbynumber_r_sun (int __number,
+			     struct rpcent *__result_buf, char *__buffer,
+			     size_t __buflen) __THROW;
+
+extern struct rpcent * __getrpcent_r_sun (struct rpcent *__result_buf,
+			char *__buffer, size_t __buflen) __THROW;
+#  ifdef __REDIRECT
+extern struct rpcent * __REDIRECT_NTH (getrpcbyname_r, (__const char *__name,
+			   struct rpcent *__result_buf, char *__buffer, size_t __buflen),
+			   __getrpcbyname_r_sun);
+
+extern struct rcpent * __REDIRECT_NTH (getrpcbynumber_r, (int __number,
+			     struct rpcent *__result_buf, char *__buffer, size_t __buflen),
+			     __getrpcbynumber_r_sun);
+
+extern struct rcpent * __REDIRECT_NTH (getrpcent_r, (struct rpcent *__result_buf,
+			char *__buffer, size_t __buflen, struct rpcent **__result),
+			__getrpcent_r_sun);
+#  else
+#   define getrpcbyname_r __getrpcbyname_r_sun
+#   define getrpcbynumber_r __getrpcbynumber_r_sun
+#   define getrpcent_r __getrpcent_r_sun
+#  endif
+# endif
 #endif
 
 __END_DECLS

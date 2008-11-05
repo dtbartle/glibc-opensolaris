@@ -42,3 +42,5 @@ int thr_keycreate_once (keyp, destructor)
 
   return errval;
 }
+
+weak_alias (thr_keycreate_once, pthread_key_create_once_np)

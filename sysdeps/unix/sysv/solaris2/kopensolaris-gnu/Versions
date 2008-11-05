@@ -7,7 +7,7 @@ libc {
     getnetmaskbyaddr;
 
     # a
-    acct; acctctl; acl; allocids;
+    acct; acctctl; acl; allocids; ascftime;
 
     # atomic
     atomic_add_8; atomic_add_char; atomic_add_16; atomic_add_short;
@@ -22,7 +22,7 @@ libc {
     atomic_dec_ulong_nv; atomic_dec_64_nv; atomic_dec_ptr_nv;
 
     # c
-    closefrom; core_get_default_content; core_get_default_path;
+    cftime; closefrom; core_get_default_content; core_get_default_path;
     core_get_global_content; core_get_global_path; core_get_options;
     core_get_process_content; core_get_process_path; core_set_default_content;
     core_set_default_path; core_set_global_content; core_set_global_path;
@@ -49,16 +49,17 @@ libc {
     getpeerucred; getpflags; getppriv; getprivimplinfo; _getprofattr;
     _getprofnam; getprojid; __getprotobyname_r_sun; __getprotobynumber_r_sun;
     __getprotoent_r_sun; __getpwent_r_sun; __getpwnam_r_sun; __getpwuid_r_sun;
-    getrctl; gettaskid; _getuserattr; _getusernam; getustack; getvfsany;
-    getvfsent; getvfsfile; getvfsspec; getvmusage; getzoneid; getzoneidbyname;
-    getzonenamebyid;
+    getrctl; __getrpcbyname_r_sun; __getrpcbynumber_r_sun; __getrpcent_r_sun;
+    __getservbyname_r_sun; __getservbyport_r_sun; __getservent_r_sun; gettaskid;
+    _getuserattr; _getusernam; getustack; getvfsany; getvfsent; getvfsfile;
+    getvfsspec; getvmusage; getzoneid; getzoneidbyname; getzonenamebyid;
 
     # h
     __hasmntopt_sun;
 
     # i
-    idmap_reg; idmap_unreg; __init_daemon_priv; __init_suid_priv; _insert;
-    issetugid; is_system_labeled;
+    idmap_reg; idmap_unreg; inet_ntoa_r; __init_daemon_priv; __init_suid_priv;
+    _insert; issetugid; is_system_labeled;
 
     # l
     _link_aton; _link_ntoa; llseek; lltostr;
@@ -68,8 +69,8 @@ libc {
     membar_consumer; memcntl; meminfo; __minor; modctl; mount;
 
     # n
-    nss_delete; nss_endent; nss_getent; nss_search; nss_setent;
-    _nss_XbyY_fgets; ntp_adjtime; ntp_gettime;
+    nss_delete; nss_endent; _nss_files_parse_userattr; nss_getent; nss_search;
+    nss_setent; _nss_XbyY_fgets; ntp_adjtime; ntp_gettime;
 
     # p
     pc_sample; p_online; priocntl; priocntlset; __priv_bracket;
@@ -96,12 +97,13 @@ libc {
     # s
     _sbrk_grow_aligned; sendfilev; sendfilev64; _setauuser; _setauthattr;
     _setexecattr; setpflags; setppriv; _setprofattr; setprojrctl; setrctl;
-    settaskid; _setuserattr; setustack; sig2str; sigsend; sigsendset;
-    __sigwait_sun; _so_accept; _so_bind; _so_connect; _so_getpeername;
-    _so_getsockname; _so_getsockopt; _so_listen; _so_recv; _so_recvfrom;
-    _so_recvmsg; _so_send; _so_sendmsg; _so_sendto; _so_setsockopt;
-    _so_shutdown; _so_socket; _so_socketpair; stack_getbounds; str2sig; strlcat;
-    strlcpy; swapctl; _sysconf; __systemcall; sysfs; systeminfo;
+    settaskid; _setuserattr; setustack; sig2str; _sigoff; _sigon; sigsend;
+    sigsendset; __sigwait_sun; _so_accept; _so_bind; _so_connect;
+    _so_getpeername; _so_getsockname; _so_getsockopt; _so_listen; _so_recv;
+    _so_recvfrom; _so_recvmsg; _so_send; _so_sendmsg; _so_sendto;
+    _so_setsockopt; _so_shutdown; _so_socket; _so_socketpair; stack_getbounds;
+    str2sig; strlcat; strlcpy; swapctl; _sysconf; __systemcall; sysfs;
+    systeminfo;
 
     # t
     thr_sighndlrinfo; _ttyname_dev;
@@ -128,5 +130,14 @@ libc {
 libnsl {
   GLIBC_2.7 {
     _escape; _strdup_null; _strtok_escape; _strpbrk_escape; _unescape;
+    setnetconfig; endnetconfig; getnetconfig; getnetconfigent;
+    freenetconfigent; setnetpath; endnetpath; getnetpath; nc_perror;
+    nc_sperror;
   }
+}
+
+libnss_files {
+  GLIBC_PRIVATE {
+    _nss_files_getuserattr_r;
+    _nss_files_getusernam_r;
 }

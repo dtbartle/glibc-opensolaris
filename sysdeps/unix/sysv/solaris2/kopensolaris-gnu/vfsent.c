@@ -21,8 +21,11 @@
 #include <vfsentP.h>
 #include <string.h>
 
-/* XXX: OpenSolaris uses a per-thread buffer.  */
-_VFS_INIT
+#define _VFS_DELIM		" \t"
+#define _VFS_CMP(x, y, f)	(!y->f || (y->f && strcmp (x->f, y->f) == 0))
+
+static __thread char vfs_buf[VFS_LINE_MAX + 2];
+
 
 static inline int vfs_strtok_r (char *str, const char *delim,
       char **saveptr, char **strt)
@@ -36,15 +39,15 @@ static inline int vfs_strtok_r (char *str, const char *delim,
 
 int getvfsent (FILE *fp, struct vfstab *vp)
 {
-  while (fgets (_VFS_BUF, VFS_LINE_MAX + 2, fp) != NULL)
+  while (fgets (vfs_buf, VFS_LINE_MAX + 2, fp) != NULL)
     {
       /* Check for long lines.  */
-      size_t len = strlen (_VFS_BUF);
+      size_t len = strlen (vfs_buf);
       if (len > VFS_LINE_MAX)
         return VFS_TOOLONG;
 
       /* Trim leading spaces/tabs.  */
-      char *bufp = _VFS_BUF;
+      char *bufp = vfs_buf;
       while (*bufp == ' ' || *bufp == '\t')
         bufp++;
       len = strlen (bufp);

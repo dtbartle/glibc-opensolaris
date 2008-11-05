@@ -132,7 +132,7 @@ typedef __key_t key_t;
 #define __need_clockid_t
 #include <time.h>
 
-#ifdef __USE_XOPEN
+#if defined(__USE_XOPEN) || defined(__USE_SUN)
 # ifndef __useconds_t_defined
 typedef __useconds_t useconds_t;
 #  define __useconds_t_defined

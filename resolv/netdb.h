@@ -300,6 +300,7 @@ extern struct servent *getservbyport (int __port, __const char *__proto);
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation they are cancellation points and
    therefore not marked with __THROW.  */
+# ifndef __USE_SUN
 extern int getservent_r (struct servent *__restrict __result_buf,
 			 char *__restrict __buf, size_t __buflen,
 			 struct servent **__restrict __result);
@@ -314,6 +315,44 @@ extern int getservbyport_r (int __port, __const char *__restrict __proto,
 			    struct servent *__restrict __result_buf,
 			    char *__restrict __buf, size_t __buflen,
 			    struct servent **__restrict __result);
+# else
+extern struct servent * __getservent_r_sun (
+			 struct servent *__restrict __result_buf,
+			 char *__restrict __buf, size_t __buflen);
+
+extern struct servent * __getservbyname_r_sun (
+			    __const char *__restrict __name,
+			    __const char *__restrict __proto,
+			    struct servent *__restrict __result_buf,
+			    char *__restrict __buf, size_t __buflen);
+
+extern struct servent * __getservbyport_r_sun (int __port,
+			    __const char *__restrict __proto,
+			    struct servent *__restrict __result_buf,
+			    char *__restrict __buf, size_t __buflen);
+#  ifdef __REDIRECT
+extern struct servent * __REDIRECT (getservent_r, (
+			 struct servent *__restrict __result_buf,
+			 char *__restrict __buf, size_t __buflen), __getservent_r_sun);
+
+extern struct servent * __REDIRECT (getservbyname_r, (
+			    __const char *__restrict __name,
+			    __const char *__restrict __proto,
+			    struct servent *__restrict __result_buf,
+			    char *__restrict __buf, size_t __buflen),
+			    __getservbyname_r_sun);
+
+extern struct servent * __REDIRECT (getservbyport_r, (int __port,
+			    __const char *__restrict __proto,
+			    struct servent *__restrict __result_buf,
+			    char *__restrict __buf, size_t __buflen),
+			    __getservbyport_r_sun);
+#  else
+#   define getservent_r __getservent_r_sun
+#   define getservbyname_r __getservbyname_r_sun
+#   define getservbyport_r __getservbyport_r_sun
+#  endif
+# endif
 #endif	/* misc */
 
 
@@ -366,7 +405,7 @@ extern struct protoent *getprotobynumber (int __proto);
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation they are cancellation points and
    therefore not marked with __THROW.  */
-# ifndef __SUN_COMPAT_MODE
+# ifndef __USE_SUN
 extern int getprotoent_r (struct protoent *__restrict __result_buf,
 			  char *__restrict __buf, size_t __buflen,
 			  struct protoent **__restrict __result);

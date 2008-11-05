@@ -37,13 +37,6 @@ struct vfstab
 #define VFS_TOOMANY	2
 #define VFS_TOOFEW	3
 
-#define _VFS_INIT	static char buf[VFS_LINE_MAX + 2];
-#define _VFS_BUF	buf
-#define _VFS_DELIM	" \t"
-
-#define _VFS_CMP(x, y, f) \
-	(!y->f || (y->f && strcmp (x->f, y->f) == 0))
-
 int getvfsany (FILE *, struct vfstab *vp, struct vfstab *vref);
 
 #endif /* _VFSENTP_H */

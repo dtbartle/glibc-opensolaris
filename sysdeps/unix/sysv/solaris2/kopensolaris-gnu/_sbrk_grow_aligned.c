@@ -22,6 +22,7 @@
    break value and set actual_size to the difference of the resulting break
    value and the low-aligned break value.  */
 
+#include <unistd.h>
 #include <errno.h>
 
 extern void *__curbrk;

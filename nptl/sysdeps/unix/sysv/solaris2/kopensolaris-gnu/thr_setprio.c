@@ -24,4 +24,5 @@ int thr_setprio (target_thread, priority)
       thread_t target_thread;
       int priority;
 {
+  return pthread_setschedprio (target_thread, priority);
 }

@@ -17,20 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _SOCKET_PRIV_H
-#define _SOCKET_PRIV_H
+#define DATABASE_NAME user_attr
+#define DEFAULT_CONFIG "files nis"
 
-#include <pthreadP.h>
-#include <atomic.h>
-
-/* Helper code to handle MSG_NOSIGNAL.  */
-
-#define SIGPIPE_DISABLE_DEFINE
-#define SIGPIPE_DISABLE \
-    atomic_increment (&THREAD_SELF->sigpipe_disabled)
-#define SIGPIPE_ENABLE \
-    atomic_decrement (&THREAD_SELF->sigpipe_disabled)
-#define SIGPIPE_IS_DISABLED \
-    (THREAD_GETMEM (THREAD_SELF, sigpipe_disabled) != 0)
-
-#endif /* _SOCKET_PRIV_H */
+#include "XXX-lookup.c"

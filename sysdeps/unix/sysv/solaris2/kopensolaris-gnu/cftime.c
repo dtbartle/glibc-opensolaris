@@ -17,32 +17,18 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <netinet/ether.h>
-#include <stdlib.h>
-#include <string.h>
+#include <time.h>
 
-char * _link_ntoa (const unsigned char *macaddr, char *str, int size,
-      int mactype)
+int cftime (char *s, const char *format, const time_t *clock)
 {
-  if (size != sizeof (struct ether_addr))
-    return NULL;
-
-  char *ret = str;
-  if (!ret)
+  struct tm res;
+  if (localtime_r (clock, &res) == NULL)
     {
-      /* 2 chars + 1 colon per byte.  */
-      ret = malloc (3 * size);
-      if (!ret)
-        return NULL;
+      s[0] = '\0';
+      return 0;
     }
-
-  struct ether_addr addr;
-  if (ether_ntoa_r (&addr, ret) == NULL)
+  else
     {
-      if (!str)
-        free (ret);
-      return NULL;
+      return ascftime (s, format, &res);
     }
-
-  return ret;
 }

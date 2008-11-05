@@ -20,11 +20,11 @@
 #include <user_attrP.h>
 
 #define LOOKUP_TYPE	userstr_t
-#define FUNCTION_NAME	_getusernam
-#define DATABASE_NAME	passwd
+#define FUNCTION_NAME	getusernam
+#define DATABASE_NAME	user_attr
 #define ADD_PARAMS	const char *name
 #define ADD_VARIABLES	name
-#define BUFLEN		NSS_BUFLEN_PROFATTR
+#define BUFLEN		NSS_BUFLEN_USERATTR
 
 #include <nss/getXXbyYY_r.c>
 
@@ -32,7 +32,7 @@ userstr_t * _getusernam (const char *name, userstr_t *psbuf, char *buf,
       int buflen, int *errnop)
 {
   userstr_t *psbufp;
-  int errval = _getusernam_r (name, psbuf, buf, buflen, &psbufp);
+  int errval = getusernam_r (name, psbuf, buf, buflen, &psbufp);
   if (errval && errnop)
     *errnop = errval;
 

@@ -50,7 +50,6 @@ extern void sigaction_atfork (void);
 
 /* Additional descr fields.  */
 # define PLATFORM_DESCR_FIELDS  \
-    int sigpipe_disabled;       \
     int main_thread;            \
     stack_t stack;
 

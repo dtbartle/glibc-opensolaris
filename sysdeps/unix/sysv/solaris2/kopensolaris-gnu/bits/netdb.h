@@ -54,4 +54,8 @@ typedef struct ipsecalgent
 
 #define MAXHOSTNAMELEN	256
 
+#ifdef __USE_MISC
+# define AI_DEFAULT	(AI_V4MAPPED | AI_ADDRCONFIG)
+#endif
+
 #endif /* __USE_MISC */

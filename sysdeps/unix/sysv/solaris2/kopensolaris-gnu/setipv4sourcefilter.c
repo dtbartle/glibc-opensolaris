@@ -46,7 +46,7 @@ setipv4sourcefilter (int s, struct in_addr interface, struct in_addr group,
   imsf->imsf_interface = interface;
   imsf->imsf_fmode = fmode;
   imsf->imsf_numsrc = numsrc;
-  memcpy (slist, imsf->imsf_slist, numsrc * sizeof (struct in_addr));
+  memcpy (imsf->imsf_slist, slist, numsrc * sizeof (struct in_addr));
 
   int res = ioctl (s, SIOCSIPMSFILTER, imsf);
   if (res == -1)

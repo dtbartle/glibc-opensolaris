@@ -25,7 +25,7 @@
 int rwlock_destroy (rwlock)
       rwlock_t *rwlock;
 {
-  memset (0, rwlock, sizeof(rwlock_t));
+  memset (rwlock, 0, sizeof(rwlock_t));
 
   return 0;
 }

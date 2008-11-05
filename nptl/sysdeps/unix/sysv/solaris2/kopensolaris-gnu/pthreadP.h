@@ -177,7 +177,7 @@ static inline int __pthread_getschedparam_internal (pthread_t threadid,
       &param->__sched_priority);
 }
 
-static inline int __cond_has_waiters (pthread_cond_t *cond)
+static inline int __cond_has_waiters (cond_t *cond)
 {
   return cond->cond_waiters_kernel;
 }
