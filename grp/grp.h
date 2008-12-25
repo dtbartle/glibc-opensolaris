@@ -129,66 +129,28 @@ extern struct group *getgrnam (__const char *__name);
    or due to the implementation it is a cancellation point and
    therefore not marked with __THROW.  */
 
-# ifdef __USE_MISC
-#  ifndef __USE_SUN
+# ifdef __USE_GNU
 extern int getgrent_r (struct group *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct group **__restrict __result);
-#  else
-extern struct group * __getgrent_r_sun (struct group *__restrict __resultbuf,
-		       char *__restrict __buffer, size_t __buflen);
-#   ifdef __REDIRECT
-extern struct group * __REDIRECT (getgrent_r, (
-		       struct group *__restrict __resultbuf,
-		       char *__restrict __buffer, size_t __buflen), __getgrent_r_sun);
-#   else
-#    define getgrent_r __getgrent_r_sun
-#   endif
-#  endif
 # endif
 
 /* Search for an entry with a matching group ID.
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-# ifndef __USE_SUN
 extern int getgrgid_r (__gid_t __gid, struct group *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct group **__restrict __result);
-# else
-extern struct group * __getgrgid_r_sun (__gid_t __gid,
-		       struct group *__restrict __resultbuf,
-		       char *__restrict __buffer, size_t __buflen);
-#  ifdef __REDIRECT
-extern struct group * __REDIRECT (getgrgid_r, (__gid_t __gid,
-		       struct group *__restrict __resultbuf,
-		       char *__restrict __buffer, size_t __buflen), __getgrgid_r_sun);
-#  else
-#   define getgrgid_r __getgrgid_r_sun
-#  endif
-# endif
 
 /* Search for an entry with a matching group name.
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-# ifndef __USE_SUN
 extern int getgrnam_r (__const char *__restrict __name,
 		       struct group *__restrict __resultbuf,
 		       char *__restrict __buffer, size_t __buflen,
 		       struct group **__restrict __result);
-# else
-extern struct group * __getgrnam_r_sun (__const char *__restrict __name,
-		       struct group *__restrict __resultbuf,
-		       char *__restrict __buffer, size_t __buflen);
-#  ifdef __REDIRECT
-extern struct group * __REDIRECT (getgrnam_r, (__const char *__restrict __name,
-		       struct group *__restrict __resultbuf,
-		       char *__restrict __buffer, size_t __buflen), __getgrnam_r_sun);
-#  else
-#   define getgrnam_r __getgrnam_r_sun
-#  endif
-# endif
 
 # ifdef	__USE_SVID
 /* Read a group entry from STREAM.  This function is not standardized
@@ -198,23 +160,10 @@ extern struct group * __REDIRECT (getgrnam_r, (__const char *__restrict __name,
    cancellation point.  But due to similarity with an POSIX interface
    or due to the implementation it is a cancellation point and
    therefore not marked with __THROW.  */
-#  ifndef __USE_SUN
 extern int fgetgrent_r (FILE *__restrict __stream,
 			struct group *__restrict __resultbuf,
 			char *__restrict __buffer, size_t __buflen,
 			struct group **__restrict __result);
-#  else
-extern struct group * __fgetgrent_r_sun (FILE *__restrict __stream,
-			struct group *__restrict __resultbuf,
-			char *__restrict __buffer, size_t __buflen);
-#   ifdef __REDIRECT
-extern struct group * __REDIRECT (fgetgrent_r, (FILE *__restrict __stream,
-			struct group *__restrict __resultbuf,
-			char *__restrict __buffer, size_t __buflen), __fgetgrent_r_sun);
-#   else
-#    define fgetgrent_r __fgetgrent_r_sun
-#   endif
-#  endif
 # endif
 
 #endif	/* POSIX or reentrant */

@@ -40,7 +40,6 @@
    _SVID_SOURCE		ISO C, POSIX, and SVID things.
    _ATFILE_SOURCE	Additional *at interfaces.
    _GNU_SOURCE		All of the above, plus GNU extensions.
-   _SUN_SOURCE		Defines things that Sun expects.
    _REENTRANT		Select additionally reentrant object.
    _THREAD_SAFE		Same as _REENTRANT, often used by other systems.
    _FORTIFY_SOURCE	If set to numeric value > 0 additional security
@@ -109,7 +108,6 @@
 #undef	__USE_MISC
 #undef	__USE_ATFILE
 #undef	__USE_GNU
-#undef	__USE_SUN
 #undef	__USE_REENTRANT
 #undef	__USE_FORTIFY_LEVEL
 #undef	__FAVOR_BSD
@@ -143,12 +141,8 @@
 #if defined _BSD_SOURCE && \
     !(defined _POSIX_SOURCE || defined _POSIX_C_SOURCE || \
       defined _XOPEN_SOURCE || defined _XOPEN_SOURCE_EXTENDED || \
-      defined _GNU_SOURCE || defined _SVID_SOURCE || _SUN_SOURCE)
+      defined _GNU_SOURCE || defined _SVID_SOURCE)
 # define __FAVOR_BSD	1
-#endif
-
-#if !defined(_SUN_SOURCE) && !defined(_POSIX_C_SOURCE)
-# define _POSIX_C_SOURCE 1
 #endif
 
 /* If _GNU_SOURCE was defined by the user, turn on all the other features.  */
@@ -171,21 +165,6 @@
 # define _SVID_SOURCE	1
 # undef  _ATFILE_SOURCE
 # define _ATFILE_SOURCE	1
-#endif
-
-/* If _SUN_SOURCE was defined by the user we enable Sun compatibility mode.  */
-#if defined (_SUN_SOURCE) && !defined (_POSIX_PTHREAD_SEMANTICS)
-# undef __USE_SUN
-# define __USE_SUN	1
-# undef  _BSD_SOURCE
-# define _BSD_SOURCE	1
-# undef  _SVID_SOURCE
-# define _SVID_SOURCE	1
-# undef  _ATFILE_SOURCE
-# define _ATFILE_SOURCE	1
-# ifndef _POSIX_C_SOURCE
-#  define _POSIX_C_SOURCE 1
-# endif
 #endif
 
 /* If nothing (other than _GNU_SOURCE) is defined,

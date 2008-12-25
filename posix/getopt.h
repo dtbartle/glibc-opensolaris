@@ -145,28 +145,15 @@ struct option
    arguments to the option '\0'.  This behavior is specific to the GNU
    `getopt'.  */
 
-#ifndef __SUN_COMPAT_MODE
-# ifdef __GNU_LIBRARY__
+#ifdef __GNU_LIBRARY__
 /* Many other libraries have conflicting prototypes for getopt, with
    differences in the consts, in stdlib.h.  To avoid compilation
    errors, only prototype getopt for the GNU C library.  */
 extern int getopt (int ___argc, char *const *___argv, const char *__shortopts)
        __THROW;
-# else /* not __GNU_LIBRARY__ */
+#else /* not __GNU_LIBRARY__ */
 extern int getopt ();
-# endif
-#else
-extern int __getopt_sun (int ___argc, char *const *___argv,
-			const char *__shortopts)
-       __THROW;
-# ifdef __REDIRECT
-extern int __REDIRECT (getopt, (int ___argc, char *const *___argv,
-			const char *__shortopts), __getopt_sun)
-       __THROW;
-# else
-#  define getopt __getopt_sun
-# endif
-#endif /* __SUN_COMPAT_MODE */
+#endif /* __GNU_LIBRARY__ */
 
 #ifndef __need_getopt
 extern int getopt_long (int ___argc, char *const *___argv,
