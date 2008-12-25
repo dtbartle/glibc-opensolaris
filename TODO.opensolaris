@@ -18,10 +18,7 @@ These are solaris extensions that we should implement:
   exportfs, nfs_getfh, nfssvc [SYS_nfssys] (sys/nfssec.h) [maybe not]
   lgrpsys
   gethomelgroup
-  atomic_*
   _ttyname_dev
-  pthread_key_create_once_np
-  pthread_mutex_reltimedlock_np
   pthread_rwlock_reltimedrdlock_np
   pthread_rwlock_reltimedwrlock_np
 
@@ -38,10 +35,6 @@ Insert into headers:
 INVALID_NOT_TERMINATED_TD_P expects to succeed on terminated threads
 
 More __builtin_expect's
-
-Since we now use an entirely libc-based rwlock implementation we should be able
-  to support PTHREAD_RWLOCK_PREFER_READER_NP, PTHREAD_RWLOCK_PREFER_WRITER_NP,
-  and PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP.
 
 More clocks in pthread_condattr_setclock
 
