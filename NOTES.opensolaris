@@ -1,3 +1,9 @@
+compiling:
+
+  Both glibc and sun's libc require 64-bit atomic operations, first found in
+  the Pentium Pro. The suggested method of compiling on 32-bit x86 is to set
+  CC='gcc -march=i586'.
+
 headers:
 
   In order to avoid duplicating OpenSolaris-specifc headers, most extensions
@@ -14,7 +20,8 @@ auxiliary vector (auxv_t):
   executables and libaries get an auxv_t while statically-linked executables
   don't. This means that statically-linked executables won't see PT_TLS, which
   is needed for __thread support. We can test for the SHARED macro for libc
-  library code, but in general, __thread will not work.
+  library code, but in general, __thread will not work for statically-linked
+  executables.
 
   In order to fix this, it should be a matter of changing the kernel to
   unconditionally supply the auxv_t.
@@ -115,8 +122,8 @@ reader-writer lock:
   private implementation that used the embedded mutex and cv's would also work
   correctly in the shared case.
 
-  Our implementation adds three additional fields are included for tracking
-  the owner (thread and process) of a reader-writer lock.
+  Our implementation adds three additional fields for tracking the owner (thread
+  and process) of a reader-writer lock.
 
 [0] http://docs.sun.com/app/docs/doc/819-2243/rwlock-init-3c?a=view
 
