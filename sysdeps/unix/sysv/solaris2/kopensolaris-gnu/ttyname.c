@@ -24,7 +24,7 @@ char *
 _ttyname_dev (dev_t rdev, char *buffer, size_t buflen)
 {
   struct stat64 st;
-  int dostat;
+  int dostat = 0;
   char *name;
   int save = errno;
   struct termios term;
@@ -38,12 +38,6 @@ _ttyname_dev (dev_t rdev, char *buffer, size_t buflen)
     {
       __set_errno (save);
       name = NULL;
-    }
-
-  if (!name && dostat != -1)
-    {
-      dostat = 1;
-      name = getttyname ("/dev", rdev, -1, save, &dostat);
     }
 
   if (!name && dostat != -1)
