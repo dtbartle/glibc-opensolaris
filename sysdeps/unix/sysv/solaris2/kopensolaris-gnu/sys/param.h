@@ -58,7 +58,7 @@
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
 #define powerof2(x)	((((x)-1)&(x))==0)
 
-#define NODEV	(dev_t)-1
+#define NODEV	(dev_t)(-1l)
 
 /* Unit of `st_blocks'.  */
 #define DEV_BSIZE       512
