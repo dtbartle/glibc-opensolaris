@@ -216,6 +216,7 @@ typedef struct flock64
 
 /* at-file support */
 #ifdef __USE_ATFILE
+# define __AT_DEFINED
 # define AT_FDCWD              0xffd19553   /* Special value used to indicate
                                           the *at functions should use the
                                           current working directory. */
