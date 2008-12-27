@@ -50,7 +50,7 @@
 #  define L_BITSMINOR	L_BITSMINOR32
 #  define L_MAXMAJ	L_MAXMAJ32
 #  define L_MAXMIN	L_MAXMIN32
-#  endif
+# endif
 
 # define major(x)	(major_t)((((unsigned)(x)) >> O_BITSMINOR) & O_MAXMAJ)
 # define minor(x)	(minor_t)((x) & O_MAXMIN)
