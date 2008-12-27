@@ -499,10 +499,6 @@ __strftime_internal (s, maxsize, format, tp, tzset_called ut_argument
       ut_argument_spec
       LOCALE_PARAM_DECL
 {
-#if defined _LIBC && defined ALLOW_NULL_STRFTIME_FORMAT
-  if (!format)
-    format = nl_langinfo (D_T_FMT);
-#endif
 #if defined _LIBC && defined USE_IN_EXTENDED_LOCALE_MODEL
   struct locale_data *const current = loc->__locales[LC_TIME];
 #endif

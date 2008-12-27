@@ -61,7 +61,7 @@ enum
 };
 
 
-#if defined(__USE_XOPEN_EXTENDED) || defined(__USE_SUN)
+#ifdef __USE_XOPEN_EXTENDED
 /* Flags for fourth argument of `nftw'.  */
 enum
 {
