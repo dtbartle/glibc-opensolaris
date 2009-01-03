@@ -10,7 +10,7 @@ ifeq ($(subdir),io)
 sysdep_routines += sys_open sys_open64 sys_openat sys_openat64 \
     sys_fstat sys_fstat64 sys_fstatat sys_fstatat64 sys_lstat \
     sys_lstat64 sys_stat sys_stat64 sys_sendfilev sys_sendfilev64 \
-    sys_getcwd sys_pipe
+    sys_getcwd sys_pipe sys_xmknod
 headers := $(filter-out sys/vfs.h, $(headers))
 endif
 
@@ -106,7 +106,7 @@ libnsl-routines += nsl_misc
 endif
 
 ifeq ($(subdir),nss)
-databases += user_attr #auth_attr bootparams netmasks printers prof_attr project
+databases += user_attr auth_attr bootparams netmasks printers prof_attr project
 CFLAGS-files-user_attr.c = -Inss_files
 endif
 

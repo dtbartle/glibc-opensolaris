@@ -81,7 +81,6 @@ vhangup             - vhangup               i:          vhangup
 waitid              - waitid                RCi:iipi    __waitid            waitid
 write               - write                 RCi:ibn     __libc_write        __write write
 writev              - writev                RCi:ipi     __writev            writev
-xmknod              - xmknod                i:isii      __xmknod            _xmknod
 
 # msg
 msgctl              - msgsys:msgctl         i:iip       __msgctl            msgctl
@@ -229,5 +228,6 @@ sys_ucred_get       - ucredsys:ucred_get    i:ip        __syscall_ucred_get
 sys_uname           - uname                 i:p         __syscall_uname
 sys_utimes          - utimes                i:sp        __syscall_utimes
 sys_utssys          - utssys                i:piiP      __syscall_utssys
+sys_xmknod          - sys_xmknod            i:isii      __syscall_xmknod
 sys_zone_create     - zone:zone_create      i:p         __syscall_zone_create
 sys_zone_lookup     - zone:zone_lookup      i:p         __syscall_zone_lookup
