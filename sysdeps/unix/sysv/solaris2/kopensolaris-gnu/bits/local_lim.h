@@ -85,7 +85,9 @@
 
 #define PASS_MAX	256
 
-#define UID_MAX         2147483647
+#define UID_MAX		2147483647
+
+#define LOGNAME_MAX	8
 
 /* Maximum message queue priority level.  */
 #define MQ_PRIO_MAX		32768
