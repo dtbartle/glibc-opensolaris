@@ -36,10 +36,9 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     is_system_labeled privP modctl acl facl lltostr ulltostr _getauthnam \
     _getauthattr deflt _getprofnam _getprofattr _getusernam _getuserattr \
     _getauuserent _getauusernam _getexecattr vfsent fdwalk closefrom ipsecalg \
-    gethostent sigsendset sigsend stack_getbounds thr_sighndlrinfo \
-    mkdev nss_getent nss_setent nss_endent nss_search nss_delete nss_misc \
-    _nss_XbyY_fgets _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned \
-    cftime ascftime inet_ntoa_r
+    gethostent sigsendset sigsend stack_getbounds thr_sighndlrinfo mkdev \
+    _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned cftime ascftime \
+    inet_ntoa_r
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
@@ -106,7 +105,16 @@ libnsl-routines += nsl_misc
 endif
 
 ifeq ($(subdir),nss)
-databases += user_attr auth_attr bootparams netmasks printers prof_attr project
+databases += audit_user auth_attr bootparams exec_attr netmasks printers \
+    prof_attr project user_attr
+CFLAGS-files-audit_user.c = -Inss_files
+CFLAGS-files-auth_attr.c = -Inss_files
+CFLAGS-files-bootparams.c = -Inss_files
+CFLAGS-files-exec_attr.c = -Inss_files
+CFLAGS-files-netmasks.c = -Inss_files
+CFLAGS-files-printers.c = -Inss_files
+CFLAGS-files-prof_attr.c = -Inss_files
+CFLAGS-files-project.c = -Inss_files
 CFLAGS-files-user_attr.c = -Inss_files
 endif
 
