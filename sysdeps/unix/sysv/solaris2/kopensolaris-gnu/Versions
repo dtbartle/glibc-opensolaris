@@ -116,6 +116,9 @@ libc {
     zone_destroy; zone_enter; zone_get_id; zone_getattr; zone_list;
     zone_list_datalink; zone_remove_datalink; zone_setattr; zone_shutdown;
     zonept; zone_version;
+
+    # sys_errlist and sys_nerr
+    _sys_errlist; sys_errlist; _sys_nerr; sys_nerr;
   }
 }
 
