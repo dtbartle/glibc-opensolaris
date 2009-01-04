@@ -32,8 +32,6 @@
 # include <paths.h>
 # define _PATH_UTMPX	_PATH_UTMP
 # define _PATH_WTMPX	_PATH_WTMP
-# define UTMPX_FILE	_UTMPX_FILE
-# define WTMPX_FILE	_WTMPX_FILE
 #endif
 
 
