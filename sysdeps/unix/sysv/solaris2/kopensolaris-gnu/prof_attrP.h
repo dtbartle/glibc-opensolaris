@@ -20,6 +20,9 @@
 #ifndef _PROF_ATTRP_H
 #define _PROF_ATTRP_H
 
+#include <sys/types.h>
+#include <nss/nss.h>
+
 #define NSS_BUFLEN_PROFATTR	1024
 
 typedef struct profstr_s
@@ -30,5 +33,11 @@ typedef struct profstr_s
 	char *desc;
 	char *attr;
 } profstr_t;
+
+struct parser_data;
+extern int _nss_files_parse_profattr (char *line, struct profstr_s *result,
+				   struct parser_data *data,
+				   size_t datalen, int *errnop);
+libnss_files_hidden_proto (_nss_files_parse_profattr)
 
 #endif /* _PROF_ATTRP_H */

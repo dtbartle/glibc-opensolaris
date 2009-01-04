@@ -1,8 +1,6 @@
-/* User file parser in nss_files module.
-   Copyright (C) 1996, 1997, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,21 +17,28 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <user_attrP.h>
+#ifndef _PROJECTP_H
+#define _PROJECTP_H
 
-#define STRUCTURE	userstr_s
-#define ENTNAME		userattr
-#define DATABASE	"user_attr"
-struct userattrent_data {};
+#include <sys/types.h>
+#include <nss/nss.h>
 
-/* Our parser function is already defined in _fgetuserattr.c, so use that
-   to parse lines from the database file.  */
-#define EXTERN_PARSER
-#include "files-parse.c"
-#include GENERIC
+#define NSS_BUFLEN_PROJECT	((4 * 1024) + (800 * sizeof (char *)))
 
-DB_LOOKUP (usernam, 1 + strlen (name), (".%s", name),
-	   {
-	     if (! strcmp (name, result->name))
-	       break;
-	   }, const char *name)
+struct project
+  {
+	char *pj_name;
+	projid_t pj_projid;
+	char *pj_comment;
+	char **pj_users;
+	char **pj_groups;
+	char *pj_attr;
+  };
+
+struct parser_data;
+extern int _nss_files_parse_proj (char *line, struct project *result,
+				   struct parser_data *data,
+				   size_t datalen, int *errnop);
+libnss_files_hidden_proto (_nss_files_parse_proj)
+
+#endif /* _PROJECTP_H */

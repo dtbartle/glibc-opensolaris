@@ -28,6 +28,9 @@
 
 #include "../nss/getXXent_r.c"
 
+extern int getuserattr_r (userstr_t *, char *, size_t, userstr_t **);
+
+
 userstr_t * _getuserattr (userstr_t *psbuf, char *buf, int buflen, int *errnop)
 {
   userstr_t *psbufp;

@@ -19,21 +19,25 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <user_attrP.h>
+#include <auditP.h>
 
-#define STRUCTURE	userstr_s
-#define ENTNAME		userattr
-#define DATABASE	"user_attr"
-struct userattrent_data {};
+#define STRUCTURE	au_user_str_s
+#define ENTNAME		auuser
+#define DATABASE	"security/audit_user"
+struct auuserent_data {};
 
-/* Our parser function is already defined in _fgetuserattr.c, so use that
-   to parse lines from the database file.  */
-#define EXTERN_PARSER
 #include "files-parse.c"
+LINE_PARSER
+(,
+ STRING_FIELD (result->au_name, ISCOLON, 0);
+ STRING_FIELD (result->au_always, ISCOLON, 0);
+ STRING_FIELD (result->au_never, ISCOLON, 0);
+ )
+
 #include GENERIC
 
-DB_LOOKUP (usernam, 1 + strlen (name), (".%s", name),
+DB_LOOKUP (auusernam, 1 + strlen (name), (".%s", name),
 	   {
-	     if (! strcmp (name, result->name))
+	     if (! strcmp (name, result->au_name))
 	       break;
 	   }, const char *name)

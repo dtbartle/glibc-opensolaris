@@ -62,8 +62,7 @@ libc {
     membar_consumer; memcntl; meminfo; __minor; modctl; mount;
 
     # n
-    nss_delete; nss_endent; _nss_files_parse_userattr; nss_getent; nss_search;
-    nss_setent; _nss_XbyY_fgets; ntp_adjtime; ntp_gettime;
+    ntp_adjtime; ntp_gettime;
 
     # p
     pc_sample; p_online; priocntl; priocntlset; __priv_bracket;
@@ -120,6 +119,9 @@ libc {
     # sys_errlist and sys_nerr
     _sys_errlist; sys_errlist; _sys_nerr; sys_nerr;
   }
+  GLIBC_PRIVATE {
+   _nss_files_parse_userattr;
+  }
 }
 
 libnsl {
@@ -133,6 +135,12 @@ libnsl {
 
 libnss_files {
   GLIBC_PRIVATE {
-    _nss_files_getuserattr_r;
-    _nss_files_getusernam_r;
+    _nss_files_getauthattr_r; _nss_files_getauthnam_r;
+    _nss_files_getexecattr_r; _nss_files_getexecprof_r;
+    _nss_files_getprofattr_r; _nss_files_getprofnam_r;
+    _nss_files_getuserattr_r; _nss_files_getusernam_r;
+    _nss_files_parse_auuser; _nss_files_parse_authattr;
+    _nss_files_parse_execattr; _nss_files_parse_profattr;
+    _nss_files_parse_proj; _nss_files_parse_userattr;
+  }
 }

@@ -21,6 +21,9 @@
 #define _AUDITP_H
 
 #include <sys/types.h>
+#include <nss/nss.h>
+
+#define NSS_BUFLEN_AUDITUSER 1024
 
 typedef uid_t au_id_t;
 typedef pid_t au_asid_t;
@@ -63,5 +66,11 @@ typedef struct _mac_label_impl m_label_t;
 typedef m_label_t bslabel_t;
 
 #define AU_NOAUDITID	((au_id_t)-2)
+
+struct parser_data;
+extern int _nss_files_parse_auuser (char *line, struct au_user_str_s *result,
+				   struct parser_data *data,
+				   size_t datalen, int *errnop);
+libnss_files_hidden_proto (_nss_files_parse_auuser)
 
 #endif /* _AUDITP_H */

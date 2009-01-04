@@ -21,6 +21,7 @@
 #define _USER_ATTRP_H
 
 #include <sys/types.h>
+#include <nss/nss.h>
 
 #define NSS_BUFLEN_USERATTR	1024
 
@@ -31,7 +32,7 @@ typedef struct userstr_s
 	char *res1;
 	char *res2;
 	char *attr;
-} userstr_t;
+  } userstr_t;
 
 struct parser_data;
 extern int _nss_files_parse_userattr (char *line, struct userstr_s *result,

@@ -20,6 +20,9 @@
 #ifndef _AUTH_ATTRP_H
 #define _AUTH_ATTRP_H
 
+#include <sys/types.h>
+#include <nss/nss.h>
+
 #define NSS_BUFLEN_AUTHATTR	1024
 
 typedef struct authstr_s
@@ -30,6 +33,12 @@ typedef struct authstr_s
 	char *short_desc;
 	char *long_desc;
 	char *attr;
-} authstr_t;
+  } authstr_t;
+
+struct parser_data;
+extern int _nss_files_parse_authattr (char *line, struct authstr_s *result,
+				   struct parser_data *data,
+				   size_t datalen, int *errnop);
+libnss_files_hidden_proto (_nss_files_parse_authattr)
 
 #endif /* _AUTH_ATTRP_H */

@@ -19,20 +19,26 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <user_attrP.h>
+#include <prof_attrP.h>
 
-#define STRUCTURE	userstr_s
-#define ENTNAME		userattr
-#define DATABASE	"user_attr"
-struct userattrent_data {};
+#define STRUCTURE	profstr_s
+#define ENTNAME		profattr
+#define DATABASE	"security/prof_attr"
+struct profattrent_data {};
 
-/* Our parser function is already defined in _fgetuserattr.c, so use that
-   to parse lines from the database file.  */
-#define EXTERN_PARSER
 #include "files-parse.c"
+LINE_PARSER
+(,
+ STRING_FIELD (result->name, ISCOLON, 0);
+ STRING_FIELD (result->res1, ISCOLON, 0);
+ STRING_FIELD (result->res2, ISCOLON, 0);
+ STRING_FIELD (result->desc, ISCOLON, 0);
+ STRING_FIELD (result->attr, ISCOLON, 0);
+ )
+
 #include GENERIC
 
-DB_LOOKUP (usernam, 1 + strlen (name), (".%s", name),
+DB_LOOKUP (profnam, 1 + strlen (name), (".%s", name),
 	   {
 	     if (! strcmp (name, result->name))
 	       break;

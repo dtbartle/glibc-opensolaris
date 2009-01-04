@@ -1,8 +1,6 @@
-/* User file parser in nss_files module.
-   Copyright (C) 1996, 1997, 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   OpenSolaris bits contributed by David Bartley
-    <dtbartle@csclub.uwaterloo.ca>, 2008.
+   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,21 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <user_attrP.h>
+#define DATABASE_NAME audit_user
+#define DEFAULT_CONFIG "files nis"
 
-#define STRUCTURE	userstr_s
-#define ENTNAME		userattr
-#define DATABASE	"user_attr"
-struct userattrent_data {};
-
-/* Our parser function is already defined in _fgetuserattr.c, so use that
-   to parse lines from the database file.  */
-#define EXTERN_PARSER
-#include "files-parse.c"
-#include GENERIC
-
-DB_LOOKUP (usernam, 1 + strlen (name), (".%s", name),
-	   {
-	     if (! strcmp (name, result->name))
-	       break;
-	   }, const char *name)
+#include "XXX-lookup.c"

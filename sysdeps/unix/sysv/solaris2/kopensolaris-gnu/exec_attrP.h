@@ -17,8 +17,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _USER_ATTRP_H
-#define _USER_ATTRP_H
+#ifndef _EXEC_ATTRP_H
+#define _EXEC_ATTRP_H
+
+#include <sys/types.h>
+#include <nss/nss.h>
 
 #define NSS_BUFLEN_USERATTR	1024
 
@@ -34,4 +37,10 @@ typedef struct execstr_s
 	struct execstr_s *next;
   } execstr_t;
 
-#endif /* _USER_ATTRP_H */
+struct parser_data;
+extern int _nss_files_parse_execattr (char *line, struct execstr_s *result,
+				   struct parser_data *data,
+				   size_t datalen, int *errnop);
+libnss_files_hidden_proto (_nss_files_parse_execattr)
+
+#endif /* _EXEC_ATTRP_H */

@@ -19,21 +19,29 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <user_attrP.h>
+#include <projectP.h>
 
-#define STRUCTURE	userstr_s
-#define ENTNAME		userattr
-#define DATABASE	"user_attr"
-struct userattrent_data {};
+#define STRUCTURE	project
+#define ENTNAME		proj
+#define DATABASE	"project"
+struct projent_data {};
 
-/* Our parser function is already defined in _fgetuserattr.c, so use that
-   to parse lines from the database file.  */
-#define EXTERN_PARSER
 #include "files-parse.c"
+// TODO: need to split out pj_users and pj_groups
+LINE_PARSER
+(,
+ STRING_FIELD (result->pj_name, ISCOLON, 0);
+ INT_FIELD (result->pj_projid, ISCOLON, 0, 10, (projid_t))
+ STRING_FIELD (result->pj_comment, ISCOLON, 0);
+ STRING_FIELD (result->pj_users, ISCOLON, 0);
+ STRING_FIELD (result->pj_groups, ISCOLON, 0);
+ STRING_FIELD (result->pj_attr, ISCOLON, 0);
+ )
+
 #include GENERIC
 
-DB_LOOKUP (usernam, 1 + strlen (name), (".%s", name),
+DB_LOOKUP (projnam, 1 + strlen (name), (".%s", name),
 	   {
-	     if (! strcmp (name, result->name))
+	     if (! strcmp (name, result->pj_name))
 	       break;
 	   }, const char *name)
