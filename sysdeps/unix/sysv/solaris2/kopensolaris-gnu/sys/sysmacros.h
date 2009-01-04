@@ -80,7 +80,7 @@
 
 #endif /* __USE_MISC */
 
-#ifdef __USE_SUN
+#ifdef __USE_MISC
 
 # ifndef MIN
 #  define MIN(a, b)	((a) < (b) ? (a) : (b))

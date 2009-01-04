@@ -188,7 +188,7 @@ typedef struct in6_addr in6_addr_t;
 #define IN6_V4MAPPED_TO_IPADDR(v6, v4) \
 	((v4) = (v6)->in6_u.u6_addr32[3])
 
-#ifdef __USE_SUN
+#ifdef __USE_MISC
 # define _S6_un		in6_u
 # define _S6_u32	u6_addr32
 #endif
