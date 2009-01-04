@@ -39,7 +39,7 @@ __xmknod (int vers, const char *path, mode_t mode, dev_t *dev)
       return -1;
     }
 
-  return INLINE_SYSCALL (xmknod, 3, CHECK_STRING (path), mode, *dev);
+  return INLINE_SYSCALL (mknod, 3, CHECK_STRING (path), mode, *dev);
 }
 
 weak_alias (__xmknod, _xmknod)
