@@ -19,13 +19,33 @@
 
 #include <sysdep.h>
 
-	.text
+	  .text;
 ENTRY (__syscall)
-	movq %rcx, %r10
-	movl $SYS_ify (syscall), %eax
-	syscall
-	jb SYSCALL_ERROR_LABEL
+	popl %rcx	/* Pop return address into %rcx.  */
+	popl %eax	/* Pop syscall number into %eax. */
+	pushl %rcx	/* Push back return adderss.  */
+	syscall	/* Do the system call.  */
+	pushl %rcx	/* Push back return address.  */
+	jb SYSCALL_ERROR_LABEL;	/* Jump to error handler if error.  */
+
 L(pseudo_end):
-	ret
+	ret			/* Return to caller.  */
 PSEUDO_END (__syscall)
 weak_alias (__syscall, syscall)
+
+	  .text;
+ENTRY (__systemcall)
+	popl %rdx		/* Pop return address into %edx.  */
+	popl %rcx		/* Pop sysret_t into %rcx.  */
+	popl %eax		/* Pop syscall number into %eax.  */
+	pushl %rdx		/* Push return address onto stack.  */
+	syscall		/* Do the system call.  */
+	pushl %rcx		/* Restore sysret_t on stack.  */
+	movl 8(%rsp), %rdx	/* Save return address into %rdx.  */
+	pushl %rdx		/* Restore return address on stack.  */
+	jb 1f			/* Jump to error handler if error.  */
+	movl %rax, 0(%rcx)	/* Set sysret_t.  */
+	xorl %rax, %rax		/* Set return to 0.  */
+1:
+	ret
+PSEUDO_END (__syscall)
