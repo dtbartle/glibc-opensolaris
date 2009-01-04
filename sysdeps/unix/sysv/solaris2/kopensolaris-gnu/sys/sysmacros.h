@@ -82,16 +82,6 @@
 
 #ifdef __USE_MISC
 
-# ifndef MIN
-#  define MIN(a, b)	((a) < (b) ? (a) : (b))
-# endif
-# ifndef MAX
-#  define MAX(a, b)	((a) < (b) ? (b) : (a))
-# endif
-# ifndef ABS
-#  define ABS(a)	((a) < 0 ? -(a) : (a))
-# endif
-
 # define IS_P2ALIGNED(v, a)	((((uintptr_t)(v)) & ((uintptr_t)(a) - 1)) == 0)
 # define ISP2(x)			(((x) & ((x) - 1)) == 0)
 
