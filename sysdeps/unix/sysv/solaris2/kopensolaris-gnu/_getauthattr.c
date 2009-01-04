@@ -28,6 +28,9 @@
 
 #include "../nss/getXXent_r.c"
 
+extern int getauthattr_r (authstr_t *, char *, size_t, authstr_t **);
+
+
 authstr_t * _getauthattr (authstr_t *psbuf, char *buf, int buflen, int *errnop)
 {
   authstr_t *psbufp;

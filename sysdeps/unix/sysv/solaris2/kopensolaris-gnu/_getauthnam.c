@@ -28,6 +28,10 @@
 
 #include <nss/getXXbyYY_r.c>
 
+extern int getauthnam_r (const char *, authstr_t *, char *, size_t,
+    authstr_t **);
+
+
 authstr_t * _getauthnam (const char *name, authstr_t *psbuf, char *buf,
       int buflen, int *errnop)
 {
