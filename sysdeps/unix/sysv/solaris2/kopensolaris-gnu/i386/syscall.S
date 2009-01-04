@@ -35,8 +35,8 @@ weak_alias (__syscall, syscall)
 	  .text;
 ENTRY (__systemcall)
 	popl %edx		/* Pop return address into %edx.  */
-	popl %eax		/* Pop syscall number into %eax.  */
 	popl %ecx		/* Pop sysret_t into %ecx.  */
+	popl %eax		/* Pop syscall number into %eax.  */
 	pushl %edx		/* Push return address onto stack.  */
 	int $0x91		/* Do the system call.  */
 	pushl %ecx		/* Restore sysret_t on stack.  */
