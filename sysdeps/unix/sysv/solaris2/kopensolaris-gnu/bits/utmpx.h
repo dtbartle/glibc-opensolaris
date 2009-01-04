@@ -86,6 +86,16 @@ struct utmpx
   char __unused[20];		/* Reserved for future use.  */
 };
 
+/* Backwards compatibility hacks.  */
+#define ut_name		ut_user
+#ifndef _NO_UT_TIME
+/* We have a problem here: `ut_time' is also used otherwise.  Define
+   _NO_UT_TIME if the compiler complains.  */
+# define ut_time	ut_tv.tv_sec
+#endif
+#define ut_xtime	ut_tv.tv_sec
+#define ut_addr		ut_addr_v6[0]
+
 
 /* Values for the `ut_type' field of a `struct utmpx'.  */
 #define EMPTY		0	/* No valid user accounting information.  */
