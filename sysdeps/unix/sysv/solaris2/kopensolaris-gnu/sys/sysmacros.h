@@ -52,21 +52,18 @@
 #  define L_MAXMIN	L_MAXMIN32
 # endif
 
-# define major(x)	(major_t)((((unsigned)(x)) >> O_BITSMINOR) & O_MAXMAJ)
-# define minor(x)	(minor_t)((x) & O_MAXMIN)
+# define major(x)	(major_t)(((dev_t)(x)) >> L_BITSMINOR)
+# define getmajor(x)	major(x)
+# define minor(x)	(minor_t)((x) & L_MAXMIN)
+# define getminor(x)	minor(x)
 
-# define makedev(x, y)		(unsigned short)(((x) << O_BITSMINOR) | \
-	((y) & O_MAXMIN))
-# define makedevice(x, y)	(dev_t)(((dev_t)(x) << L_BITSMINOR) | \
+# define makedev(x, y)	(dev_t)(((dev_t)(x) << L_BITSMINOR) | \
 	((y) & L_MAXMIN))
+# define makedevice(x, y)	makedev(x, y)
 
 # define emajor(x)	(major_t)(((unsigned int)(x) >> O_BITSMINOR) > \
 	O_MAXMAJ) ? NODEV : (((unsigned int)(x) >> O_BITSMINOR) & O_MAXMAJ)
 # define eminor(x)	(minor_t)((x) & O_MAXMIN)
-
-# define getemajor(x)	(major_t)((((dev_t)(x) >> L_BITSMINOR) > L_MAXMAJ) ? \
-			    NODEV : (((dev_t)(x) >> L_BITSMINOR) & L_MAXMAJ))
-# define geteminor(x)	(minor_t)((x) & L_MAXMIN)
 
 # define cmpdev(x)	(o_dev_t)((((x) >> L_BITSMINOR) > O_MAXMAJ || \
 	((x) & L_MAXMIN) > O_MAXMIN) ? NODEV : \
@@ -74,13 +71,8 @@
 # define expdev(x)	(dev_t)(((dev_t)(((x) >> O_BITSMINOR) & O_MAXMAJ) << \
 	L_BITSMINOR) | ((x) & O_MAXMIN))
 
-
 # define howmany(x, y)	(((x)+((y)-1))/(y))
 # define roundup(x, y)	((((x)+((y)-1))/(y))*(y))
-
-#endif /* __USE_MISC */
-
-#ifdef __USE_MISC
 
 # define IS_P2ALIGNED(v, a)	((((uintptr_t)(v)) & ((uintptr_t)(a) - 1)) == 0)
 # define ISP2(x)			(((x) & ((x) - 1)) == 0)

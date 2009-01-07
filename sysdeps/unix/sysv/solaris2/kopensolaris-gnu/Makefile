@@ -36,7 +36,7 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     is_system_labeled privP modctl acl facl lltostr ulltostr _getauthnam \
     _getauthattr deflt _getprofnam _getprofattr _getusernam _getuserattr \
     _getauuserent _getauusernam _getexecattr vfsent fdwalk closefrom ipsecalg \
-    gethostent sigsendset sigsend stack_getbounds thr_sighndlrinfo mkdev \
+    gethostent sigsendset sigsend stack_getbounds thr_sighndlrinfo \
     _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned cftime ascftime \
     inet_ntoa_r
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
@@ -49,7 +49,7 @@ sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
     sys/ptyvar.h sys/synch.h sys/fork.h sys/sockio.h sys/ioccom.h sys/tty.h \
     sys/trap.h sys/sysconfig.h sys/ptms.h sys/stack.h sys/regset.h sys/fault.h \
     sys/reg.h sys/siginfo.h sys/types32.h sys/isa_defs.h sys/int_types.h \
-    sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h
+    sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h sys/mkdev.h
 sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h
 headers := $(filter-out sys/sysinfo.h sys/swap.h, $(headers))
 endif

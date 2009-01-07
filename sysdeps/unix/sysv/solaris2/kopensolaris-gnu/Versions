@@ -58,8 +58,8 @@ libc {
     _link_aton; _link_ntoa; llseek; lltostr;
 
     # m
-    __makedev; __major; membar_enter; membar_exit; membar_producer;
-    membar_consumer; memcntl; meminfo; __minor; modctl; mount;
+    membar_enter; membar_exit; membar_producer; membar_consumer; memcntl;
+    meminfo; modctl; mount;
 
     # n
     ntp_adjtime; ntp_gettime;
