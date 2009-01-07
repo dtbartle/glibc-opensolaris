@@ -98,6 +98,6 @@
 # define P2SAMEHIGHBIT_TYPED(x, y, type)	(((type)(x) ^ (type)(y)) < \
 	((type)(x) & (type)(y)))
 
-#endif /* __USE_SUN */
+#endif /* __USE_MISC */
 
 #endif	/* _SYS_SYSMACROS_H */
