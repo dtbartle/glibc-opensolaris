@@ -26,7 +26,10 @@
 #define DATABASE_NAME	prof_attr
 #define BUFLEN		NSS_BUFLEN_PROFATTR
 
-#include "../nss/getXXent_r.c"
+#include <nss/getXXent_r.c>
+
+extern int getprofattr_r (profstr_t *, char *, size_t, profstr_t **);
+
 
 profstr_t * _getprofattr (profstr_t *psbuf, char *buf, int buflen, int *errnop)
 {

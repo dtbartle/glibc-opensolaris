@@ -26,7 +26,10 @@
 #define DATABASE_NAME	passwd
 #define BUFLEN		NSS_BUFLEN_AUDITUSER
 
-#include "../nss/getXXent_r.c"
+#include <nss/getXXent_r.c>
+
+extern int getauuserent_r (au_user_str_t *, char *, size_t, au_user_str_t **);
+
 
 au_user_str_t * _getauuserent (au_user_str_t *psbuf, char *buf, int buflen, int *errnop)
 {

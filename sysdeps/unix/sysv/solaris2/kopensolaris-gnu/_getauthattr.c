@@ -26,7 +26,7 @@
 #define DATABASE_NAME	passwd
 #define BUFLEN		NSS_BUFLEN_AUTHATTR
 
-#include "../nss/getXXent_r.c"
+#include <nss/getXXent_r.c>
 
 extern int getauthattr_r (authstr_t *, char *, size_t, authstr_t **);
 

@@ -26,7 +26,7 @@
 #define DATABASE_NAME	user_attr
 #define BUFLEN		NSS_BUFLEN_PROFATTR
 
-#include "../nss/getXXent_r.c"
+#include <nss/getXXent_r.c>
 
 extern int getuserattr_r (userstr_t *, char *, size_t, userstr_t **);
 

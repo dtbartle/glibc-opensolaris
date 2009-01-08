@@ -28,6 +28,10 @@
 
 #include <nss/getXXbyYY_r.c>
 
+extern int getauusernam_r (const char *, au_user_str_t *, char *, size_t,
+    au_user_str_t **);
+
+
 au_user_str_t * _getauusernam (const char *name, au_user_str_t *psbuf, char *buf,
       int buflen, int *errnop)
 {

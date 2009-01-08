@@ -26,7 +26,10 @@
 #define DATABASE_NAME	prof_attr
 #define BUFLEN		NSS_BUFLEN_EXECATTR
 
-#include "../nss/getXXent_r.c"
+#include <nss/getXXent_r.c>
+
+extern int getexecattr_r (execstr_t *, char *, size_t, execstr_t **);
+
 
 execstr_t * _getexecattr (execstr_t *esbuf, char *buf, int buflen, int *errnop)
 {

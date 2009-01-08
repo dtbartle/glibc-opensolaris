@@ -28,6 +28,10 @@
 
 #include <nss/getXXbyYY_r.c>
 
+extern int getprofnam_r (const char *, profstr_t *, char *, size_t,
+    profstr_t **);
+
+
 profstr_t * _getprofnam (const char *name, profstr_t *psbuf, char *buf,
       int buflen, int *errnop)
 {
