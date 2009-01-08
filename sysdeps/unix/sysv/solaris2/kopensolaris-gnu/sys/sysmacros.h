@@ -98,6 +98,11 @@
 # define P2SAMEHIGHBIT_TYPED(x, y, type)	(((type)(x) ^ (type)(y)) < \
 	((type)(x) & (type)(y)))
 
+/* For compatibility with GNU/Linux.  */
+# define gnu_dev_major(dev) major (dev)
+# define gnu_dev_minor(dev) minor (dev)
+# define gnu_dev_makedev(maj, min) makedev (maj, min)
+
 #endif /* __USE_MISC */
 
 #endif	/* _SYS_SYSMACROS_H */
