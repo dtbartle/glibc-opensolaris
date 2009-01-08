@@ -240,6 +240,7 @@ struct cmsghdr
 #endif
 #define CMSG_ALIGN(len)	(((uintptr_t)(len) + _CMSG_HDR_ALIGNMENT - 1) \
 			& ~(_CMSG_HDR_ALIGNMENT - 1))
+#define _CMSG_HDR_ALIGN(x)	CMSG_ALIGN(x)
 #define CMSG_DATA(cmsg) ((unsigned char *) CMSG_ALIGN((struct cmsghdr *) (cmsg) + 1))
 #define CMSG_NXTHDR(mhdr, cmsg) __cmsg_nxthdr (mhdr, cmsg)
 #define CMSG_FIRSTHDR(mhdr) \
