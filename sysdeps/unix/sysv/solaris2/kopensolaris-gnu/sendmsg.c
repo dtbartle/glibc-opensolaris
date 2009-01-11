@@ -33,7 +33,7 @@ __sendmsg (fd, message, flags)
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE;
 
-  int res = _so_sendmsg (fd, message, flags & ~MSG_NOSIGNAL);
+  int res = _so_sendmsg (fd, message, (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2);
 
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_ENABLE;
