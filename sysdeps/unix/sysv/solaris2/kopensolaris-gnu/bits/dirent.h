@@ -20,8 +20,8 @@
 # error "Never use <bits/dirent.h> directly; include <dirent.h> instead."
 #endif
 
-/* XXX: On OpenSolaris d_name is variable length. Fo compatibility we define it
-   to have length 256.  */
+/* XXX: On OpenSolaris d_name is variable length. For compatibility we define
+   it to have length 256.  */
 
 typedef struct dirent
   {
