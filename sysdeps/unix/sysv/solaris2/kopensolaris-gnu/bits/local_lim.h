@@ -18,6 +18,9 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
+/* XXX: OpenSolaris doesn't define this but we do for compatibility.  */
+#define NAME_MAX	255
+
 /* The number of data keys per process.  */
 #define _POSIX_THREAD_KEYS_MAX	128
 /* This is the value this implementation supports.  */
