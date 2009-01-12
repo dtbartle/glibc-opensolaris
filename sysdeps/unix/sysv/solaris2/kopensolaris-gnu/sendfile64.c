@@ -29,7 +29,7 @@ sendfile64 (int out_fd, int in_fd, off64_t *offset, size_t count)
   sfv.sfv_flag = 0;
   sfv.sfv_off = *offset;
   sfv.sfv_len = count;
-  int xferred = 0;
+  size_t xferred = 0;
 
   ssize_t res = sendfilev (out_fd, &sfv, 1, &xferred);
   *offset += xferred;
