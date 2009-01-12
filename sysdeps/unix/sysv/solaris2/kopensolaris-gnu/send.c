@@ -36,7 +36,7 @@ __send (fd, buf, n, flags)
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE;
 
-  int res = _so_send (fd, buf, n, (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2);
+  ssize_t res = _so_send (fd, buf, n, (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2);
 
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_ENABLE;

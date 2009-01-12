@@ -21,7 +21,7 @@
 #include <inline-syscall.h>
 #include <sys/socket.h>
 
-DECLARE_INLINE_SYSCALL (ssize_t, recvmsg, int s, struct msghdr *msg, int flags);
+extern ssize_t _so_recvmsg (int s, struct msghdr *msg, int flags);
 
 ssize_t
 __recvmsg (fd, message, flags)
@@ -29,7 +29,7 @@ __recvmsg (fd, message, flags)
      struct msghdr *message;
      int flags;
 {
-  return INLINE_SYSCALL (recvmsg, 3, fd, message, flags | MSG_XPG4_2);
+  return _so_recvmsg (fd, message, flags | MSG_XPG4_2);
 }
 
 weak_alias (__recvmsg, recvmsg)

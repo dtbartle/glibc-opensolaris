@@ -37,7 +37,7 @@ __sendto (fd, buf, n, flags, addr, addr_len)
   if (flags & MSG_NOSIGNAL)
     SIGPIPE_DISABLE;
 
-  int res = _so_sendto (fd, buf, n, (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2,
+  ssize_t res = _so_sendto (fd, buf, n, (flags & ~MSG_NOSIGNAL) | MSG_XPG4_2,
       addr, addr_len);
 
   if (flags & MSG_NOSIGNAL)
