@@ -93,6 +93,8 @@ __ptsname_r (int fd, char *buf, size_t buflen)
 
     memcpy (__stpcpy (buf, devpts), p, &numbuf[sizeof (numbuf)] - p);
 
+    access (buf, F_OK);
+
     return 0;
 }
 weak_alias (__ptsname_r, ptsname_r)
