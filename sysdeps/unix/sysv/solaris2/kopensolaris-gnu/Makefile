@@ -78,7 +78,7 @@ sysdep_routines += sys_lwp_sigmask sys_sigqueue sys_sigtimedwait \
 endif
 
 ifeq ($(subdir),socket)
-sysdep_routines += sa_len
+sysdep_routines += cmsg_nxthdr sa_len
 sysdep_routines += netmask
 headers := $(filter-out sys/socketvar.h, $(headers))
 endif

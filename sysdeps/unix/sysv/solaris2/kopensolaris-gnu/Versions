@@ -22,11 +22,12 @@ libc {
     atomic_dec_ulong_nv; atomic_dec_64_nv; atomic_dec_ptr_nv;
 
     # c
-    cftime; closefrom; core_get_default_content; core_get_default_path;
-    core_get_global_content; core_get_global_path; core_get_options;
-    core_get_process_content; core_get_process_path; core_set_default_content;
-    core_set_default_path; core_set_global_content; core_set_global_path;
-    core_set_options; core_set_process_content; core_set_process_path;
+    cftime; closefrom; __cmsg_nxthdr; core_get_default_content;
+    core_get_default_path; core_get_global_content; core_get_global_path;
+    core_get_options; core_get_process_content; core_get_process_path;
+    core_set_default_content; core_set_default_path; core_set_global_content;
+    core_set_global_path; core_set_options; core_set_process_content;
+    core_set_process_path;
 
     # d
     _delete; defcntl; defopen; defread; door_bind; door_call; door_cred;
