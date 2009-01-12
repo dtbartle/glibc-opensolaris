@@ -27,7 +27,7 @@ __listen (fd, n)
      int fd;
      int n;
 {
-  return _so_listen (fd, n, SOV_DEFAULT);
+  return _so_listen (fd, n, SOV_XPG4_2);
 }
 
 weak_alias (__listen, listen)

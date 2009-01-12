@@ -30,7 +30,7 @@ __libc_connect (fd, addr, len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t len;
 {
-  return _so_connect (fd, addr, len, SOV_DEFAULT);
+  return _so_connect (fd, addr, len, SOV_XPG4_2);
 }
 
 weak_alias (__libc_connect, __connect)

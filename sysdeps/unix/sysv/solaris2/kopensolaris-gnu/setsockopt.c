@@ -31,7 +31,7 @@ __setsockopt (fd, level, optname, optval, optlen)
      const __ptr_t optval;
      socklen_t optlen;
 {
-  return _so_setsockopt (fd, level, optname, optval, optlen, SOV_DEFAULT);
+  return _so_setsockopt (fd, level, optname, optval, optlen, SOV_XPG4_2);
 }
 
 weak_alias (__setsockopt, setsockopt)

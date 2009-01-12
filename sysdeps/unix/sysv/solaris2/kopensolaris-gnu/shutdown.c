@@ -27,5 +27,5 @@ shutdown (fd, how)
      int fd;
      int how;
 {
-  return _so_shutdown (fd, how, SOV_DEFAULT);
+  return _so_shutdown (fd, how, SOV_XPG4_2);
 }

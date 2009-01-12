@@ -30,7 +30,7 @@ __libc_accept (fd, addr, addr_len)
      __SOCKADDR_ARG addr;
      socklen_t *addr_len;
 {
-  return _so_accept (fd, addr, addr_len, SOV_DEFAULT);
+  return _so_accept (fd, addr, addr_len, SOV_XPG4_2);
 }
 
 weak_alias (__libc_accept, accept)

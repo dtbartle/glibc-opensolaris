@@ -29,7 +29,7 @@ __getpeername (fd, addr, len)
      __SOCKADDR_ARG addr;
      socklen_t *len;
 {
-  return _so_getpeername (fd, addr, len, SOV_DEFAULT);
+  return _so_getpeername (fd, addr, len, SOV_XPG4_2);
 }
 
 weak_alias (__getpeername, getpeername)

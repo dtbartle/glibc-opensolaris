@@ -29,7 +29,7 @@ __socket (domain, type, protocol)
      int type;
      int protocol;
 {
-  return _so_socket (domain, type, protocol, NULL, SOV_DEFAULT);
+  return _so_socket (domain, type, protocol, NULL, SOV_XPG4_2);
 }
 
 weak_alias (__socket, socket)

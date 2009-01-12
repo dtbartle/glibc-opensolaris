@@ -30,7 +30,7 @@ __getsockname (fd, addr, len)
      __SOCKADDR_ARG addr;
      socklen_t *len;
 {
-  return _so_getsockname (fd, addr, len, SOV_DEFAULT);
+  return _so_getsockname (fd, addr, len, SOV_XPG4_2);
 }
 
 weak_alias (__getsockname, getsockname)

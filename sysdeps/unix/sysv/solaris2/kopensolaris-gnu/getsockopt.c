@@ -31,5 +31,5 @@ getsockopt (fd, level, optname, optval, optlen)
      void *optval;
      socklen_t *optlen;
 {
-  return _so_getsockopt (fd, level, optname, optval, optlen, SOV_DEFAULT);
+  return _so_getsockopt (fd, level, optname, optval, optlen, SOV_XPG4_2);
 }
