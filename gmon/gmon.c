@@ -59,6 +59,7 @@ struct gmonparam _gmonparam attribute_hidden = { GMON_PROF_OFF };
 static int	s_scale;
 #define		SCALE_1_TO_1	0x10000L
 
+#undef ERR
 #define ERR(s) write_not_cancel (STDERR_FILENO, s, sizeof (s) - 1)
 
 void moncontrol (int mode);
