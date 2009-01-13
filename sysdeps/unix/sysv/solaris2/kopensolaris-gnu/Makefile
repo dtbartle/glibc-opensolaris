@@ -100,10 +100,6 @@ ifeq ($(subdir),elf)
 sysdep-rtld-routines += _sysconfig
 endif
 
-ifeq ($(subdir),nis)
-libnsl-routines += nsl_misc
-endif
-
 ifeq ($(subdir),nss)
 databases += audit_user auth_attr bootparams exec_attr netmasks printers \
     prof_attr project user_attr
