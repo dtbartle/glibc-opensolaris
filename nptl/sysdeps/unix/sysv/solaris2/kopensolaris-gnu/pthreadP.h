@@ -62,9 +62,18 @@
 
 #define MUTEX_NOT_OWNER(mutex)  (! MUTEX_IS_OWNER (mutex))
 
+#include <time.h>
+
 #define PAST_TIMESPEC(tv)	((tv) && (tv)->tv_sec < 0)
 #define INVALID_TIMESPEC(tv)    ((tv) && ((tv)->tv_nsec < 0 || \
 	(tv)->tv_nsec >= 1000000000))
+#define COPY_TIMESPEC(tv)                       \
+	struct timespec *__##tv = NULL, _##tv;    \
+    if (tv)                                     \
+      {                                         \
+        _##tv = *tv;                            \
+        __##tv = &_##tv;                        \
+      }
 
 #include <sys/types.h>
 #include <sys/syscall.h>

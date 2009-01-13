@@ -104,8 +104,10 @@ getttyname (const char *dev, dev_t mydev, ino64_t myino, int save, int *dostat)
 }
 
 
+#ifndef __ASSUME_PROC_SELF_FD_NOT_SYMLINK
 /* Static buffer in `ttyname'.  */
 libc_freeres_ptr (static char *ttyname_buf);
+#endif
 
 
 /* Return the pathname of the terminal FD is open on, or NULL on errors.
@@ -121,9 +123,9 @@ ttyname (int fd)
   int dostat = 0;
   char *name;
   int save = errno;
+#ifndef __TTYNAME_NO_CHECKS
   struct termios term;
 
-#ifndef __TTYNAME_NO_CHECKS
   /* isatty check, tcgetattr is used because it sets the correct
      errno (EBADF resp. ENOTTY) on error.  */
   if (__builtin_expect (__tcgetattr (fd, &term) < 0, 0))

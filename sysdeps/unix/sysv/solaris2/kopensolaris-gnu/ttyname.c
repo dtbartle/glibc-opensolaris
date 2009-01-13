@@ -27,7 +27,6 @@ _ttyname_dev (dev_t rdev, char *buffer, size_t buflen)
   int dostat = 0;
   char *name;
   int save = errno;
-  struct termios term;
 
   if (__xstat64 (_STAT_VER, "/dev/pts", &st) == 0 && S_ISDIR (st.st_mode))
     {

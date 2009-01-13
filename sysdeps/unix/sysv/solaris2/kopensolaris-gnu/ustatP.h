@@ -30,4 +30,6 @@ struct ustat
 	char f_fpack[6];
   };
 
+extern int ustat (dev_t, struct ustat *);
+
 #endif /* _USTATP_H */

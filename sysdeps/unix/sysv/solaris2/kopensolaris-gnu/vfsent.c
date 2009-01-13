@@ -27,7 +27,7 @@
 static __thread char vfs_buf[VFS_LINE_MAX + 2];
 
 
-static inline int vfs_strtok_r (char *str, const char *delim,
+static int vfs_strtok_r (char *str, const char *delim,
       char **saveptr, char **strt)
 {
   int ret = (*strt = strtok_r (str, delim, saveptr)) ? 1 : 0;
@@ -66,7 +66,7 @@ int getvfsent (FILE *fp, struct vfstab *vp)
           !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_fstype) ||
           !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_fsckpass) ||
           !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_automnt) ||
-          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, vp->vfs_mntopts))
+          !vfs_strtok_r (NULL, _VFS_DELIM, &tokp, &vp->vfs_mntopts))
         return VFS_TOOFEW;
 
       /* If we can still tokenize the line is too long.  */

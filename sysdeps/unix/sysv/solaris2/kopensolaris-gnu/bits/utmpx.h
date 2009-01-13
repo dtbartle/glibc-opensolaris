@@ -26,8 +26,8 @@
 #include <bits/wordsize.h>
 
 
-#define _UTMPX_FILE	"/var/adm/utmpx"
-#define _WTMPX_FILE	"/var/adm/wtmpx"
+#define _UTMPX_FILE	"/var/run/utmp"
+#define _WTMPX_FILE	"/var/log/wtmp"
 #ifdef __USE_MISC
 # include <paths.h>
 # define _PATH_UTMPX	_PATH_UTMP

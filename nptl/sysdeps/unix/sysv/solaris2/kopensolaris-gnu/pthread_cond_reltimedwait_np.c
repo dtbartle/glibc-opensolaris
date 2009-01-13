@@ -28,7 +28,8 @@ pthread_cond_reltimedwait_np (cond, mutex, reltime)
      pthread_mutex_t *mutex;
      const struct timespec *reltime;
 {
-  int errval = cond_reltimedwait ((cond_t *)cond, (mutex_t *)mutex, reltime);
+  COPY_TIMESPEC (reltime)
+  int errval = cond_reltimedwait ((cond_t *)cond, (mutex_t *)mutex, __reltime);
   if (errval == ETIME)
     return ETIMEDOUT;
   else if (errval == EINTR)

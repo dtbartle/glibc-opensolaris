@@ -17,10 +17,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
 #include <sys/sysconfig.h>
 
-extern long sysconfig (int which);
+extern long _sysconfig (int which);
 
 int
 __getdtablesize (void)

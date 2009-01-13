@@ -22,7 +22,7 @@
 
 extern void rtld_db_preinit (void *arg);
 extern void rtld_db_postinit (void *arg);
-extern void rtld_db_ldactivity (void *arg);
+extern void rtld_db_dlactivity (void *arg);
 
 extern rd_event_msg_t rtld_db_event_msg;
 
@@ -41,5 +41,8 @@ static inline void rtld_db_event (rd_event_e event, r_state_e state)
       break;
     case RD_DLACTIVITY:
       rtld_db_dlactivity (NULL);
+      break;
+    case RD_NONE:
+      break;
     }
 }

@@ -127,7 +127,6 @@ libc {
 
 libnsl {
   GLIBC_2.7 {
-    _escape; _strdup_null; _strtok_escape; _strpbrk_escape; _unescape;
     setnetconfig; endnetconfig; getnetconfig; getnetconfigent;
     freenetconfigent; setnetpath; endnetpath; getnetpath; nc_perror;
     nc_sperror;

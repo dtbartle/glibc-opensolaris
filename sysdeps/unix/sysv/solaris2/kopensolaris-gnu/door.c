@@ -29,8 +29,8 @@
 #include <signal.h>
 
 static pid_t __door_private_pid, __door_unref_pid;
-static void * door_server_create_default (door_info_t *);
-door_server_func_t *door_server_create_proc = &door_server_create_default;
+static void door_server_create_default (door_info_t *);
+door_server_func_t *door_server_create_proc = door_server_create_default;
 static int (*thr_create_ptr) (void *, size_t, void * (*)(void *), void *,
     long, thread_t *);
 
@@ -144,31 +144,30 @@ static void * door_create_default_proc (void *arg)
 }
 
 
-static void door_load_libpthread (void)
+static int door_load_libpthread (void)
 {
   if (!thr_create_ptr)
     {
       void *libpthread = __libc_dlopen ("libpthread.so.0");
       if (!libpthread)
-        return;
+        return -1;
       thr_create_ptr = __libc_dlsym (libpthread, "thr_create");
       if (!thr_create_ptr)
-        return;
+        return -1;
     }
+
+  return 0;
 }
 
 
-static void * door_server_create_default (door_info_t *info)
+static void door_server_create_default (door_info_t *info)
 {
-  door_load_libpthread ();
-  if (!thr_create_ptr)
-    return NULL;
+  if (door_load_libpthread () != 0)
+    return;
 
   /* The default server create action is to create a server thread. We use
      thr_create since we want to create this as a daemon thread.  */
   thr_create_ptr (NULL, 0, door_create_default_proc, NULL, THR_DETACHED, NULL);
-
-  return NULL;
 }
 
 
@@ -207,8 +206,7 @@ int door_create (void (*server_procedure)(void *cookie, char *argp,
     }
   if (__door_unref_pid != pid && (attributes & (DOOR_UNREF | DOOR_UNREF_MULTI)))
     {
-      door_load_libpthread ();
-      if (!thr_create_ptr)
+      if (door_load_libpthread () != 0)
         return -1;
 
       /* We haven't created the unreferenced thread.  */

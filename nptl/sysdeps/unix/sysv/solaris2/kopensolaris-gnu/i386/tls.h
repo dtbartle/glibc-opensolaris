@@ -40,7 +40,6 @@
 # define TLS_INIT_TP(thrdescr, secondcall) \
   ({ void *_thrdescr = (thrdescr);					      \
      tcbhead_t *_head = _thrdescr;					      \
-     int _result;							      \
      sysret_t ret;                                          \
 									      \
      _head->tcb = _thrdescr;						      \

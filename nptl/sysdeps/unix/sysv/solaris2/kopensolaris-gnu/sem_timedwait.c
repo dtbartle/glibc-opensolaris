@@ -32,7 +32,8 @@
 int
 sem_timedwait (sem_t *sem, const struct timespec *abstime)
 {
-  int errval = __sema_timedwait ((sema_t *)sem, abstime);
+  COPY_TIMESPEC (abstime)
+  int errval = __sema_timedwait ((sema_t *)sem, __abstime);
   if (errval == ETIME)
     errval = ETIMEDOUT;
   if (errval != 0)

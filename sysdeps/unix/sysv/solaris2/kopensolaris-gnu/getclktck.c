@@ -17,13 +17,10 @@
    02111-1307 USA.  */
 
 #include <time.h>
-
 #include <ldsodefs.h>
-
-#include <inline-syscall.h>
 #include <sys/sysconfig.h>
 
-extern long sysconfig (int which);
+extern long _sysconfig (int which);
 
 /* Return frequency of times().  */
 int

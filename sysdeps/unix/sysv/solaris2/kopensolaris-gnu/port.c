@@ -78,7 +78,7 @@ int port_sendn (int ports[], int errors[], unsigned int nent,
   int nevents = 0;
   for (unsigned int i = 0; i < nent; i += PORT_MAX_LIST)
     {
-      int errval = __systemcall (&ret, SYS_port, SYS_SUB_port_sendn |
+      int errval = __systemcall (&ret.rvals, SYS_port, SYS_SUB_port_sendn |
         PORT_SYS_NOPORT, &ports[i], &errors[i], MIN (nent - i, PORT_MAX_LIST),
         events, user);
       if (errval == 0 || errval == ETIME)
@@ -106,7 +106,7 @@ int port_getn (int port, port_event_t list[], unsigned int max,
       unsigned int *nget, struct timespec *timeout)
 {
   rval_t ret;
-  int errval = __systemcall (&ret, SYS_port, SYS_SUB_port_getn, port, list,
+  int errval = __systemcall (&ret.rvals, SYS_port, SYS_SUB_port_getn, port, list,
     max, *nget, timeout);
   if (errval == 0 || errval == ETIME)
     *nget = ret.rval1;

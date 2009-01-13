@@ -180,6 +180,7 @@ is_system_labeled   - labelsys:syslabeling  i:          is_system_labeled
 # implement these in helper files
 #
 
+sys_access          - access                i:si        __syscall_access
 sys_allocids        - sidsys:allocids       i:iii       __syscall_allocids
 sys_brk             - brk                   i:p         __syscall_brk
 sys_fcntl           - fcntl                 Ri:iiF      __syscall_fcntl

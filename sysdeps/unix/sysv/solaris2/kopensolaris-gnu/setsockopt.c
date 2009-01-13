@@ -21,7 +21,7 @@
 #include <sys/socket.h>
 
 extern int _so_setsockopt (int sock, int level, int option_name,
-    void *option_value, socklen_t option_len, int version);
+    const void *option_value, socklen_t option_len, int version);
 
 int
 __setsockopt (fd, level, optname, optval, optlen)

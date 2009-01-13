@@ -101,4 +101,47 @@ typedef struct rd_event_msg
 	  } u;
   } rd_event_msg_t;
 
+typedef enum
+  {
+	RD_RESOLVE_NONE,
+	RD_RESOLVE_STEP,
+	RD_RESOLVE_TARGET,
+	RD_RESOLVE_TARGET_STEP
+  } rd_skip_e;
+
+typedef struct rd_plt_info
+  {
+	rd_skip_e pi_skip_method;
+	long pi_nstep;
+	psaddr_t pi_target;
+	psaddr_t pi_baddr;
+	unsigned int pi_flags;
+  } rd_plt_info_t;
+
+/* pi_flags values.  */
+#define RD_FLG_PI_PLTBOUND	0x01
+
+/* rd_ctl commands.  */
+#define RD_CTL_SET_HELPPATH	0x01
+
+__BEGIN_DECLS
+
+extern void rd_delete (rd_agent_t *);
+extern char * rd_errstr (rd_err_e);
+extern rd_err_e rd_event_addr (rd_agent_t *, rd_event_e, rd_notify_t *);
+extern rd_err_e rd_event_enable (rd_agent_t *, int);
+extern rd_err_e rd_event_getmsg (rd_agent_t *, rd_event_msg_t *);
+extern rd_err_e rd_init (int);
+extern rd_err_e rd_ctl (int, void *);
+extern rd_err_e rd_loadobj_iter (rd_agent_t *, rl_iter_f *, void *);
+extern void rd_log (const int);
+extern rd_agent_t * rd_new (struct ps_prochandle *);
+extern rd_err_e rd_objpad_enable(struct rd_agent *, size_t);
+extern rd_err_e rd_plt_resolution (rd_agent_t *, psaddr_t, lwpid_t, psaddr_t,
+    rd_plt_info_t *);
+extern rd_err_e rd_get_dyns (rd_agent_t *, psaddr_t, void **, size_t *);
+extern rd_err_e rd_reset (struct rd_agent *);
+
+__END_DECLS
+
 #endif /* _RTLD_DB_H */

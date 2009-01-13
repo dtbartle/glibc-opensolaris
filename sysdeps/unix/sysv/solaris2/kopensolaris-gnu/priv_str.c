@@ -72,14 +72,14 @@ priv_set_t *priv_str_to_set (const char *buf, const char *sep,
           int negate = *str == '-' || *str == '!';
           if (negate)
             str++;
-          int privnum = priv_getbyname (str);
-          if (privnum == -1)
-            goto inval;
 
+          int res;
           if (negate)
-            priv_delset (set, privnum);
+            res = priv_delset (set, str);
           else
-            priv_addset (set, privnum);
+            res = priv_addset (set, str);
+          if (res == -1)
+            goto inval;
         }
     }
   while ((priv = strtok_r (NULL, sep, &saveptr))) ;

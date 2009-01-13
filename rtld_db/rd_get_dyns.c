@@ -67,8 +67,9 @@ rd_err_e rd_get_dyns (rd_agent_t *rdap, psaddr_t addr, void **dynpp,
   /* Scan all the Phdr's looking for DT_DYNAMIC.  */
   for (int i = 0; i < nphdr; i++)
     {
-      Elf32_Phdr phdr, *phdr_ptr = addr + ehdr.e_phoff + (ehdr.e_phentsize * i);
-      res = ps_pread (rdap->rd_php, phdr_ptr, &phdr, sizeof (phdr));
+      Elf32_Phdr phdr;
+      psaddr_t phdr_ptr = addr + ehdr.e_phoff + (ehdr.e_phentsize * i);
+      res = ps_pread (rdap->rd_php, (psaddr_t)phdr_ptr, &phdr, sizeof (phdr));
       if (res != PS_OK)
         return RD_ERR;
 

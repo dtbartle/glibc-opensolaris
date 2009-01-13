@@ -20,6 +20,8 @@
 #include <signal.h>
 #include <sys/procset.h>
 
+extern int sigsendset (procset_t *, int sig);
+
 int sigsend (idtype_t idtype, id_t id, int sig)
 {
   procset_t set;

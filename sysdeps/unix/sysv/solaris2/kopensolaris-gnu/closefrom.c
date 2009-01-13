@@ -18,6 +18,7 @@
    02111-1307 USA.  */
 
 #include <stdlib.h>
+#include <unistd.h>
 
 /* TODO: This should go away once we put fdwalk in stdlib.h.  */
 extern int fdwalk(int (*)(void *, int), void *);

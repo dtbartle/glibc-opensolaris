@@ -67,8 +67,9 @@ int __mutex_reltimedlock (mutex, reltime)
     return EINVAL;
 
   int errval;
+  COPY_TIMESPEC (reltime)
   do
-    errval = INLINE_SYSCALL (lwp_mutex_timedlock, 2, mutex, reltime);
+    errval = INLINE_SYSCALL (lwp_mutex_timedlock, 2, mutex, __reltime);
   while (errval == EINTR);
 
   /* The kernel sets EDEADLK for priority inherit mutexes.  */
@@ -79,7 +80,7 @@ int __mutex_reltimedlock (mutex, reltime)
       INTERNAL_SYSCALL_DECL (err);
       if (reltime)
         {
-          int res = INTERNAL_SYSCALL (nanosleep, err, 2, reltime, reltime);
+          int res = INTERNAL_SYSCALL (nanosleep, err, 2, __reltime, __reltime);
           do
             errval = INTERNAL_SYSCALL_ERRNO (res, err) ? EINTR : ETIMEDOUT;
           while (errval == EINTR);

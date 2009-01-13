@@ -30,7 +30,8 @@ pthread_rwlock_timedwrlock (rwlock, abstime)
      pthread_rwlock_t *rwlock;
      const struct timespec *abstime;
 {
-  int errval = __rw_timedwrlock ((rwlock_t *)rwlock, abstime);
+  COPY_TIMESPEC (abstime)
+  int errval = __rw_timedwrlock ((rwlock_t *)rwlock, __abstime);
   if (errval == ETIME)
     return ETIMEDOUT;
   return errval;

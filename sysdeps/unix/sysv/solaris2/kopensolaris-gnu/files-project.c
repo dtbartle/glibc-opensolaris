@@ -31,7 +31,7 @@ struct projent_data {};
 LINE_PARSER
 (,
  STRING_FIELD (result->pj_name, ISCOLON, 0);
- INT_FIELD (result->pj_projid, ISCOLON, 0, 10, (projid_t))
+ INT_FIELD (result->pj_projid, ISCOLON, 0, 10, (projid_t));
  STRING_FIELD (result->pj_comment, ISCOLON, 0);
  STRING_FIELD (result->pj_users, ISCOLON, 0);
  STRING_FIELD (result->pj_groups, ISCOLON, 0);

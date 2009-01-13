@@ -122,6 +122,7 @@ extern void priv_freeset (priv_set_t *sp);
 extern void priv_union (const priv_set_t *src, priv_set_t *dst);
 extern void priv_intersect (const priv_set_t *src, priv_set_t *dst);
 extern void priv_emptyset (priv_set_t *sp);
+extern void priv_fillset (priv_set_t *sp);
 extern int priv_addset (priv_set_t *sp, const char *priv);
 extern int priv_delset (priv_set_t *sp, const char *priv);
 extern void priv_copyset (const priv_set_t *src, priv_set_t *dst);

@@ -22,10 +22,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/sysmacros.h>
+#include <inline-syscall.h>
 
 #include <sysdep.h>
-#include <sys/syscall.h>
+#include <syscallP.h>
 #include <bp-checks.h>
+
+DECLARE_INLINE_SYSCALL (int, mknod, const char *, mode_t, dev_t);
 
 /* Create a device file named PATH, with permission and special bits MODE
    and device number DEV (which can be constructed from major and minor

@@ -23,4 +23,7 @@
 #define MS_DATA		0x04
 #define MS_NOMNTTAB	0x80
 
+extern int mount (const char *, const char *, int, ...);
+extern int umount2 (const char *, int);
+
 #endif /* _MOUNTP_H */

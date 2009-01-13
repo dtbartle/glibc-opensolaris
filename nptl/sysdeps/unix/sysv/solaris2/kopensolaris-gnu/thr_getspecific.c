@@ -26,7 +26,7 @@ int thr_getspecific (key, valuep)
       void **valuep;
 {
   /* We need to check that key is valid.  */
-  if (key < PTHREAD_KEYS_MAX)
+  if (key >= PTHREAD_KEYS_MAX)
     return EINVAL;
   uintptr_t seq = __pthread_keys[key].seq;
   if (KEY_UNUSED (seq) || KEY_USABLE (seq))

@@ -18,6 +18,7 @@
    02111-1307 USA.  */
 
 #include <streams/stropts.h>
+#include <mountP.h>
 
 int
 fdetach (path)

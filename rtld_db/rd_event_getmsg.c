@@ -25,7 +25,7 @@ Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 rd_err_e rd_event_getmsg (rd_agent_t *rdap, rd_event_msg_t *emsg)
 {
   /* Read rd_event_msg.  */
-  ps_err_e res = ps_pread (rdap->rd_php, rdap->rd_event_msg, emsg,
+  ps_err_e res = ps_pread (rdap->rd_php, (psaddr_t)rdap->rd_event_msg, emsg,
       sizeof (*emsg));
   if (res != PS_OK)
     return RD_DBERR;

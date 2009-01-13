@@ -20,6 +20,8 @@
 #ifndef _UADMINP_H
 #define _UADMINP_H
 
+#include <sys/types.h>
+
 /* uadmin cmd's.  */
 #define	A_REBOOT	1
 #define	A_SHUTDOWN	2
@@ -37,5 +39,7 @@
 #define	AD_SIBOOT	4
 #define	AD_POWEROFF	6
 #define	AD_NOSYNC	7
+
+extern int uadmin (int, int, uintptr_t);
 
 #endif /* _UADMINP_H */

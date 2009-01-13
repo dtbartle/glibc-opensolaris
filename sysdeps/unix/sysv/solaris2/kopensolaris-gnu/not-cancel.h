@@ -55,7 +55,7 @@ extern int openat64_not_cancel(int dirfd, const char *name,
       __ret;})
 #define write_not_cancel(fd, buf, n)                                    \
     ({int __fd = (fd);                                                  \
-      void *__buf = (buf);                                              \
+      const void *__buf = (buf);                                        \
       size_t __n = (n);                                                 \
       int __ret;                                                        \
       while ((__ret = syscall (SYS_write, __fd, __buf, __n)) == -1 &&   \
