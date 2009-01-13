@@ -60,15 +60,34 @@ __access (file, type)
 
           /* Test user bit.  */
           if (uid == buf.st_uid)
-            return (buf.st_mode & S_IXUSR) ? 0 : EACCES;
+            {
+              if ((buf.st_mode & S_IXUSR) == 0)
+                {
+                  __set_errno (EACCES);
+                  return -1;
+                }
+              return 0;
+            }
 
           /* Test gid bit.  */
           if (gid == buf.st_gid)
-            return (buf.st_mode & S_IXGRP) ? 0 : EACCES;
+            {
+              if ((buf.st_mode & S_IXGRP) == 0)
+                {
+                  __set_errno (EACCES);
+                  return -1;
+                }
+              return 0;
+            }
 
           /* Test other bit.  */
-          return (buf.st_mode & S_IXOTH) ? 0 : EACCES;
-      }
+          if ((buf.st_mode & S_IXOTH) == 0)
+            {
+              __set_errno (EACCES);
+              return -1;
+            }
+          return 0;
+        }
     }
 
   return res;
