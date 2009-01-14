@@ -40,7 +40,7 @@ mount               - mount                 i:ppippipi  __mount             moun
 nanosleep           - nanosleep             Ci:pP       __libc_nanosleep    __nanosleep nanosleep
 pathconf            - pathconf              i:pi        __pathconf          pathconf
 pcsample            - pcsample              i:pi        pcsample
-ppoll               - pollsys               Ci:pipp     ppoll
+ppoll               - pollsys               RCi:pipp    ppoll
 pread               - pread                 RCi:iPii    __libc_pread        __pread pread
 pread64             - pread64               Ci:iPii     __libc_pread64      __pread64 pread64
 profil              - profil                :piii       __profil            profil
