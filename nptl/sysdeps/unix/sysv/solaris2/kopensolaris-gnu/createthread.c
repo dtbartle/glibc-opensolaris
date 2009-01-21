@@ -98,6 +98,9 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
             errval = EPERM;
         }
 
+      /* TODO: remove this hack once scheduling works.  */
+      errval = 0;
+
       if (errval == 0 && !(attr->flags & ATTR_FLAG_SUSPENDED))
         {
           errval = INLINE_SYSCALL (lwp_continue, 1, pd->tid);
