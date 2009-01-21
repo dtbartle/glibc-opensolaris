@@ -1,3 +1,10 @@
+ABI changes:
+  Add d_type to struct dirent
+  Fix f_files/f_ffree bug in struct statfs (they are always ino64_t)
+  Adjust struct statfs or remove statfs/fstatfs outright
+    Implement statfs[64] in terms of statvfs[64]
+      Use sysfs to translate fsname into fstype
+
 /usr/include/gnu/stubs-32.h
 
 ptrace details:
