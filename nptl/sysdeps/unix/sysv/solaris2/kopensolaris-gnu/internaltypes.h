@@ -54,6 +54,7 @@ struct pthread_attr
 #define ATTR_FLAG_DAEMON		0x0080
 #define ATTR_FLAG_SUSPENDED		0x0100
 #define ATTR_FLAG_THR_CREATE	0x0200
+#define ATTR_FLAG_CREATE_FAILED		0x0400
 
 
 /* Mutex attribute data structure.  */

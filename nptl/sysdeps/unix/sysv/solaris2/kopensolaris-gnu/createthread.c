@@ -98,16 +98,24 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
             errval = EPERM;
         }
 
-      /* Resume thread if requested.  */
-      if (errval == 0)
+      if (errval == 0 && !(attr->flags & ATTR_FLAG_SUSPENDED))
         {
-          if (!(attr->flags & ATTR_FLAG_SUSPENDED))
-            errval = INLINE_SYSCALL (lwp_continue, 1, pd->tid);
+          errval = INLINE_SYSCALL (lwp_continue, 1, pd->tid);
         }
+      else if (errval != 0)
+        {
+          pd->flags |= ATTR_FLAG_CREATE_FAILED;
+          INLINE_SYSCALL (lwp_continue, 1, pd->tid);
 
-      /* Kill the thread if we didn't succeed above.  */
-      if (errval != 0)
-        INLINE_SYSCALL (lwp_kill, 2, pd->tid, SIGKILL);
+          if (!IS_DETACHED (pd))
+            {
+              int result;
+              lll_wait_tid (pd->tid);
+            }
+
+          /* Note: if the thread is detached, start_thread will free pd;
+             otherwise the caller of create_thread will free pd.  */
+        }
     }
 
   if (errval == 0)
@@ -120,13 +128,6 @@ create_thread (struct pthread *pd, const struct pthread_attr *attr,
   else
     {
       atomic_decrement (&__nptl_nthreads); /* Oops, we lied for a second.  */
-
-      /* Failed.  If the thread is detached, remove the TCB here since
-         the caller cannot do this.  The caller remembered the thread
-         as detached and cannot reverify that it is not since it must
-         not access the thread descriptor again.  */
-      if (IS_DETACHED (pd))
-        __deallocate_stack (pd);
     }
 
   return errval;

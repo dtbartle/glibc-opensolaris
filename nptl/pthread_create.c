@@ -245,6 +245,14 @@ start_thread (void *arg)
 {
   struct pthread *pd = (struct pthread *) arg;
 
+#ifdef ATTR_FLAG_CREATE_FAILED
+  if ((pd->flags & ATTR_FLAG_CREATE_FAILED) && IS_DETACHED (pd))
+    {
+      __free_tcb (pd);
+      __exit_thread_inline (0);
+    }
+#endif
+
 #if HP_TIMING_AVAIL
   /* Remember the time when the thread was started.  */
   hp_timing_t now;
