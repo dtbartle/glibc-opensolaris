@@ -25,7 +25,6 @@
 #ifndef	_BITS_TYPES_H
 #define	_BITS_TYPES_H	1
 
-#include <sys/feature_tests.h>
 #include <bits/wordsize.h>
 
 /* Convenience types.  */
