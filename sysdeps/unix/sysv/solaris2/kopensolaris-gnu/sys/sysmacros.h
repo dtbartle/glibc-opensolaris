@@ -20,7 +20,8 @@
 #ifndef _SYS_SYSMACROS_H
 #define _SYS_SYSMACROS_H
 
-#include <sys/feature_tests.h>
+#include <features.h>
+#include <sys/isa_defs.h>
 
 #ifdef __USE_MISC
 
