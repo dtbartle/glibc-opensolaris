@@ -25,8 +25,6 @@
 
 #ifdef __USE_MISC
 
-# include <sys/param.h>
-
 # define dtob(DD)	((DD) << DEV_BSHIFT)
 # define btod(BB)	(((BB) + DEV_BSIZE - 1) >> DEV_BSHIFT)
 # define btodt(BB)	((BB) >> DEV_BSHIFT)
