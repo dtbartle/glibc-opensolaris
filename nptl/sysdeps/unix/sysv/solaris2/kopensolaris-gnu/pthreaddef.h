@@ -45,8 +45,7 @@ extern void sigaction_atfork (void);
       {                                             \
         pd->stackblock = _stack->ss_sp;             \
         pd->stackblock_size = _stack->ss_size;      \
-      }                                             \
-    PLATFORM_THREAD_START
+      }
 
 /* Additional descr fields.  */
 # define PLATFORM_DESCR_FIELDS  \
