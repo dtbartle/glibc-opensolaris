@@ -52,7 +52,7 @@ sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
     sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h sys/mkdev.h \
     sys/klog.h
 sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h
-headers := $(filter-out sys/sysinfo.h sys/swap.h, $(headers))
+headers := $(filter-out sys/sysinfo.h, $(headers))
 endif
 
 ifeq ($(subdir),dirent)
