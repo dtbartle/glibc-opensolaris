@@ -81,7 +81,7 @@ endif
 ifeq ($(subdir),socket)
 sysdep_routines += cmsg_nxthdr sa_len
 sysdep_routines += netmask
-headers := $(filter-out sys/socketvar.h, $(headers))
+headers := $(filter-out sys/socketvar.h net/route.h, $(headers))
 endif
 
 ifeq ($(subdir),time)
