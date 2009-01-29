@@ -47,7 +47,7 @@ sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
 sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
     sys/systeminfo.h sys/link.h sys/procfs_isa.h sys/ttold.h sys/procset.h \
     sys/ptyvar.h sys/synch.h sys/fork.h sys/sockio.h sys/ioccom.h sys/tty.h \
-    sys/trap.h sys/sysconfig.h sys/ptms.h sys/stack.h sys/regset.h sys/fault.h \
+    sys/trap.h sys/sysconfig.h sys/ptms.h sys/stack.h sys/regset.h bits/regset.h sys/fault.h \
     sys/reg.h sys/siginfo.h sys/types32.h sys/isa_defs.h sys/int_types.h \
     sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h sys/mkdev.h \
     sys/klog.h
