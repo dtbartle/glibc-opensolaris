@@ -25,7 +25,7 @@
 # include <bits/sigstack.h>
 #endif
 #include <bits/sigset.h>
-#include <sys/regset.h>
+#include <bits/regset.h>
 #include <features.h>
 
 typedef struct ucontext
