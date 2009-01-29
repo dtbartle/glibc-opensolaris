@@ -24,6 +24,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#define E_OK 010
+
 int
 __euidaccess (file, type)
      const char *file;

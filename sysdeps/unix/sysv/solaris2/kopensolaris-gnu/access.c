@@ -27,6 +27,8 @@
 
 DECLARE_INLINE_SYSCALL (int, access, const char *, int);
 
+#define E_OK 010
+
 /* Test for access to FILE.  */
 int
 __access (file, type)

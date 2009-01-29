@@ -28,8 +28,6 @@
 # include <bits/uio.h>
 #endif
 
-#define E_OK	010
-
 
 /* open/fcntl */
 #define	O_RDONLY	0
