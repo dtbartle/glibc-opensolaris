@@ -30,7 +30,9 @@ __libc_fork (void)
 {
   rval_t res;
   res.rval64 = INLINE_SYSCALL (forkx, 1, 0);
-  if (res.rval64 == -1)
+
+  /* Only the lower 32-bits are set to -1 on error (see NOTES.opensolaris).  */
+  if (res.rval1 == -1)
     return (pid_t)-1;
   else if (res.rval2 != 0)
     return 0;

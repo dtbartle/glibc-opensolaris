@@ -1,5 +1,7 @@
 # File name Caller Syscall name Args Strong name Weak names
 
+# Important: see NOTES.opensolaris about syscalls that return a 64-bit integer.
+
 #
 # these implement libc functions directly
 #

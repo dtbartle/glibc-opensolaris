@@ -149,6 +149,31 @@ nsswitch:
     This function is used to parse a file directly, rather than going through
     nsswitch.conf and its databases.
 
+syscalls:
+
+  Dealing with 64-bit returns in 32-bit code is tricky. For 32-bit x86, %eax
+  and %edx are not saved across function calls. Since syscalls always return
+  a 32-bit integer we always have to push/pop %eax across functions. However,
+  since there are very few 64-bit returning syscalls, we don't save %edx unless
+  we have a 64-bit returning syscall. The following is a list of 64-bit
+  returning syscalls:
+
+    getgid, getuid, getpid, forkx, pipe, lseek64
+
+  Currently, the only time we actually call functions is in the case of
+  cancellation points (we call pthread_async_enable/disable). lseek64 is the
+  only syscall listed above that is a cancellation point. To deal with this,
+  we define SYSCALL_64BIT_RETURN in lseek64.S, which triggers inclusion of
+  %edx saving.
+
+  Additionally, 64-bit returning syscalls set both %eax and %edx to -1 on
+  error. Similarily this behaviour is enabled by SYSCALL_64BIT_RETURN. Note
+  that getegid, geteuid, and getppid are special in that their libc
+  equivalents actually return 32-bit integers so we don't need to worry about
+  %edx on error. With forkx and pipe, it suffices to check only the lower
+  32-bits (one of the pid/fd's returned) for -1. For lseek64 we do have to
+  check the full 64-bit return for -1.
+
 sysconf:
 
   Many of the _SC_ sysconf values are obtained via the systemconf syscall. The

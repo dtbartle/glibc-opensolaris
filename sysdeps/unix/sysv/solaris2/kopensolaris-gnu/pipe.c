@@ -36,8 +36,11 @@ __pipe (__pipedes)
 
   rval_t result;
   result.rval64 = INLINE_SYSCALL (pipe, 0);
-  if (result.rval64 == -1)
+
+  /* Only the lower 32-bits are set to -1 on error (see NOTES.opensolaris).  */
+  if (result.rval1 == -1)
     return -1;
+
   __pipedes[0] = result.rval1;
   __pipedes[1] = result.rval2;
 

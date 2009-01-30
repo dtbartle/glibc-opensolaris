@@ -30,6 +30,15 @@
 #undef PSEUDO_ERRVAL
 #undef PSEUDO_SUBCALL_NOERRNO
 
+/* This is needed so that we don't clobber %edx in the cancellation calls.  */
+#ifdef SYSCALL_64BIT_RETURN
+# define SYSCALL_64BIT_PUSH_ASM     pushl %edx; cfi_adjust_cfa_offset (4);
+# define SYSCALL_64BIT_POP_ASM      popl %edx; cfi_adjust_cfa_offset (-4);
+#else
+# define SYSCALL_64BIT_PUSH_ASM
+# define SYSCALL_64BIT_POP_ASM
+#endif
+
 #ifdef SYSCALL_RESTARTABLE
 # define DO_RESTART_CANCEL \
     cmpl $ERESTART, %eax; \
@@ -67,14 +76,18 @@
     jnb 3f;										\
     DO_RESTART_CANCEL                             \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
+    SYSCALL_64BIT_PUSH_ASM                  \
     movl %ecx, %eax;                        \
     CDISABLE;                           \
+    SYSCALL_64BIT_POP_ASM                     \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
     jmp SYSCALL_ERROR_LABEL;                           \
 3:                                                  \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
+    SYSCALL_64BIT_PUSH_ASM                  \
     movl %ecx, %eax;                        \
     CDISABLE;                           \
+    SYSCALL_64BIT_POP_ASM                     \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
   L(pseudo_end):
 
@@ -116,8 +129,10 @@
     jnb 3f;										\
     DO_RESTART_CANCEL                             \
     pushl %eax; cfi_adjust_cfa_offset (4);  \
+    SYSCALL_64BIT_PUSH_ASM                  \
     movl %ecx, %eax;                        \
     CDISABLE;                           \
+    SYSCALL_64BIT_POP_ASM                     \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
     movl 0(%esp), %ecx;                               \
     movl %ecx, 4(%esp);							\
@@ -125,8 +140,10 @@
     jmp SYSCALL_ERROR_LABEL;                           \
 3:											\
     pushl %eax; cfi_adjust_cfa_offset (4);  \
+    SYSCALL_64BIT_PUSH_ASM                  \
     movl %ecx, %eax;                        \
     CDISABLE;                           \
+    SYSCALL_64BIT_POP_ASM                     \
     popl %eax; cfi_adjust_cfa_offset (-4);    \
     movl 0(%esp), %ecx;                               \
     movl %ecx, 4(%esp);							\
