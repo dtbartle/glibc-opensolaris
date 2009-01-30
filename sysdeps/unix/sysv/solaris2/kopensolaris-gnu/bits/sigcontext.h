@@ -21,6 +21,4 @@
 # error "Never use <bits/sigcontext.h> directly; include <signal.h> instead."
 #endif
 
-#include <sys/ucontext.h>
-
 struct sigcontext;
