@@ -81,7 +81,10 @@
 #endif	/* <signal.h> included.  */
 
 #define _NSIG		49	/* Biggest signal number + 1 */
-#define MAXSIG		48	/* Biggest signal number */
+
+#ifdef __USE_MISC
+# define MAXSIG		48	/* Biggest signal number */
+#endif
 
 /* This is here for lack of a better location.  */
 #define SIG2STR_MAX	32
