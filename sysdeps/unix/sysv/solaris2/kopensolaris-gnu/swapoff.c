@@ -24,7 +24,7 @@
 int
 swapoff (const char *path)
 {
-  /* call uadmin */
+  swapres_t sr;
   sr.sr_name = (char*)path;
   sr.sr_start = 0;
   sr.sr_length = 0;

@@ -26,9 +26,6 @@ swapon (path)
      const char *path;
 {
   swapres_t sr;
-  int result;
-
-  /* call uadmin */
   sr.sr_name = (char*)path;
   sr.sr_start = 0;
   sr.sr_length = 0;
