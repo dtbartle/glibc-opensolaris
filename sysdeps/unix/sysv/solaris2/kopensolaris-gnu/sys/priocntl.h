@@ -24,82 +24,89 @@
 #include <sys/types.h>
 #include <sys/procset.h>
 
-#define PC_VERSION		1
+#define PC_VERSION	1
 
-#define PC_GETCID		0
+#define PC_GETCID	0
 #define PC_GETCLINFO	1
-#define PC_SETPARMS		2
-#define PC_GETPARMS		3
-#define PC_ADMIN		4
+#define PC_SETPARMS	2
+#define PC_GETPARMS	3
+#define PC_ADMIN	4
 #define PC_GETPRIRANGE	5
-#define PC_DONICE		6
+#define PC_DONICE	6
 #define PC_SETXPARMS	7
 #define PC_GETXPARMS	8
-#define PC_SETDFLCL		9
-#define PC_GETDFLCL		10
-#define PC_DOPRIO		11
+#define PC_SETDFLCL	9
+#define PC_GETDFLCL	10
+#define PC_DOPRIO	11
 
-#define PC_CLNULL		-1
+#define PC_CLNULL	-1
 
 typedef struct pcinfo
-{
+  {
 	id_t pc_cid;
-#define PC_CLNMSZ		16
+#define PC_CLNMSZ	16
 	char pc_clname[PC_CLNMSZ];
-#define PC_CLINFOSZ		(32 / sizeof (int))
+#define PC_CLINFOSZ	(32 / sizeof (int))
 	int pc_clinfo[PC_CLINFOSZ];
-} pcinfo_t;
+  } pcinfo_t;
+
+typedef struct pcparms
+  {
+    id_t pc_cid;
+#define PC_CLPARMSZ	(32 / sizeof (int))
+    int pc_clparms[PC_CLPARMSZ];
+  } pcparms_t;
 
 typedef struct pcnice
-{
+  {
 	int pc_val;
 	int pc_op;
-} pcnice_t;
+  } pcnice_t;
 
 /* pc_op values.  */
-#define PC_GETNICE		0
-#define PC_SETNICE		1
+#define PC_GETNICE	0
+#define PC_SETNICE	1
 
 typedef struct pcprio
-{
+  {
 	int pc_op;
 	id_t pc_cid;
 	int pc_val;
-} pcprio_t;
+  } pcprio_t;
 
 /* pc_op values.  */
-#define PC_GETPRIO		0
-#define PC_SETPRIO		1
+#define PC_GETPRIO	0
+#define PC_SETPRIO	1
 
 typedef struct pc_vaparm
-{
+  {
 	int pc_key;
 	unsigned long long pc_parm;
-} pc_vaparm_t;
+  } pc_vaparm_t;
 
 /* pc_key values.  */
-#define PC_KY_NULL		0
+#define PC_KY_NULL	0
 #define PC_KY_CLNAME	1
 
 typedef struct pc_vaparms
-{
+  {
 	unsigned int pc_vaparmscnt;
 #define PC_VAPARMCNT	8
 	pc_vaparm_t pc_parms[PC_VAPARMCNT];
-} pc_vaparms_t;
+  } pc_vaparms_t;
 
 typedef struct pcpri
-{
+  {
 	id_t pc_cid;
 	pri_t pc_clpmax;
 	pri_t pc_clpmin;
-} pcpri_t;
+  } pcpri_t;
 
 typedef struct pcadmin
-{
+  {
 	id_t pc_cid;
 	__caddr_t pc_cladmin;
-} pcadmin_t;
+  } pcadmin_t;
 
 __BEGIN_DECLS
 
