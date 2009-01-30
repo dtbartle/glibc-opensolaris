@@ -91,7 +91,6 @@
     popl %eax; cfi_adjust_cfa_offset (-4);    \
   L(pseudo_end):
 
-/* XXX: This uses %edx, so subcalls that return 64-bit ints won't work.  */
 # undef  PSEUDO_SUBCALL
 # define PSEUDO_SUBCALL(name, syscall_name, subcall_name, args)				      \
   .text;                                      \
