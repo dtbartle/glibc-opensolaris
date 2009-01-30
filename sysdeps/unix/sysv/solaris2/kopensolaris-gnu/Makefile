@@ -61,7 +61,6 @@ endif
 
 ifeq ($(subdir),inet)
 sysdep_routines += _link_aton _link_ntoa
-headers := $(filter-out netinet/if_ether.h, $(headers))
 endif
 
 ifeq ($(subdir),posix)
