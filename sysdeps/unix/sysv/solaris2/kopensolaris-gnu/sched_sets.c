@@ -19,7 +19,7 @@
 
 #include <schedP.h>
 #include <errno.h>
-#include <sys/priocntl.h>
+#include <sys/procset.h>
 #include <sched.h>
 
 int
