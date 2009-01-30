@@ -85,11 +85,3 @@ struct termcb
   char st_vrow;
   char st_lrow;
 };
-
-/* Suns use a different layout for `struct ttysize', and TIOCGSIZE and
-   TIOCGWINSZ are separate commands that do the same thing with different
-   structures (likewise TIOCSSIZE and TIOCSWINSZ).  */
-struct ttysize
-{
-  int ts_lines, ts_cols;	/* Lines and columns, in characters.  */
-};

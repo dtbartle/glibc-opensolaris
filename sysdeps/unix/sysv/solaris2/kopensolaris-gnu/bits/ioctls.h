@@ -303,20 +303,3 @@
 #define	TIOCM_RNG	0200
 #define	TIOCM_RI	TIOCM_RNG
 #define	TIOCM_DSR	0400
-
-#define TIOCPKT		_IOW('t', 112, int)
-#define TIOCPKT_DATA		0x00
-#define TIOCPKT_FLUSHREAD	0x01
-#define TIOCPKT_FLUSHWRITE	0x02
-#define TIOCPKT_STOP		0x04
-#define TIOCPKT_START		0x08
-#define TIOCPKT_NOSTOP		0x10
-#define TIOCPKT_DOSTOP		0x20
-#define TIOCPKT_IOCTL		0x40
-
-#define TIOCUCNTL	_IOW('t', 102, int)
-#define TIOCTCNTL	_IOW('t', 32, int)
-#define TIOCISPACE	_IOR('t', 128, int)
-#define TIOCISIZE	_IOR('t', 129, int)
-#define	TIOCSSIZE	_IOW('t', 37, struct ttysize)
-#define	TIOCGSIZE	_IOR('t', 38, struct ttysize)
