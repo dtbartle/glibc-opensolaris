@@ -27,6 +27,11 @@
 extern const char * _dl_sun_execname;
 extern int _dl_malloc_prot_exec;
 
+/* Since we use __thread in a few places in libc, we need a bit more surplus.  */
+#include <deflt.h>
+#include <vfsentP.h>
+#define TLS_STATIC_EXTRA_SURPLUS	(2 * (_DEFLT_BUFSIZE + VFS_LINE_MAX + 32))
+
 /* Get the real definitions.  */
 #include_next <ldsodefs.h>
 
@@ -46,7 +51,5 @@ extern void _dl_non_dynamic_init (void) internal_function;
 
 # define DLOPEN_ALLOWED_FLAGS	(RTLD_BINDING_MASK | RTLD_NOLOAD | \
 	RTLD_DEEPBIND | RTLD_GLOBAL | RTLD_LOCAL | RTLD_NODELETE)
-
-#define DLERR_USE_INTERNAL_MALLOC
 
 #endif /* ldsodefs.h */

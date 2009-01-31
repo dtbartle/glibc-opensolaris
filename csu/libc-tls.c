@@ -61,7 +61,7 @@ struct dtv_slotinfo_list *_dl_tls_dtv_slotinfo_list;
 size_t _dl_tls_static_nelem;
 /* Size of the static TLS block.  Giving this initialized value
    preallocates some surplus bytes in the static TLS area.  */
-size_t _dl_tls_static_size = 2048;
+size_t _dl_tls_static_size = 2048 + TLS_STATIC_EXTRA_SURPLUS;
 /* Size actually allocated in the static TLS block.  */
 size_t _dl_tls_static_used;
 /* Alignment requirement of the static TLS block.  */
