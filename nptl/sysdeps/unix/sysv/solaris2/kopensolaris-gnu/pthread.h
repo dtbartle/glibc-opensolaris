@@ -723,10 +723,10 @@ extern int pthread_mutex_lock (pthread_mutex_t *__mutex)
 extern int pthread_mutex_timedlock (pthread_mutex_t *__restrict __mutex,
                                     __const struct timespec *__restrict
                                     __abstime) __THROW __nonnull ((1, 2));
-extern int pthread_mutex_reltimedlock (pthread_mutex_t *__restrict __mutex,
+#endif
+extern int pthread_mutex_reltimedlock_np (pthread_mutex_t *__restrict __mutex,
                                     __const struct timespec *__restrict
                                     __reltime) __THROW __nonnull ((1, 2));
-#endif
 
 /* Unlock a mutex.  */
 extern int pthread_mutex_unlock (pthread_mutex_t *__mutex)
