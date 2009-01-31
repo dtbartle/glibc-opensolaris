@@ -80,24 +80,6 @@ int getvfsent (FILE *fp, struct vfstab *vp)
 }
 
 
-int getvfsfile (FILE *fp, struct vfstab *vp, char *file)
-{
-  struct vfstab vref = {
-   .vfs_mountp = file
-  };
-  return getvfsany (fp, vp, &vref);
-}
-
-
-int getvfsspec (FILE *fp, struct vfstab *vp, char *spec)
-{
-  struct vfstab vref = {
-    .vfs_special = spec
-  };
-  return getvfsany (fp, vp, &vref);
-}
-
-
 int getvfsany (FILE *fp, struct vfstab *vp, struct vfstab *vpref)
 {
   int res;
@@ -114,4 +96,22 @@ int getvfsany (FILE *fp, struct vfstab *vp, struct vfstab *vpref)
     }
 
   return res;
+}
+
+
+int getvfsfile (FILE *fp, struct vfstab *vp, char *file)
+{
+  struct vfstab vref = {
+   .vfs_mountp = file
+  };
+  return getvfsany (fp, vp, &vref);
+}
+
+
+int getvfsspec (FILE *fp, struct vfstab *vp, char *spec)
+{
+  struct vfstab vref = {
+    .vfs_special = spec
+  };
+  return getvfsany (fp, vp, &vref);
 }

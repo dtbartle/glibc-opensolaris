@@ -37,6 +37,4 @@ struct vfstab
 #define VFS_TOOMANY	2
 #define VFS_TOOFEW	3
 
-int getvfsany (FILE *, struct vfstab *vp, struct vfstab *vref);
-
 #endif /* _VFSENTP_H */
