@@ -49,11 +49,12 @@ sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
     sys/synch.h sys/fork.h sys/sockio.h sys/ioccom.h sys/tty.h sys/priocntl.h \
     sys/trap.h sys/sysconfig.h sys/ptms.h sys/stack.h sys/regset.h \
     bits/regset.h sys/priv.h sys/priv_names.h sys/uadmin.h sys/vfstab.h \
-    sys/fault.h sys/door.h sys/mount.h sys/procfs.h sys/old_procfs.h sys/port.h \
+    sys/fault.h sys/door.h sys/mount.h sys/procfs.h sys/old_procfs.h \
     sys/reg.h sys/siginfo.h sys/types32.h sys/isa_defs.h sys/int_types.h \
     sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h sys/mkdev.h \
     sys/klog.h sys/zone.h sys/processor.h sys/pset.h sys/rctl.h sys/task.h \
-    sys/exacct.h sys/acct.h sys/acctctl.h sys/utssys.h sys/corectl.h
+    sys/exacct.h sys/acct.h sys/acctctl.h sys/utssys.h sys/corectl.h \
+    sys/port.h sys/acl.h
 sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h door.h \
     ucred.h priv.h zone.h port.h deflt.h procfs.h rctl.h
 headers := $(filter-out sys/sysinfo.h, $(headers))
