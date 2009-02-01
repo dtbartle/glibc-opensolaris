@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <sys/swap.h>
-#include <uadminP.h>
+#include <sys/uadmin.h>
 #include <errno.h>
 
 int

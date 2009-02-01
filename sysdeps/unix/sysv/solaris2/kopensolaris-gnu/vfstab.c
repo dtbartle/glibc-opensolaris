@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <stdio.h>
-#include <vfsentP.h>
+#include <sys/vfstab.h>
 #include <string.h>
 
 #define _VFS_DELIM		" \t"

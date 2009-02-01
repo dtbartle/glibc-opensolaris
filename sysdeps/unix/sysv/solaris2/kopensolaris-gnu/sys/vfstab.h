@@ -17,27 +17,38 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _UCREDP_H
-#define _UCREDP_H
+#ifndef _SYS_VFSTAB_H
+#define _SYS_VFSTAB_H
 
-#include <sys/types.h>
+#include <features.h>
+#include <stdio.h>
 
-struct ucred_s
+struct vfstab
   {
-	uint32_t uc_size;
-	uint32_t uc_credoff;
-	uint32_t uc_privoff;
-	pid_t uc_pid;
-	uint32_t uc_audoff;
-	zoneid_t uc_zoneid;
-	projid_t uc_projid;
-	uint32_t uc_labeloff;
+	char *vfs_special;
+	char *vfs_fsckdev;
+	char *vfs_mountp;
+	char *vfs_fstype;
+	char *vfs_fsckpass;
+	char *vfs_automnt;
+	char *vfs_mntopts;
   };
 
-#include <ucred.h>
+#define VFS_LINE_MAX	1024
 
-#define BSLABEL_T_SIZE		36
+#define VFS_TOOLONG	1
+#define VFS_TOOMANY	2
+#define VFS_TOOFEW	3
 
-extern ucred_t *_ucred_alloc (void);
+__BEGIN_DECLS
 
-#endif /* _UCREDP_H */
+extern int getvfsent (FILE *, struct vfstab *);
+extern int getvfsspec (FILE *, struct vfstab *, char *);
+extern int getvfsfile (FILE *, struct vfstab *, char *);
+extern int getvfsany (FILE *, struct vfstab *, struct vfstab *);
+extern void vfsnull (FILE *, struct vfstab *);
+extern void putvfsent (FILE *, struct vfstab *);
+
+__END_DECLS
+
+#endif /* _SYS_VFSTAB_H */

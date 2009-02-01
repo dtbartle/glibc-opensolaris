@@ -20,64 +20,7 @@
 #ifndef _PRIVP_H
 #define _PRIVP_H
 
-#include <sys/types.h>
-#include <stdint.h>
-
-typedef uint32_t priv_chunk_t;
-typedef struct priv_set priv_set_t;
-typedef const char *priv_ptype_t;
-
-typedef struct prpriv
-  {
-	uint32_t pr_nsets;
-	uint32_t pr_setsize;
-	uint32_t pr_infosize;
-	priv_chunk_t pr_sets[1];
-  } prpriv_t;
-
-typedef struct priv_impl_info
-  {
-	uint32_t priv_headersize;
-	uint32_t priv_flags;
-	uint32_t priv_nsets;
-	uint32_t priv_setsize;
-	uint32_t priv_max;
-	uint32_t priv_infosize;
-	uint32_t priv_globalinfosize;
-  } priv_impl_info_t;
-
-#define PRIV_IMPL_INFO_SIZE(p) \
-	((p)->priv_headersize + (p)->priv_globalinfosize)
-
-typedef struct priv_info
-  {
-	uint32_t priv_info_type;
-	uint32_t priv_info_size;
-  } priv_info_t;
-
-typedef struct priv_info_uint
-  {
-	priv_info_t info;
-	unsigned int val;
-  } priv_info_uint_t;
-
-typedef struct priv_info_set
-  {
-	priv_info_t info;
-	priv_chunk_t set[1];
-  } priv_info_set_t;
-
-typedef struct priv_info_names
-  {
-	priv_info_t info;
-	int cnt;
-	char names[1];
-  } priv_info_names_t;
-
-#define PRIV_INFO_SETNAMES	1
-#define PRIV_INFO_PRIVNAMES	2
-#define PRIV_INFO_BASICPRIVS	3
-#define PRIV_INFO_FLAGS		4
+#include <priv.h>
 
 typedef struct priv_data
   {
@@ -89,22 +32,7 @@ typedef struct priv_data
 	priv_set_t *pd_basicprivs;
   } priv_data_t;
 
-typedef enum priv_op
-{
-	PRIV_ON,
-	PRIV_OFF,
-	PRIV_SET
-} priv_op_t;
-
-#define PRIV_EFFECTIVE		"Effective"
-#define PRIV_INHERITABLE	"Inheritable"
-#define PRIV_PERMITTED		"Permitted"
-#define PRIV_LIMIT		"Limit"
-
-#define PU_RESETGROUPS		0x01
-#define PU_LIMITPRIVS		0x02
-#define PU_INHERITPRIVS		0x04
-#define PU_CLEARLIMITSET	0x08
+extern const priv_data_t * __priv_parse_data_cached (void);
 
 #define __NPRIVBITS	(8 * sizeof (priv_chunk_t))
 #define __PRIVELT(pr)	((pr) / __NPRIVBITS)
@@ -112,21 +40,9 @@ typedef enum priv_op
 #define __PRIVSETCHUNKS	(getprivimplinfo()->priv_setsize)
 #define __PRIVSETSIZE	(__PRIVSETCHUNKS * sizeof (priv_chunk_t))
 
-extern const priv_data_t * __priv_parse_data_cached (void);
-extern const priv_impl_info_t *getprivimplinfo (void);
-extern int setppriv (priv_op_t, priv_ptype_t, const priv_set_t *);
-extern int getppriv (priv_ptype_t, priv_set_t *);
-extern int priv_getsetbyname (const char *);
-extern priv_set_t *priv_allocset (void);
-extern void priv_freeset (priv_set_t *sp);
-extern void priv_union (const priv_set_t *src, priv_set_t *dst);
-extern void priv_intersect (const priv_set_t *src, priv_set_t *dst);
-extern void priv_emptyset (priv_set_t *sp);
-extern void priv_fillset (priv_set_t *sp);
-extern int priv_addset (priv_set_t *sp, const char *priv);
-extern int priv_delset (priv_set_t *sp, const char *priv);
-extern void priv_copyset (const priv_set_t *src, priv_set_t *dst);
-extern boolean_t priv_issubset (const priv_set_t *src, const priv_set_t *dst);
-extern int priv_getbyname (const char *privname);
+#define PU_RESETGROUPS		0x01
+#define PU_LIMITPRIVS		0x02
+#define PU_INHERITPRIVS		0x04
+#define PU_CLEARLIMITSET	0x08
 
 #endif /* _PRIVP_H */

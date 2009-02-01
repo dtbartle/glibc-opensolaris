@@ -1,5 +1,5 @@
 #include <sysdep.h>
-#include <doorP.h>
+#include <sys/door.h>
 
 oDOOR_RESULTS_PC	offsetof (struct door_results, pc)
 oDOOR_RESULTS_NSERVERS	offsetof (struct door_results, nservers)

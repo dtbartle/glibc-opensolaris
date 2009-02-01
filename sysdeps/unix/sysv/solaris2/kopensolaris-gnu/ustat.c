@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <ustatP.h>
+#include <ustat.h>
 #include <sys/types.h>
 #include <unistd.h>
 

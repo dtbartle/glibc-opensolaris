@@ -17,27 +17,32 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _UCREDP_H
-#define _UCREDP_H
+#ifndef _RCTL_H
+#define _RCTL_H
 
+#include <sys/rctl.h>
 #include <sys/types.h>
+#include <features.h>
 
-struct ucred_s
-  {
-	uint32_t uc_size;
-	uint32_t uc_credoff;
-	uint32_t uc_privoff;
-	pid_t uc_pid;
-	uint32_t uc_audoff;
-	zoneid_t uc_zoneid;
-	projid_t uc_projid;
-	uint32_t uc_labeloff;
-  };
+__BEGIN_DECLS
 
-#include <ucred.h>
+int rctl_walk(int (*)(const char *, void *), void *);
 
-#define BSLABEL_T_SIZE		36
+hrtime_t rctlblk_get_firing_time (rctlblk_t *);
+unsigned int rctlblk_get_global_action (rctlblk_t *);
+unsigned int rctlblk_get_global_flags (rctlblk_t *);
+unsigned int rctlblk_get_local_action (rctlblk_t *, int *);
+unsigned int rctlblk_get_local_flags (rctlblk_t *);
+rctl_priv_t rctlblk_get_privilege (rctlblk_t *);
+id_t rctlblk_get_recipient_pid (rctlblk_t *);
+rctl_qty_t rctlblk_get_value(rctlblk_t *);
+rctl_qty_t rctlblk_get_enforced_value (rctlblk_t *);
+void rctlblk_set_local_action (rctlblk_t *, unsigned int, int);
+void rctlblk_set_local_flags (rctlblk_t *, unsigned int);
+void rctlblk_set_privilege (rctlblk_t *, rctl_priv_t);
+void rctlblk_set_recipient_pid (rctlblk_t *, id_t);
+size_t rctlblk_size (void);
 
-extern ucred_t *_ucred_alloc (void);
+__END_DECLS
 
-#endif /* _UCREDP_H */
+#endif /* _RCTL_H */

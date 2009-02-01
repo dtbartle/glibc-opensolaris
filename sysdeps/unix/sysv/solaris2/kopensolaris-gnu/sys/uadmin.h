@@ -17,27 +17,49 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _UCREDP_H
-#define _UCREDP_H
+#ifndef _UADMINP_H
+#define _UADMINP_H
 
 #include <sys/types.h>
 
-struct ucred_s
-  {
-	uint32_t uc_size;
-	uint32_t uc_credoff;
-	uint32_t uc_privoff;
-	pid_t uc_pid;
-	uint32_t uc_audoff;
-	zoneid_t uc_zoneid;
-	projid_t uc_projid;
-	uint32_t uc_labeloff;
-  };
+/* uadmin cmd's.  */
+#define	A_REBOOT	1
+#define	A_SHUTDOWN	2
+#define	A_FREEZE	3
+#define	A_REMOUNT	4
+#define	A_DUMP		5
+#define	A_FTRACE	15
+#define	A_SWAPCTL	16
+#define A_SDTTEST	22
 
-#include <ucred.h>
+/* Shutdown-related fcn's.  */
+#define	AD_HALT		0
+#define	AD_BOOT		1
+#define	AD_IBOOT	2
+#define	AD_SBOOT	3
+#define	AD_SIBOOT	4
+#define	AD_POWEROFF	6
+#define	AD_NOSYNC	7
+#define AD_FASTREBOOT	8
+#define AD_FASTREBOOT_DRYRUN	9
 
-#define BSLABEL_T_SIZE		36
+/* Freeze-related fcn's.  */
+#define AD_COMPRESS	0
+#define AD_FORCE	1
+#define AD_CHECK	2
+#define AD_REUSEINIT	3
+#define AD_REUSABLE	4
+#define AD_REUSEFINI	5
+#define AD_SUSPEND_TO_DISK	AD_COMPRESS
+#define AD_CHECK_SUSPEND_TO_DISK	AD_CHECK
+#define AD_SUSPEND_TO_RAM	20
+#define AD_CHECK_SUSPEND_TO_RAM	21
 
-extern ucred_t *_ucred_alloc (void);
+#define AD_FTRACE_START	1
+#define AD_FTRACE_STOP	2
 
-#endif /* _UCREDP_H */
+#define BOOTARGS_MAX	256
+
+extern int uadmin (int, int, uintptr_t);
+
+#endif /* _UADMINP_H */

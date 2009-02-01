@@ -18,7 +18,8 @@
    02111-1307 USA.  */
 
 #include <privP.h>
-#include <zoneP.h>
+#include <priv.h>
+#include <zone.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>

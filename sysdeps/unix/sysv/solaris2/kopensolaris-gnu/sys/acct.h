@@ -1,6 +1,6 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Declarations of privilege functions and types.
+   Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,19 +17,46 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _USTATP_H
-#define _USTATP_H
+#ifndef _SYS_ACCT_H
+#define _SYS_ACCT_H
 
+#include <features.h>
 #include <sys/types.h>
+#include <sys/types32.h>
 
-struct ustat
+#define AFORK		0001
+#define ASU		0002
+#ifdef SUN_SRC_COMPAT
+# define ACOMPAT	0004
+# define ACORE		0010
+# define AXSIG		0020
+#endif
+#define AEXPND		0040
+#define ACCTF		0300
+
+typedef unsigned short comp_t;
+
+struct acct
   {
-	daddr_t f_tfree;
-	ino_t f_tinode;
-	char f_fname[6];
-	char f_fpack[6];
-  };
+	char ac_flag;
+	char ac_stat;
+	uid32_t ac_uid;
+	gid32_t ac_gid;
+	dev32_t ac_tty;
+	time32_t ac_btime;
+	comp_t ac_utime;
+	comp_t ac_stime;
+	comp_t ac_etime;
+	comp_t ac_mem;
+	comp_t ac_io;
+	comp_t ac_rw;
+	char ac_comm[8];
+};
 
-extern int ustat (dev_t, struct ustat *);
+__BEGIN_DECLS
 
-#endif /* _USTATP_H */
+extern int acct (const char *);
+
+__END_DECLS
+
+#endif /* _SYS_ACCT_H */

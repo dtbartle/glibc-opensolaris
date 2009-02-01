@@ -1,4 +1,4 @@
-/* Declarations of processor sets.
+/* Include file for getting new procfs API
    Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -17,9 +17,14 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _PSETP_H
-#define _PSETP_H
+#ifndef _PROCFS_H
+#define _PROCFS_H
 
-typedef int psetid_t;
+#ifdef _STRUCTURED_PROC
+# undef _STRUCTURED_PROC
+#endif
+#define _STRUCTURED_PROC    1
 
-#endif /* _PSETP_H */
+#include <sys/procfs.h>
+
+#endif /* _PROCFS_H */

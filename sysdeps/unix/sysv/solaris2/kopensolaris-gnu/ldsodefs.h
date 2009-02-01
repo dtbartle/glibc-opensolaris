@@ -28,9 +28,7 @@ extern const char * _dl_sun_execname;
 extern int _dl_malloc_prot_exec;
 
 /* Since we use __thread in a few places in libc, we need a bit more surplus.  */
-#include <deflt.h>
-#include <vfsentP.h>
-#define TLS_STATIC_EXTRA_SURPLUS	(2 * (_DEFLT_BUFSIZE + VFS_LINE_MAX + 32))
+#define TLS_STATIC_EXTRA_SURPLUS	4096
 
 /* Get the real definitions.  */
 #include_next <ldsodefs.h>

@@ -17,29 +17,19 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _UADMINP_H
-#define _UADMINP_H
+#ifndef _PORT_H
+#define _PORT_H
 
 #include <sys/types.h>
+#include <sys/port.h>
 
-/* uadmin cmd's.  */
-#define	A_REBOOT	1
-#define	A_SHUTDOWN	2
-#define	A_FREEZE	3
-#define	A_REMOUNT	4
-#define	A_DUMP		5
-#define	A_FTRACE	15
-#define	A_SWAPCTL	16
+int port_create (void);
+int port_associate (int, int, uintptr_t, int, void *);
+int port_dissociate (int, int, uintptr_t);
+int port_send (int, int, void *);
+int port_sendn (int [], int [], uint_t, int, void *);
+int port_get (int, port_event_t *, struct timespec *);
+int port_getn (int, port_event_t [], uint_t, uint_t *, struct timespec *);
+int port_alert (int, int, int, void *);
 
-/* Shutdown-related fcn's.  */
-#define	AD_HALT		0
-#define	AD_BOOT		1
-#define	AD_IBOOT	2
-#define	AD_SBOOT	3
-#define	AD_SIBOOT	4
-#define	AD_POWEROFF	6
-#define	AD_NOSYNC	7
-
-extern int uadmin (int, int, uintptr_t);
-
-#endif /* _UADMINP_H */
+#endif /* _PORT_H */

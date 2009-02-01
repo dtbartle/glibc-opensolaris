@@ -22,6 +22,7 @@
 
 #include <sys/types.h>
 #include <nss/nss.h>
+#include <ucred.h>
 
 #define NSS_BUFLEN_AUDITUSER 1024
 
@@ -62,7 +63,6 @@ typedef struct au_user_str_s
 	char *au_never;
   } au_user_str_t;
 
-typedef struct _mac_label_impl m_label_t;
 typedef m_label_t bslabel_t;
 
 #define AU_NOAUDITID	((au_id_t)-2)

@@ -35,7 +35,7 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _so_socket _so_socketpair _sysconfig rctl atomic door __door_return \
     getexecname is_system_labeled privP modctl acl facl lltostr ulltostr \
     _getauthnam _getauthattr deflt _getprofnam _getprofattr _getusernam \
-    _getuserattr _getauuserent _getauusernam _getexecattr vfsent fdwalk \
+    _getuserattr _getauuserent _getauusernam _getexecattr vfstab fdwalk \
     closefrom ipsecalg gethostent sigsendset sigsend stack_getbounds \
     thr_sighndlrinfo _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned \
     cftime ascftime inet_ntoa_r
@@ -47,11 +47,15 @@ sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
 sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
     sys/systeminfo.h sys/link.h sys/procfs_isa.h sys/ttold.h sys/procset.h \
     sys/synch.h sys/fork.h sys/sockio.h sys/ioccom.h sys/tty.h sys/priocntl.h \
-    sys/trap.h sys/sysconfig.h sys/ptms.h sys/stack.h sys/regset.h bits/regset.h sys/fault.h \
+    sys/trap.h sys/sysconfig.h sys/ptms.h sys/stack.h sys/regset.h \
+    bits/regset.h sys/priv.h sys/priv_names.h sys/uadmin.h sys/vfstab.h \
+    sys/fault.h sys/door.h sys/mount.h sys/procfs.h sys/old_procfs.h sys/port.h \
     sys/reg.h sys/siginfo.h sys/types32.h sys/isa_defs.h sys/int_types.h \
     sys/inttypes.h sys/atomic.h sys/machtypes.h sys/elf.h sys/mkdev.h \
-    sys/klog.h
-sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h
+    sys/klog.h sys/zone.h sys/processor.h sys/pset.h sys/rctl.h sys/task.h \
+    sys/exacct.h sys/acct.h sys/acctctl.h sys/utssys.h sys/corectl.h
+sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h door.h \
+    ucred.h priv.h zone.h port.h deflt.h procfs.h rctl.h
 headers := $(filter-out sys/sysinfo.h, $(headers))
 endif
 

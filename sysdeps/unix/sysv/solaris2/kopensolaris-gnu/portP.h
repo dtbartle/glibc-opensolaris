@@ -20,19 +20,7 @@
 #ifndef _PORTP_H
 #define _PORTP_H
 
-#include <sys/types.h>
-
 #define PORT_SYS_NOPORT		0x100
-
-#define PORT_MAX_LIST	8192
-
-typedef struct port_event
-  {
-	int portev_events;
-	unsigned short portev_source;
-	unsigned short portev_pad;
-	uintptr_t portev_object;
-	void *portev_user;
-  } port_event_t;
+#define PORT_MAX_LIST		8192
 
 #endif /* _PORTP_H */

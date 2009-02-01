@@ -21,7 +21,8 @@
 #include <unistd.h>
 #include <ucredP.h>
 #include <auditP.h>
-#include <privP.h>
+#include <priv.h>
+#include <procfs.h>
 #include <errno.h>
 #include <assert.h>
 

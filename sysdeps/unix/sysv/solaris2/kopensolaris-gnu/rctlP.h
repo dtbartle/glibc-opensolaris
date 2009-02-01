@@ -20,14 +20,7 @@
 #ifndef _RCTLP_H
 #define _RCTLP_H
 
-#include <sys/types.h>
-
-#define RCTL_GLOBAL_ACTION_MASK	0xFFFF0000
-#define RCTL_LOCAL_ACTION_MASK	0xFFFF0000
-
-typedef unsigned long long rctl_qty_t;
-typedef int rctl_priv_t;
-typedef struct rctlblk rctlblk_t;
+#include <sys/rctl.h>
 
 typedef struct rctl_opaque
   {

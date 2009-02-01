@@ -21,7 +21,7 @@
 
 #include <sys/types.h>
 #include <sys/reboot.h>
-#include <uadminP.h>
+#include <sys/uadmin.h>
 #include <bp-checks.h>
 
 int

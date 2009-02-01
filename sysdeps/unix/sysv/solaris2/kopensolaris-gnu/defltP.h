@@ -20,14 +20,8 @@
 #ifndef _DEFLTP_H
 #define _DEFLTP_H
 
+#include <deflt.h>
+
 #define _DEFLT_BUFSIZE	1024
-
-#define DC_GETFLAGS	0
-#define DC_SETFLAGS	1
-
-#define DC_CASE		0x01
-#define DC_NOREWIND	0x02
-#define DC_STRIP_QUOTES	0x04
-#define DC_STD		DC_CASE
 
 #endif /* _DEFLTP_H */
