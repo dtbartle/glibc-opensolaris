@@ -83,6 +83,11 @@ do_test (void)
   static const char symlinkcontent[] = "some-file";
   if (symlinkat (symlinkcontent, dir_fd, "another-file") != 0)
     {
+      if (errno == ENOSYS)
+        {
+          puts ("symlinkat function not supported");
+          return 0;
+        }
       puts ("symlinkat failed");
       return 1;
     }
@@ -109,6 +114,11 @@ do_test (void)
   int n = readlinkat (dir_fd, "another-file", buf, sizeof (buf));
   if (n == -1)
     {
+      if (errno == ENOSYS)
+        {
+          puts ("readlinkat function not supported");
+          return 0;
+        }
       puts ("readlinkat failed");
       return 1;
     }

@@ -140,6 +140,11 @@ do_test (void)
   /* Remove the file now.  */
   if (unlinkat (dir_fd, "some-file", 0) != 0)
     {
+      if (errno == ENOSYS)
+        {
+          puts ("unlinkat function not supported");
+          return 0;
+        }
       puts ("unlinkat failed");
       return 1;
     }

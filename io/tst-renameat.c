@@ -109,7 +109,12 @@ do_test (void)
       puts ("renameat with normal file descriptor succeeded");
       return 1;
     }
-  if (errno != ENOTDIR)
+  if (errno == ENOSYS)
+    {
+      puts ("renameat function not supported");
+      return 0;
+    }
+  else if (errno != ENOTDIR)
     {
       puts ("error for renameat with normal file descriptor not ENOTDIR");
       return 1;

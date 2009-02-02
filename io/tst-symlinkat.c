@@ -107,6 +107,11 @@ do_test (void)
 
   if (symlinkat ("some-file", dir_fd, "another-file") != 0)
     {
+      if (errno == ENOSYS)
+        {
+          puts ("symlinkat function not supported");
+          return 0;
+        }
       puts ("symlinkat failed");
       return 1;
     }

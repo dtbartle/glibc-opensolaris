@@ -119,7 +119,12 @@ do_test (void)
       puts ("fchownat using descriptor for normal file worked");
       return 1;
     }
-  if (errno != ENOTDIR)
+  if (errno == ENOSYS)
+    {
+	  puts ("faccessat function not supported");
+      return 0;
+    }
+  else if (errno != ENOTDIR)
     {
       puts ("\
 error for fchownat using descriptor for normal file not ENOTDIR ");

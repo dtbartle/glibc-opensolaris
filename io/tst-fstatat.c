@@ -105,7 +105,12 @@ do_test (void)
       puts ("fstatatat using descriptor for normal file worked");
       return 1;
     }
-  if (errno != ENOTDIR)
+  if (errno == ENOSYS)
+    {
+	  puts ("fstatat function not supported");
+      return 0;
+    }
+  else if (errno != ENOTDIR)
     {
       puts ("error for fstatat using descriptor for normal file not ENOTDIR ");
       return 1;

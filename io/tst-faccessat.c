@@ -105,7 +105,12 @@ do_test (void)
       puts ("faccessat using descriptor for normal file worked");
       return 1;
     }
-  if (errno != ENOTDIR)
+  if (errno == ENOSYS)
+    {
+	  puts ("faccessat function not supported");
+      return 0;
+    }
+  else if (errno != ENOTDIR)
     {
       puts ("\
 error for faccessat using descriptor for normal file not ENOTDIR ");
@@ -135,25 +140,27 @@ error for faccessat using descriptor for normal file not ENOTDIR ");
       result = 1;
     }
 
-  if (fchmodat (dir_fd, "some-file", 0400, 0) != 0)
+  if (fchmodat (dir_fd, "some-file", 0400, 0) != 0 && errno != ENOSYS)
     {
       printf ("fchownat failed: %m\n");
       return 1;
     }
-
-  if (faccessat (dir_fd, "some-file", R_OK, AT_EACCESS))
+  else if (errno != ENOSYS)
     {
-      printf ("faccessat R_OK: %m\n");
-      result = 1;
-    }
+      if (faccessat (dir_fd, "some-file", R_OK, AT_EACCESS))
+        {
+          printf ("faccessat R_OK: %m\n");
+          result = 1;
+        }
 
-  errno = 0;
-  if (faccessat (dir_fd, "some-file", W_OK, AT_EACCESS) == 0
-      ? (geteuid () != 0) : (errno != EACCES))
-    {
-      printf ("faccessat W_OK on unwritable file: %m\n");
-      result = 1;
-    }
+      errno = 0;
+      if (faccessat (dir_fd, "some-file", W_OK, AT_EACCESS) == 0
+          ? (geteuid () != 0) : (errno != EACCES))
+        {
+          printf ("faccessat W_OK on unwritable file: %m\n");
+          result = 1;
+        }
+  }
 
   /* Create a file descriptor which is closed again right away.  */
   int dir_fd2 = dup (dir_fd);

@@ -113,6 +113,11 @@ do_test (void)
   tv[1].tv_usec = 0;
   if (futimesat (dir_fd, "some-file", tv) != 0)
     {
+      if (errno == ENOSYS)
+        {
+          puts ("futimesat function not supported");
+          return 0;
+        }
       puts ("futimesat failed");
       return 1;
     }
