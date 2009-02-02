@@ -10,7 +10,7 @@ ifeq ($(subdir),io)
 sysdep_routines += sys_open sys_open64 sys_openat sys_openat64 \
     sys_fstat sys_fstat64 sys_fstatat sys_fstatat64 sys_lstat \
     sys_lstat64 sys_stat sys_stat64 sys_sendfilev sys_sendfilev64 \
-    sys_getcwd sys_pipe sys_mknod sys_access
+    sys_getcwd sys_pipe sys_mknod sys_access sys_accessat
 headers := $(filter-out sys/vfs.h, $(headers))
 endif
 

@@ -96,7 +96,6 @@ putacct             - exacctsys:putacct     i:iipii     putacct
 wracct              - exacctsys:wracct      i:iii       wracct
 
 # *at
-faccessat           - fsat:accessat         i:isi       faccessat
 fchownat            - fsat:fchownat         i:isiii     fchownat
 futimesat           - fsat:futimesat        i:isi       futimesat
 renameat            - fsat:renameat         i:isis      renameat
@@ -183,6 +182,7 @@ is_system_labeled   - labelsys:syslabeling  i:          is_system_labeled
 #
 
 sys_access          - access                i:si        __syscall_access
+sys_accessat        - fsat:accessat         i:isi       __syscall_accessat
 sys_allocids        - sidsys:allocids       i:iii       __syscall_allocids
 sys_brk             - brk                   i:p         __syscall_brk
 sys_fcntl           - fcntl                 Ri:iiF      __syscall_fcntl

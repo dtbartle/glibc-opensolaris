@@ -217,12 +217,14 @@ typedef struct flock64
 /* at-file support */
 #ifdef __USE_ATFILE
 # define __AT_DEFINED
-# define AT_FDCWD              0xffd19553   /* Special value used to indicate
-                                          the *at functions should use the
-                                          current working directory. */
-# define AT_SYMLINK_NOFOLLOW   0x1000  /* Do not follow symbolic links.  */
-# define AT_REMOVEDIR          0x1     /* Remove directory instead of
-                                          unlinking file.  */
+# define AT_FDCWD	0xffd19553	/* Special value used to indicate
+					   the *at functions should use the
+					   current working directory. */
+# define AT_SYMLINK_NOFOLLOW	0x1000	/* Do not follow symbolic links.  */
+# define AT_REMOVEDIR		0x1	/* Remove directory instead of
+					   unlinking file.  */
+# define AT_EACCESS		010	/* Test access permitted for
+					   effective IDs, not real IDs.  */
 #endif
 
 /* Define some more compatibility macros to be backward compatible with
