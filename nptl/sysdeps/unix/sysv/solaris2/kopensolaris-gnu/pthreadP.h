@@ -164,6 +164,20 @@ static inline int __internal_sched_get_priority_max_1 (int *errval, int policy)
   return result;
 }
 
+static inline int __internal_munmap_2 (int *errval, void *start, size_t length)
+{
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_munmap, start, length);
+  return ret.sys_rval1;
+}
+
+static inline int __internal_close_1 (int *errval, int fd)
+{
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_close, fd);
+  return ret.sys_rval1;
+}
+
 /* These are used by the "real" associated functions.  */
 
 static inline int __pthread_setschedparam_internal (pthread_t threadid,

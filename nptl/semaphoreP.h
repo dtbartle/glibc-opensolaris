@@ -18,7 +18,7 @@
    02111-1307 USA.  */
 
 #include <semaphore.h>
-#include "pthreadP.h"
+#include <pthreadP.h>
 
 
 /* Mount point of the shared memory filesystem.  */
@@ -48,7 +48,11 @@ extern pthread_once_t __namedsem_once attribute_hidden;
 extern void *__sem_mappings attribute_hidden;
 
 /* Lock to protect the search tree.  */
+#ifndef lll_define
 extern int __sem_mappings_lock attribute_hidden;
+#else
+lll_define (extern, __sem_mappings_lock);
+#endif
 
 
 /* Initializer for mountpoint.  */

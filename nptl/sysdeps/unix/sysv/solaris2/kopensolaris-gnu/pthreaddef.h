@@ -81,3 +81,10 @@ DECLARE_INLINE_SYSCALL (void, lwp_exit, void);
 #undef __exit_thread_inline
 #define __exit_thread_inline(val) \
     INLINE_SYSCALL (lwp_exit, 0);
+
+/* We don't have /dev/shm on solaris, so we use /tmp/.dev_shm.  */
+#define STATIC_DEV_SHM		"/tmp/.glibc_dev_shm"
+#define STATIC_DEV_SHM_PREFIX	STATIC_DEV_SHM "/sem."
+
+/* Force using sem_* instead of assuming sem_t internals.  */
+#define SEM_T_IS_OPAQUE

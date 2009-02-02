@@ -54,6 +54,7 @@ void
 attribute_hidden
 __where_is_shmfs (void)
 {
+#ifndef STATIC_DEV_SHM
   char buf[512];
   struct statfs f;
   struct mntent resmem;
@@ -120,6 +121,16 @@ __where_is_shmfs (void)
 
   /* Close the stream.  */
   __endmntent (fp);
+#else
+  int mode = S_IRWXU | S_IRWXG | S_IRWXO;
+  int res = mkdir (STATIC_DEV_SHM, mode);
+  if (res != 0 && errno != EEXIST)
+    return;
+  if (res == 0 && chmod (STATIC_DEV_SHM, mode) != 0)
+    return;
+  mountpoint.dir = (char *)STATIC_DEV_SHM_PREFIX;
+  mountpoint.dirlen = sizeof (STATIC_DEV_SHM_PREFIX) - 1;
+#endif
 }
 
 
@@ -147,7 +158,11 @@ __sem_search (const void *a, const void *b)
 void *__sem_mappings attribute_hidden;
 
 /* Lock to protect the search tree.  */
+#ifndef lll_define_initialized
 int __sem_mappings_lock attribute_hidden = LLL_LOCK_INITIALIZER;
+#else
+lll_define_initialized (, __sem_mappings_lock);
+#endif
 
 
 /* Search for existing mapping and if possible add the one provided.  */
@@ -304,6 +319,7 @@ sem_open (const char *name, int oflag, ...)
       /* Create the initial file content.  */
       sem_t initsem;
 
+#ifndef SEM_T_IS_OPAQUE
       struct new_sem *iinitsem = (struct new_sem *) &initsem;
       iinitsem->value = value;
       iinitsem->private = 0;
@@ -312,6 +328,10 @@ sem_open (const char *name, int oflag, ...)
       /* Initialize the remaining bytes as well.  */
       memset ((char *) &initsem + sizeof (struct new_sem), '\0',
 	      sizeof (sem_t) - sizeof (struct new_sem));
+#else
+      if (sem_init (&initsem, 1, value) != 0)
+        return SEM_FAILED;
+#endif
 
       tmpfname = (char *) alloca (mountpoint.dirlen + 6 + 1);
       char *xxxxxx = __mempcpy (tmpfname, mountpoint.dir, mountpoint.dirlen);
