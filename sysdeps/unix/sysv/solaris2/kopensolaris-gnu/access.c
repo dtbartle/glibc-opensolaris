@@ -35,15 +35,13 @@ __access (file, type)
      const char *file;
      int type;
 {
-  int res;
-
   if (file == NULL || (type & ~(R_OK|W_OK|X_OK|F_OK|E_OK)) != 0)
     {
       __set_errno (EINVAL);
       return -1;
     }
 
-  res = INLINE_SYSCALL (access, 2, file, type);
+  int res = INLINE_SYSCALL (access, 2, file, type);
 
   /* XXX: This should really be fixed in the kernel.  */
   if (res == 0 && (type & X_OK))
