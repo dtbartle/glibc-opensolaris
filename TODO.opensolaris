@@ -20,12 +20,11 @@ ptrace details:
     write command (long) followed by struct
 
 These are solaris extensions that we should implement:
-  _sharefs
+  _sharefs (share.h)
   _cladm (sys/cladm.h)
   exportfs, nfs_getfh, nfssvc [SYS_nfssys] (sys/nfssec.h) [maybe not]
   lgrpsys
   gethomelgroup
-  _ttyname_dev
   pthread_rwlock_reltimedrdlock_np
   pthread_rwlock_reltimedwrlock_np
 
@@ -49,3 +48,5 @@ Use timer_* syscalls
 
 Fix forward.c to include mutex_* and thr_main
   thr_main should return -1 when libpthread.so is not linked in
+
+Bypass the local PLT
