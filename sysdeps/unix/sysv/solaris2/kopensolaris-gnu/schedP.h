@@ -17,9 +17,31 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#ifndef _SCHEDP_H
+#define _SCHEDP_H
+
 #include <sys/types.h>
 #include <sys/procset.h>
 #include <sched.h>
+
+typedef struct rtparms
+  {
+	pri_t rt_pri;
+	unsigned int rt_tqsecs;
+	int rt_tqnsecs;
+  } rtparms_t;
+
+#define RT_TQINF	-2
+
+typedef struct fxparms
+  {
+	pri_t fx_upri;
+	pri_t fx_uprilim;
+	unsigned int fx_tqsecs;
+	int fx_tqnsecs;
+  } fxparms_t;
+
+#define FX_TQINF	-2
 
 extern int __sched_policy_to_class (int policy);
 extern int __sched_class_to_policy (int cid);
@@ -31,3 +53,5 @@ extern int __sched_setscheduler_id (int idtype, id_t id, int policy,
     int priority);
 extern long __internal_priocntl_4 (int *errval, idtype_t idtype, id_t id,
     int cmd, ...);
+
+#endif /* _SCHEDP_H */
