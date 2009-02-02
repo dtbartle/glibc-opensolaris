@@ -32,7 +32,9 @@
 #define SCHED_RR	2
 #define SCHED_SYS	3
 #define SCHED_IA	4
-#define _SCHED_NEXT	5
+#define SCHED_FSS	5
+#define SCHED_FX	6
+#define _SCHED_NEXT	7
 
 /* The official definition.  */
 struct sched_param
