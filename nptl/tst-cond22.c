@@ -1,4 +1,4 @@
-#include <pthread.h>
+#include <pthreadP.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -106,10 +106,12 @@ do_test (void)
       status = 1;
     }
 
+#ifndef OPAQUE_STRUCTS
   printf ("cond = { %d, %x, %lld, %lld, %lld, %p, %u, %u }\n",
   	  c.__data.__lock, c.__data.__futex, c.__data.__total_seq,
 	  c.__data.__wakeup_seq, c.__data.__woken_seq, c.__data.__mutex,
 	  c.__data.__nwaiters, c.__data.__broadcast_seq);
+#endif
 
   if (pthread_create (&th, NULL, tf, (void *) 1l) != 0)
     {
@@ -148,10 +150,12 @@ do_test (void)
       status = 1;
     }
 
+#ifndef OPAQUE_STRUCTS
   printf ("cond = { %d, %x, %lld, %lld, %lld, %p, %u, %u }\n",
   	  c.__data.__lock, c.__data.__futex, c.__data.__total_seq,
 	  c.__data.__wakeup_seq, c.__data.__woken_seq, c.__data.__mutex,
 	  c.__data.__nwaiters, c.__data.__broadcast_seq);
+#endif
 
   return status;
 }

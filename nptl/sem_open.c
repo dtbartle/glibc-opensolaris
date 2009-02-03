@@ -319,7 +319,7 @@ sem_open (const char *name, int oflag, ...)
       /* Create the initial file content.  */
       sem_t initsem;
 
-#ifndef SEM_T_IS_OPAQUE
+#ifndef OPAQUE_STRUCTS
       struct new_sem *iinitsem = (struct new_sem *) &initsem;
       iinitsem->value = value;
       iinitsem->private = 0;

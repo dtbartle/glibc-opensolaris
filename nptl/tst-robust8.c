@@ -253,7 +253,9 @@ do_test (void)
 	    {
 	      printf ("mutex_destroy %d in round %d failed with %d\n",
 		      n + 1, round, e);
+#ifndef OPAQUE_STRUCTS
 	      printf("nusers = %d\n", (int) map[n].__data.__nusers);
+#endif
 	      return 1;
 	    }
 	}
