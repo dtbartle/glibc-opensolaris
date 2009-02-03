@@ -358,11 +358,11 @@ muntrace ()
   if (mallstream == NULL)
     return;
 
-  fprintf (mallstream, "= End\n");
-  fclose (mallstream);
-  mallstream = NULL;
   __free_hook = tr_old_free_hook;
   __malloc_hook = tr_old_malloc_hook;
   __realloc_hook = tr_old_realloc_hook;
   __memalign_hook = tr_old_memalign_hook;
+  fprintf (mallstream, "= End\n");
+  fclose (mallstream);
+  mallstream = NULL;
 }
