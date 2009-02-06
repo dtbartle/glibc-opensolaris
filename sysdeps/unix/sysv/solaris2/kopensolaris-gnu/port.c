@@ -18,8 +18,8 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <portP.h>
 #include <port.h>
+#include <sys/port_impl.h>
 
 /* SYS_port returns a 64-bit int but the port_* calls return a 32-bit int, so
    we can't implement these directly in syscalls.list.  Whenever the 2nd

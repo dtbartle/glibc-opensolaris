@@ -1,6 +1,5 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,10 +16,25 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _PORTP_H
-#define _PORTP_H
+#ifndef _SYS_PORT_IMPL_H
+#define _SYS_PORT_IMPL_H
 
-#define PORT_SYS_NOPORT		0x100
+#include <sys/port.h>
+
+#define PORT_CREATE	0
+#define PORT_ASSOCIATE	1
+#define PORT_DISSOCIATE	2
+#define PORT_SEND	3
+#define PORT_SENDN	4
+#define PORT_GET	5
+#define PORT_GETN	6
+#define PORT_ALERT	7
+#define PORT_DISPATCH	8
+
+#define PORT_SYS_NOPORT		0x0100
+#define PORT_SYS_NOSHARE	0x0200
+#define PORT_CODE_MASK		0xFF
+#define PORT_SHARE_EVENT	0x01
 #define PORT_MAX_LIST		8192
 
-#endif /* _PORTP_H */
+#endif /* _SYS_PORT_IMPL_H */
