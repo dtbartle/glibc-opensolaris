@@ -23,10 +23,10 @@
 #include <sys/types.h>
 
 typedef struct pt_own
-{
-    uid_t pto_ruid;
-    gid_t pto_rgid;
-} pt_own_t;
+  {
+	uid_t pto_ruid;
+	gid_t pto_rgid;
+  } pt_own_t;
 
 #define ISPTM	(('P'<<8)|1)
 #define UNLKPT	(('P'<<8)|2)
