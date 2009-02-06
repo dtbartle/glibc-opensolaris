@@ -88,3 +88,6 @@ DECLARE_INLINE_SYSCALL (void, lwp_exit, void);
 
 /* Pthread structs are opaque so don't assume any struct internals.  */
 #define OPAQUE_STRUCTS
+
+/* Need to let the kernel know about detaching threads.  */
+#define NEED_TDETACH

@@ -96,6 +96,13 @@ static inline int __internal_kill_1 (int *errval, int sig)
   return ret.sys_rval1;
 }
 
+static inline int __internal_tdetach_1 (int *errval, pthread_t tid)
+{
+  sysret_t ret;
+  *errval = __systemcall (&ret, SYS_lwp_detach, tid);
+  return ret.sys_rval1;
+}
+
 static inline pthread_t __internal_set_tid_address_1 (int *errval, pthread_t *tid)
 {
   sysret_t ret;
