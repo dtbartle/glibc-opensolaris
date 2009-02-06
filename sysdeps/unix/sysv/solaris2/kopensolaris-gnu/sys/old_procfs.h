@@ -27,6 +27,7 @@
 #include <sys/ucontext.h>
 #include <sys/signal.h>
 #include <sys/fault.h>
+#include <sys/procfs_isa.h>
 
 #define	PIOC		('q'<<8)
 #define	PIOCSTATUS	(PIOC|1)
