@@ -16,7 +16,6 @@ sys_lwp_park            - lwp_park:lwp_park     Vi:pi   __syscall_lwp_park
 sys_lwp_unpark          - lwp_park:lwp_unpark   Vi:pi   __syscall_lwp_unpark
 sys_lwp_unpark_all      - lwp_park:lwp_unpark_all Vi:pi __syscall_lwp_unpark_all
 sys_lwp_unpark_cancel   - lwp_park:lwp_unpark   Vi:i    __syscall_lwp_unpark_cancel
-sys_lwp_info            - lwp_info              i:p     __syscall_lwp_info
 sys_lwp_detach          - lwp_detach            i:i     __syscall_lwp_detach
 
 sys_lwp_mutex_wakeup    - lwp_mutex_wakeup      Vi:pi   __syscall_lwp_mutex_wakeup
