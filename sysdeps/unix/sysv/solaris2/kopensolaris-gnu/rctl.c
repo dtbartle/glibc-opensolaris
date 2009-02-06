@@ -18,7 +18,8 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
-#include <rctlP.h>
+#include <rctl.h>
+#include <sys/rctl_impl.h>
 
 /* Docs: http://docs.sun.com/app/docs/doc/816-5167/getrctl-2?a=view
          http://docs.sun.com/app/docs/doc/816-5168/rctlblk-size-3c?a=view  */
@@ -70,7 +71,7 @@ hrtime_t rctlblk_get_firing_time (rctlblk_t *rblk)
 }
 
 
-int rctlblk_get_global_action (rctlblk_t *rblk)
+unsigned int rctlblk_get_global_action (rctlblk_t *rblk)
 {
   /* Note: rcq_global_flagaction contains both flags and action.  */
   return ((rctl_opaque_t *)rblk)->rcq_global_flagaction &
@@ -78,7 +79,7 @@ int rctlblk_get_global_action (rctlblk_t *rblk)
 }
 
 
-int rctlblk_get_global_flags (rctlblk_t *rblk)
+unsigned int rctlblk_get_global_flags (rctlblk_t *rblk)
 {
   /* Note: rcq_global_flagaction contains both flags and action.  */
   return ((rctl_opaque_t *)rblk)->rcq_global_flagaction &
@@ -86,7 +87,7 @@ int rctlblk_get_global_flags (rctlblk_t *rblk)
 }
 
 
-int rctlblk_get_local_action (rctlblk_t *rblk, int *signalp)
+unsigned int rctlblk_get_local_action (rctlblk_t *rblk, int *signalp)
 {
   /* Note: rcq_local_flagaction contains both flags and action.  */
   return ((rctl_opaque_t *)rblk)->rcq_local_flagaction &
@@ -94,7 +95,7 @@ int rctlblk_get_local_action (rctlblk_t *rblk, int *signalp)
 }
 
 
-int rctlblk_get_local_flags (rctlblk_t *rblk)
+unsigned int rctlblk_get_local_flags (rctlblk_t *rblk)
 {
   /* Note: rcq_local_flagaction contains both flags and action.  */
   return ((rctl_opaque_t *)rblk)->rcq_local_flagaction &
@@ -137,7 +138,7 @@ void rctlblk_set_local_action (rctlblk_t *rblk, unsigned int action,
 }
 
 
-void rctlblk_set_local_flags (rctlblk_t *rblk, int flags)
+void rctlblk_set_local_flags (rctlblk_t *rblk, unsigned int flags)
 {
   /* Note: rcq_local_flagaction contains both flags and action.  */
   rctl_opaque_t *_rblk = (rctl_opaque_t *)rblk;

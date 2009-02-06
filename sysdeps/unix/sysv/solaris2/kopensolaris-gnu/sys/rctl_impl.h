@@ -1,6 +1,5 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,10 +16,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifndef _RCTLP_H
-#define _RCTLP_H
+#ifndef _SYS_RCTL_IMPL_H
+#define _SYS_RCTL_IMPL_H
 
 #include <sys/rctl.h>
+#include <sys/types.h>
+#include <features.h>
+
+#define RCTLCTL_GET	0
+#define RCTLCTL_SET	1
 
 typedef struct rctl_opaque
   {
@@ -35,4 +39,14 @@ typedef struct rctl_opaque
 	hrtime_t rcq_firing_time;
   } rctl_opaque_t;
 
-#endif /* _RCTLP_H */
+#define RCTLBLK_INC(b, n) (rctlblk_t *)(((char *)b) + (n * rctlblk_size ()))
+
+__BEGIN_DECLS
+
+extern int rctlctl (const char *, rctlblk_t *, int);
+extern size_t rctllist (char *, size_t);
+extern int setprojrctl (const char *, rctlblk_t *, size_t, int);
+
+__END_DECLS
+
+#endif /* _SYS_RCTL_IMPL_H */
