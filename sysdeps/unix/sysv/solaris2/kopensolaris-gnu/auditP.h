@@ -63,8 +63,6 @@ typedef struct au_user_str_s
 	char *au_never;
   } au_user_str_t;
 
-typedef m_label_t bslabel_t;
-
 #define AU_NOAUDITID	((au_id_t)-2)
 
 struct parser_data;

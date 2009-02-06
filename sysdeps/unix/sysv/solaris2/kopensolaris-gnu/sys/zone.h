@@ -24,9 +24,7 @@
 #include <sys/priv.h>
 #include <sys/uadmin.h>
 #include <sys/param.h>
-
-typedef struct _mac_label_impl m_label_t;
-typedef m_label_t bslabel_t;
+#include <sys/tsol/label.h>
 
 /* Subcall numbers.  */
 #define ZONE_CREATE	0

@@ -23,6 +23,7 @@
 #include <features.h>
 #include <sys/types.h>
 #include <sys/zone.h>
+#include <sys/tsol/label.h>
 
 __BEGIN_DECLS
 
