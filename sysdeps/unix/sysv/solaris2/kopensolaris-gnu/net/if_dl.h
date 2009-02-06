@@ -25,7 +25,7 @@
 
 struct sockaddr_dl
 {
-    __SOCKADDR_COMMON(sdl);
+    __SOCKADDR_COMMON(sdl_);
     unsigned short sdl_index;
     unsigned char sdl_type;
     unsigned char sdl_nlen;
