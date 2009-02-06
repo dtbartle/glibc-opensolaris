@@ -18,16 +18,17 @@
    02111-1307 USA.  */
 
 #include <inline-syscall.h>
+#include <sys/loadavg.h>
 
 DECLARE_INLINE_SYSCALL (int, getloadavg, int *buf, int nelem);
 
 int
 getloadavg (double loadavg[], int nelem)
 {
-  int buf[3], i;
+  int buf[LOADAVG_NSTATS], i;
 
-  if (nelem > 3)
-    nelem = 3;
+  if (nelem > LOADAVG_NSTATS)
+    nelem = LOADAVG_NSTATS;
   int result = INLINE_SYSCALL (getloadavg, 2, buf, nelem);
   if (result == -1)
     return -1;

@@ -1,6 +1,6 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Declarations of loadavg types.
+   Copyright (C) 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,26 +17,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
-#include <sys/pset.h>
-#include <sys/loadavg.h>
+#ifndef _SYS_LOADAVG
+#define _SYS_LOADAVG
 
-DECLARE_INLINE_SYSCALL (int, pset_getloadavg, int *buf, int nelem);
+#include <stdlib.h>
 
-int
-pset_getloadavg (psetid_t pset, double loadavg[], int nelem)
-{
-  int buf[LOADAVG_NSTATS], i;
+#define LOADAVG_1MIN	0
+#define LOADAVG_5MIN	1
+#define LOADAVG_15MIN	2
 
-  if (nelem > LOADAVG_NSTATS)
-    nelem = LOADAVG_NSTATS;
-  int result = INLINE_SYSCALL (pset_getloadavg, 2, buf, nelem);
-  if (result == -1)
-    return -1;
+#define LOADAVG_NSTATS	3
 
-  /* the results from the kernel are scaled by a factor of 256 */
-  for(i = 0; i < nelem; i++)
-    loadavg[i] = (double)buf[i] / 256;
-
-  return nelem;
-}
+#endif /* _SYS_LOADAVG */
