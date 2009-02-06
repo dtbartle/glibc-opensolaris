@@ -310,9 +310,9 @@ int getpeerucred (int fd, ucred_t **ucred)
   ucred_t *uc = *ucred;
 
   /* alloc ucred if needed */
-  if(*ucred == NULL)
+  if (*ucred == NULL)
     {
-      ucred_t *uc = _ucred_alloc ();
+      uc = _ucred_alloc ();
       if (!uc)
         return -1;
       *ucred = uc;

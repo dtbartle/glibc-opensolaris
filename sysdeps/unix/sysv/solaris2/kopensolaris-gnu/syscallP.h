@@ -114,16 +114,16 @@
 #define SYS_SUB_sendfilev64     1
 
 /* SYS_privsys */
-#define SYS_SUB_setppriv       0
-#define SYS_SUB_getppriv       1
-#define SYS_SUB_getimplinfo    2
-#define SYS_SUB_setpflags      3
-#define SYS_SUB_getpflags      4
-#define SYS_SUB_issetugid      5
+#define SYS_SUB_setppriv        0
+#define SYS_SUB_getppriv        1
+#define SYS_SUB_getimplinfo     2
+#define SYS_SUB_setpflags       3
+#define SYS_SUB_getpflags       4
+#define SYS_SUB_issetugid       5
 
 /* SYS_ucredsys */
-#define SYS_ucred_get       0
-#define SYS_getpeerucred    1
+#define SYS_SUB_ucred_get       0
+#define SYS_SUB_getpeerucred    1
 
 /* SYS_sigpending */
 #define SYS_SUB_sigpending  1
