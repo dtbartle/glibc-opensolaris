@@ -27,6 +27,7 @@ These are solaris extensions that we should implement:
   gethomelgroup
   pthread_rwlock_reltimedrdlock_np
   pthread_rwlock_reltimedwrlock_np
+  fgetattr, fsetattr, getattrat, setattrat
 
 Insert into headers:
   resolvpath (unistd.h)
@@ -50,3 +51,5 @@ Fix forward.c to include mutex_* and thr_main
   thr_main should return -1 when libpthread.so is not linked in
 
 Bypass the local PLT
+
+Implement semaphores using a mutex and condition variable

@@ -221,3 +221,9 @@ sysconf:
     _SC_CPUID_MAX           _CONFIG_CPUID_MAX
     _SC_EPHID_MAX           _CONFIG_EPHID_MAX
     _SC_SYMLOOP_MAX         _CONFIG_SYMLOOP_MAX         SYMLOOP_MAX
+
+fgetattr, fsetattr, getattrat, setattrat:
+
+  The *attr calls are new to OpenSolaris  and are similar to Linux's extended
+  attributes functions. They are implemented as openat(fd, attr_name, O_XATTR)
+  and then read/written via the respective syscall.
