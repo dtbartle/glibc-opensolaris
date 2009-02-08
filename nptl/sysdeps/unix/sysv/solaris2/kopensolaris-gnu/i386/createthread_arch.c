@@ -17,7 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sys/segments.h>
+#define LWPGS_SEL	0x01C3
 
 static int
 create_thread_arch (ucontext_t *ctx, struct pthread *pd,
