@@ -38,7 +38,7 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _getuserattr _getauuserent _getauusernam _getexecattr vfstab fdwalk \
     closefrom ipsecalg gethostent sigsendset sigsend stack_getbounds \
     thr_sighndlrinfo _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned \
-    cftime ascftime inet_ntoa_r
+    cftime ascftime inet_ntoa_r mnttab
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \
@@ -55,10 +55,11 @@ sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
     sys/klog.h sys/zone.h sys/processor.h sys/pset.h sys/task.h sys/exacct.h \
     sys/acct.h sys/acctctl.h sys/utssys.h sys/corectl.h sys/loadavg.h \
     sys/port.h sys/port_impl.h sys/acl.h sys/tsol/label.h sys/fsid.h \
-    sys/fstyp.h sys/rctl.h sys/rctl_impl.h sys/sid.h
+    sys/fstyp.h sys/rctl.h sys/rctl_impl.h sys/sid.h sys/mnttab.h sys/mntio.h
 sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h door.h \
     ucred.h priv.h zone.h port.h deflt.h procfs.h rctl.h
 headers := $(filter-out sys/sysinfo.h sys/xattr.h, $(headers))
+headers := $(filter-out fstab.h mntent.h, $(headers))
 endif
 
 ifeq ($(subdir),dirent)
