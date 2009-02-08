@@ -21,6 +21,7 @@
 #define	_SYS_FSTYP_H
 
 #include <features.h>
+#include <sys/statvfs.h>
 
 #define	GETFSIND	1
 #define	GETFSTYP	2
