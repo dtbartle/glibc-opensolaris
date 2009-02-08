@@ -192,6 +192,10 @@
 # define __USE_ISOC95	1
 #endif
 
+#if defined _XOPEN_SOURCE || defined _POSIX_C_SOURCE
+# define __USE_XOPEN_OR_POSIX
+#endif
+
 /* If none of the ANSI/POSIX macros are defined, use POSIX.1 and POSIX.2
    (and IEEE Std 1003.1b-1993 unless _XOPEN_SOURCE is defined).  */
 #if ((!defined __STRICT_ANSI__ || (_XOPEN_SOURCE - 0) >= 500) && \

@@ -232,7 +232,7 @@ typedef __t_uscalar_t	t_uscalar_t;
 #endif
 typedef __t_scalar_t	t_scalar_t;
 
-#if defined(__USE_XOPEN) || defined(__USE_POSIX)
+#if defined(__USE_XOPEN_OR_POSIX)
 typedef enum
   {
 	_B_FALSE,
