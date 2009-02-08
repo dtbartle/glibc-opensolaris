@@ -22,6 +22,16 @@
 
 #include <features.h>
 #include <stdio.h>
+#include <paths.h>
+
+#define VFSTAB	_PATH_MNTTAB
+
+#define VFS_LINE_MAX	1024
+
+#define VFS_TOOLONG	1
+#define VFS_TOOMANY	2
+#define VFS_TOOFEW	3
+
 
 struct vfstab
   {
@@ -33,12 +43,6 @@ struct vfstab
 	char *vfs_automnt;
 	char *vfs_mntopts;
   };
-
-#define VFS_LINE_MAX	1024
-
-#define VFS_TOOLONG	1
-#define VFS_TOOMANY	2
-#define VFS_TOOFEW	3
 
 __BEGIN_DECLS
 
