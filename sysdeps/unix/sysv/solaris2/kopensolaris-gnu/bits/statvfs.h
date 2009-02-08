@@ -23,8 +23,12 @@
 
 #include <bits/types.h>  /* For __fsblkcnt_t and __fsfilcnt_t.  */
 #include <bits/wordsize.h>
+#include <features.h>
 
 #define _FSTYPSZ 16
+#ifdef __USE_MISC
+# define FSTYPSZ	_FSTYPSZ
+#endif
 
 typedef struct statvfs
 {
