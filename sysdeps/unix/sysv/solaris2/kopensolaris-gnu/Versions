@@ -52,11 +52,11 @@ libc {
     getzoneid; getzoneidbyname; getzonenamebyid;
 
     # h
-    __hasmntopt_sun;
+    __hasmntopt_sun; htonll;
 
     # i
     idmap_reg; idmap_unreg; inet_ntoa_r; __init_daemon_priv; __init_suid_priv;
-    _insert; issetugid; is_system_labeled;
+    _insert; inst_sync; issetugid; is_system_labeled;
 
     # l
     _link_aton; _link_ntoa; llseek; lltostr;
@@ -66,7 +66,7 @@ libc {
     meminfo; modctl; mount;
 
     # n
-    ntp_adjtime; ntp_gettime;
+    ntohll; ntp_adjtime; ntp_gettime;
 
     # p
     pc_sample; p_online; priocntl; priocntlset; __priv_bracket;
