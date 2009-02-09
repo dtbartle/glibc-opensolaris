@@ -31,6 +31,7 @@ getvmusage          - rusagesys:getvmusage  i:iipp      getvmusage
 gtty                - gtty                  i:ip        gtty
 idmap_reg           - sidsys:idmap_reg      i:i         idmap_reg
 idmap_unreg         - sidsys:idmap_unreg    i:i         idmap_unreg
+inst_sync           - inst_sync             i:si        inst_sync
 ioctl               - ioctl                 Ri:iiI      __ioctl             ioctl
 issetugid           - privsys:issetugid     Ei:         issetugid
 lchown              - lchown                i:sii       __lchown            lchown
