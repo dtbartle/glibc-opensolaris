@@ -45,11 +45,14 @@ libc {
     getacct; _getauuserent; _getauusernam; _getauthattr; _getauthnam; getcpuid;
     _getexecattr; getexecname; _getexecprof; getextmntent; gethrtime;
     gethrvtime; getipnodebyaddr; getipnodebyname; getipsecalgbyname;
-    getipsecalgbynum; getmntany; getpagesizes; getpagesizes2; getpeerucred;
-    getpflags; getppriv; getprivimplinfo; _getprofattr; _getprofnam; getprojid;
-    getrctl; gettaskid; _getuserattr; _getusernam; getustack; getvfsany;
-    getvfsent; getvfsfile; getvfsspec; getvmusage; getzoneid; getzoneidbyname;
-    getzonenamebyid;
+    getipsecalgbynum; getmntany; __getmntent_sun; getpagesizes; getpagesizes2;
+    getpeerucred; getpflags; getppriv; getprivimplinfo; _getprofattr;
+    _getprofnam; getprojid; getrctl; gettaskid; _getuserattr; _getusernam;
+    getustack; getvfsany; getvfsent; getvfsfile; getvfsspec; getvmusage;
+    getzoneid; getzoneidbyname; getzonenamebyid;
+
+    # h
+    __hasmntopt_sun;
 
     # i
     idmap_reg; idmap_unreg; inet_ntoa_r; __init_daemon_priv; __init_suid_priv;

@@ -17,12 +17,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <mntentP.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <sys/ioctl.h>
-#include <sys/mnttab.h>
-#include <sys/mntio.h>
 
 /* Docs: http://docs.sun.com/app/docs/doc/816-5168/resetmnttab-3c  */
 
@@ -30,7 +29,7 @@
 	(!y->f || (y->f && strcmp (x->f, y->f) == 0))
 
 
-int __getmntent_sun (FILE *fp, struct mnttab *mt)
+int getmntent (FILE *fp, struct mnttab *mt)
 {
   struct extmnttab emt;
   int res = ioctl (fileno (fp), MNTIOC_GETMNTENT, &emt);
@@ -45,7 +44,6 @@ int __getmntent_sun (FILE *fp, struct mnttab *mt)
 
   return 0;
 }
-
 
 int getmntany (FILE *fp, struct mnttab *mt, struct mnttab *mtpref)
 {
@@ -64,7 +62,7 @@ int getmntany (FILE *fp, struct mnttab *mt, struct mnttab *mtpref)
 }
 
 
-int getextmntent (FILE *fp, struct extmnttab *emt, size_t len)
+int getextmntent(FILE *fp, struct extmnttab *emt, int len)
 {
   int res = ioctl (fileno (fp), MNTIOC_GETMNTENT, emt);
   if (res != 0)
@@ -95,7 +93,7 @@ char *mntopt (char **opts)
 }
 
 
-char * __hasmntopt_sun (struct mnttab *mt, char *opt)
+char * hasmntopt (struct mnttab *mt, char *opt)
 {
   /* We make a copy of mnt_mntopts since we modify it.  */
   char buf[MNT_LINE_MAX + 1];

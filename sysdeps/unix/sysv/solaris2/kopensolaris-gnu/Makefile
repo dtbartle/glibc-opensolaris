@@ -59,7 +59,6 @@ sysdep_headers += sys/feature_tests.h sys/dirent.h sys/utime.h sys/machelf.h \
 sysdep_headers += rtld_db.h pcsample.h atomic.h bits/machtypes.h door.h \
     ucred.h priv.h zone.h port.h deflt.h procfs.h rctl.h
 headers := $(filter-out sys/sysinfo.h sys/xattr.h, $(headers))
-headers := $(filter-out fstab.h mntent.h, $(headers))
 endif
 
 ifeq ($(subdir),dirent)

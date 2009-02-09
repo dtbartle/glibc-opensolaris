@@ -17,12 +17,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#ifndef _MNTENT_H
 #ifndef _SYS_MNTTAB_H
 #define _SYS_MNTTAB_H
 
 #include <features.h>
-#include <stdio.h>
-#include <stddef.h>
 #include <paths.h>
 
 #define MNTTAB	_PATH_MOUNTED
@@ -58,13 +57,26 @@ struct extmnttab
 
 __BEGIN_DECLS
 
-extern void resetmnttab (FILE *);
-extern int getmntent (FILE *, struct mnttab *);
+extern void	resetmnttab (FILE *);
+# ifdef __REDIRECT_NTH
+extern int __getmntent_sun (FILE *, struct mnttab *);
+extern int __REDIRECT_NTH (getmntent, (FILE *, struct mnttab *),
+	__getmntent_sun);
+# else
+#  define getmntent __getmntent_sun
+# endif
 extern int getextmntent (FILE *, struct extmnttab *, size_t);
 extern int getmntany (FILE *, struct mnttab *, struct mnttab *);
-extern char * hasmntopt (struct mnttab *, char *);
-extern char * mntopt (char **);
+# ifdef __REDIRECT_NTH
+extern char	* __hasmntopt_sun (struct mnttab *, char *);
+extern char * __REDIRECT_NTH (hasmntopt, (struct mnttab *, char *),
+	__hasmntopt_sun);
+# else
+#  define hasmntopt __hasmntopt_sun
+# endif
+extern char	*mntopt (char **);
 
 __END_DECLS
 
 #endif /* _SYS_MNTTAB_H */
+#endif
