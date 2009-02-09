@@ -20,6 +20,7 @@
 #define _SYS_PARAM_H	1
 
 #include <limits.h>
+#include <bits/local_lim.h>
 #include <features.h>
 #include <sys/isa_defs.h>
 
