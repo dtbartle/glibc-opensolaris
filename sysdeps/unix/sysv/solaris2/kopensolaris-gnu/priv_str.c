@@ -95,3 +95,10 @@ inval:
    __set_errno (EINVAL);
   return NULL;
 }
+
+
+char * priv_set_to_str (const priv_set_t *pset, char separator, int flag)
+{
+  // TODO
+  return NULL;
+}
