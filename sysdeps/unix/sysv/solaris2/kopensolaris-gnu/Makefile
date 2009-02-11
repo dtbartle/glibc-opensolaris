@@ -38,7 +38,8 @@ sysdep_routines +=  gethrtime mount umount umount2 systeminfo resolvepath \
     _getuserattr _getauuserent _getauusernam _getexecattr vfstab fdwalk \
     closefrom ipsecalg gethostent sigsendset sigsend stack_getbounds \
     thr_sighndlrinfo _getexecprof _fgetuserattr priv_str _sbrk_grow_aligned \
-    cftime ascftime inet_ntoa_r mnttab inst_sync
+    cftime ascftime inet_ntoa_r mnttab inst_sync autofssys cladm lgrpsys \
+    _lgrp_home_fast
 sysdep_routines += sys_fdsync sys_brk sys_fcntl sys_utssys sys_lwp_private \
     sys_uname sys_getloadavg sys_utimes sys_getpeerucred sys_ucred_get \
     sys_privsys sys_putmsg sys_putpmsg sys_meminfo sys_pset_getloadavg \

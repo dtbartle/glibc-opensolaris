@@ -6,9 +6,11 @@
 # these implement libc functions directly
 #
 
+autofssys           - autofssys             iip         _autofssys
 acct                - acct                  i:s         acct
 acctctl             - acctctl               i:ipi       acctctl
 acl                 - acl                   i:siip      acl
+cladm               - cladm                 i:iip       cladm
 clock_getres        - clock_getres          i:ip        clock_getres
 creat               - creat                 Ci:si       __libc_creat        creat
 facl                - facl                  i:iiip      facl
@@ -35,6 +37,7 @@ inst_sync           - inst_sync             i:si        inst_sync
 ioctl               - ioctl                 Ri:iiI      __ioctl             ioctl
 issetugid           - privsys:issetugid     Ei:         issetugid
 lchown              - lchown                i:sii       __lchown            lchown
+lgrpsys             - lgrpsys               i:iip       _lgrpsys
 memcntl             - memcntl               i:piiiii    memcntl
 mincore             - mincore               i:anV       mincore
 modctl              - modctl                i:ip        modctl
