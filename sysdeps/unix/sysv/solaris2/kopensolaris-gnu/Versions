@@ -7,7 +7,7 @@ libc {
     getnetmaskbyaddr;
 
     # a
-    acct; acctctl; acl; allocids; ascftime;
+    acct; acctctl; acl; allocids; ascftime; _autofssys;
 
     # atomic
     atomic_add_8; atomic_add_char; atomic_add_16; atomic_add_short;
@@ -22,7 +22,7 @@ libc {
     atomic_dec_ulong_nv; atomic_dec_64_nv; atomic_dec_ptr_nv;
 
     # c
-    cftime; closefrom; __cmsg_nxthdr; core_get_default_content;
+    cftime; closefrom; _cladm; __cmsg_nxthdr; core_get_default_content;
     core_get_default_path; core_get_global_content; core_get_global_path;
     core_get_options; core_get_process_content; core_get_process_path;
     core_set_default_content; core_set_default_path; core_set_global_content;
@@ -59,7 +59,7 @@ libc {
     _insert; inst_sync; issetugid; is_system_labeled;
 
     # l
-    _link_aton; _link_ntoa; llseek; lltostr;
+    _lgrp_home_fast; _lgrpsys; _link_aton; _link_ntoa; llseek; lltostr;
 
     # m
     membar_enter; membar_exit; membar_producer; membar_consumer; memcntl;
