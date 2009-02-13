@@ -56,6 +56,13 @@ pthread_detach (th)
       /* Note that the code in __free_tcb makes sure each thread
 	 control block is freed only once.  */
       __free_tcb (pd);
+#ifdef NEED_TDETACH
+    else
+      {
+        INTERNAL_SYSCALL_DECL (err);
+        result = INTERNAL_SYSCALL (tdetach, err, 1, th);
+      }
+#endif
 
   return result;
 }
