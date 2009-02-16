@@ -41,7 +41,7 @@
 #define MS_GLOBAL	0x0200 /* Clustering: Mount into global name space.  */
 #define MS_FORCE	0x0400 /* Forced unmount.  */
 #define MS_NOMNTTAB	0x0800 /* Don't show mount in mnttab.  */
-#define MS_SYSSPACE	0x1000
+#define MS_NOSPLICE	0x1000
 #define MS_NOCHECK	0x2000
 
 #define MS_MASK		(MS_RDONLY | MS_FSS | MS_DATA | MS_NOSUID | \
