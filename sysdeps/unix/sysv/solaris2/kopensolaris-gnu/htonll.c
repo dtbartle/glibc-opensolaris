@@ -17,6 +17,7 @@
    02111-1307 USA.  */
 
 #include <netinet/in.h>
+#include <sys/byteorder.h>
 
 #undef	htonll
 #undef	ntohll
