@@ -34,7 +34,7 @@ typedef struct statvfs
 {
     unsigned long int f_bsize;
     unsigned long int f_frsize;
-#if defined(__USE_FILE_OFFSET64) || defined(__USE_LARGEFILE64)
+#ifdef __USE_FILE_OFFSET64
     __fsblkcnt64_t f_blocks;
     __fsblkcnt64_t f_bfree;
 	__fsblkcnt64_t f_bavail;
