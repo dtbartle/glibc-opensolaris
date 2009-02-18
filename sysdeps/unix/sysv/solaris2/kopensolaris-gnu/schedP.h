@@ -33,6 +33,11 @@ typedef struct rtparms
 
 #define RT_TQINF	-2
 
+typedef struct rtinfo
+  {
+    pri_t rt_maxpri;
+  } rtinfo_t;
+
 typedef struct fxparms
   {
 	pri_t fx_upri;
@@ -51,6 +56,7 @@ extern int __sched_getscheduler_id (int idtype, id_t id, int *policy,
     int *priority);
 extern int __sched_setscheduler_id (int idtype, id_t id, int policy,
     int priority);
+extern int __sched_get_rt_priorities (int *minpri, int *maxpri);
 extern long __internal_priocntl_4 (int *errval, idtype_t idtype, id_t id,
     int cmd, ...);
 

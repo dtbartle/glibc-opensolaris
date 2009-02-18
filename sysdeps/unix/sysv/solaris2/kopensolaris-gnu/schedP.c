@@ -28,6 +28,9 @@
 
 /* TODO: Cleanup errno usage.  */
 
+/* Note: Because SCHED_FIFO and SCHED_RR map to the same scheduler, we need to
+   do additional work if we encounter either schedulers.  */
+
 /* SCHED_SYS has cid == 0 always. */
 static pcinfo_t __sched_policies[] = {
   {-1, "TS", {0}},	/* SCHED_OTHER */
@@ -39,7 +42,6 @@ static pcinfo_t __sched_policies[] = {
   {-1, "FX", {0}},	/* SCHED_FX */
 };
 
-int __sched_policies_initialized = 0;
 __libc_lock_define_initialized (static, lock);
 
 int __sched_policy_to_class (int policy)
@@ -83,6 +85,9 @@ int __sched_class_to_policy (int cid)
 
   __libc_lock_unlock (lock);
 
+  if (policy == -1)
+    __set_errno (EINVAL);
+
   return policy;
 }
 
@@ -125,9 +130,21 @@ int __sched_getscheduler_id (int idtype, id_t id, int *policy, int *priority)
   if (result != 0)
     return errno;
 
+  *policy = __sched_class_to_policy (prio.pc_cid);
+  if (*policy == -1)
+    return errno;
   if (priority)
     *priority = prio.pc_val;
-  *policy = __sched_class_to_policy (prio.pc_cid);
+
+  if (*policy == SCHED_FIFO || *policy == SCHED_RR)
+    {
+      pcparms_t parms;
+      parms.pc_cid = PC_CLNULL;
+      if (priocntl (idtype, id, PC_GETPARMS, parms) == -1)
+        return errno;
+      *policy = (((rtparms_t *)parms.pc_clparms)->rt_tqnsecs == RT_TQINF) ?
+        SCHED_FIFO : SCHED_RR;
+    }
 
   return 0;
 }
@@ -139,11 +156,28 @@ int __sched_setscheduler_id (int idtype, id_t id, int policy, int priority)
   prio.pc_val = priority;
   prio.pc_cid = __sched_policy_to_class (policy);
   if (prio.pc_cid == -1)
-    return -1;
+    return errno;
 
   int result = priocntl (idtype, id, PC_DOPRIO, &prio);
   if (result != 0)
     return errno;
+
+  if (policy == SCHED_FIFO || policy == SCHED_RR)
+    {
+      // TODO
+    }
+
+  return 0;
+}
+
+int __sched_get_rt_priorities (int *minpri, int *maxpri)
+{
+  /* Force the class info for the RT scheduler to be fetched.  */
+  if (__sched_policy_to_class (SCHED_FIFO) == -1)
+    return -1;
+
+  *minpri = 0;
+  *maxpri = ((rtinfo_t *)__sched_policies[SCHED_FIFO].pc_clinfo)->rt_maxpri;
 
   return 0;
 }
