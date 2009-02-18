@@ -21,37 +21,38 @@
 #define _SYNCH_PRIV_H
 
 /* mutex helper macros */
-#define mutex_type			flags.mbcp_type_un.mtype_rcount.count_type1
-#define	mutex_magic			flags.magic
-#define mutex_flag			flags.flag1
-#define mutex_ceiling		flags.ceiling
-#define mutex_rcount		flags.mbcp_type_un.mtype_rcount.count_type2
-#define mutex_owner			data.data32.owner
-#define mutex_lockword32	lock.lock32.lockword
-#define mutex_lockword64	lock.owner64
-#define mutex_lockbyte		lock.lock64.pad[7]
-#define mutex_waiters		lock.lock64.pad[6]
-#define mutex_cond_waiters	data.data32.cond_waiters
-#define mutex_ownerpid		lock.lock32.ownerpid
-#define RECURSION_MAX		255 /* UCHAR_MAX */
-#define LOCKBYTE_SET        0x01
-#define LOCKBYTE_UNSET      0x00
-#define LOCKWORD32_SET_NO_WAITERS   0x01000000
-#define LOCKWORD32_UNSET_NO_WAITERS 0x00000000
-#define LOCKWORD64_SET_NO_WAITERS   0x0100000000000000
-#define LOCKWORD64_UNSET_NO_WAITERS 0x0000000000000000
-#define MUTEX_OWNERPID_SHIFT	0
+#define mutex_type              flags.mbcp_type_un.mtype_rcount.count_type1
+#define mutex_magic             flags.magic
+#define mutex_flag              flags.flag1
+#define mutex_ceiling           flags.ceiling
+#define mutex_real_ceiling      flags.flag2 /* Non-standard; see NOTES.opensolaris */
+#define mutex_rcount            flags.mbcp_type_un.mtype_rcount.count_type2
+#define mutex_owner             data.data32.owner
+#define mutex_lockword32        lock.lock32.lockword
+#define mutex_lockword64        lock.owner64
+#define mutex_lockbyte          lock.lock64.pad[7]
+#define mutex_waiters           lock.lock64.pad[6]
+#define mutex_cond_waiters      data.data32.cond_waiters
+#define mutex_ownerpid          lock.lock32.ownerpid
+#define RECURSION_MAX           255 /* UCHAR_MAX */
+#define LOCKBYTE_SET            0x01
+#define LOCKBYTE_UNSET          0x00
+#define LOCKWORD32_SET_NO_WAITERS       0x01000000
+#define LOCKWORD32_UNSET_NO_WAITERS     0x00000000
+#define LOCKWORD64_SET_NO_WAITERS       0x0100000000000000
+#define LOCKWORD64_UNSET_NO_WAITERS     0x0000000000000000
+#define MUTEX_OWNERPID_SHIFT    0
 
 /* condition variable helper macros */
-#define cond_type			flags.type
-#define cond_magic			flags.magic
-#define cond_clockid		flags.flag[1]
-#define cond_waiters_user	flags.flag[2]
-#define cond_waiters_kernel	flags.flag[3]
+#define cond_type               flags.type
+#define cond_magic              flags.magic
+#define cond_clockid            flags.flag[1]
+#define cond_waiters_user       flags.flag[2]
+#define cond_waiters_kernel     flags.flag[3]
 
 /* semaphore helper macros */
-#define sema_count		count
-#define sema_type		type
-#define sema_waiters	flags[7]
+#define sema_count              count
+#define sema_type               type
+#define sema_waiters            flags[7]
 
 #endif /* _SYNCH_PRIV_H */
