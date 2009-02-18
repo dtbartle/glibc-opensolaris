@@ -46,3 +46,6 @@ Fix forward.c to include mutex_* and thr_main
 Bypass the local PLT
 
 Implement semaphores using a mutex and condition variable
+
+Implement [python] some scripts:
+  Compiler/linker wrapper to translate sun -> gnu compiler/linker options
