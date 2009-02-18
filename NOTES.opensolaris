@@ -37,6 +37,22 @@ scheduling:
   a class id with a posix scheduler (i.e. SCHED_*). The only exception is
   SCHED_SYS, which is guaranteed to have cid == 0.
 
+  The following schedulers are defined:
+
+  SCHED_*       | Name  | Min Prio  | Max Prio  |
+  -----------------------------------------------
+  SCHED_OTHER   | TS    | -60       | 60        |
+  SCHED_FIFO    | RT    | 0         | 59        |
+  SCHED_RR      | RT    | 0         | 59        |
+  SCHED_SYS     | SYS   | 60        | 99        |
+  SCHED_IA      | IA    | -60       | 60        |
+  SCHED_FSS     | FSS   | -60       | 60        |
+  SCHED_FX      | FX    | 0         | 60        |
+
+  Internally the maximum and minimum are stored in a short int. Further, for
+  mutexes, the ceiling is stored in a uint8_t. This means that it can be
+  assumed that priorities must be between -128 and 127.
+
 privileges:
 
   Each process has a set of privileges, represented by a prpriv_t. This struct
@@ -86,8 +102,8 @@ mutex:
 
     mutex_owner (32-bits): The lwpid of the owning thread.
 
-    mutex_cond (32-bits): An in-use counter that is incremented when waiting on
-      a condition and decremented when we return (or are cancelled).
+    mutex_cond_waiters (32-bits): An in-use counter that is incremented when
+      waiting on a condition and decremented when we return (or are cancelled).
 
   The kernel only touches the data field when it is cleared during cleanup for
   certain mutex types.
@@ -96,6 +112,9 @@ mutex:
 
   The kernel does not set mutex_lockbyte for mutexes with the
   LOCK_PRIO_INHERIT bit set.
+
+  The kernel does not use data.flag2. We use this to track the current priority
+  ceiling (mutex_real_ceiling) for LOCK_PRIO_PROTECT mutexes.
 
 semaphore:
 
