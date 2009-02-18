@@ -1,4 +1,4 @@
-/* Copyright (C) 1997, 1998, 2000, 2002, 2003, 2008
+/* Copyright (C) 1997, 1998, 2000, 2002, 2003, 2009
     Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -25,24 +25,43 @@
 
 struct statfs
   {
-    short int f_fstyp;
-    long int f_bsize;
-    long int f_frsize;
-    long int f_blocks;
-    long int f_bfree;
+    __SWORD_TYPE f_type;
+    __SWORD_TYPE f_bsize;
 #ifndef __USE_FILE_OFFSET64
-    __ino64_t f_files;
-    __ino64_t f_ffree;
+    __fsblkcnt_t f_blocks;
+    __fsblkcnt_t f_bfree;
+    __fsblkcnt_t f_bavail;
+    __fsfilcnt_t f_files;
+    __fsfilcnt_t f_ffree;
 #else
-    __ino64_t f_files;
-    __ino64_t f_ffree;
+    __fsblkcnt64_t f_blocks;
+    __fsblkcnt64_t f_bfree;
+    __fsblkcnt64_t f_bavail;
+    __fsfilcnt64_t f_files;
+    __fsfilcnt64_t f_ffree;
 #endif
-    char f_fname[6];
-    char f_fpack[6];
+    __UWORD_TYPE f_fsid;
+    __SWORD_TYPE f_namelen;
+    __SWORD_TYPE f_frsize;
+    __SWORD_TYPE f_spare[5];
   };
 
-/* There is no statfs64 on OpenSolaris. */
-struct statfs64;
+#ifdef __USE_LARGEFILE64
+struct statfs64
+  {
+    __SWORD_TYPE f_type;
+    __SWORD_TYPE f_bsize;
+    __fsblkcnt64_t f_blocks;
+    __fsblkcnt64_t f_bfree;
+    __fsblkcnt64_t f_bavail;
+    __fsfilcnt64_t f_files;
+    __fsfilcnt64_t f_ffree;
+    __UWORD_TYPE f_fsid;
+    __SWORD_TYPE f_namelen;
+    __SWORD_TYPE f_frsize;
+    __SWORD_TYPE f_spare[5];
+  };
+#endif
 
 /* Tell code we have these members.  */
 #define _STATFS_F_NAMELEN
