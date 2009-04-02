@@ -19,27 +19,51 @@
 
 #include <stdlib.h>
 #include <dirent.h>
+#include <sys/resource.h>
 
 /* Docs: http://docs.sun.com/app/docs/doc/816-5168/fdwalk-3c  */
 
 int fdwalk (int (*func)(void *, int), void *cd)
 {
-  DIR *dir = opendir ("/proc/self/fd");
-  if (!dir)
-    return -1;
+  int res;
+  DIR *dir;
 
-  /* Note that fdwalk is not required to be thread-safe so we don't need to
-     use the _r version.  */
-  struct dirent *dirent;
-  while ((dirent = readdir (dir)))
+  dir = opendir ("/proc/self/fd");
+  if (dir)
     {
-      if (dirent->d_name[0] == '.')
-        continue;
-      int fd = atoi (dirent->d_name);
-      if (fd == dirfd (dir))
-        continue;
-      (*func)(cd, fd);
+      /* Note that fdwalk is not required to be thread-safe so we don't need to
+         use the _r version.  */
+      struct dirent *dirent;
+      while ((dirent = readdir (dir)))
+	{
+	  int fd;
+
+	  if (dirent->d_name[0] == '.')
+	    continue;
+	  fd = atoi (dirent->d_name);
+	  if (fd == dirfd (dir))
+	    continue;
+	  res = (*func)(cd, fd);
+	  if (res != 0)
+	    break;
+	}
+
+      (void) closedir (dir);
+    }
+  else
+    {
+      struct rlimit rlim;
+      int fd;
+
+      if (getrlimit (RLIMIT_NOFILE, &rlim) != 0)
+	return -1;
+      for (fd = 0; fd < rlim.rlim_max; fd++)
+	{
+	  res = (*func)(cd, fd);
+	  if (res != 0)
+	    break;
+	}
     }
 
-  return closedir (dir);
+  return res;
 }

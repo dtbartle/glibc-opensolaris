@@ -27,7 +27,7 @@ static int close_lowfd (void *lowfdp, int fd)
 {
   int lowfd = (int)lowfdp;
   if (fd >= lowfd)
-    close (fd);
+    (void) close (fd);
   return 0;
 }
 
