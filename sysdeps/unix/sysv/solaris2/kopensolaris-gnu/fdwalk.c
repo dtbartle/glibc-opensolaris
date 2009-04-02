@@ -25,7 +25,7 @@
 
 int fdwalk (int (*func)(void *, int), void *cd)
 {
-  int res;
+  int res = 0;
   DIR *dir;
 
   dir = opendir ("/proc/self/fd");
