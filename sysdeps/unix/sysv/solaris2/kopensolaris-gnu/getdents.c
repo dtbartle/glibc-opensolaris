@@ -1,4 +1,4 @@
-/* Copyright (C) 2008 Free Software Foundation, Inc.
+/* Copyright (C) 2009 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by David Bartley <dtbartle@csclub.uwaterloo.ca>, 2008.
 
@@ -17,16 +17,16 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <inline-syscall.h>
-#include <dirent.h>
+#include <sys/types,h>
 
-/* This can't be a direct syscall since it's marked as internal_function. */
+#define __KERNEL_DIRENT
+struct kernel_dirent
+  {
+    __ino_t d_ino;
+    __off_t d_off;
+    unsigned short d_reclen;
+    char d_name[1];
+  };
+#endif
 
-DECLARE_INLINE_SYSCALL (int, getdents, int fd, void *buf, size_t count);
-
-ssize_t
-internal_function
-__getdents (int fd, char *buf, size_t nbytes)
-{
-  return INLINE_SYSCALL(getdents, 3, fd, buf, nbytes);
-}
+#include <sysdeps/unix/sysv/linux/getdents.c>

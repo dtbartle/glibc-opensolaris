@@ -58,6 +58,7 @@ extern int __have_no_getdents64 attribute_hidden;
 
    Here is the kernel definition of `struct dirent' as of 2.1.20:  */
 
+#ifndef __KERNEL_DIRENT
 struct kernel_dirent
   {
     long int d_ino;
@@ -66,6 +67,7 @@ struct kernel_dirent
     char d_name[256];
   };
 
+# ifdef __NR_getdents64
 struct kernel_dirent64
   {
     uint64_t		d_ino;
@@ -74,6 +76,8 @@ struct kernel_dirent64
     unsigned char	d_type;
     char		d_name[256];
   };
+# endif
+#endif
 
 #ifndef __GETDENTS
 # define __GETDENTS __getdents

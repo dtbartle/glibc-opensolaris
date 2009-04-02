@@ -20,9 +20,6 @@
 # error "Never use <bits/dirent.h> directly; include <dirent.h> instead."
 #endif
 
-/* XXX: On OpenSolaris d_name is variable length. For compatibility we define
-   it to have length 256.  */
-
 typedef struct dirent
   {
 #ifndef __USE_FILE_OFFSET64
@@ -33,18 +30,9 @@ typedef struct dirent
     __off64_t d_off;
 #endif
     unsigned short int d_reclen;
+    unsigned char d_type;
     char d_name[256];		/* We must not include limits.h! */
   } dirent_t;
-
-#ifdef _SYSCALL32
-typedef struct dirent32
-  {
-	__ino_t d_ino;
-	__off_t d_off;
-	__uint16_t d_reclen;
-	char d_name[256];
-  } dirent32_t;
-#endif
 
 #ifdef __USE_LARGEFILE64
 typedef struct dirent64
@@ -52,6 +40,7 @@ typedef struct dirent64
     __ino64_t d_ino;
     __off64_t d_off;
     unsigned short int d_reclen;
+    unsigned char d_type;
     char d_name[256];		/* We must not include limits.h! */
   } dirent64_t;
 #endif
@@ -61,3 +50,4 @@ typedef struct dirent64
 #undef  _DIRENT_HAVE_D_NAMLEN
 #define _DIRENT_HAVE_D_RECLEN
 #define _DIRENT_HAVE_D_OFF
+#define _DIRENT_HAVE_D_TYPE
